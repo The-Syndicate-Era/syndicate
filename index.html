@@ -7,22 +7,13 @@
 
   <title>The Syndicate</title>
 
-  <!-- Google Font: Cinzel -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 
   <style>
 
-    body {
-      margin: 0;
-      background-color: black;
-      font-family: Arial, sans-serif;
-    }
-
     .site-header {
       height: 70px;
-      background-color: #0b0b0b;
+      background-color: var(--background-dark);
 
       display: flex;
       align-items: center;
@@ -30,20 +21,20 @@
 
       padding: 0 30px;
 
-      border-bottom: 1px solid #4a4020;
+      border-bottom: 1px solid var(--gold-dark);
     }
 
     .logo-area {
-      color: #d4af37;
+      font-family: var(--font-heading);
+      color: var(--gold);
       font-size: 20px;
-      font-family: "Cinzel", serif;
     }
 
     .menu-button {
       background: none;
       border: none;
 
-      color: #d4af37;
+      color: var(--gold);
       font-size: 32px;
 
       cursor: pointer;
@@ -76,37 +67,74 @@
       padding: 40px;
 
       text-align: center;
-      color: #d4af37;
     }
 
     .hero-content h1 {
-      margin: 0 0 25px 0;
-
-      font-size: 52px;
-      font-weight: normal;
+      margin-bottom: 25px;
       letter-spacing: 3px;
-
-      font-family: "Cinzel", serif;
     }
 
     .hero-content h2 {
-      margin: 0 0 25px 0;
-
-      font-size: 14px;
-      font-weight: normal;
-
-      font-family: "Cinzel", serif;
+      margin-bottom: 25px;
+      font-size: var(--paragraph-small);
     }
 
     .hero-content p {
       max-width: 550px;
-
       margin: 0;
-
-      font-size: 16px;
-      line-height: 1.6;
     }
+.directory {
+  padding: 70px 40px;
+  text-align: center;
+}
 
+.directory h2 {
+  margin-bottom: 40px;
+}
+
+.directory-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.directory-card {
+  background-color: #11100d;
+  border: 1px solid var(--gold-dark);
+
+  padding: 30px 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.directory-card h3 {
+  margin-bottom: 20px;
+}
+
+.directory-card p {
+  min-height: 70px;
+  margin-bottom: 25px;
+}
+
+.directory-button {
+  display: inline-block;
+
+  background-color: var(--gold);
+  color: black;
+
+  text-decoration: none;
+
+  padding: 12px 28px;
+
+  font-family: var(--font-heading);
+  font-size: var(--paragraph-small);
+
+  border-radius: 4px;
+}
   </style>
 </head>
 
@@ -124,17 +152,19 @@
 
   </header>
 
+
   <section class="hero">
 
     <div class="hero-image">
       Image will go here
     </div>
 
+
     <div class="hero-content">
 
       <h1>THE SYNDICATE</h1>
 
-      <h2>◆ CLASSIC ERA • FOR THE HORDE ◆</h2>
+      <h2>--◆ CLASSIC ERA • FOR THE HORDE ◆--</h2>
 
       <p>
         The Syndicate is a Horde guild built around good people,
@@ -147,7 +177,39 @@
     </div>
 
   </section>
+<section class="directory">
 
+  <h2>GUILD DIRECTORY</h2>
+
+  <div class="directory-grid">
+
+    <div class="directory-card">
+      <h3>OUR GUILD</h3>
+      <p>Officers, members, and more.</p>
+      <a href="guild.html" class="directory-button">Meet the Team</a>
+    </div>
+
+    <div class="directory-card">
+      <h3>CALENDAR</h3>
+      <p>Guild events, dungeons, and raids on the schedule this month.</p>
+      <a href="calendar.html" class="directory-button">See The Scheudule</a>
+    </div>
+
+    <div class="directory-card">
+      <h3>RAID HUB</h3>
+      <p>Rules, consumes, requirements, and raid-specific information.</p>
+      <a href="raids.html" class="directory-button">Prepare to Raid</a>
+    </div>
+
+    <div class="directory-card">
+      <h3>RESOURCES</h3>
+      <p>Addons, professions, supportive websites, and more.</p>
+      <a href="resources.html" class="directory-button">Browse Resources</a>
+    </div>
+
+  </div>
+
+</section>
 </body>
 
 </html>
