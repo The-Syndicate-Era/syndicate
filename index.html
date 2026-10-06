@@ -7,11 +7,17 @@
 
   <title>The Syndicate</title>
 
+  <!-- Google Font: Cinzel -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
 
     body {
       margin: 0;
       background-color: black;
+      font-family: Arial, sans-serif;
     }
 
     .site-header {
@@ -30,6 +36,7 @@
     .logo-area {
       color: #d4af37;
       font-size: 20px;
+      font-family: "Cinzel", serif;
     }
 
     .menu-button {
@@ -40,6 +47,64 @@
       font-size: 32px;
 
       cursor: pointer;
+    }
+
+    .hero {
+      display: flex;
+      min-height: 420px;
+    }
+
+    .hero-image {
+      width: 55%;
+      background-color: #111111;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: #666666;
+    }
+
+    .hero-content {
+      width: 45%;
+
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+
+      padding: 40px;
+
+      text-align: center;
+      color: #d4af37;
+    }
+
+    .hero-content h1 {
+      margin: 0 0 25px 0;
+
+      font-size: 52px;
+      font-weight: normal;
+      letter-spacing: 3px;
+
+      font-family: "Cinzel", serif;
+    }
+
+    .hero-content h2 {
+      margin: 0 0 25px 0;
+
+      font-size: 14px;
+      font-weight: normal;
+
+      font-family: "Cinzel", serif;
+    }
+
+    .hero-content p {
+      max-width: 550px;
+
+      margin: 0;
+
+      font-size: 16px;
+      line-height: 1.6;
     }
 
   </style>
@@ -58,6 +123,30 @@
     </button>
 
   </header>
+
+  <section class="hero">
+
+    <div class="hero-image">
+      Image will go here
+    </div>
+
+    <div class="hero-content">
+
+      <h1>THE SYNDICATE</h1>
+
+      <h2>◆ CLASSIC ERA • FOR THE HORDE ◆</h2>
+
+      <p>
+        The Syndicate is a Horde guild built around good people,
+        organized chaos, and getting things done together.
+        From leveling and dungeons to 20- and 40-man raiding,
+        we're here to build a strong community, help each other out,
+        and have a good time along the way.
+      </p>
+
+    </div>
+
+  </section>
 
 </body>
 
