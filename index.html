@@ -136,7 +136,49 @@
 
       border-radius: 4px;
     }
+.divider-section {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
+  gap: 18px;
+
+  max-width: 1200px;
+  margin: 10px auto 0;
+  padding: 20px 40px;
+}
+
+.divider-line {
+  height: 1px;
+  flex: 1;
+
+  background-color: var(--gold-dark);
+}
+
+.divider-text {
+  font-family: var(--font-heading);
+  color: var(--gold-dark);
+
+  font-size: 18px;
+  letter-spacing: 2px;
+
+  white-space: nowrap;
+}
+
+.site-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 25px 20px 40px;
+}
+
+.footer-logo {
+  font-family: var(--font-heading);
+  color: var(--gold);
+
+  font-size: 20px;
+}
   </style>
 </head>
 
@@ -240,7 +282,26 @@
     </div>
 
   </section>
+<section class="divider-section">
 
+  <div class="divider-line"></div>
+
+  <div class="divider-text">
+    ◆ THIS IS THE WAY. ◆
+  </div>
+
+  <div class="divider-line"></div>
+
+</section>
+
+
+<footer class="site-footer">
+
+  <div class="footer-logo">
+    THE SYNDICATE
+  </div>
+
+</footer>
 </body>
 
 </html>
