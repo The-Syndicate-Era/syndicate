@@ -3,48 +3,28 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <title>The Syndicate | Our Guild</title>
 
-  <title>The Syndicate | Coming Soon</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  >
-
+  <link rel="stylesheet" href="styles.css">
 
   <style>
 
     :root {
       --background-dark: #090909;
-      --background-soft: #101010;
+      --background-card: #11100d;
 
       --gold: #d9b438;
       --gold-light: #efcc54;
       --gold-dark: #7d651c;
 
       --text-light: #e6dfc9;
-      --text-muted: #a59b80;
-
-      --border: rgba(217, 180, 56, 0.35);
+      --text-muted: #b7ad94;
 
       --font-heading: "Cinzel", serif;
-      --font-body: "Montserrat", sans-serif;
+      --font-body: Arial, sans-serif;
     }
-
 
     * {
       box-sizing: border-box;
@@ -52,19 +32,12 @@
       padding: 0;
     }
 
-
     body {
       background: var(--background-dark);
       color: var(--text-light);
 
       font-family: var(--font-body);
-
-      min-height: 100vh;
-
-      display: flex;
-      flex-direction: column;
     }
-
 
     a {
       color: inherit;
@@ -83,6 +56,8 @@
       align-items: center;
       justify-content: space-between;
 
+      padding: 0 30px;
+
       background: var(--background-dark);
 
       border-bottom: 1px solid var(--gold-dark);
@@ -91,171 +66,464 @@
       z-index: 100;
     }
 
-
-    .logo-area {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-
-      padding-left: 14px;
-    }
-
-
     .logo-area img {
-      height: 46px;
+      height: 45px;
       width: auto;
 
       display: block;
     }
 
-
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-
-      gap: 34px;
-
-      padding-right: 32px;
-
-      font-family: var(--font-heading);
-
-      font-size: 15px;
+    .menu-button {
+      background: none;
+      border: none;
 
       color: var(--gold);
+
+      font-size: 32px;
+
+      cursor: pointer;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
 
-    .desktop-nav a {
-      transition: color 0.2s ease;
+    /* =========================
+       SLIDE-OUT MENU
+    ========================= */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(0, 0, 0, 0.65);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+
+      z-index: 900;
     }
 
-
-    .desktop-nav a:hover {
-      color: var(--gold-light);
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
     }
 
+    .side-menu {
+      position: fixed;
 
-    .menu-button {
-      display: none;
+      top: 0;
+      right: 0;
+
+      width: 420px;
+      max-width: 48vw;
+      height: 100%;
+
+      background: #090909;
+
+      border-left: 1px solid var(--gold-dark);
+
+      transform: translateX(100%);
+
+      transition: transform 0.3s ease;
+
+      z-index: 1000;
+
+      padding: 70px 40px 40px;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      transform: translateX(0);
+    }
+
+    .close-menu {
+      position: absolute;
+
+      top: 18px;
+      right: 22px;
 
       background: none;
       border: none;
 
       color: var(--gold);
 
-      font-size: 28px;
+      font-size: 34px;
 
       cursor: pointer;
-
-      padding: 12px 20px;
     }
 
+    .side-menu-logo {
+      text-align: center;
 
-    .mobile-nav {
-      display: none;
-
-      position: absolute;
-
-      top: 70px;
-      right: 0;
-
-      width: 230px;
-
-      background: #0b0b0b;
-
-      border-left: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-
-      z-index: 200;
+      margin-bottom: 40px;
     }
 
+    .side-menu-logo img {
+      width: 180px;
+      max-width: 80%;
 
-    .mobile-nav.open {
-      display: block;
+      height: auto;
     }
 
+    .side-menu-links {
+      display: flex;
+      flex-direction: column;
 
-    .mobile-nav a {
-      display: block;
+      gap: 10px;
+    }
 
-      padding: 15px 20px;
+    .side-menu-links a {
+      padding: 18px 10px;
 
       border-bottom:
-        1px solid rgba(217, 180, 56, 0.15);
+        1px solid rgba(217, 180, 56, 0.25);
 
       font-family: var(--font-heading);
 
       color: var(--gold);
 
-      font-size: 14px;
+      font-size: 20px;
+
+      letter-spacing: 1px;
+
+      transition:
+        color 0.2s ease,
+        padding-left 0.2s ease;
+    }
+
+    .side-menu-links a:hover {
+      color: var(--gold-light);
+
+      padding-left: 18px;
+    }
+
+    .side-menu-motto {
+      margin-top: auto;
+
+      padding-top: 30px;
+
+      border-top: 1px solid var(--gold-dark);
+
+      text-align: center;
+
+      font-family: var(--font-heading);
+
+      color: var(--gold-dark);
+
+      font-size: 13px;
+
+      letter-spacing: 2px;
     }
 
 
     /* =========================
-       MAIN CONTENT
+       PAGE INTRO
     ========================= */
 
-    main {
-      flex: 1;
+    .guild-intro {
+      max-width: 950px;
 
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      margin: 0 auto;
 
-      padding: 60px 30px;
-    }
-
-
-    .coming-soon {
-      width: 100%;
-      max-width: 850px;
+      padding: 65px 30px 55px;
 
       text-align: center;
-
-      padding: 60px 30px;
-
-      border-top: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
     }
 
-
-    .coming-soon h1 {
+    .guild-intro h1 {
       font-family: var(--font-heading);
 
       color: var(--gold);
 
-      font-size: clamp(38px, 7vw, 72px);
-
+      font-size: 52px;
       font-weight: 400;
 
-      letter-spacing: 4px;
+      letter-spacing: 3px;
 
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
 
+    .guild-intro p {
+      max-width: 760px;
 
-    .coming-soon p {
+      margin: 0 auto 28px;
+
       color: var(--text-muted);
 
       font-size: 15px;
 
       line-height: 1.8;
-
-      max-width: 600px;
-
-      margin: 0 auto;
     }
 
 
-    .coming-soon-mark {
+    /* =========================
+       ROSTER BUTTON
+    ========================= */
+
+    .roster-button {
+      display: inline-block;
+
+      padding: 11px 28px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #b51414 0%,
+          #8f0909 45%,
+          #650505 100%
+        );
+
+      color: #ffd633;
+
+      font-family: var(--font-heading);
+
+      font-size: 13px;
+
+      border: 2px solid #2a1a10;
+
+      border-radius: 5px;
+
+      box-shadow:
+        0 0 0 2px #6a4a25,
+        0 0 0 4px #120d09,
+        inset 0 2px 0 rgba(255,255,255,0.18),
+        inset 0 -2px 0 rgba(0,0,0,0.55),
+        0 3px 5px rgba(0,0,0,0.75);
+
+      text-shadow:
+        1px 1px 2px #000;
+
+      transition:
+        filter 0.15s ease,
+        transform 0.15s ease;
+    }
+
+    .roster-button:hover {
+      filter: brightness(1.15);
+    }
+
+    .roster-button:active {
+      transform: translateY(2px);
+    }
+
+    .roster-note {
+      margin-top: 18px;
+
+      font-size: 12px !important;
+
+      color: #807763 !important;
+    }
+
+
+    /* =========================
+       DIVIDER
+    ========================= */
+
+    .section-divider {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 18px;
+
+      max-width: 1100px;
+
+      margin: 0 auto;
+
+      padding: 0 30px 45px;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: "";
+
+      height: 1px;
+
+      flex: 1;
+
+      background: var(--gold-dark);
+    }
+
+    .section-divider span {
+      font-family: var(--font-heading);
+
       color: var(--gold-dark);
 
-      font-size: 24px;
+      font-size: 12px;
 
-      margin-bottom: 18px;
+      letter-spacing: 3px;
+    }
 
-      letter-spacing: 8px;
+
+    /* =========================
+       OFFICERS SECTION
+    ========================= */
+
+    .officers-section {
+      max-width: 1050px;
+
+      margin: 0 auto;
+
+      padding: 0 30px 70px;
+    }
+
+    .officers-heading {
+      text-align: center;
+
+      margin-bottom: 36px;
+    }
+
+    .officers-heading h2 {
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 34px;
+      font-weight: 400;
+
+      letter-spacing: 2px;
+    }
+
+
+    /* =========================
+       DARK MATRIARCH
+    ========================= */
+
+    .matriarch-card {
+      max-width: 520px;
+
+      margin: 0 auto 48px;
+
+      padding: 30px;
+
+      text-align: center;
+
+      background:
+        linear-gradient(
+          180deg,
+          #16130d,
+          #0d0c09
+        );
+
+      border: 1px solid var(--gold);
+
+      box-shadow:
+        0 0 18px rgba(217, 180, 56, 0.08);
+    }
+
+    .rank-title {
+      display: block;
+
+      font-family: var(--font-heading);
+
+      color: var(--gold-dark);
+
+      font-size: 12px;
+
+      letter-spacing: 3px;
+
+      margin-bottom: 13px;
+    }
+
+    .matriarch-card h3 {
+      font-family: var(--font-heading);
+
+      color: var(--gold-light);
+
+      font-size: 30px;
+      font-weight: 400;
+
+      letter-spacing: 2px;
+    }
+
+
+    /* =========================
+       DARK COUNCIL
+    ========================= */
+
+    .council-title {
+      text-align: center;
+
+      margin-bottom: 24px;
+
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 22px;
+      font-weight: 400;
+
+      letter-spacing: 2px;
+    }
+
+    .council-grid {
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 18px;
+    }
+
+    .officer-card {
+      min-height: 125px;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: center;
+      justify-content: center;
+
+      text-align: center;
+
+      padding: 24px 18px;
+
+      background: var(--background-card);
+
+      border: 1px solid rgba(125, 101, 28, 0.7);
+
+      transition:
+        border-color 0.2s ease,
+        transform 0.2s ease,
+        background 0.2s ease;
+    }
+
+    .officer-card:hover {
+      transform: translateY(-3px);
+
+      background: #15130e;
+
+      border-color: var(--gold);
+    }
+
+    .officer-rank {
+      font-family: var(--font-heading);
+
+      color: var(--gold-dark);
+
+      font-size: 10px;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 10px;
+    }
+
+    .officer-name {
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 21px;
+
+      letter-spacing: 1px;
     }
 
 
@@ -263,139 +531,144 @@
        FOOTER
     ========================= */
 
-    .site-footer {
-      border-top:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      padding: 26px 30px 20px;
-
-      text-align: center;
-    }
-
-
-    .footer-motto {
+    .divider-section {
       display: flex;
+
       align-items: center;
       justify-content: center;
 
-      gap: 12px;
+      gap: 18px;
 
-      font-family: var(--font-heading);
+      max-width: 1200px;
 
-      font-size: 14px;
+      margin: 0 auto;
 
-      letter-spacing: 3px;
-
-      color: var(--gold-dark);
+      padding: 20px 40px;
     }
 
-
-    .footer-motto::before,
-    .footer-motto::after {
-      content: "";
-
-      width: 90px;
+    .divider-line {
       height: 1px;
+
+      flex: 1;
 
       background: var(--gold-dark);
     }
 
+    .divider-text {
+      font-family: var(--font-heading);
 
-    .footer-divider {
-      height: 1px;
+      color: var(--gold-dark);
 
-      max-width: 1100px;
+      font-size: 15px;
 
-      margin: 16px auto;
+      letter-spacing: 2px;
 
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
+      white-space: nowrap;
     }
 
+    .site-footer {
+      display: flex;
+
+      justify-content: center;
+      align-items: center;
+
+      padding: 15px 20px 35px;
+
+      border-top: 1px solid var(--gold-dark);
+    }
 
     .footer-logo img {
-      width: 155px;
-      max-width: 65%;
+      height: 55px;
+      width: auto;
 
-      height: auto;
+      display: block;
     }
 
 
     /* =========================
-       TABLET / MOBILE
+       MOBILE
     ========================= */
 
-    @media (max-width: 900px) {
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-    }
-
-
-    @media (max-width: 650px) {
+    @media (max-width: 768px) {
 
       .site-header {
         height: 60px;
+
+        padding: 0 18px;
       }
-
-
-      .logo-area {
-        height: 60px;
-      }
-
 
       .logo-area img {
-        height: 38px;
+        height: 36px;
+      }
+
+      .menu-button {
+        font-size: 28px;
+      }
+
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
+
+        padding: 70px 25px 30px;
+      }
+
+      .side-menu-links a {
+        font-size: 18px;
       }
 
 
-      .mobile-nav {
-        top: 60px;
+      .guild-intro {
+        padding: 45px 20px 40px;
       }
 
-
-      main {
-        padding: 40px 18px;
-      }
-
-
-      .coming-soon {
-        padding: 45px 16px;
-      }
-
-
-      .coming-soon h1 {
+      .guild-intro h1 {
         font-size: 38px;
+      }
 
-        letter-spacing: 2px;
+      .guild-intro p {
+        font-size: 14px;
       }
 
 
-      .coming-soon p {
-        font-size: 13px;
+      .officers-section {
+        padding: 0 18px 55px;
+      }
+
+      .officers-heading h2 {
+        font-size: 28px;
+      }
+
+      .matriarch-card {
+        margin-bottom: 38px;
+
+        padding: 26px 20px;
+      }
+
+      .matriarch-card h3 {
+        font-size: 26px;
+      }
+
+      .council-grid {
+        grid-template-columns: 1fr;
+
+        gap: 14px;
+      }
+
+      .officer-card {
+        min-height: 105px;
       }
 
 
-      .footer-motto {
-        font-size: 11px;
-        letter-spacing: 2px;
+      .divider-section {
+        padding: 18px 20px;
       }
 
+      .divider-text {
+        font-size: 12px;
+      }
 
-      .footer-motto::before,
-      .footer-motto::after {
-        width: 45px;
+      .footer-logo img {
+        height: 45px;
       }
 
     }
@@ -407,132 +680,269 @@
 <body>
 
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+  <!-- HEADER -->
 
   <header class="site-header">
 
-    <a
-      href="index.html"
-      class="logo-area"
-    >
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-    </a>
-
-
-    <nav class="desktop-nav">
+    <div class="logo-area">
 
       <a href="index.html">
-        Home
+
+        <img
+          src="images/HeaderLogo.png"
+          alt="The Syndicate"
+        >
+
       </a>
 
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
+    </div>
 
 
     <button
       class="menu-button"
       id="menuButton"
       type="button"
-      aria-label="Open navigation menu"
+      aria-label="Open menu"
       aria-expanded="false"
     >
       ☰
     </button>
 
-
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
   </header>
 
 
-  <!-- =========================
-       COMING SOON
-  ========================== -->
 
-  <main>
+  <!-- SLIDE-OUT MENU -->
 
-    <section class="coming-soon">
-
-      <div class="coming-soon-mark">
-        ✦ ✦ ✦
-      </div>
-
-      <h1>
-        Coming Soon
-      </h1>
-
-      <p>
-        This section of The Syndicate is still being built.
-        Check back soon for more information, resources,
-        and questionable levels of organization.
-      </p>
-
-    </section>
-
-  </main>
+  <div
+    class="menu-overlay"
+    id="menuOverlay"
+  ></div>
 
 
-  <!-- =========================
-       FOOTER
-  ========================== -->
+  <aside
+    class="side-menu"
+    id="sideMenu"
+  >
 
-  <footer class="site-footer">
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu"
+    >
+      ×
+    </button>
 
-    <div class="footer-motto">
-      ✦ THIS IS THE WAY. ✦
+
+    <div class="side-menu-logo">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate"
+      >
+
     </div>
 
-    <div class="footer-divider"></div>
+
+    <nav class="side-menu-links">
+
+      <a href="index.html">HOME</a>
+
+      <a href="guild.html">OUR GUILD</a>
+
+      <a href="calendar.html">CALENDAR</a>
+
+      <a href="raids.html">RAID HUB</a>
+
+      <a href="resources.html">RESOURCES</a>
+
+    </nav>
+
+
+    <div class="side-menu-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+  </aside>
+
+
+
+  <!-- GUILD INTRO -->
+
+  <section class="guild-intro">
+
+    <h1>
+      OUR GUILD
+    </h1>
+
+
+    <p>
+      The Syndicate is a Horde guild on Mankrik Classic Era
+      built around good people, organized chaos, and getting
+      things done together. From leveling and dungeons to
+      progression raiding, we're here to build a strong
+      community, help each other out, and enjoy the game
+      along the way.
+    </p>
+
+
+    <a
+      href="https://worldofwarcraft.blizzard.com/en-us/classic1x/us/armory/guild/mankrik/the-syndicate?class=all&page=1"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="roster-button"
+    >
+      VIEW ACTIVE GUILD ROSTER
+    </a>
+
+
+    <p class="roster-note">
+      Blizzard's guild roster includes both mains and alts
+      and provides the most current view of our membership.
+    </p>
+
+  </section>
+
+
+
+  <!-- DIVIDER -->
+
+  <div class="section-divider">
+
+    <span>
+      ◆ LEADERSHIP ◆
+    </span>
+
+  </div>
+
+
+
+  <!-- OFFICERS -->
+
+  <section class="officers-section">
+
+
+    <div class="officers-heading">
+
+      <h2>
+        MEET THE OFFICERS
+      </h2>
+
+    </div>
+
+
+
+    <!-- DARK MATRIARCH -->
+
+    <div class="matriarch-card">
+
+      <span class="rank-title">
+        DARK MATRIARCH
+      </span>
+
+      <h3>
+        FARED
+      </h3>
+
+    </div>
+
+
+
+    <!-- DARK COUNCIL -->
+
+    <h3 class="council-title">
+      DARK COUNCIL
+    </h3>
+
+
+    <div class="council-grid">
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">YOSHI</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">BELLE</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">RILDILIAN</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">TANKBOT</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">ROACHEE</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">JOE</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">KAERIXI</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">BEREAVEMENT</span>
+      </div>
+
+
+      <div class="officer-card">
+        <span class="officer-rank">DARK COUNCIL</span>
+        <span class="officer-name">GRAWL</span>
+      </div>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- FOOTER DIVIDER -->
+
+  <section class="divider-section">
+
+    <div class="divider-line"></div>
+
+    <div class="divider-text">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+    <div class="divider-line"></div>
+
+  </section>
+
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
 
     <div class="footer-logo">
 
       <img
-        src="HeaderLogo.png"
+        src="images/HeaderLogo.png"
         alt="The Syndicate"
       >
 
@@ -541,30 +951,77 @@
   </footer>
 
 
-  <!-- =========================
-       MOBILE MENU
-  ========================== -->
+
+  <!-- MENU SCRIPT -->
 
   <script>
 
     const menuButton =
       document.getElementById("menuButton");
 
-    const mobileNav =
-      document.getElementById("mobileNav");
+    const sideMenu =
+      document.getElementById("sideMenu");
+
+    const menuOverlay =
+      document.getElementById("menuOverlay");
+
+    const closeMenu =
+      document.getElementById("closeMenu");
+
+
+    function openMenu() {
+
+      sideMenu.classList.add("open");
+
+      menuOverlay.classList.add("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    }
+
+
+    function closeSideMenu() {
+
+      sideMenu.classList.remove("open");
+
+      menuOverlay.classList.remove("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
 
 
     menuButton.addEventListener(
       "click",
-      function () {
+      openMenu
+    );
 
-        const isOpen =
-          mobileNav.classList.toggle("open");
 
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen
-        );
+    closeMenu.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    menuOverlay.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Escape") {
+          closeSideMenu();
+        }
 
       }
     );
@@ -573,4 +1030,5 @@
 
 
 </body>
+
 </html>
