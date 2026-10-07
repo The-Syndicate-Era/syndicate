@@ -3,14 +3,32 @@
 
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
 
   <title>The Syndicate | Calendar</title>
 
-  <!-- Google Font -->
+
+  <!-- =========================
+       GOOGLE FONTS
+  ========================== -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  >
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
+    rel="stylesheet"
+  >
+
 
   <style>
 
@@ -19,6 +37,7 @@
     ========================= */
 
     :root {
+
       --background-dark: #090909;
       --background-soft: #101010;
       --background-card: #0d0d0d;
@@ -32,9 +51,17 @@
 
       --border: rgba(217, 180, 56, 0.35);
 
+      --raid-red: #b53a3a;
+      --raid-red-background: rgba(110, 20, 20, 0.42);
+
+      --event-blue: #4b78bd;
+      --event-blue-background: rgba(24, 55, 105, 0.42);
+
       --font-heading: "Cinzel", serif;
       --font-body: "Montserrat", sans-serif;
+
     }
+
 
 
     /* =========================
@@ -52,10 +79,15 @@
     }
 
     body {
+
       background: var(--background-dark);
+
       color: var(--text-light);
+
       font-family: var(--font-body);
+
       min-height: 100vh;
+
     }
 
     a {
@@ -64,179 +96,255 @@
     }
 
 
+
     /* =========================
        HEADER
     ========================= */
 
     .site-header {
+
       height: 70px;
 
       display: flex;
+
       align-items: center;
+
       justify-content: space-between;
 
       border-bottom: 1px solid var(--gold-dark);
 
-      background: #090909;
+      background: var(--background-dark);
 
       position: relative;
+
       z-index: 100;
+
     }
 
+
     .logo-area {
+
       height: 70px;
 
       display: flex;
+
       align-items: center;
 
-      padding-left: 12px;
+      padding-left: 14px;
+
     }
+
 
     .logo-area img {
+
       height: 46px;
+
       width: auto;
+
       display: block;
+
     }
 
+
     .desktop-nav {
+
       display: flex;
+
       align-items: center;
+
       gap: 34px;
 
       padding-right: 32px;
 
       font-family: var(--font-heading);
+
       font-size: 15px;
+
       color: var(--gold);
+
     }
+
 
     .desktop-nav a {
+
       transition: color 0.2s ease;
+
     }
+
 
     .desktop-nav a:hover {
+
       color: var(--gold-light);
+
     }
 
+
     .menu-button {
+
       display: none;
 
       background: none;
+
       border: none;
 
       color: var(--gold);
 
       font-size: 28px;
+
       cursor: pointer;
 
       padding: 12px 20px;
+
     }
 
+
     .mobile-nav {
+
       display: none;
 
       position: absolute;
+
       top: 70px;
+
       right: 0;
 
       width: 230px;
 
       background: #0b0b0b;
+
       border-left: 1px solid var(--gold-dark);
+
       border-bottom: 1px solid var(--gold-dark);
 
       z-index: 200;
+
     }
+
 
     .mobile-nav.open {
       display: block;
     }
 
+
     .mobile-nav a {
+
       display: block;
 
       padding: 15px 20px;
 
-      border-bottom: 1px solid rgba(217, 180, 56, 0.15);
+      border-bottom:
+        1px solid rgba(217, 180, 56, 0.15);
 
       font-family: var(--font-heading);
+
       color: var(--gold);
 
       font-size: 14px;
+
     }
+
 
 
     /* =========================
-       PAGE HEADER
+       PAGE HEADING
     ========================= */
 
     .page-heading {
+
       max-width: 1200px;
 
       margin: 0 auto;
+
       padding: 48px 30px 28px;
+
     }
 
+
     .page-heading h1 {
+
       font-family: var(--font-heading);
+
       font-size: clamp(34px, 5vw, 58px);
 
       font-weight: 400;
+
       letter-spacing: 2px;
 
       color: var(--gold);
 
       margin-bottom: 12px;
+
     }
 
+
     .page-heading p {
-      max-width: 720px;
+
+      max-width: 760px;
 
       font-size: 15px;
+
       line-height: 1.7;
 
       color: var(--text-muted);
+
     }
 
+
     .heading-rule {
+
       width: 100%;
+
       height: 1px;
 
       margin-top: 28px;
 
-      background: linear-gradient(
-        90deg,
-        var(--gold-dark),
-        var(--gold),
-        var(--gold-dark)
-      );
+      background:
+        linear-gradient(
+          90deg,
+          var(--gold-dark),
+          var(--gold),
+          var(--gold-dark)
+        );
+
     }
 
 
+
     /* =========================
-       CALENDAR AREA
+       CALENDAR SECTION
     ========================= */
 
     .calendar-section {
+
       max-width: 1200px;
 
       margin: 0 auto;
+
       padding: 10px 30px 60px;
+
     }
 
+
     .calendar-shell {
+
       border: 1px solid var(--border);
+
       background: var(--background-card);
+
     }
+
 
 
     /* =========================
-       CALENDAR HEADER
+       CALENDAR TOOLBAR
     ========================= */
 
     .calendar-toolbar {
+
       display: grid;
+
       grid-template-columns: 1fr auto 1fr;
+
       align-items: center;
 
       gap: 20px;
@@ -244,32 +352,48 @@
       padding: 20px;
 
       border-bottom: 1px solid var(--border);
+
     }
 
+
     .calendar-toolbar h2 {
+
       text-align: center;
 
       font-family: var(--font-heading);
+
       font-size: 26px;
+
       font-weight: 400;
 
       color: var(--gold);
 
       letter-spacing: 1px;
+
     }
+
 
     .calendar-controls {
+
       display: flex;
+
       gap: 8px;
+
     }
+
 
     .calendar-controls:last-child {
+
       justify-content: flex-end;
+
     }
 
+
     .calendar-button {
+
       min-width: 42px;
-      min-height: 38px;
+
+      min-height: 40px;
 
       padding: 8px 13px;
 
@@ -287,43 +411,63 @@
         background 0.2s ease,
         color 0.2s ease,
         border-color 0.2s ease;
+
     }
 
+
     .calendar-button:hover {
+
       background: var(--gold);
+
       color: #080808;
+
       border-color: var(--gold);
+
     }
+
 
 
     /* =========================
-       DAY HEADINGS
+       WEEKDAY HEADINGS
     ========================= */
 
     .calendar-weekdays {
+
       display: grid;
+
       grid-template-columns: repeat(7, 1fr);
 
       border-bottom: 1px solid var(--border);
 
       background: #0b0b0b;
+
     }
 
+
     .calendar-weekdays div {
+
       padding: 13px 5px;
 
       text-align: center;
 
       font-family: var(--font-heading);
+
       font-size: 13px;
+
       color: var(--gold);
 
-      border-right: 1px solid rgba(217, 180, 56, 0.15);
+      border-right:
+        1px solid rgba(217, 180, 56, 0.15);
+
     }
 
+
     .calendar-weekdays div:last-child {
+
       border-right: none;
+
     }
+
 
 
     /* =========================
@@ -331,114 +475,293 @@
     ========================= */
 
     .calendar-grid {
+
       display: grid;
+
       grid-template-columns: repeat(7, 1fr);
+
     }
 
+
     .calendar-day {
+
       position: relative;
 
       min-height: 135px;
 
       padding: 10px;
 
-      border-right: 1px solid rgba(217, 180, 56, 0.14);
-      border-bottom: 1px solid rgba(217, 180, 56, 0.14);
+      border-right:
+        1px solid rgba(217, 180, 56, 0.14);
+
+      border-bottom:
+        1px solid rgba(217, 180, 56, 0.14);
 
       background: #0b0b0b;
+
+      min-width: 0;
+
     }
+
 
     .calendar-day:nth-child(7n) {
+
       border-right: none;
+
     }
+
 
     .calendar-day.other-month {
+
       background: #080808;
+
       color: #4d493e;
+
     }
+
 
     .calendar-day.today {
-      box-shadow: inset 0 0 0 1px var(--gold);
+
+      box-shadow:
+        inset 0 0 0 1px var(--gold);
+
     }
 
+
     .day-number {
+
       font-family: var(--font-heading);
+
       font-size: 14px;
 
       color: var(--text-muted);
 
       margin-bottom: 8px;
+
     }
 
+
     .calendar-day.today .day-number {
+
       color: var(--gold-light);
+
     }
+
 
 
     /* =========================
-       EVENTS
+       CALENDAR EVENTS
     ========================= */
 
     .event {
+
       display: block;
 
       margin-top: 6px;
+
       padding: 7px 8px;
 
-      background: rgba(217, 180, 56, 0.09);
-
-      border-left: 2px solid var(--gold);
-
       font-size: 11px;
+
       line-height: 1.35;
 
-      color: var(--text-light);
+      color: #f3ead3;
+
+      border-left: 3px solid;
+
+      overflow-wrap: anywhere;
+
     }
 
+
+    /* RAID = RED */
+
+    .event.raid {
+
+      background:
+        var(--raid-red-background);
+
+      border-left-color:
+        var(--raid-red);
+
+    }
+
+
+    /* EVENT = BLUE */
+
+    .event.guild-event {
+
+      background:
+        var(--event-blue-background);
+
+      border-left-color:
+        var(--event-blue);
+
+    }
+
+
+    /* UNKNOWN TYPE */
+
+    .event.other-event {
+
+      background:
+        rgba(217, 180, 56, 0.10);
+
+      border-left-color:
+        var(--gold);
+
+    }
+
+
     .event-name {
+
       display: block;
 
       font-family: var(--font-heading);
-      color: var(--gold-light);
+
+      color: #f3e5ba;
 
       margin-bottom: 2px;
+
     }
+
 
     .event-time {
+
       display: block;
 
-      color: var(--text-muted);
+      color: #c4baa0;
+
       font-size: 10px;
+
     }
 
-    .event.guild-event {
-      border-left-color: #d8c997;
-    }
-
-    .event.special-event {
-      border-left-color: #ffffff;
-    }
 
 
     /* =========================
-       WEEKLY SCHEDULE
+       LOADING / ERROR
+    ========================= */
+
+    .calendar-message {
+
+      grid-column: 1 / -1;
+
+      min-height: 180px;
+
+      display: flex;
+
+      align-items: center;
+
+      justify-content: center;
+
+      text-align: center;
+
+      padding: 30px;
+
+      color: var(--text-muted);
+
+      font-size: 14px;
+
+    }
+
+
+    .calendar-message.error {
+
+      color: #d98282;
+
+    }
+
+
+
+    /* =========================
+       LEGEND
+    ========================= */
+
+    .calendar-legend {
+
+      display: flex;
+
+      justify-content: flex-end;
+
+      align-items: center;
+
+      gap: 20px;
+
+      padding: 12px 16px;
+
+      border-top:
+        1px solid rgba(217, 180, 56, 0.15);
+
+      font-size: 11px;
+
+      color: var(--text-muted);
+
+    }
+
+
+    .legend-item {
+
+      display: flex;
+
+      align-items: center;
+
+      gap: 7px;
+
+    }
+
+
+    .legend-color {
+
+      width: 10px;
+
+      height: 10px;
+
+    }
+
+
+    .legend-color.raid {
+
+      background: var(--raid-red);
+
+    }
+
+
+    .legend-color.event {
+
+      background: var(--event-blue);
+
+    }
+
+
+
+    /* =========================
+       WEEKLY RAID SCHEDULE
     ========================= */
 
     .schedule-section {
+
       max-width: 1200px;
 
       margin: 0 auto;
+
       padding: 0 30px 70px;
+
     }
 
+
     .schedule-heading {
+
       text-align: center;
 
       margin-bottom: 26px;
+
     }
 
+
     .schedule-heading h2 {
+
       font-family: var(--font-heading);
+
       font-weight: 400;
 
       color: var(--gold);
@@ -446,22 +769,32 @@
       font-size: 28px;
 
       margin-bottom: 8px;
+
     }
+
 
     .schedule-heading p {
+
       color: var(--text-muted);
+
       font-size: 13px;
+
     }
 
+
     .schedule-grid {
+
       display: grid;
 
       grid-template-columns: repeat(5, 1fr);
 
       gap: 12px;
+
     }
 
+
     .schedule-card {
+
       border: 1px solid var(--border);
 
       background: #0d0d0d;
@@ -473,42 +806,62 @@
       transition:
         border-color 0.2s ease,
         background 0.2s ease;
+
     }
+
 
     .schedule-card:hover {
+
       border-color: var(--gold);
+
       background: #11100c;
+
     }
 
+
     .schedule-day {
+
       display: block;
 
       font-family: var(--font-heading);
+
       color: var(--gold);
 
       font-size: 13px;
+
       letter-spacing: 2px;
 
       margin-bottom: 12px;
+
     }
 
+
     .schedule-raid {
+
       display: block;
 
       font-family: var(--font-heading);
+
       color: var(--text-light);
 
       font-size: 17px;
 
       margin-bottom: 7px;
+
     }
+
 
     .schedule-time {
+
       font-size: 12px;
+
       color: var(--gold);
+
     }
 
+
     .schedule-note {
+
       text-align: center;
 
       margin-top: 22px;
@@ -516,8 +869,11 @@
       color: var(--text-muted);
 
       font-size: 12px;
+
       line-height: 1.6;
+
     }
+
 
 
     /* =========================
@@ -525,16 +881,23 @@
     ========================= */
 
     .site-footer {
-      border-top: 1px solid rgba(217, 180, 56, 0.25);
+
+      border-top:
+        1px solid rgba(217, 180, 56, 0.25);
 
       padding: 26px 30px 20px;
 
       text-align: center;
+
     }
 
+
     .footer-motto {
+
       display: flex;
+
       align-items: center;
+
       justify-content: center;
 
       gap: 12px;
@@ -542,41 +905,57 @@
       font-family: var(--font-heading);
 
       font-size: 14px;
+
       letter-spacing: 3px;
 
       color: var(--gold-dark);
+
     }
+
 
     .footer-motto::before,
     .footer-motto::after {
+
       content: "";
 
       width: 90px;
+
       height: 1px;
 
       background: var(--gold-dark);
+
     }
 
+
     .footer-divider {
+
       height: 1px;
 
       max-width: 1100px;
 
       margin: 16px auto;
 
-      background: linear-gradient(
-        90deg,
-        transparent,
-        var(--gold-dark),
-        transparent
-      );
+      background:
+        linear-gradient(
+          90deg,
+          transparent,
+          var(--gold-dark),
+          transparent
+        );
+
     }
 
+
     .footer-logo img {
+
       width: 155px;
+
       max-width: 65%;
+
       height: auto;
+
     }
+
 
 
     /* =========================
@@ -604,6 +983,7 @@
     }
 
 
+
     /* =========================
        MOBILE
     ========================= */
@@ -626,86 +1006,159 @@
         top: 60px;
       }
 
+
       .page-heading {
-        padding: 34px 18px 22px;
+
+        padding:
+          34px 18px 22px;
+
       }
+
 
       .page-heading h1 {
+
         font-size: 34px;
+
       }
+
 
       .page-heading p {
+
         font-size: 13px;
+
       }
+
 
       .calendar-section {
-        padding: 5px 10px 45px;
+
+        padding:
+          5px 8px 45px;
+
       }
 
+
       .calendar-toolbar {
+
         grid-template-columns: 1fr;
 
         text-align: center;
+
       }
+
 
       .calendar-toolbar h2 {
+
         order: 1;
+
       }
+
 
       .calendar-controls {
+
         justify-content: center;
+
       }
+
 
       .calendar-controls:first-child {
+
         order: 2;
+
       }
+
 
       .calendar-controls:last-child {
+
         order: 3;
+
         justify-content: center;
+
       }
+
 
       .calendar-weekdays div {
-        font-size: 10px;
-        padding: 10px 2px;
-      }
-
-      .calendar-day {
-        min-height: 90px;
-
-        padding: 5px;
-      }
-
-      .day-number {
-        font-size: 11px;
-      }
-
-      .event {
-        padding: 4px;
 
         font-size: 9px;
+
+        padding: 10px 1px;
+
       }
+
+
+      .calendar-day {
+
+        min-height: 88px;
+
+        padding: 4px;
+
+      }
+
+
+      .day-number {
+
+        font-size: 11px;
+
+        margin-bottom: 4px;
+
+      }
+
+
+      .event {
+
+        padding: 4px;
+
+        margin-top: 3px;
+
+        font-size: 8px;
+
+        border-left-width: 2px;
+
+      }
+
 
       .event-time {
-        font-size: 8px;
+
+        font-size: 7px;
+
       }
+
+
+      .calendar-legend {
+
+        justify-content: center;
+
+      }
+
 
       .schedule-section {
-        padding: 0 18px 50px;
+
+        padding:
+          0 18px 50px;
+
       }
+
 
       .schedule-grid {
+
         grid-template-columns: 1fr;
+
       }
 
+
       .footer-motto {
+
         font-size: 11px;
+
         letter-spacing: 2px;
+
       }
+
 
       .footer-motto::before,
       .footer-motto::after {
+
         width: 45px;
+
       }
 
     }
@@ -723,24 +1176,48 @@
 
   <header class="site-header">
 
-    <a href="index.html" class="logo-area">
-      <!-- CHANGE THIS IMAGE PATH IF NEEDED -->
-      <img src="images/syndicate-logo.png" alt="The Syndicate">
+    <a
+      href="index.html"
+      class="logo-area"
+    >
+
+      <img
+        src="HeaderLogo.png"
+        alt="The Syndicate"
+      >
+
     </a>
 
 
     <nav class="desktop-nav">
-      <a href="index.html">Home</a>
-      <a href="officers.html">Our Guild</a>
-      <a href="calendar.html">Calendar</a>
-      <a href="raids.html">Raid Hub</a>
-      <a href="resources.html">Resources</a>
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="officers.html">
+        Our Guild
+      </a>
+
+      <a href="calendar.html">
+        Calendar
+      </a>
+
+      <a href="raids.html">
+        Raid Hub
+      </a>
+
+      <a href="resources.html">
+        Resources
+      </a>
+
     </nav>
 
 
     <button
       class="menu-button"
       id="menuButton"
+      type="button"
       aria-label="Open navigation menu"
       aria-expanded="false"
     >
@@ -748,12 +1225,31 @@
     </button>
 
 
-    <nav class="mobile-nav" id="mobileNav">
-      <a href="index.html">Home</a>
-      <a href="officers.html">Our Guild</a>
-      <a href="calendar.html">Calendar</a>
-      <a href="raids.html">Raid Hub</a>
-      <a href="resources.html">Resources</a>
+    <nav
+      class="mobile-nav"
+      id="mobileNav"
+    >
+
+      <a href="index.html">
+        Home
+      </a>
+
+      <a href="officers.html">
+        Our Guild
+      </a>
+
+      <a href="calendar.html">
+        Calendar
+      </a>
+
+      <a href="raids.html">
+        Raid Hub
+      </a>
+
+      <a href="resources.html">
+        Resources
+      </a>
+
     </nav>
 
   </header>
@@ -761,18 +1257,27 @@
 
 
   <!-- =========================
-       PAGE HEADING
+       PAGE CONTENT
   ========================== -->
 
   <main>
 
+
+    <!-- =========================
+         PAGE HEADING
+    ========================== -->
+
     <section class="page-heading">
 
-      <h1>Guild Calendar</h1>
+      <h1>
+        Upcoming Events
+      </h1>
 
       <p>
-        Raid nights, guild events, and important dates for The Syndicate.
-        Check Discord sign-ups and announcements for the most current raid information.
+        Keep up with upcoming raids, guild events,
+        and important dates for The Syndicate.
+        Discord sign-ups and announcements are
+        always the final word for schedule changes.
       </p>
 
       <div class="heading-rule"></div>
@@ -789,9 +1294,14 @@
 
       <div class="calendar-shell">
 
+
+        <!-- CALENDAR TOOLBAR -->
+
         <div class="calendar-toolbar">
 
+
           <div class="calendar-controls">
+
             <button
               class="calendar-button"
               id="prevMonth"
@@ -800,11 +1310,12 @@
             >
               ‹
             </button>
+
           </div>
 
 
           <h2 id="calendarTitle">
-            October 2026
+            Calendar
           </h2>
 
 
@@ -817,6 +1328,7 @@
             >
               Today
             </button>
+
 
             <button
               class="calendar-button"
@@ -832,23 +1344,64 @@
         </div>
 
 
+
+        <!-- WEEKDAY HEADINGS -->
+
         <div class="calendar-weekdays">
 
           <div>Sun</div>
+
           <div>Mon</div>
+
           <div>Tue</div>
+
           <div>Wed</div>
+
           <div>Thu</div>
+
           <div>Fri</div>
+
           <div>Sat</div>
 
         </div>
 
 
+
+        <!-- JAVASCRIPT BUILDS THE DAYS -->
+
         <div
           class="calendar-grid"
           id="calendarGrid"
         ></div>
+
+
+
+        <!-- COLOR LEGEND -->
+
+        <div class="calendar-legend">
+
+          <div class="legend-item">
+
+            <span
+              class="legend-color raid"
+            ></span>
+
+            Raid
+
+          </div>
+
+
+          <div class="legend-item">
+
+            <span
+              class="legend-color event"
+            ></span>
+
+            Guild Event
+
+          </div>
+
+        </div>
 
       </div>
 
@@ -862,18 +1415,27 @@
 
     <section class="schedule-section">
 
+
       <div class="schedule-heading">
 
-        <h2>Regular Raid Schedule</h2>
+        <h2>
+          Regular Raid Schedule
+        </h2>
 
         <p>
-          Our usual weekly rhythm. Special events and schedule changes appear on the calendar above.
+          Our usual weekly schedule.
+          Special events and schedule changes
+          appear on the calendar above.
         </p>
 
       </div>
 
 
+
       <div class="schedule-grid">
+
+
+        <!-- MONDAY -->
 
         <div class="schedule-card">
 
@@ -892,6 +1454,9 @@
         </div>
 
 
+
+        <!-- WEDNESDAY -->
+
         <div class="schedule-card">
 
           <span class="schedule-day">
@@ -908,6 +1473,9 @@
 
         </div>
 
+
+
+        <!-- THURSDAY -->
 
         <div class="schedule-card">
 
@@ -926,6 +1494,9 @@
         </div>
 
 
+
+        <!-- FRIDAY -->
+
         <div class="schedule-card">
 
           <span class="schedule-day">
@@ -942,6 +1513,9 @@
 
         </div>
 
+
+
+        <!-- SUNDAY -->
 
         <div class="schedule-card">
 
@@ -962,12 +1536,17 @@
       </div>
 
 
+
       <p class="schedule-note">
-        Raid schedules may shift for progression, special events, or holidays.
-        Discord sign-ups and announcements are always the final word.
+
+        Raid schedules may shift for progression,
+        special events, holidays, or other guild needs.
+        Check Discord for current sign-ups and announcements.
+
       </p>
 
     </section>
+
 
   </main>
 
@@ -979,17 +1558,21 @@
 
   <footer class="site-footer">
 
+
     <div class="footer-motto">
+
       ✦ THIS IS THE WAY. ✦
+
     </div>
+
 
     <div class="footer-divider"></div>
 
+
     <div class="footer-logo">
 
-      <!-- CHANGE THIS IMAGE PATH IF NEEDED -->
       <img
-        src="images/syndicate-logo.png"
+        src="HeaderLogo.png"
         alt="The Syndicate"
       >
 
@@ -1000,168 +1583,528 @@
 
 
   <!-- =========================
-       JAVASCRIPT
+       SUPABASE LIBRARY
+  ========================== -->
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"
+  ></script>
+
+
+
+  <!-- =========================
+       PAGE JAVASCRIPT
   ========================== -->
 
   <script>
+
+
+    /* =====================================
+       SUPABASE CONNECTION
+    ===================================== */
+
+
+    const SUPABASE_URL =
+      "https://vjxbulbnozopbuzyxxob.supabase.co";
+
+
+    /*
+      Replace the text below with
+      your Supabase PUBLISHABLE key.
+
+      DO NOT use the secret/service-role key.
+    */
+
+    const SUPABASE_KEY =
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4";
+
+
+    const supabaseClient =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
+
+
 
     /* =====================================
        MOBILE MENU
     ===================================== */
 
-    const menuButton = document.getElementById("menuButton");
-    const mobileNav = document.getElementById("mobileNav");
 
-    menuButton.addEventListener("click", function () {
-
-      const isOpen = mobileNav.classList.toggle("open");
-
-      menuButton.setAttribute(
-        "aria-expanded",
-        isOpen
+    const menuButton =
+      document.getElementById(
+        "menuButton"
       );
 
-    });
+
+    const mobileNav =
+      document.getElementById(
+        "mobileNav"
+      );
 
 
+    menuButton.addEventListener(
+      "click",
+      function () {
 
-    /* =====================================
-       TEMPORARY EVENT DATA
+        const isOpen =
+          mobileNav.classList.toggle(
+            "open"
+          );
 
-       We will replace this with Supabase.
-    ===================================== */
 
-    const events = [
+        menuButton.setAttribute(
+          "aria-expanded",
+          isOpen
+        );
 
-      {
-        date: "2026-10-07",
-        name: "Molten Core",
-        time: "8:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-08",
-        name: "Zul'Gurub",
-        time: "8:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-09",
-        name: "AQ40",
-        time: "8:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-11",
-        name: "Onyxia",
-        time: "6:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-12",
-        name: "Blackwing Lair",
-        time: "8:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-14",
-        name: "Molten Core",
-        time: "8:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-15",
-        name: "AQ20",
-        time: "8:00 PM",
-        type: "Raid"
-      },
-
-      {
-        date: "2026-10-16",
-        name: "AQ40",
-        time: "8:00 PM",
-        type: "Raid"
       }
-
-    ];
+    );
 
 
 
     /* =====================================
-       CALENDAR
+       CALENDAR ELEMENTS
     ===================================== */
+
 
     const calendarGrid =
-      document.getElementById("calendarGrid");
+      document.getElementById(
+        "calendarGrid"
+      );
+
 
     const calendarTitle =
-      document.getElementById("calendarTitle");
+      document.getElementById(
+        "calendarTitle"
+      );
+
 
     const prevMonthButton =
-      document.getElementById("prevMonth");
+      document.getElementById(
+        "prevMonth"
+      );
+
 
     const nextMonthButton =
-      document.getElementById("nextMonth");
+      document.getElementById(
+        "nextMonth"
+      );
+
 
     const todayButton =
-      document.getElementById("todayButton");
+      document.getElementById(
+        "todayButton"
+      );
 
 
-    const today = new Date();
+
+    /* =====================================
+       CURRENT DATE
+    ===================================== */
 
 
-    /*
-      Starting on October 2026 while we
-      build the page.
+    const today =
+      new Date();
 
-      When Supabase is connected we can
-      switch this to the actual current date
-      if desired.
-    */
 
     let displayedDate =
-      new Date(2026, 9, 1);
+      new Date(
+        today.getFullYear(),
+        today.getMonth(),
+        1
+      );
 
 
 
-    function formatDateKey(year, month, day) {
+    /* =====================================
+       EVENTS CURRENTLY LOADED
+    ===================================== */
+
+
+    let events = [];
+
+
+
+    /* =====================================
+       DATE HELPERS
+    ===================================== */
+
+
+    function formatDateKey(
+      year,
+      month,
+      day
+    ) {
 
       const monthString =
-        String(month + 1).padStart(2, "0");
+        String(
+          month + 1
+        ).padStart(
+          2,
+          "0"
+        );
+
 
       const dayString =
-        String(day).padStart(2, "0");
+        String(
+          day
+        ).padStart(
+          2,
+          "0"
+        );
 
-      return `${year}-${monthString}-${dayString}`;
+
+      return (
+        year +
+        "-" +
+        monthString +
+        "-" +
+        dayString
+      );
 
     }
 
 
 
-    function renderCalendar() {
+    /* =====================================
+       TIME FORMATTER
 
-      calendarGrid.innerHTML = "";
+       Converts:
+       20:00:00
+
+       Into:
+       8:00 PM
+    ===================================== */
+
+
+    function formatTime(
+      timeString
+    ) {
+
+      if (!timeString) {
+
+        return "";
+
+      }
+
+
+      const pieces =
+        timeString.split(":");
+
+
+      let hours =
+        Number(
+          pieces[0]
+        );
+
+
+      const minutes =
+        pieces[1] || "00";
+
+
+      const suffix =
+        hours >= 12
+          ? "PM"
+          : "AM";
+
+
+      hours =
+        hours % 12;
+
+
+      if (hours === 0) {
+
+        hours = 12;
+
+      }
+
+
+      return (
+        hours +
+        ":" +
+        minutes +
+        " " +
+        suffix
+      );
+
+    }
+
+
+
+    /* =====================================
+       LOAD EVENTS FROM SUPABASE
+    ===================================== */
+
+
+    async function loadEvents() {
+
+
+      showCalendarMessage(
+        "Loading events..."
+      );
 
 
       const year =
         displayedDate.getFullYear();
 
+
       const month =
         displayedDate.getMonth();
+
+
+
+      /*
+        First date of month
+      */
+
+      const startDate =
+        formatDateKey(
+          year,
+          month,
+          1
+        );
+
+
+
+      /*
+        Last date of month
+      */
+
+      const finalDay =
+        new Date(
+          year,
+          month + 1,
+          0
+        ).getDate();
+
+
+      const endDate =
+        formatDateKey(
+          year,
+          month,
+          finalDay
+        );
+
+
+
+      /*
+        Read Events table.
+
+        Expected Supabase fields:
+
+        id
+        date
+        event
+        time
+        type
+        notes
+      */
+
+
+      const {
+        data,
+        error
+      } =
+        await supabaseClient
+
+          .from("Events")
+
+          .select("*")
+
+          .gte(
+            "date",
+            startDate
+          )
+
+          .lte(
+            "date",
+            endDate
+          )
+
+          .order(
+            "date",
+            {
+              ascending: true
+            }
+          )
+
+          .order(
+            "time",
+            {
+              ascending: true
+            }
+          );
+
+
+
+      if (error) {
+
+
+        console.error(
+          "Supabase Error:",
+          error
+        );
+
+
+        showCalendarMessage(
+          "Calendar events could not be loaded.",
+          true
+        );
+
+
+        return;
+
+      }
+
+
+
+      /*
+        Normalize Supabase rows.
+
+        This supports either:
+        event
+
+        OR:
+        event_name
+
+        so we don't have to rebuild
+        the calendar if that field name
+        is slightly different.
+      */
+
+
+      events =
+        (data || []).map(
+          function (row) {
+
+
+            return {
+
+              id:
+                row.id,
+
+
+              date:
+                row.date,
+
+
+              name:
+                row.event ||
+                row.event_name ||
+                row.name ||
+                "Event",
+
+
+              time:
+                formatTime(
+                  row.time
+                ),
+
+
+              type:
+                row.type ||
+                "",
+
+
+              notes:
+                row.notes ||
+                ""
+
+            };
+
+          }
+        );
+
+
+      renderCalendar();
+
+    }
+
+
+
+    /* =====================================
+       SHOW LOADING / ERROR MESSAGE
+    ===================================== */
+
+
+    function showCalendarMessage(
+      message,
+      isError = false
+    ) {
+
+
+      calendarGrid.innerHTML =
+        "";
+
+
+      const messageElement =
+        document.createElement(
+          "div"
+        );
+
+
+      messageElement.className =
+        "calendar-message";
+
+
+      if (isError) {
+
+        messageElement.classList.add(
+          "error"
+        );
+
+      }
+
+
+      messageElement.textContent =
+        message;
+
+
+      calendarGrid.appendChild(
+        messageElement
+      );
+
+    }
+
+
+
+    /* =====================================
+       BUILD CALENDAR
+    ===================================== */
+
+
+    function renderCalendar() {
+
+
+      calendarGrid.innerHTML =
+        "";
+
+
+      const year =
+        displayedDate.getFullYear();
+
+
+      const month =
+        displayedDate.getMonth();
+
+
+
+      /*
+        Month title
+      */
 
 
       const monthName =
         displayedDate.toLocaleString(
           "en-US",
           {
+
             month: "long",
+
             year: "numeric"
+
           }
         );
 
@@ -1170,31 +2113,53 @@
         monthName;
 
 
+
+      /*
+        Month details
+      */
+
+
       const firstDay =
-        new Date(year, month, 1);
+        new Date(
+          year,
+          month,
+          1
+        );
+
 
       const lastDay =
-        new Date(year, month + 1, 0);
+        new Date(
+          year,
+          month + 1,
+          0
+        );
 
 
       const firstWeekday =
         firstDay.getDay();
+
 
       const daysInMonth =
         lastDay.getDate();
 
 
       const previousMonthLastDay =
-        new Date(year, month, 0).getDate();
+        new Date(
+          year,
+          month,
+          0
+        ).getDate();
+
 
 
       /*
-        Always render 6 rows
-        so the calendar does not jump
-        in height between months.
+        Always create six calendar rows.
       */
 
-      const totalCells = 42;
+
+      const totalCells =
+        42;
+
 
 
       for (
@@ -1203,32 +2168,58 @@
         index++
       ) {
 
+
         const dayElement =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
+
 
         dayElement.className =
           "calendar-day";
 
 
-        let cellYear = year;
-        let cellMonth = month;
+
+        let cellYear =
+          year;
+
+
+        let cellMonth =
+          month;
+
+
         let cellDay;
 
 
-        /*
-          Previous month
-        */
 
-        if (index < firstWeekday) {
+        /* =========================
+           PREVIOUS MONTH
+        ========================= */
 
-          cellMonth = month - 1;
 
-          if (cellMonth < 0) {
+        if (
+          index <
+          firstWeekday
+        ) {
 
-            cellMonth = 11;
-            cellYear = year - 1;
+
+          cellMonth =
+            month - 1;
+
+
+          if (
+            cellMonth < 0
+          ) {
+
+            cellMonth =
+              11;
+
+
+            cellYear =
+              year - 1;
 
           }
+
 
           cellDay =
             previousMonthLastDay
@@ -1236,42 +2227,64 @@
             + index
             + 1;
 
-          dayElement.classList.add(
-            "other-month"
-          );
+
+          dayElement
+            .classList
+            .add(
+              "other-month"
+            );
 
         }
 
 
-        /*
-          Current month
-        */
+
+        /* =========================
+           CURRENT MONTH
+        ========================= */
+
 
         else if (
           index <
-          firstWeekday + daysInMonth
+          firstWeekday
+          + daysInMonth
         ) {
 
+
           cellDay =
-            index - firstWeekday + 1;
+            index
+            - firstWeekday
+            + 1;
 
         }
 
 
-        /*
-          Next month
-        */
+
+        /* =========================
+           NEXT MONTH
+        ========================= */
+
 
         else {
 
-          cellMonth = month + 1;
 
-          if (cellMonth > 11) {
+          cellMonth =
+            month + 1;
 
-            cellMonth = 0;
-            cellYear = year + 1;
+
+          if (
+            cellMonth > 11
+          ) {
+
+
+            cellMonth =
+              0;
+
+
+            cellYear =
+              year + 1;
 
           }
+
 
           cellDay =
             index
@@ -1279,12 +2292,20 @@
             - daysInMonth
             + 1;
 
-          dayElement.classList.add(
-            "other-month"
-          );
+
+          dayElement
+            .classList
+            .add(
+              "other-month"
+            );
 
         }
 
+
+
+        /* =========================
+           DATE KEY
+        ========================= */
 
 
         const dateKey =
@@ -1296,109 +2317,237 @@
 
 
 
-        /*
-          Highlight today
-        */
+        /* =========================
+           TODAY HIGHLIGHT
+        ========================= */
+
 
         if (
-          cellYear === today.getFullYear()
+
+          cellYear ===
+          today.getFullYear()
+
           &&
-          cellMonth === today.getMonth()
+
+          cellMonth ===
+          today.getMonth()
+
           &&
-          cellDay === today.getDate()
+
+          cellDay ===
+          today.getDate()
+
         ) {
 
-          dayElement.classList.add(
-            "today"
-          );
+
+          dayElement
+            .classList
+            .add(
+              "today"
+            );
 
         }
 
 
 
+        /* =========================
+           DAY NUMBER
+        ========================= */
+
+
         const number =
-          document.createElement("div");
+          document.createElement(
+            "div"
+          );
+
 
         number.className =
           "day-number";
 
+
         number.textContent =
           cellDay;
 
-        dayElement.appendChild(number);
+
+        dayElement.appendChild(
+          number
+        );
 
 
 
-        /*
-          Add events for this date
-        */
+        /* =========================
+           FIND EVENTS
+        ========================= */
+
 
         const dayEvents =
           events.filter(
-            event =>
-              event.date === dateKey
+            function (event) {
+
+              return (
+                event.date ===
+                dateKey
+              );
+
+            }
           );
+
+
+
+        /* =========================
+           DISPLAY EVENTS
+        ========================= */
 
 
         dayEvents.forEach(
           function (event) {
 
+
             const eventElement =
-              document.createElement("div");
+              document.createElement(
+                "div"
+              );
+
 
             eventElement.className =
               "event";
 
 
+
+            /*
+              RAID = RED
+              EVENT = BLUE
+            */
+
+
+            const eventType =
+              String(
+                event.type
+              )
+                .trim()
+                .toLowerCase();
+
+
+
             if (
-              event.type === "Guild Event"
+              eventType ===
+              "raid"
             ) {
 
-              eventElement.classList.add(
-                "guild-event"
-              );
+
+              eventElement
+                .classList
+                .add(
+                  "raid"
+                );
 
             }
 
 
-            if (
-              event.type === "Special Event"
+            else if (
+              eventType ===
+              "event"
+              ||
+              eventType ===
+              "guild event"
             ) {
 
-              eventElement.classList.add(
-                "special-event"
-              );
+
+              eventElement
+                .classList
+                .add(
+                  "guild-event"
+                );
 
             }
+
+
+            else {
+
+
+              eventElement
+                .classList
+                .add(
+                  "other-event"
+                );
+
+            }
+
+
+
+            /*
+              EVENT NAME
+            */
 
 
             const eventName =
-              document.createElement("span");
+              document.createElement(
+                "span"
+              );
+
 
             eventName.className =
               "event-name";
+
 
             eventName.textContent =
               event.name;
 
 
+
+            /*
+              EVENT TIME
+            */
+
+
             const eventTime =
-              document.createElement("span");
+              document.createElement(
+                "span"
+              );
+
 
             eventTime.className =
               "event-time";
 
+
             eventTime.textContent =
               event.time;
+
 
 
             eventElement.appendChild(
               eventName
             );
 
-            eventElement.appendChild(
-              eventTime
-            );
+
+            if (
+              event.time
+            ) {
+
+              eventElement.appendChild(
+                eventTime
+              );
+
+            }
+
+
+
+            /*
+              Optional notes appear
+              as browser tooltip.
+            */
+
+
+            if (
+              event.notes
+            ) {
+
+              eventElement.title =
+                event.notes;
+
+            }
+
+
 
             dayElement.appendChild(
               eventElement
@@ -1406,6 +2555,7 @@
 
           }
         );
+
 
 
         calendarGrid.appendChild(
@@ -1419,12 +2569,14 @@
 
 
     /* =====================================
-       MONTH CONTROLS
+       PREVIOUS MONTH
     ===================================== */
+
 
     prevMonthButton.addEventListener(
       "click",
       function () {
+
 
         displayedDate =
           new Date(
@@ -1433,15 +2585,23 @@
             1
           );
 
-        renderCalendar();
+
+        loadEvents();
 
       }
     );
 
 
+
+    /* =====================================
+       NEXT MONTH
+    ===================================== */
+
+
     nextMonthButton.addEventListener(
       "click",
       function () {
+
 
         displayedDate =
           new Date(
@@ -1450,15 +2610,23 @@
             1
           );
 
-        renderCalendar();
+
+        loadEvents();
 
       }
     );
 
 
+
+    /* =====================================
+       TODAY BUTTON
+    ===================================== */
+
+
     todayButton.addEventListener(
       "click",
       function () {
+
 
         displayedDate =
           new Date(
@@ -1467,7 +2635,8 @@
             1
           );
 
-        renderCalendar();
+
+        loadEvents();
 
       }
     );
@@ -1475,13 +2644,16 @@
 
 
     /* =====================================
-       INITIAL LOAD
+       INITIAL PAGE LOAD
     ===================================== */
 
-    renderCalendar();
+
+    loadEvents();
+
 
   </script>
 
 
 </body>
+
 </html>
