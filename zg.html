@@ -9,7 +9,6 @@
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
   <link
     href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap"
     rel="stylesheet">
@@ -32,7 +31,7 @@
       --red-mid: #8f0909;
       --red-bottom: #650505;
 
-      /* ZG RAID ACCENT */
+      /* ZG accent */
       --raid: #4f7d3a;
       --raid-dark: #263d1d;
       --raid-soft: #82a96c;
@@ -63,13 +62,12 @@
       min-height: 100vh;
     }
 
-    /* =====================================================
+    /* =========================
        HEADER
-       ===================================================== */
+       ========================= */
 
     .site-header {
       height: 70px;
-
       background: var(--background-dark);
 
       display: flex;
@@ -100,9 +98,9 @@
       cursor: pointer;
     }
 
-    /* =====================================================
+    /* =========================
        SIDE MENU
-       ===================================================== */
+       ========================= */
 
     .menu-overlay {
       position: fixed;
@@ -183,7 +181,6 @@
 
     .side-menu-links a {
       color: var(--gold);
-
       text-decoration: none;
 
       font-family: var(--font-heading);
@@ -214,9 +211,9 @@
       padding-top: 25px;
     }
 
-    /* =====================================================
+    /* =========================
        HERO
-       ===================================================== */
+       ========================= */
 
     .raid-hero {
       max-width: 1200px;
@@ -226,9 +223,7 @@
       padding: 52px 40px 34px;
 
       display: grid;
-
       grid-template-columns: .95fr 1.05fr;
-
       gap: 44px;
 
       align-items: center;
@@ -253,7 +248,6 @@
       height: 100%;
 
       display: block;
-
       object-fit: cover;
     }
 
@@ -262,9 +256,7 @@
 
       font-family: var(--font-heading);
 
-      font-size:
-        clamp(42px,5vw,66px);
-
+      font-size: clamp(42px,5vw,66px);
       font-weight: 400;
 
       letter-spacing: 2px;
@@ -317,9 +309,9 @@
       line-height: 1.75;
     }
 
-    /* =====================================================
+    /* =========================
        QUICK FACTS
-       ===================================================== */
+       ========================= */
 
     .quick-facts-wrap {
       max-width: 1200px;
@@ -331,9 +323,7 @@
 
     .quick-facts {
       display: grid;
-
-      grid-template-columns:
-        repeat(5,1fr);
+      grid-template-columns: repeat(5,1fr);
 
       border: 1px solid #3d351f;
 
@@ -370,9 +360,9 @@
       font-size: 12px;
     }
 
-    /* =====================================================
-       TABS
-       ===================================================== */
+    /* =========================
+       RAID CONTENT
+       ========================= */
 
     .raid-content {
       max-width: 1200px;
@@ -381,6 +371,10 @@
 
       padding: 0 40px 80px;
     }
+
+    /* =========================
+       TABS
+       ========================= */
 
     .tab-bar {
       display: flex;
@@ -402,7 +396,6 @@
       color: var(--text-muted);
 
       font-family: var(--font-heading);
-
       font-size: 11px;
 
       letter-spacing: .7px;
@@ -427,9 +420,9 @@
         );
     }
 
-    /* =====================================================
+    /* =========================
        TAB PANELS
-       ===================================================== */
+       ========================= */
 
     .tab-panel {
       display: none;
@@ -442,8 +435,7 @@
     .content-grid {
       display: grid;
 
-      grid-template-columns:
-        1fr 1fr;
+      grid-template-columns: 1fr 1fr;
 
       gap: 20px;
     }
@@ -457,8 +449,7 @@
     }
 
     .content-box.full {
-      grid-column:
-        1 / -1;
+      grid-column: 1 / -1;
     }
 
     .content-box h2,
@@ -466,7 +457,6 @@
       color: var(--gold);
 
       font-family: var(--font-heading);
-
       font-weight: 500;
 
       margin-bottom: 15px;
@@ -487,8 +477,7 @@
       line-height: 1.75;
     }
 
-    .content-box ul,
-    .content-box ol {
+    .content-box ul {
       padding-left: 20px;
     }
 
@@ -501,15 +490,14 @@
       margin-bottom: 7px;
     }
 
-    /* =====================================================
-       BOSS LIST
-       ===================================================== */
+    /* =========================
+       BOSSES
+       ========================= */
 
     .boss-list {
       display: grid;
 
-      grid-template-columns:
-        repeat(2,1fr);
+      grid-template-columns: repeat(2,1fr);
 
       gap: 12px;
     }
@@ -520,6 +508,10 @@
       background: #0c0b09;
 
       border-left: 3px solid var(--raid-dark);
+    }
+
+    .boss.optional {
+      border-left-color: var(--gold-dark);
     }
 
     .boss strong {
@@ -541,13 +533,9 @@
       line-height: 1.55;
     }
 
-    .boss.optional {
-      border-left-color: var(--gold-dark);
-    }
-
-    /* =====================================================
+    /* =========================
        TAGS
-       ===================================================== */
+       ========================= */
 
     .tag-list {
       display: flex;
@@ -579,9 +567,9 @@
       border-color: var(--gold-dark);
     }
 
-    /* =====================================================
+    /* =========================
        BUTTONS
-       ===================================================== */
+       ========================= */
 
     .button-row {
       display: flex;
@@ -612,7 +600,6 @@
       color: #ffd633;
 
       font-family: var(--font-heading);
-
       font-size: 11px;
 
       letter-spacing: .7px;
@@ -637,9 +624,9 @@
       filter: brightness(1.12);
     }
 
-    /* =====================================================
+    /* =========================
        MAP PLACEHOLDER
-       ===================================================== */
+       ========================= */
 
     .map-placeholder {
       min-height: 320px;
@@ -667,19 +654,19 @@
       padding: 30px;
     }
 
-    /* =====================================================
-       MISSING
-       ===================================================== */
+    /* =========================
+       MISSING INFO
+       ========================= */
 
     .missing-info {
-      color: var(--missing) !important;
+      color: var(--missing);
 
       font-weight: 600;
     }
 
-    /* =====================================================
+    /* =========================
        FOOTER
-       ===================================================== */
+       ========================= */
 
     .site-footer {
       border-top: 1px solid var(--gold-dark);
@@ -705,14 +692,15 @@
 
     .site-footer img {
       width: 145px;
+
       max-width: 70%;
 
       opacity: .85;
     }
 
-    /* =====================================================
+    /* =========================
        TABLET
-       ===================================================== */
+       ========================= */
 
     @media(max-width:950px) {
 
@@ -721,13 +709,11 @@
       }
 
       .quick-facts {
-        grid-template-columns:
-          repeat(2,1fr);
+        grid-template-columns: repeat(2,1fr);
       }
 
       .quick-fact {
-        border-bottom:
-          1px solid #332c1b;
+        border-bottom: 1px solid #332c1b;
       }
 
       .content-grid {
@@ -738,13 +724,835 @@
         grid-column: auto;
       }
 
+      .side-menu {
+        max-width: 60vw;
+      }
+
     }
 
-    /* =====================================================
+    /* =========================
        MOBILE
-       ===================================================== */
+       ========================= */
 
     @media(max-width:650px) {
 
       .site-header {
-        padding: 0
+        padding: 0 18px;
+      }
+
+      .logo-area img {
+        height: 40px;
+      }
+
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
+
+        padding: 28px 24px;
+      }
+
+      .raid-hero {
+        padding: 38px 20px 28px;
+      }
+
+      .raid-image {
+        height: 240px;
+      }
+
+      .raid-copy h1 {
+        font-size: 40px;
+      }
+
+      .quick-facts-wrap {
+        padding: 0 20px 25px;
+      }
+
+      .quick-facts {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .quick-fact {
+        border-right: 1px solid #332c1b;
+      }
+
+      .raid-content {
+        padding: 0 20px 60px;
+      }
+
+      .tab-bar {
+        gap: 0;
+      }
+
+      .tab-button {
+        flex: 1 1 50%;
+        padding: 12px 8px;
+      }
+
+      .boss-list {
+        grid-template-columns: 1fr;
+      }
+
+      .button-row {
+        flex-direction: column;
+      }
+
+      .syndicate-button {
+        width: 100%;
+      }
+
+    }
+
+  </style>
+
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <a class="logo-area" href="index.html">
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate">
+    </a>
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false">
+      ☰
+    </button>
+
+  </header>
+
+  <!-- SIDE MENU -->
+
+  <div
+    class="menu-overlay"
+    id="menuOverlay">
+  </div>
+
+  <aside
+    class="side-menu"
+    id="sideMenu">
+
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu">
+      ×
+    </button>
+
+    <div class="side-menu-logo">
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate">
+    </div>
+
+    <nav class="side-menu-links">
+      <a href="index.html">HOME</a>
+      <a href="guild.html">THE SYNDICATE</a>
+      <a href="calendar.html">CALENDAR</a>
+      <a href="raids.html">RAID HUB</a>
+      <a href="resources.html">RESOURCES</a>
+    </nav>
+
+    <div class="side-menu-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+  </aside>
+
+  <main>
+
+    <!-- HERO -->
+
+    <section class="raid-hero">
+
+      <div class="raid-image">
+
+        <!-- Replace with your ZG signup image filename -->
+
+        <img
+          src="images/ZG.png"
+          alt="Zul'Gurub">
+
+      </div>
+
+      <div class="raid-copy">
+
+        <h1>ZUL'GURUB</h1>
+
+        <div class="raid-line"></div>
+
+        <div class="status-row">
+
+          <span class="status">
+            ON FARM
+          </span>
+
+          <span class="status">
+            20-MAN
+          </span>
+
+        </div>
+
+        <p>
+          Deep within the jungles of Stranglethorn Vale,
+          the Gurubashi trolls have summoned Hakkar the Soulflayer.
+          Zul'Gurub is a 20-player raid featuring Zandalar Tribe
+          reputation, class rewards, profession recipes, enchants,
+          and a collection of encounters ranging from straightforward
+          farm bosses to optional challenges.
+        </p>
+
+      </div>
+
+    </section>
+
+    <!-- QUICK FACTS -->
+
+    <section class="quick-facts-wrap">
+
+      <div class="quick-facts">
+
+        <div class="quick-fact">
+          <strong>RAID SIZE</strong>
+          <span>20 Players</span>
+        </div>
+
+        <div class="quick-fact">
+          <strong>RESET</strong>
+          <span>3 Days</span>
+        </div>
+
+        <div class="quick-fact">
+          <strong>LOCATION</strong>
+          <span>Stranglethorn Vale</span>
+        </div>
+
+        <div class="quick-fact">
+          <strong>ATTUNEMENT</strong>
+          <span>None</span>
+        </div>
+
+        <div class="quick-fact">
+          <strong>REPUTATION</strong>
+          <span>Zandalar Tribe</span>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- TABS -->
+
+    <section class="raid-content">
+
+      <div class="tab-bar">
+
+        <button
+          class="tab-button active"
+          data-tab="overview">
+          OVERVIEW
+        </button>
+
+        <button
+          class="tab-button"
+          data-tab="reserves">
+          HARD RESERVES
+        </button>
+
+        <button
+          class="tab-button"
+          data-tab="strategy">
+          STRATEGY
+        </button>
+
+        <button
+          class="tab-button"
+          data-tab="maps">
+          MAPS
+        </button>
+
+        <button
+          class="tab-button"
+          data-tab="gear">
+          GEAR & PREP
+        </button>
+
+        <button
+          class="tab-button"
+          data-tab="classneeds">
+          CLASS NEEDS
+        </button>
+
+        <button
+          class="tab-button"
+          data-tab="resources">
+          RESOURCES
+        </button>
+
+      </div>
+
+      <!-- ======================
+           OVERVIEW
+           ====================== -->
+
+      <div
+        class="tab-panel active"
+        id="overview">
+
+        <div class="content-grid">
+
+          <div class="content-box">
+
+            <h2>
+              ABOUT ZUL'GURUB
+            </h2>
+
+            <p>
+              Zul'Gurub is a 20-player raid centered around Hakkar
+              and the Gurubashi priests who empower him.
+              Defeating the five High Priests weakens Hakkar
+              before the final encounter.
+            </p>
+
+            <div class="tag-list">
+              <span class="tag">20-MAN</span>
+              <span class="tag">3 DAY RESET</span>
+              <span class="tag">NO ATTUNEMENT</span>
+            </div>
+
+          </div>
+
+          <div class="content-box">
+
+            <h2>
+              ZANDALAR TRIBE
+            </h2>
+
+            <p>
+              ZG is the primary source of Zandalar Tribe reputation.
+              Reputation unlocks class rewards, profession recipes,
+              consumables, and important head, leg, and shoulder
+              enchants.
+            </p>
+
+            <div class="button-row">
+
+              <a
+                class="syndicate-button"
+                href="reputations.html">
+                VIEW REPUTATIONS
+              </a>
+
+            </div>
+
+          </div>
+
+          <div class="content-box full">
+
+            <h2>
+              BOSSES
+            </h2>
+
+            <div class="boss-list">
+
+              <div class="boss">
+                <strong>HIGH PRIESTESS JEKLIK</strong>
+                <span>Bat aspect.</span>
+              </div>
+
+              <div class="boss">
+                <strong>HIGH PRIEST VEN0XIS</strong>
+                <span>Snake aspect.</span>
+              </div>
+
+              <div class="boss">
+                <strong>HIGH PRIESTESS MAR'LI</strong>
+                <span>Spider aspect.</span>
+              </div>
+
+              <div class="boss">
+                <strong>HIGH PRIEST THEKAL</strong>
+                <span>Tiger aspect.</span>
+              </div>
+
+              <div class="boss">
+                <strong>HIGH PRIESTESS ARLOKK</strong>
+                <span>Panther aspect.</span>
+              </div>
+
+              <div class="boss optional">
+                <strong>BLOODLORD MANDOKIR</strong>
+                <span>Optional major boss.</span>
+              </div>
+
+              <div class="boss optional">
+                <strong>JIN'DO THE HEXXER</strong>
+                <span>Optional major boss.</span>
+              </div>
+
+              <div class="boss optional">
+                <strong>EDGE OF MADNESS</strong>
+                <span>Optional rotating encounter.</span>
+              </div>
+
+              <div class="boss">
+                <strong>HAKKAR</strong>
+                <span>Final boss.</span>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ======================
+           HARD RESERVES
+           ====================== -->
+
+      <div
+        class="tab-panel"
+        id="reserves">
+
+        <div class="content-box">
+
+          <h2>
+            HARD RESERVES
+          </h2>
+
+          <p class="missing-info">
+            MISSING-INFO
+          </p>
+
+          <p style="margin-top:14px;">
+            Current hard reserves will be listed here.
+            Raid announcements and Discord signups remain the final
+            source if a reserve changes for a specific run.
+          </p>
+
+        </div>
+
+      </div>
+
+      <!-- ======================
+           STRATEGY
+           ====================== -->
+
+      <div
+        class="tab-panel"
+        id="strategy">
+
+        <div class="content-box">
+
+          <h2>
+            STRATEGY
+          </h2>
+
+          <p>
+            This section will contain short Syndicate-focused strategy
+            notes for each encounter rather than full external guides.
+          </p>
+
+          <div style="margin-top:20px;" class="boss-list">
+
+            <div class="boss">
+              <strong>JEKLIK</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>VENOXIS</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>MAR'LI</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>THEKAL</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>ARLOKK</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>MANDOKIR</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>JIN'DO</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>HAKKAR</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ======================
+           MAPS
+           ====================== -->
+
+      <div
+        class="tab-panel"
+        id="maps">
+
+        <div class="content-box">
+
+          <h2>
+            RAID MAPS
+          </h2>
+
+          <div class="map-placeholder">
+            Syndicate ZG maps and positioning graphics will go here.
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ======================
+           GEAR & PREP
+           ====================== -->
+
+      <div
+        class="tab-panel"
+        id="gear">
+
+        <div class="content-grid">
+
+          <div class="content-box">
+
+            <h2>
+              RECOMMENDED GEAR
+            </h2>
+
+            <p class="missing-info">
+              MISSING-INFO
+            </p>
+
+          </div>
+
+          <div class="content-box">
+
+            <h2>
+              CONSUMABLES
+            </h2>
+
+            <p>
+              ZG is an on-farm raid. General raid consumables are
+              recommended rather than universally required unless
+              the raid signup states otherwise.
+            </p>
+
+            <div class="button-row">
+
+              <a
+                class="syndicate-button"
+                href="raid-consumables.html">
+                RAID CONSUMABLES
+              </a>
+
+            </div>
+
+          </div>
+
+          <div class="content-box full">
+
+            <h2>
+              SPECIAL PREPARATION
+            </h2>
+
+            <p class="missing-info">
+              MISSING-INFO
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ======================
+           CLASS NEEDS
+           ====================== -->
+
+      <div
+        class="tab-panel"
+        id="classneeds">
+
+        <div class="content-box">
+
+          <h2>
+            CLASS & ROLE NEEDS
+          </h2>
+
+          <p>
+            This section will cover specific jobs that matter in ZG:
+            dispels, interrupts, tank assignments, totems, Hunter
+            responsibilities, crowd control, and other raid-specific
+            class needs.
+          </p>
+
+          <div style="margin-top:20px;" class="boss-list">
+
+            <div class="boss">
+              <strong>TANKS</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>HEALERS</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>SHAMANS</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>HUNTERS</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>MAGES</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+            <div class="boss">
+              <strong>WARLOCKS</strong>
+              <span class="missing-info">MISSING-INFO</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ======================
+           RESOURCES
+           ====================== -->
+
+      <div
+        class="tab-panel"
+        id="resources">
+
+        <div class="content-box">
+
+          <h2>
+            RAID RESOURCES
+          </h2>
+
+          <p>
+            Guild-wide raid expectations, recommended consumables,
+            and required raid add-ons are maintained separately so
+            they stay consistent across every raid page.
+          </p>
+
+          <div class="button-row">
+
+            <a
+              class="syndicate-button"
+              href="raid-rules.html">
+              RAID RULES
+            </a>
+
+            <a
+              class="syndicate-button"
+              href="raid-consumables.html">
+              RAID CONSUMABLES
+            </a>
+
+            <a
+              class="syndicate-button"
+              href="required-addons.html">
+              REQUIRED ADD-ONS
+            </a>
+
+            <a
+              class="syndicate-button"
+              href="reputations.html">
+              ZANDALAR REPUTATION
+            </a>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="footer-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+    <img
+      src="images/HeaderLogo.png"
+      alt="The Syndicate">
+
+  </footer>
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    /* =========================
+       MENU
+       ========================= */
+
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const sideMenu =
+      document.getElementById("sideMenu");
+
+    const menuOverlay =
+      document.getElementById("menuOverlay");
+
+    const closeMenu =
+      document.getElementById("closeMenu");
+
+
+    function openMenu() {
+
+      sideMenu.classList.add("open");
+
+      menuOverlay.classList.add("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    }
+
+
+    function closeSideMenu() {
+
+      sideMenu.classList.remove("open");
+
+      menuOverlay.classList.remove("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+
+    menuButton.addEventListener(
+      "click",
+      openMenu
+    );
+
+
+    closeMenu.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    menuOverlay.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (event.key === "Escape") {
+          closeSideMenu();
+        }
+
+      }
+    );
+
+
+    /* =========================
+       RAID TABS
+       ========================= */
+
+    const tabButtons =
+      document.querySelectorAll(".tab-button");
+
+    const tabPanels =
+      document.querySelectorAll(".tab-panel");
+
+
+    tabButtons.forEach(button => {
+
+      button.addEventListener(
+        "click",
+        () => {
+
+          const target =
+            button.dataset.tab;
+
+
+          tabButtons.forEach(tab => {
+
+            tab.classList.remove("active");
+
+          });
+
+
+          tabPanels.forEach(panel => {
+
+            panel.classList.remove("active");
+
+          });
+
+
+          button.classList.add("active");
+
+
+          document
+            .getElementById(target)
+            .classList.add("active");
+
+        }
+      );
+
+    });
+
+  </script>
+
+</body>
+
+</html>
