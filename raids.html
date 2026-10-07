@@ -11,17 +11,48 @@
 
   <style>
 
-    /* ---------------- HEADER ---------------- */
+    :root {
+      --background-dark: #090909;
+      --gold: #d9b438;
+      --gold-light: #efcc54;
+      --gold-dark: #7d651c;
+      --text-light: #e6dfc9;
+
+      --font-heading: "Cinzel", serif;
+      --font-body: Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background: var(--background-dark);
+      color: var(--text-light);
+      font-family: var(--font-body);
+    }
+
+    a {
+      color: inherit;
+    }
+
+
+    /* =========================
+       HEADER
+    ========================= */
 
     .site-header {
       height: 70px;
-      background-color: var(--background-dark);
 
       display: flex;
       align-items: center;
       justify-content: space-between;
 
-      padding: 0 30px;
+      padding: 0 20px;
+
+      background: var(--background-dark);
 
       border-bottom: 1px solid var(--gold-dark);
     }
@@ -43,38 +74,56 @@
     }
 
 
-    /* ---------------- PAGE TITLE ---------------- */
+    /* =========================
+       PAGE TITLE
+    ========================= */
 
     .page-title {
-      padding: 18px 12px 12px;
+      padding: 14px 12px 12px;
 
       border-bottom: 1px solid var(--gold-dark);
     }
 
     .page-title h1 {
-      margin: 0;
-
       font-family: var(--font-heading);
-      font-size: 32px;
-      font-weight: 400;
 
       color: var(--gold);
+
+      font-size: 32px;
+      font-weight: 400;
 
       letter-spacing: 1px;
     }
 
 
-    /* ---------------- RAID RESOURCE AREA ---------------- */
+    /* =========================
+       TOP RAID RESOURCE SECTION
+    ========================= */
 
     .raid-top {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
       display: grid;
-      grid-template-columns: 34% 66%;
+
+      grid-template-columns: 30% 70%;
 
       border-bottom: 1px solid var(--gold-dark);
     }
 
 
+    /* IMAGE */
+
     .raid-image {
+      height: 320px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      background: #090909;
+
       border-right: 1px solid var(--gold-dark);
 
       overflow: hidden;
@@ -84,31 +133,34 @@
       width: 100%;
       height: 100%;
 
-      object-fit: cover;
+      object-fit: contain;
 
       display: block;
     }
 
 
-    /* ---------------- RESOURCE LINKS ---------------- */
+    /* RESOURCE ROWS */
 
     .raid-resources {
-      display: flex;
-      flex-direction: column;
+      display: grid;
+      grid-template-rows: repeat(3, 1fr);
+
+      min-height: 320px;
     }
 
-
     .resource-row {
-      flex: 1;
-
       display: grid;
-      grid-template-columns: 40px 1fr 1fr;
+
+      grid-template-columns:
+        30px
+        minmax(210px, 0.85fr)
+        1.4fr;
 
       align-items: center;
 
-      gap: 15px;
+      gap: 24px;
 
-      padding: 18px 20px;
+      padding: 20px 28px;
 
       border-bottom: 1px solid var(--gold-dark);
     }
@@ -116,7 +168,6 @@
     .resource-row:last-child {
       border-bottom: none;
     }
-
 
     .resource-number {
       font-family: var(--font-heading);
@@ -126,40 +177,40 @@
       font-size: 13px;
     }
 
-
     .resource-title {
       font-family: var(--font-heading);
 
       color: var(--gold);
 
-      font-size: 21px;
+      font-size: 22px;
+
+      line-height: 1.2;
 
       text-decoration: underline;
 
       transition: color 0.15s ease;
     }
 
-
     .resource-title:hover {
       color: var(--gold-light);
     }
 
-
     .resource-description {
       color: var(--gold);
 
-      font-size: 12px;
+      font-size: 14px;
 
-      line-height: 1.45;
+      line-height: 1.55;
     }
 
 
-    /* ---------------- RAID BUTTON GRID ---------------- */
+    /* =========================
+       RAID BUTTON AREA
+    ========================= */
 
     .raid-grid-section {
-      padding: 65px 45px 60px;
+      padding: 60px 35px 55px;
     }
-
 
     .raid-grid {
       max-width: 1100px;
@@ -170,14 +221,16 @@
 
       grid-template-columns: repeat(3, 1fr);
 
-      gap: 38px 80px;
+      gap: 34px 80px;
 
-      align-items: center;
       justify-items: center;
+      align-items: center;
     }
 
 
-    /* ---------------- WOW STYLE BUTTON ---------------- */
+    /* =========================
+       WOW-STYLE RAID BUTTON
+    ========================= */
 
     .raid-button {
       display: flex;
@@ -186,11 +239,11 @@
       justify-content: center;
 
       width: 100%;
-      max-width: 220px;
+      max-width: 230px;
 
-      min-height: 60px;
+      min-height: 72px;
 
-      padding: 10px 20px;
+      padding: 12px 18px;
 
       background:
         linear-gradient(
@@ -203,22 +256,20 @@
       color: #ffd633;
 
       font-family: var(--font-heading);
-
       font-size: 13px;
 
-      text-decoration: none;
       text-align: center;
+      text-decoration: none;
 
       border: 2px solid #2a1a10;
-
       border-radius: 5px;
 
       box-shadow:
         0 0 0 2px #6a4a25,
         0 0 0 4px #120d09,
-        inset 0 2px 0 rgba(255, 255, 255, 0.18),
-        inset 0 -2px 0 rgba(0, 0, 0, 0.55),
-        0 3px 5px rgba(0, 0, 0, 0.75);
+        inset 0 2px 0 rgba(255,255,255,0.18),
+        inset 0 -2px 0 rgba(0,0,0,0.55),
+        0 3px 5px rgba(0,0,0,0.75);
 
       text-shadow:
         1px 1px 2px #000;
@@ -230,38 +281,22 @@
         transform 0.1s ease;
     }
 
-
     .raid-button:hover {
       filter: brightness(1.15);
     }
 
-
     .raid-button:active {
       transform: translateY(2px);
-
-      box-shadow:
-        0 0 0 2px #6a4a25,
-        0 0 0 4px #120d09,
-        inset 0 3px 5px rgba(0, 0, 0, 0.7);
     }
-
-
-    /* ---------------- DISABLED BUTTON ---------------- */
 
     .raid-button.disabled {
-      opacity: 0.45;
-
+      opacity: 0.35;
       cursor: default;
-
-      filter: grayscale(0.4);
-    }
-
-    .raid-button.disabled:hover {
-      filter: grayscale(0.4);
+      pointer-events: none;
     }
 
 
-    /* ---------------- GRID POSITIONS ---------------- */
+    /* GRID POSITIONING */
 
     .zg {
       grid-column: 1;
@@ -299,7 +334,9 @@
     }
 
 
-    /* ---------------- DIVIDER ---------------- */
+    /* =========================
+       DIVIDER
+    ========================= */
 
     .divider-section {
       display: flex;
@@ -316,21 +353,20 @@
       padding: 20px 40px;
     }
 
-
     .divider-line {
       height: 1px;
+
       flex: 1;
 
-      background-color: var(--gold-dark);
+      background: var(--gold-dark);
     }
-
 
     .divider-text {
       font-family: var(--font-heading);
 
       color: var(--gold-dark);
 
-      font-size: 18px;
+      font-size: 15px;
 
       letter-spacing: 2px;
 
@@ -338,101 +374,103 @@
     }
 
 
-    /* ---------------- FOOTER ---------------- */
+    /* =========================
+       FOOTER
+    ========================= */
 
     .site-footer {
       display: flex;
 
-      justify-content: center;
       align-items: center;
+      justify-content: center;
 
       padding: 15px 20px 35px;
 
       border-top: 1px solid var(--gold-dark);
     }
 
-
     .footer-logo img {
       height: 55px;
-
       width: auto;
 
       display: block;
     }
 
 
-    /* ---------------- MOBILE ---------------- */
+    /* =========================
+       MOBILE
+    ========================= */
 
     @media (max-width: 768px) {
 
       .site-header {
         height: 60px;
-
-        padding: 0 18px;
+        padding: 0 16px;
       }
-
 
       .logo-area img {
         height: 36px;
       }
 
-
       .menu-button {
         font-size: 28px;
       }
-
 
       .page-title h1 {
         font-size: 28px;
       }
 
 
+      /* STACK TOP SECTION */
+
       .raid-top {
         grid-template-columns: 1fr;
       }
 
-
       .raid-image {
-        height: 250px;
+        height: 240px;
 
         border-right: none;
-
         border-bottom: 1px solid var(--gold-dark);
       }
 
 
-      .resource-row {
-        grid-template-columns: 25px 1fr;
+      /* STACK RESOURCE CONTENT */
 
-        gap: 10px;
+      .resource-row {
+        grid-template-columns: 24px 1fr;
+
+        gap: 8px 12px;
 
         padding: 18px 15px;
       }
-
-
-      .resource-description {
-        grid-column: 2;
-
-        margin-top: 3px;
-      }
-
 
       .resource-title {
         font-size: 18px;
       }
 
+      .resource-description {
+        grid-column: 2;
 
-      .raid-grid-section {
-        padding: 45px 25px;
+        font-size: 13px;
+
+        line-height: 1.5;
+
+        margin-top: 4px;
       }
 
+
+      /* RAID BUTTONS */
+
+      .raid-grid-section {
+        padding: 45px 20px;
+      }
 
       .raid-grid {
         grid-template-columns: 1fr;
 
-        gap: 26px;
+        gap: 24px;
       }
-
 
       .zg,
       .ony,
@@ -445,54 +483,63 @@
         grid-row: auto;
       }
 
-
       .raid-button {
-        max-width: 260px;
+        max-width: 270px;
 
-        min-height: 58px;
-      }
+        min-height: 65px;
 
-
-      .divider-section {
-        padding: 20px;
-      }
-
-
-      .divider-text {
         font-size: 13px;
       }
 
 
+      /* FOOTER */
+
+      .divider-section {
+        padding: 18px 20px;
+      }
+
+      .divider-text {
+        font-size: 12px;
+      }
+
       .footer-logo img {
         height: 45px;
       }
-
     }
 
   </style>
+
 </head>
 
 
 <body>
 
 
-  <!-- HEADER -->
+  <!-- =========================
+       HEADER
+  ========================= -->
 
   <header class="site-header">
 
     <div class="logo-area">
 
       <a href="index.html">
+
         <img
           src="images/HeaderLogo.png"
           alt="The Syndicate"
         >
+
       </a>
 
     </div>
 
 
-    <button class="menu-button">
+    <button
+      class="menu-button"
+      type="button"
+      aria-label="Open menu"
+    >
       ☰
     </button>
 
@@ -500,7 +547,9 @@
 
 
 
-  <!-- PAGE TITLE -->
+  <!-- =========================
+       PAGE TITLE
+  ========================= -->
 
   <section class="page-title">
 
@@ -512,12 +561,14 @@
 
 
 
-  <!-- RAID RESOURCES -->
+  <!-- =========================
+       RAID RESOURCE TOP SECTION
+  ========================= -->
 
   <section class="raid-top">
 
 
-    <!-- RAID IMAGE -->
+    <!-- IMAGE -->
 
     <div class="raid-image">
 
@@ -559,7 +610,7 @@
 
 
 
-      <!-- REQUIRED ADDONS -->
+      <!-- REQUIRED ADD-ONS -->
 
       <div class="resource-row">
 
@@ -575,8 +626,8 @@
         </a>
 
         <p class="resource-description">
-          Required and recommended add-ons to keep
-          raids running smoothly.
+          Required and recommended add-ons to keep raids
+          running smoothly and everyone on the same page.
         </p>
 
       </div>
@@ -605,13 +656,16 @@
 
       </div>
 
+
     </div>
 
   </section>
 
 
 
-  <!-- RAID BUTTONS -->
+  <!-- =========================
+       RAID BUTTONS
+  ========================= -->
 
   <section class="raid-grid-section">
 
@@ -662,12 +716,6 @@
       </a>
 
 
-      <!--
-        NAXX LINK NOT PROVIDED YET.
-        Replace this div with an <a>
-        once naxx.html exists.
-      -->
-
       <div
         class="raid-button disabled naxx"
       >
@@ -689,17 +737,17 @@
 
 
 
-  <!-- DIVIDER -->
+  <!-- =========================
+       FOOTER DIVIDER
+  ========================= -->
 
   <section class="divider-section">
 
     <div class="divider-line"></div>
 
-
     <div class="divider-text">
       ◆ THIS IS THE WAY. ◆
     </div>
-
 
     <div class="divider-line"></div>
 
@@ -707,7 +755,9 @@
 
 
 
-  <!-- FOOTER -->
+  <!-- =========================
+       FOOTER
+  ========================= -->
 
   <footer class="site-footer">
 
