@@ -44,8 +44,6 @@
 
       cursor: pointer;
 
-      text-decoration: none;
-
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -251,15 +249,29 @@
 
     .directory {
       padding: 70px 40px;
+
       text-align: center;
     }
 
     .directory h3 {
       margin-bottom: 40px;
+
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 40px;
+      font-weight: 400;
+
+      letter-spacing: 2px;
     }
+
+
+    /* DIRECTORY GRID */
 
     .directory-grid {
       display: grid;
+
       grid-template-columns: repeat(4, 1fr);
 
       gap: 20px;
@@ -269,51 +281,84 @@
       margin: 0 auto;
     }
 
-.directory-card {
-  background-color: #11100d;
-  border: 1px solid var(--gold-dark);
 
-  padding: 30px 20px;
+    /* DIRECTORY CARD */
 
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+    .directory-card {
+      min-height: 385px;
 
-  height: 100%;
-}
+      background-color: #11100d;
 
-.directory-card h4 {
-  margin-bottom: 20px;
+      border: 1px solid var(--gold-dark);
 
-  min-height: 70px;
+      padding: 32px 24px 28px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
 
-  text-align: center;
-}
+      text-align: center;
+    }
 
-.directory-card p {
-  min-height: 70px;
-  margin-bottom: 25px;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
+    /* CARD TITLE */
 
-  text-align: center;
-}
+    .directory-card h4 {
+      min-height: 88px;
+
+      margin: 0 0 12px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 31px;
+      font-weight: 400;
+
+      line-height: 1.15;
+
+      text-align: center;
+    }
+
+
+    /* CARD DESCRIPTION */
+
+    .directory-card p {
+      min-height: 90px;
+
+      margin: 0 0 24px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      color: var(--gold);
+
+      font-size: 15px;
+
+      line-height: 1.55;
+
+      text-align: center;
+    }
 
 
     /* ---------------- WOW-STYLE BUTTONS ---------------- */
 
     .directory-button {
-      display: inline-block;
+      width: 100%;
+      max-width: 230px;
 
-      min-width: 180px;
+      margin-top: auto;
 
-      padding: 8px 24px;
+      padding: 10px 20px;
+
+      display: flex;
+      align-items: center;
+      justify-content: center;
 
       background:
         linear-gradient(
@@ -322,9 +367,7 @@
           #8f0909 45%,
           #650505 100%
         );
-.directory-button {
-  margin-top: auto;
-}
+
       color: #ffd633;
 
       font-family: var(--font-heading);
@@ -423,8 +466,11 @@
 
     @media (max-width: 768px) {
 
+      /* HEADER */
+
       .site-header {
         height: 60px;
+
         padding: 0 18px;
       }
 
@@ -436,6 +482,8 @@
         font-size: 28px;
       }
 
+
+      /* SIDE MENU */
 
       .side-menu {
         width: 85%;
@@ -449,8 +497,11 @@
       }
 
 
+      /* HERO */
+
       .hero {
         flex-direction: column;
+
         min-height: auto;
       }
 
@@ -460,17 +511,20 @@
       }
 
       .hero-content {
-        width: auto;
+        width: 100%;
+
         padding: 35px 22px;
       }
 
       .hero-content h2 {
         font-size: 36px;
+
         margin-bottom: 18px;
       }
 
       .hero-content h6 {
         font-size: 16px;
+
         margin-bottom: 18px;
       }
 
@@ -478,35 +532,57 @@
         font-size: 15px;
       }
 
+
+      /* DIRECTORY */
+
       .directory {
         padding: 45px 20px;
       }
 
       .directory h3 {
         font-size: 32px;
+
         margin-bottom: 30px;
       }
 
       .directory-grid {
         grid-template-columns: 1fr;
+
         gap: 22px;
       }
 
       .directory-card {
-        padding: 25px 20px;
+        min-height: auto;
+
+        padding: 28px 22px;
       }
 
       .directory-card h4 {
+        min-height: auto;
+
+        margin-bottom: 18px;
+
         font-size: 28px;
       }
 
       .directory-card p {
         min-height: auto;
+
+        margin-bottom: 25px;
+
+        font-size: 14px;
       }
 
       .directory-button {
-        min-width: 160px;
+        width: auto;
+
+        min-width: 190px;
+
+        margin-top: 0;
       }
+
+
+      /* FOOTER */
 
       .divider-section {
         padding: 20px;
@@ -529,7 +605,9 @@
 <body>
 
 
-  <!-- HEADER -->
+  <!-- =========================
+       HEADER
+  ========================= -->
 
   <header class="site-header">
 
@@ -561,7 +639,9 @@
 
 
 
-  <!-- SLIDE-OUT MENU -->
+  <!-- =========================
+       SLIDE-OUT MENU
+  ========================= -->
 
   <div
     class="menu-overlay"
@@ -601,7 +681,7 @@
       </a>
 
       <a href="guild.html">
-        The Syndicate
+        THE SYNDICATE
       </a>
 
       <a href="calendar.html">
@@ -627,9 +707,12 @@
 
 
 
-  <!-- HERO -->
+  <!-- =========================
+       HERO
+  ========================= -->
 
   <section class="hero">
+
 
     <div class="hero-image">
 
@@ -647,9 +730,11 @@
         THE SYNDICATE
       </h2>
 
+
       <h6>
         ◆ CLASSIC ERA • FOR THE HORDE ◆
       </h6>
+
 
       <p>
         The Syndicate is a Horde guild built around good people,
@@ -665,7 +750,9 @@
 
 
 
-  <!-- GUILD DIRECTORY -->
+  <!-- =========================
+       GUILD DIRECTORY
+  ========================= -->
 
   <section class="directory">
 
@@ -677,12 +764,13 @@
     <div class="directory-grid">
 
 
-      <!-- OUR GUILD -->
+      <!-- THE SYNDICATE -->
 
       <div class="directory-card">
 
         <h4>
-          The Syndicate
+          THE<br>
+          SYNDICATE
         </h4>
 
         <p>
@@ -709,7 +797,8 @@
         </h4>
 
         <p>
-          Guild events, dungeons, and raids on the schedule this month.
+          Guild events, dungeons, and raids
+          on the schedule this month.
         </p>
 
         <a
@@ -732,7 +821,8 @@
         </h4>
 
         <p>
-          Rules, consumes, requirements, and raid-specific information.
+          Rules, consumes, requirements,
+          and raid-specific information.
         </p>
 
         <a
@@ -755,7 +845,8 @@
         </h4>
 
         <p>
-          Addons, professions, supportive websites, and more.
+          Addons, professions, supportive
+          websites, and more.
         </p>
 
         <a
@@ -774,7 +865,9 @@
 
 
 
-  <!-- DIVIDER -->
+  <!-- =========================
+       DIVIDER
+  ========================= -->
 
   <section class="divider-section">
 
@@ -790,7 +883,9 @@
 
 
 
-  <!-- FOOTER -->
+  <!-- =========================
+       FOOTER
+  ========================= -->
 
   <footer class="site-footer">
 
@@ -807,7 +902,9 @@
 
 
 
-  <!-- SLIDE-OUT MENU SCRIPT -->
+  <!-- =========================
+       SLIDE-OUT MENU SCRIPT
+  ========================= -->
 
   <script>
 
