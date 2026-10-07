@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Supportive Websites | The Syndicate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --background: #080806;
+      --background-dark: #050504;
+      --panel: #11100d;
+      --panel-hover: #16140f;
+
+      --gold: #d9b438;
+      --gold-dark: #6c5520;
+      --gold-soft: #b89a42;
+
+      --text: #d8d2c4;
+      --text-muted: #a79e8d;
+
+      --red-top: #b51414;
+      --red-mid: #8f0909;
+      --red-bottom: #650505;
+
+      --font-heading: "Cinzel", serif;
+      --font-body: "Montserrat", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top, rgba(217, 180, 56, 0.04), transparent 30%),
+        var(--background);
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* ---------------- HEADER ---------------- */
+
+    .site-header {
+      height: 70px;
+      background: var(--background-dark);
+      border-bottom: 1px solid var(--gold-dark);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 30px;
+
+      position: relative;
+      z-index: 100;
+    }
+
+    .logo-area img {
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 30px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* ---------------- SIDE MENU ---------------- */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      opacity: 0;
+      visibility: hidden;
+      transition: 0.25s ease;
+      z-index: 999;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -440px;
+      width: 420px;
+      max-width: 48vw;
+      height: 100vh;
+
+      background: #0b0a08;
+      border-left: 1px solid var(--gold-dark);
+
+      padding: 38px 34px;
+
+      transition: right 0.3s ease;
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .close-menu {
+      align-self: flex-end;
+      background: none;
+      border: none;
+      color: var(--gold);
+      font-size: 34px;
+      cursor: pointer;
+      margin-bottom: 20px;
+    }
+
+    .side-menu-logo {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .side-menu-logo img {
+      width: 180px;
+      max-width: 100%;
+    }
+
+    .side-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-menu-links a {
+      color: var(--gold);
+      text-decoration: none;
+      font-family: var(--font-heading);
+      letter-spacing: 1px;
+      font-size: 18px;
+
+      padding: 13px 4px;
+      border-bottom: 1px solid rgba(108, 85, 32, 0.55);
+    }
+
+    .side-menu-links a:hover {
+      color: #f2d565;
+    }
+
+    .side-menu-motto {
+      margin-top: auto;
+      text-align: center;
+      color: var(--gold-dark);
+      font-family: var(--font-heading);
+      font-size: 13px;
+      letter-spacing: 2px;
+      padding-top: 25px;
+    }
+
+    /* ---------------- HERO ---------------- */
+
+    .page-hero {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px 45px;
+
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 48px;
+      align-items: center;
+    }
+
+    .hero-image {
+      height: 330px;
+      border: 1px solid var(--gold-dark);
+      background: #0c0b09;
+      padding: 10px;
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .hero-copy h1 {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: clamp(38px, 5vw, 62px);
+      font-weight: 400;
+      line-height: 1.05;
+      letter-spacing: 2px;
+      margin-bottom: 18px;
+    }
+
+    .hero-divider {
+      width: 120px;
+      height: 1px;
+      background: var(--gold-dark);
+      margin-bottom: 20px;
+    }
+
+    .hero-copy p {
+      color: var(--text);
+      font-size: 15px;
+      line-height: 1.8;
+      max-width: 560px;
+    }
+
+    /* ---------------- CONTENT ---------------- */
+
+    .resources-section {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 15px 40px 80px;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    .section-heading h2 {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      margin-bottom: 10px;
+    }
+
+    .section-heading p {
+      color: var(--text-muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ---------------- WEBSITE GRID ---------------- */
+
+    .website-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .website-card {
+      min-height: 285px;
+
+      background:
+        linear-gradient(
+          180deg,
+          rgba(217, 180, 56, 0.025),
+          transparent 32%
+        ),
+        var(--panel);
+
+      border: 1px solid var(--gold-dark);
+      padding: 26px 24px;
+
+      display: flex;
+      flex-direction: column;
+
+      transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+    }
+
+    .website-card:hover {
+      transform: translateY(-4px);
+      background: var(--panel-hover);
+      border-color: var(--gold);
+      box-shadow:
+        0 10px 20px rgba(0, 0, 0, 0.38),
+        0 0 10px rgba(217, 180, 56, 0.08);
+    }
+
+    .site-category {
+      color: var(--gold-soft);
+      font-family: var(--font-heading);
+      font-size: 10px;
+      letter-spacing: 1.6px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .website-card h3 {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 21px;
+      font-weight: 500;
+      line-height: 1.25;
+      margin-bottom: 16px;
+    }
+
+    .website-card p {
+      color: #c8c1b2;
+      font-size: 13px;
+      line-height: 1.65;
+      margin-bottom: 24px;
+    }
+
+    .card-actions {
+      margin-top: auto;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* ---------------- BUTTONS ---------------- */
+
+    .syndicate-button {
+      min-height: 42px;
+      padding: 10px 18px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          to bottom,
+          var(--red-top) 0%,
+          var(--red-mid) 45%,
+          var(--red-bottom) 100%
+        );
+
+      color: #ffd633;
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.7px;
+      text-decoration: none;
+      text-align: center;
+
+      border: 2px solid #2a1a10;
+      border-radius: 5px;
+
+      box-shadow:
+        0 0 0 2px #6a4a25,
+        0 0 0 4px #120d09,
+        inset 0 2px 0 rgba(255,255,255,.14),
+        inset 0 -2px 0 rgba(0,0,0,.55),
+        0 3px 5px rgba(0,0,0,.65);
+
+      text-shadow: 1px 1px 2px #000;
+
+      transition:
+        transform 0.15s ease,
+        filter 0.15s ease;
+    }
+
+    .syndicate-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.12);
+    }
+
+    .secondary-button {
+      background: #15120d;
+      color: var(--gold);
+
+      border: 1px solid var(--gold-dark);
+      border-radius: 4px;
+
+      box-shadow: none;
+      text-shadow: none;
+    }
+
+    .secondary-button:hover {
+      border-color: var(--gold);
+      background: #1d1910;
+    }
+
+    /* ---------------- FOOTER ---------------- */
+
+    .site-footer {
+      border-top: 1px solid var(--gold-dark);
+      text-align: center;
+      padding: 45px 20px;
+      background: #060605;
+    }
+
+    .footer-motto {
+      color: var(--gold);
+      font-family: var(--font-heading);
+      font-size: 14px;
+      letter-spacing: 2px;
+      margin-bottom: 20px;
+    }
+
+    .site-footer img {
+      width: 145px;
+      max-width: 70%;
+      opacity: 0.85;
+    }
+
+    /* ---------------- TABLET ---------------- */
+
+    @media (max-width: 1000px) {
+
+      .page-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image {
+        height: 300px;
+      }
+
+      .website-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .side-menu {
+        max-width: 60vw;
+      }
+    }
+
+    /* ---------------- MOBILE ---------------- */
+
+    @media (max-width: 700px) {
+
+      .site-header {
+        padding: 0 18px;
+      }
+
+      .logo-area img {
+        height: 40px;
+      }
+
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
+        padding: 28px 24px;
+      }
+
+      .page-hero {
+        padding: 38px 20px 30px;
+        gap: 28px;
+      }
+
+      .hero-image {
+        height: 230px;
+      }
+
+      .hero-copy h1 {
+        font-size: 38px;
+      }
+
+      .hero-copy p {
+        font-size: 14px;
+      }
+
+      .resources-section {
+        padding: 15px 20px 60px;
+      }
+
+      .section-heading h2 {
+        font-size: 27px;
+      }
+
+      .website-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .website-card {
+        min-height: auto;
+      }
+
+      .card-actions {
+        flex-direction: column;
+      }
+
+      .syndicate-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <a class="logo-area" href="index.html">
+      <img src="images/HeaderLogo.png" alt="The Syndicate">
+    </a>
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false">
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- MENU -->
+
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <aside class="side-menu" id="sideMenu">
+
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu">
+      ×
+    </button>
+
+    <div class="side-menu-logo">
+      <img src="images/HeaderLogo.png" alt="The Syndicate">
+    </div>
+
+    <nav class="side-menu-links">
+      <a href="index.html">HOME</a>
+      <a href="guild.html">THE SYNDICATE</a>
+      <a href="calendar.html">CALENDAR</a>
+      <a href="raids.html">RAID HUB</a>
+      <a href="resources.html">RESOURCES</a>
+    </nav>
+
+    <div class="side-menu-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+  </aside>
+
+
+  <!-- HERO -->
+
+  <main>
+
+    <section class="page-hero">
+
+      <div class="hero-image">
+        <img
+          src="images/ResourcesBackground.png"
+          alt="The Syndicate resources">
+      </div>
+
+      <div class="hero-copy">
+
+        <h1>SUPPORTIVE<br>WEBSITES</h1>
+
+        <div class="hero-divider"></div>
+
+        <p>
+          Useful corners of the internet for finding answers,
+          planning characters, researching loot, checking logs,
+          finding add-ons, and spending significantly too much time
+          thinking about Classic WoW.
+        </p>
+
+      </div>
+
+    </section>
+
+
+    <!-- WEBSITE LIST -->
+
+    <section class="resources-section">
+
+      <div class="section-heading">
+        <h2>USEFUL RESOURCES</h2>
+        <p>
+          A collection of websites we use and recommend for Classic Era.
+        </p>
+      </div>
+
+
+      <div class="website-grid">
+
+        <!-- WOWHEAD -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Database & Guides
+          </div>
+
+          <h3>WOWHEAD CLASSIC</h3>
+
+          <p>
+            Quests, items, NPCs, drops, professions, reputations,
+            attunements, raids, and community comments all in one
+            massive Classic database.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.wowhead.com/classic"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT WOWHEAD
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- CURSEFORGE -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Add-Ons
+          </div>
+
+          <h3>CURSEFORGE</h3>
+
+          <p>
+            Browse and download World of Warcraft add-ons for raiding,
+            interface improvements, professions, quality-of-life tools,
+            and everyday gameplay.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT CURSEFORGE
+            </a>
+
+            <a
+              class="syndicate-button secondary-button"
+              href="addons.html">
+              SYNDICATE ADD-ONS
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- WOW PROFESSIONS -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Professions
+          </div>
+
+          <h3>WOW PROFESSIONS</h3>
+
+          <p>
+            Step-by-step profession leveling guides, material lists,
+            farming routes, specializations, recipes, and crafting
+            information for Classic Era.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.wow-professions.com/classic"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT WOW PROFESSIONS
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- ICY VEINS -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Classes & Guides
+          </div>
+
+          <h3>ICY VEINS</h3>
+
+          <p>
+            Class guides, talents, leveling information, professions,
+            reputations, dungeons, raids, and other Classic reference
+            material.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.icy-veins.com/wow-classic/"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT ICY VEINS
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- WARCRAFT LOGS -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Raid Performance
+          </div>
+
+          <h3>WARCRAFT LOGS</h3>
+
+          <p>
+            Review raid logs, damage, healing, deaths, casts,
+            encounters, and other combat data to better understand
+            what happened during a raid.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://classic.warcraftlogs.com/"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT WARCRAFT LOGS
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- WAGO -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            WeakAuras & Imports
+          </div>
+
+          <h3>WAGO</h3>
+
+          <p>
+            Browse community-created WeakAuras and other interface
+            imports for Classic, including raid mechanics, class
+            utilities, reminders, and UI tools.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://classic.wago.io/"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT WAGO
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- SHADOWPANTHER -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Rogue Resource
+          </div>
+
+          <h3>SHADOWPANTHER</h3>
+
+          <p>
+            The Rogue Bible. A long-running Rogue resource covering
+            gear, weapons, enchants, PvP, stealth, builds, and
+            class-specific reference information.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.shadowpanther.net/"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT ROGUE BIBLE
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- WOWISCLASSIC -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Classic Guides
+          </div>
+
+          <h3>WOWISCLASSIC</h3>
+
+          <p>
+            Classic-focused class guides, profession guides,
+            leveling information, PvE and PvP resources, and
+            general WoW Classic reference material.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.wowisclassic.com/en/"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT WOWISCLASSIC
+            </a>
+
+          </div>
+
+        </article>
+
+
+        <!-- PETOPIA -->
+
+        <article class="website-card">
+
+          <div class="site-category">
+            Hunter Resource
+          </div>
+
+          <h3>PETOPIA CLASSIC</h3>
+
+          <p>
+            Hunter pet database covering tameable pet families,
+            appearances, locations, abilities, and other Classic
+            pet information.
+          </p>
+
+          <div class="card-actions">
+
+            <a
+              class="syndicate-button"
+              href="https://www.wow-petopia.com/classic/"
+              target="_blank"
+              rel="noopener noreferrer">
+              VISIT PETOPIA
+            </a>
+
+          </div>
+
+        </article>
+
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="footer-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+    <img
+      src="images/HeaderLogo.png"
+      alt="The Syndicate">
+
+  </footer>
+
+
+  <!-- MENU SCRIPT -->
+
+  <script>
+
+    const menuButton = document.getElementById("menuButton");
+    const sideMenu = document.getElementById("sideMenu");
+    const menuOverlay = document.getElementById("menuOverlay");
+    const closeMenu = document.getElementById("closeMenu");
+
+    function openMenu() {
+      sideMenu.classList.add("open");
+      menuOverlay.classList.add("open");
+      menuButton.setAttribute("aria-expanded", "true");
+    }
+
+    function closeSideMenu() {
+      sideMenu.classList.remove("open");
+      menuOverlay.classList.remove("open");
+      menuButton.setAttribute("aria-expanded", "false");
+    }
+
+    menuButton.addEventListener("click", openMenu);
+    closeMenu.addEventListener("click", closeSideMenu);
+    menuOverlay.addEventListener("click", closeSideMenu);
+
+    document.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeSideMenu();
+      }
+    });
+
+  </script>
+
+</body>
+</html>
