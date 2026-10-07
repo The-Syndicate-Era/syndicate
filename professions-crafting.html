@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8"> 
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <title>Professions & Crafting | The Syndicate</title>
@@ -56,11 +56,19 @@
 
     body {
       margin: 0;
+
       background:
-        radial-gradient(circle at top, rgba(212, 175, 55, 0.06), transparent 35%),
+        radial-gradient(
+          circle at top,
+          rgba(212, 175, 55, 0.06),
+          transparent 35%
+        ),
         var(--background-dark);
+
       color: var(--text-main);
+
       font-family: var(--font-body);
+
       min-height: 100vh;
     }
 
@@ -74,13 +82,18 @@
       cursor: pointer;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     a {
       color: var(--gold-light);
     }
 
-    /* -----------------------------
+    /* ============================================================
        HEADER
-    ----------------------------- */
+    ============================================================ */
 
     .site-header {
       position: sticky;
@@ -96,21 +109,28 @@
       padding: 0 20px;
 
       background: rgba(13, 13, 13, 0.96);
+
       border-bottom: 1px solid var(--gold-dark);
+
       backdrop-filter: blur(10px);
     }
 
     .brand {
       font-family: var(--font-heading);
+
       color: var(--gold);
+
       font-size: 19px;
       font-weight: 700;
+
       letter-spacing: 0.06em;
     }
 
     .back-link {
       color: var(--text-muted);
+
       text-decoration: none;
+
       font-size: 14px;
     }
 
@@ -118,13 +138,15 @@
       color: var(--gold);
     }
 
-    /* -----------------------------
+    /* ============================================================
        MAIN
-    ----------------------------- */
+    ============================================================ */
 
     main {
       width: min(100% - 28px, var(--max-width));
+
       margin: 0 auto;
+
       padding: 34px 0 70px;
     }
 
@@ -136,10 +158,13 @@
       margin: 0 0 7px;
 
       color: var(--gold);
+
       font-size: 12px;
-      text-transform: uppercase;
-      letter-spacing: 0.18em;
       font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.18em;
     }
 
     h1,
@@ -150,54 +175,73 @@
 
     h1 {
       margin: 0;
+
       color: var(--gold-light);
+
       font-size: clamp(30px, 7vw, 48px);
+
       line-height: 1.1;
     }
 
     .page-description {
       max-width: 740px;
+
       margin: 12px 0 0;
 
       color: var(--text-muted);
+
       font-size: 15px;
+
       line-height: 1.7;
     }
 
-    /* -----------------------------
-       SEARCH / FILTER AREA
-    ----------------------------- */
+    /* ============================================================
+       SEARCH PANEL
+    ============================================================ */
 
     .search-panel {
-      background: linear-gradient(
-        180deg,
-        rgba(29, 29, 29, 0.96),
-        rgba(20, 20, 20, 0.96)
-      );
-
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      margin-bottom: 25px;
 
       padding: 18px;
 
-      margin-bottom: 25px;
+      background:
+        linear-gradient(
+          180deg,
+          rgba(29, 29, 29, 0.96),
+          rgba(20, 20, 20, 0.96)
+        );
+
+      border: 1px solid var(--border);
+
+      border-radius: var(--radius);
     }
 
     .search-box {
-      position: relative;
       margin-bottom: 14px;
+    }
+
+    .search-with-clear {
+      display: flex;
+
+      gap: 8px;
+    }
+
+    .search-with-clear input {
+      flex: 1;
     }
 
     .search-box input {
       width: 100%;
 
+      padding: 14px 15px;
+
       background: #101010;
+
       color: var(--text-main);
 
       border: 1px solid #454545;
-      border-radius: 8px;
 
-      padding: 14px 15px;
+      border-radius: 8px;
 
       outline: none;
 
@@ -208,50 +252,108 @@
 
     .search-box input:focus {
       border-color: var(--gold);
-      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+
+      box-shadow:
+        0 0 0 3px rgba(212, 175, 55, 0.12);
+    }
+
+    .clear-search-button {
+      flex: 0 0 auto;
+
+      padding: 0 14px;
+
+      background: #181818;
+
+      color: var(--text-muted);
+
+      border: 1px solid #444;
+
+      border-radius: 7px;
+    }
+
+    .clear-search-button:hover {
+      color: var(--gold-light);
+
+      border-color: var(--gold-dark);
     }
 
     .filter-row {
       display: grid;
+
       grid-template-columns: 1fr;
+
       gap: 10px;
     }
 
     .filter-row select {
       width: 100%;
 
+      padding: 11px 12px;
+
       background: #101010;
+
       color: var(--text-main);
 
       border: 1px solid #454545;
-      border-radius: 7px;
 
-      padding: 11px 12px;
+      border-radius: 7px;
     }
 
     .filter-row select:focus {
       border-color: var(--gold);
+
       outline: none;
+    }
+
+    .search-actions {
+      display: flex;
+      flex-wrap: wrap;
+
+      align-items: center;
+
+      gap: 10px;
+
+      margin-top: 14px;
     }
 
     .checkbox-row {
       display: flex;
       align-items: center;
+
       gap: 8px;
 
       color: var(--text-muted);
-      font-size: 13px;
 
-      margin-top: 13px;
+      font-size: 13px;
     }
 
     .checkbox-row input {
       accent-color: var(--gold);
     }
 
-    /* -----------------------------
-       PROFESSION BUTTONS
-    ----------------------------- */
+    .add-craft-button {
+      padding: 11px 16px;
+
+      background: rgba(212, 175, 55, 0.1);
+
+      color: var(--gold-light);
+
+      border: 1px solid var(--gold-dark);
+
+      border-radius: 7px;
+
+      font-weight: 700;
+    }
+
+    .add-craft-button:hover {
+      background: rgba(212, 175, 55, 0.18);
+
+      border-color: var(--gold);
+    }
+
+    /* ============================================================
+       PROFESSIONS
+    ============================================================ */
 
     .profession-section {
       margin-bottom: 30px;
@@ -259,13 +361,18 @@
 
     .section-title {
       margin: 0 0 13px;
+
       color: var(--gold-light);
+
       font-size: 19px;
     }
 
     .profession-grid {
       display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
+
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
       gap: 9px;
     }
 
@@ -280,10 +387,12 @@
       padding: 10px 13px;
 
       background: var(--background-panel);
-      border: 1px solid var(--border);
-      border-radius: 8px;
 
       color: var(--text-main);
+
+      border: 1px solid var(--border);
+
+      border-radius: 8px;
 
       text-align: left;
 
@@ -295,33 +404,39 @@
 
     .profession-button:hover {
       border-color: var(--gold-dark);
+
       background: var(--background-hover);
+
       transform: translateY(-1px);
     }
 
     .profession-button.active {
       border-color: var(--gold);
+
       background: rgba(212, 175, 55, 0.1);
     }
 
     .profession-name {
-      font-weight: 700;
       margin-bottom: 3px;
+
+      font-weight: 700;
     }
 
     .profession-count {
       color: var(--text-muted);
+
       font-size: 12px;
     }
 
-    /* -----------------------------
+    /* ============================================================
        RESULTS
-    ----------------------------- */
+    ============================================================ */
 
     .results-header {
       display: flex;
-      justify-content: space-between;
       align-items: baseline;
+      justify-content: space-between;
+
       gap: 15px;
 
       margin-bottom: 13px;
@@ -329,25 +444,31 @@
 
     .results-count {
       color: var(--text-muted);
+
       font-size: 13px;
     }
 
     .results-grid {
       display: grid;
+
       grid-template-columns: 1fr;
+
       gap: 12px;
     }
 
     .item-card {
-      background: var(--background-panel);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      display: flex;
+      flex-direction: column;
+
+      gap: 12px;
 
       padding: 16px;
 
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
+      background: var(--background-panel);
+
+      border: 1px solid var(--border);
+
+      border-radius: var(--radius);
 
       transition:
         border-color 0.2s,
@@ -356,29 +477,26 @@
 
     .item-card:hover {
       border-color: var(--gold-dark);
-      transform: translateY(-1px);
-    }
 
-    .item-card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 12px;
+      transform: translateY(-1px);
     }
 
     .item-name {
       margin: 0;
 
       font-family: var(--font-heading);
+
       color: var(--gold-light);
 
       font-size: 16px;
+
       line-height: 1.35;
     }
 
     .item-meta {
       display: flex;
       flex-wrap: wrap;
+
       gap: 6px;
 
       margin-top: 7px;
@@ -390,24 +508,30 @@
 
       padding: 4px 7px;
 
-      border-radius: 999px;
-      border: 1px solid #434343;
-
       background: #111;
 
       color: var(--text-muted);
+
+      border: 1px solid #434343;
+
+      border-radius: 999px;
+
       font-size: 11px;
     }
 
     .badge.gold {
-      color: var(--gold-light);
-      border-color: var(--gold-dark);
       background: rgba(212, 175, 55, 0.06);
+
+      color: var(--gold-light);
+
+      border-color: var(--gold-dark);
     }
 
     .crafter-preview {
       color: var(--text-muted);
+
       font-size: 13px;
+
       line-height: 1.55;
     }
 
@@ -421,36 +545,37 @@
       padding: 9px 13px;
 
       background: transparent;
+
       color: var(--gold-light);
 
       border: 1px solid var(--gold-dark);
+
       border-radius: 6px;
 
-      font-weight: 600;
       font-size: 13px;
-
-      transition:
-        background-color 0.2s,
-        border-color 0.2s;
+      font-weight: 600;
     }
 
     .view-button:hover {
       background: rgba(212, 175, 55, 0.1);
+
       border-color: var(--gold);
     }
 
-    /* -----------------------------
+    /* ============================================================
        STATES
-    ----------------------------- */
+    ============================================================ */
 
     .state-message {
       padding: 28px 18px;
 
+      color: var(--text-muted);
+
       border: 1px dashed #444;
+
       border-radius: 8px;
 
       text-align: center;
-      color: var(--text-muted);
     }
 
     .loading-spinner {
@@ -460,7 +585,9 @@
       margin: 0 auto 13px;
 
       border: 3px solid #333;
+
       border-top-color: var(--gold);
+
       border-radius: 50%;
 
       animation: spin 0.8s linear infinite;
@@ -472,12 +599,13 @@
       }
     }
 
-    /* -----------------------------
-       DETAIL MODAL
-    ----------------------------- */
+    /* ============================================================
+       MODALS
+    ============================================================ */
 
     .modal-backdrop {
       position: fixed;
+
       inset: 0;
 
       z-index: 100;
@@ -497,24 +625,27 @@
 
     .detail-modal {
       width: 100%;
-      max-height: 90vh;
+
+      max-height: 92vh;
 
       overflow-y: auto;
+
+      padding: 22px;
 
       background: #131313;
 
       border: 1px solid var(--gold-dark);
+
       border-bottom: none;
 
       border-radius: 16px 16px 0 0;
-
-      padding: 22px;
     }
 
     .modal-header {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
+
       gap: 15px;
 
       margin-bottom: 20px;
@@ -524,7 +655,9 @@
       margin: 0;
 
       color: var(--gold-light);
+
       font-size: 23px;
+
       line-height: 1.3;
     }
 
@@ -534,11 +667,13 @@
       width: 38px;
       height: 38px;
 
-      border: 1px solid #444;
-      border-radius: 50%;
-
       background: #1c1c1c;
+
       color: #ddd;
+
+      border: 1px solid #444;
+
+      border-radius: 50%;
 
       font-size: 21px;
     }
@@ -551,45 +686,77 @@
       margin: 0 0 10px;
 
       color: var(--gold);
+
       font-size: 15px;
+
       letter-spacing: 0.03em;
     }
 
     .detail-grid {
       display: grid;
+
       grid-template-columns: 1fr;
+
       gap: 8px;
     }
 
     .detail-field {
+      margin-bottom: 10px;
+
       padding: 11px 12px;
 
       background: #191919;
+
       border: 1px solid #303030;
+
       border-radius: 6px;
     }
 
     .detail-label {
+      margin-bottom: 5px;
+
       color: var(--text-muted);
+
       font-size: 11px;
+
       text-transform: uppercase;
+
       letter-spacing: 0.07em;
-      margin-bottom: 4px;
     }
 
     .detail-value {
       color: var(--text-main);
+
       font-size: 13px;
+
       line-height: 1.5;
     }
 
-    /* -----------------------------
+    .detail-field select {
+      width: 100%;
+
+      margin-top: 5px;
+
+      padding: 10px;
+
+      background: #101010;
+
+      color: var(--text-main);
+
+      border: 1px solid #444;
+
+      border-radius: 6px;
+    }
+
+    /* ============================================================
        CRAFTERS
-    ----------------------------- */
+    ============================================================ */
 
     .crafter-list {
       display: grid;
+
       grid-template-columns: 1fr;
+
       gap: 8px;
     }
 
@@ -603,19 +770,23 @@
       padding: 11px 12px;
 
       background: #191919;
+
       border: 1px solid #303030;
+
       border-radius: 7px;
     }
 
     .crafter-name {
-      font-weight: 700;
       color: var(--text-main);
+
+      font-weight: 700;
     }
 
     .crafter-subtext {
       margin-top: 3px;
 
       color: var(--text-muted);
+
       font-size: 11px;
     }
 
@@ -623,51 +794,67 @@
       flex: 0 0 auto;
 
       padding: 4px 8px;
+
       border-radius: 999px;
 
       font-size: 10px;
       font-weight: 700;
+
       text-transform: uppercase;
+
       letter-spacing: 0.05em;
     }
 
     .status-active {
-      color: #a8d7aa;
-      border: 1px solid #426644;
       background: rgba(119, 184, 121, 0.08);
+
+      color: #a8d7aa;
+
+      border: 1px solid #426644;
     }
 
     .status-casual {
-      color: #e7c987;
-      border: 1px solid #725e31;
       background: rgba(211, 163, 74, 0.08);
+
+      color: #e7c987;
+
+      border: 1px solid #725e31;
     }
 
     .status-fading,
     .status-faded {
-      color: #d8b27a;
-      border: 1px solid #6a5031;
       background: rgba(174, 117, 56, 0.08);
+
+      color: #d8b27a;
+
+      border: 1px solid #6a5031;
     }
 
     .status-inactive {
-      color: #c48f8f;
-      border: 1px solid #674040;
       background: rgba(168, 93, 93, 0.08);
+
+      color: #c48f8f;
+
+      border: 1px solid #674040;
     }
 
     .status-unknown {
-      color: #aaa;
-      border: 1px solid #555;
       background: #1b1b1b;
+
+      color: #aaa;
+
+      border: 1px solid #555;
     }
 
     .source-link {
       display: inline-block;
+
       margin-top: 10px;
 
       color: var(--gold-light);
+
       font-size: 13px;
+
       text-decoration: none;
     }
 
@@ -675,14 +862,137 @@
       text-decoration: underline;
     }
 
-    /* -----------------------------
+    /* ============================================================
+       UPDATE MY CRAFTS
+    ============================================================ */
+
+    .craft-checkbox-list {
+      display: grid;
+
+      grid-template-columns: 1fr;
+
+      gap: 7px;
+
+      margin-top: 8px;
+
+      max-height: 380px;
+
+      overflow-y: auto;
+
+      padding-right: 4px;
+    }
+
+    .craft-checkbox-option {
+      display: flex;
+      align-items: flex-start;
+
+      gap: 8px;
+
+      padding: 9px 10px;
+
+      background: #111;
+
+      color: var(--text-main);
+
+      border: 1px solid #333;
+
+      border-radius: 6px;
+
+      font-size: 13px;
+    }
+
+    .craft-checkbox-option:hover {
+      border-color: var(--gold-dark);
+    }
+
+    .craft-checkbox-option input {
+      margin-top: 2px;
+
+      accent-color: var(--gold);
+    }
+
+    .craft-profession-title {
+      margin-top: 16px;
+      margin-bottom: 3px;
+
+      padding-bottom: 5px;
+
+      color: var(--gold-light);
+
+      border-bottom: 1px solid var(--gold-dark);
+
+      font-family: var(--font-heading);
+
+      font-size: 15px;
+    }
+
+    .craft-category-title {
+      margin-top: 8px;
+
+      color: var(--text-muted);
+
+      font-size: 11px;
+      font-weight: 700;
+
+      text-transform: uppercase;
+
+      letter-spacing: 0.05em;
+    }
+
+    .craft-message {
+      margin-top: 14px;
+
+      color: var(--text-muted);
+
+      font-size: 13px;
+
+      line-height: 1.5;
+    }
+
+    .craft-message.success {
+      color: #a8d7aa;
+    }
+
+    .craft-message.error {
+      color: #d79898;
+    }
+
+    .modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 8px;
+
+      margin-top: 14px;
+    }
+
+    .secondary-button {
+      padding: 11px 16px;
+
+      background: #171717;
+
+      color: var(--text-muted);
+
+      border: 1px solid #444;
+
+      border-radius: 7px;
+    }
+
+    .secondary-button:hover {
+      color: var(--gold-light);
+
+      border-color: var(--gold-dark);
+    }
+
+    /* ============================================================
        DESKTOP
-    ----------------------------- */
+    ============================================================ */
 
     @media (min-width: 650px) {
 
       main {
         width: min(100% - 46px, var(--max-width));
+
         padding-top: 45px;
       }
 
@@ -695,46 +1005,66 @@
       }
 
       .filter-row {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns:
+          1fr 1fr;
       }
 
       .profession-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
       }
 
       .results-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
 
       .detail-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
 
       .crafter-list {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
       }
 
       .modal-backdrop {
         align-items: center;
+
         padding: 25px;
       }
 
       .detail-modal {
-        max-width: 850px;
+        max-width: 900px;
 
-        border-bottom: 1px solid var(--gold-dark);
+        border-bottom:
+          1px solid var(--gold-dark);
+
         border-radius: 12px;
+      }
+
+      .craft-checkbox-list {
+        grid-template-columns:
+          repeat(2, minmax(0, 1fr));
+      }
+
+      .craft-profession-title,
+      .craft-category-title {
+        grid-column: 1 / -1;
       }
     }
 
     @media (min-width: 1000px) {
 
       .profession-grid {
-        grid-template-columns: repeat(6, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(6, minmax(0, 1fr));
       }
 
       .results-grid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
+        grid-template-columns:
+          repeat(3, minmax(0, 1fr));
       }
     }
 
@@ -744,73 +1074,149 @@
 
 <body>
 
-  <header class="site-header">
-    <div class="brand">The Syndicate</div>
+  <!-- ============================================================
+       HEADER
+  ============================================================ -->
 
-    <a href="resources.html" class="back-link">
+  <header class="site-header">
+
+    <div class="brand">
+      The Syndicate
+    </div>
+
+    <a
+      href="resources.html"
+      class="back-link"
+    >
       ← Resources
     </a>
+
   </header>
 
+
+  <!-- ============================================================
+       PAGE
+  ============================================================ -->
 
   <main>
 
     <section class="page-heading">
-      <p class="eyebrow">Guild Resources</p>
 
-      <h1>Professions & Crafting</h1>
+      <p class="eyebrow">
+        Guild Resources
+      </p>
+
+      <h1>
+        Professions & Crafting
+      </h1>
 
       <p class="page-description">
-        Find rare recipes, specialty crafts, and the Syndicate members
-        who can make them. Search by item, recipe, profession, or character.
+        Find rare recipes, specialty crafts, and the Syndicate
+        members who can make them. Search by item, recipe,
+        profession, category, or character.
       </p>
+
     </section>
 
 
-    <!-- SEARCH -->
+    <!-- ==========================================================
+         SEARCH
+    =========================================================== -->
+
     <section class="search-panel">
 
-      <div class="search-box">
+      <div class="search-box search-with-clear">
+
         <input
           id="searchInput"
           type="search"
-          placeholder="Search an item, profession, or character..."
+          placeholder="Search an item, profession, category, or character..."
           autocomplete="off"
         >
+
+        <button
+          id="clearSearchButton"
+          type="button"
+          class="clear-search-button"
+        >
+          Clear
+        </button>
+
       </div>
+
 
       <div class="filter-row">
 
         <select id="professionFilter">
-          <option value="">All Professions</option>
+
+          <option value="">
+            All Professions
+          </option>
+
         </select>
+
 
         <select id="categoryFilter">
-          <option value="">All Categories</option>
+
+          <option value="">
+            All Categories
+          </option>
+
         </select>
 
       </div>
 
-      <label class="checkbox-row">
-        <input type="checkbox" id="showInactive">
-        Show inactive crafters
-      </label>
 
-    </section>
+      <div class="search-actions">
+
+        <label class="checkbox-row">
+
+          <input
+            type="checkbox"
+            id="showInactive"
+          >
+
+          Show inactive crafters
+
+        </label>
 
 
-    <!-- PROFESSIONS -->
-    <section class="profession-section">
+        <button
+          id="addCraftButton"
+          type="button"
+          class="add-craft-button"
+        >
+          + Update My Crafts
+        </button>
 
-      <h2 class="section-title">Browse by Profession</h2>
-
-      <div id="professionGrid" class="profession-grid">
       </div>
 
     </section>
 
 
-    <!-- RESULTS -->
+    <!-- ==========================================================
+         PROFESSION BUTTONS
+    =========================================================== -->
+
+    <section class="profession-section">
+
+      <h2 class="section-title">
+        Browse by Profession
+      </h2>
+
+      <div
+        id="professionGrid"
+        class="profession-grid"
+      >
+      </div>
+
+    </section>
+
+
+    <!-- ==========================================================
+         RESULTS
+    =========================================================== -->
+
     <section>
 
       <div class="results-header">
@@ -819,16 +1225,26 @@
           Rare Recipes & Crafts
         </h2>
 
-        <div id="resultsCount" class="results-count">
+        <div
+          id="resultsCount"
+          class="results-count"
+        >
         </div>
 
       </div>
 
-      <div id="resultsGrid" class="results-grid">
+
+      <div
+        id="resultsGrid"
+        class="results-grid"
+      >
 
         <div class="state-message">
+
           <div class="loading-spinner"></div>
+
           Loading guild crafting data...
+
         </div>
 
       </div>
@@ -838,19 +1254,37 @@
   </main>
 
 
-  <!-- ITEM DETAIL MODAL -->
-  <div id="detailBackdrop" class="modal-backdrop">
+  <!-- ============================================================
+       ITEM DETAIL MODAL
+  ============================================================ -->
+
+  <div
+    id="detailBackdrop"
+    class="modal-backdrop"
+  >
 
     <div class="detail-modal">
 
       <div class="modal-header">
 
         <div>
-          <p class="eyebrow">Crafting Details</p>
-          <h2 id="detailTitle" class="modal-title"></h2>
 
-          <div id="detailBadges" class="item-meta"></div>
+          <p class="eyebrow">
+            Crafting Details
+          </p>
+
+          <h2
+            id="detailTitle"
+            class="modal-title"
+          ></h2>
+
+          <div
+            id="detailBadges"
+            class="item-meta"
+          ></div>
+
         </div>
+
 
         <button
           id="closeDetail"
@@ -866,18 +1300,28 @@
 
       <div class="detail-section">
 
-        <h3>Guild Crafters</h3>
+        <h3>
+          Guild Crafters
+        </h3>
 
-        <div id="crafterList" class="crafter-list"></div>
+        <div
+          id="crafterList"
+          class="crafter-list"
+        ></div>
 
       </div>
 
 
       <div class="detail-section">
 
-        <h3>Recipe Information</h3>
+        <h3>
+          Recipe Information
+        </h3>
 
-        <div id="recipeDetails" class="detail-grid"></div>
+        <div
+          id="recipeDetails"
+          class="detail-grid"
+        ></div>
 
         <a
           id="sourceLink"
@@ -896,24 +1340,159 @@
   </div>
 
 
+  <!-- ============================================================
+       UPDATE MY CRAFTS MODAL
+  ============================================================ -->
+
+  <div
+    id="addCraftBackdrop"
+    class="modal-backdrop"
+  >
+
+    <div class="detail-modal">
+
+      <div class="modal-header">
+
+        <div>
+
+          <p class="eyebrow">
+            Guild Crafting
+          </p>
+
+          <h2 class="modal-title">
+            Update My Crafts
+          </h2>
+
+          <p class="page-description">
+            Choose your character, select one or more professions,
+            then check the recipes that character knows.
+          </p>
+
+        </div>
+
+
+        <button
+          id="closeAddCraft"
+          class="close-button"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <!-- CHARACTER -->
+
+        <div class="detail-field">
+
+          <div class="detail-label">
+            Character
+          </div>
+
+          <select id="craftCharacter">
+
+            <option value="">
+              Select your character...
+            </option>
+
+          </select>
+
+        </div>
+
+
+        <!-- PROFESSIONS -->
+
+        <div class="detail-field">
+
+          <div class="detail-label">
+            Professions
+          </div>
+
+          <div
+            id="craftProfessionList"
+            class="craft-checkbox-list"
+          ></div>
+
+        </div>
+
+
+        <!-- RECIPES -->
+
+        <div class="detail-field">
+
+          <div class="detail-label">
+            Recipes Known
+          </div>
+
+          <div
+            id="craftItemList"
+            class="craft-checkbox-list"
+          >
+            Select one or more professions first.
+          </div>
+
+        </div>
+
+
+        <!-- MESSAGE -->
+
+        <div
+          id="craftMessage"
+          class="craft-message"
+        ></div>
+
+
+        <!-- ACTIONS -->
+
+        <div class="modal-actions">
+
+          <button
+            id="submitCraft"
+            type="button"
+            class="add-craft-button"
+          >
+            Save Crafts
+          </button>
+
+
+          <button
+            id="cancelCraft"
+            type="button"
+            class="secondary-button"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- ============================================================
+       JAVASCRIPT
+  ============================================================ -->
+
   <script>
 
     /* ============================================================
-       SUPABASE CONNECTION
-
-       Replace SUPABASE-URL-HERE with your project's URL.
-
-       Keep API-KEY-HERE until you're ready to insert the
-       Supabase public / anon key.
+       SUPABASE
     ============================================================ */
 
     const SUPABASE_URL = "https://vjxbulbnozopbuzyxxob.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4";
-
-    const db = supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+    const db =
+      supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_KEY
+      );
 
 
     /* ============================================================
@@ -921,7 +1500,9 @@
     ============================================================ */
 
     let rareItems = [];
+
     let characterItems = [];
+
     let guildRoster = [];
 
     let itemsWithCrafters = [];
@@ -934,46 +1515,151 @@
     ============================================================ */
 
     const searchInput =
-      document.getElementById("searchInput");
+      document.getElementById(
+        "searchInput"
+      );
+
+
+    const clearSearchButton =
+      document.getElementById(
+        "clearSearchButton"
+      );
+
 
     const professionFilter =
-      document.getElementById("professionFilter");
+      document.getElementById(
+        "professionFilter"
+      );
+
 
     const categoryFilter =
-      document.getElementById("categoryFilter");
+      document.getElementById(
+        "categoryFilter"
+      );
+
 
     const showInactive =
-      document.getElementById("showInactive");
+      document.getElementById(
+        "showInactive"
+      );
+
 
     const professionGrid =
-      document.getElementById("professionGrid");
+      document.getElementById(
+        "professionGrid"
+      );
+
 
     const resultsGrid =
-      document.getElementById("resultsGrid");
+      document.getElementById(
+        "resultsGrid"
+      );
+
 
     const resultsCount =
-      document.getElementById("resultsCount");
+      document.getElementById(
+        "resultsCount"
+      );
+
+
+    /* ITEM DETAIL MODAL */
 
     const detailBackdrop =
-      document.getElementById("detailBackdrop");
+      document.getElementById(
+        "detailBackdrop"
+      );
+
 
     const detailTitle =
-      document.getElementById("detailTitle");
+      document.getElementById(
+        "detailTitle"
+      );
+
 
     const detailBadges =
-      document.getElementById("detailBadges");
+      document.getElementById(
+        "detailBadges"
+      );
+
 
     const crafterList =
-      document.getElementById("crafterList");
+      document.getElementById(
+        "crafterList"
+      );
+
 
     const recipeDetails =
-      document.getElementById("recipeDetails");
+      document.getElementById(
+        "recipeDetails"
+      );
+
 
     const sourceLink =
-      document.getElementById("sourceLink");
+      document.getElementById(
+        "sourceLink"
+      );
+
 
     const closeDetail =
-      document.getElementById("closeDetail");
+      document.getElementById(
+        "closeDetail"
+      );
+
+
+    /* UPDATE CRAFT MODAL */
+
+    const addCraftButton =
+      document.getElementById(
+        "addCraftButton"
+      );
+
+
+    const addCraftBackdrop =
+      document.getElementById(
+        "addCraftBackdrop"
+      );
+
+
+    const closeAddCraft =
+      document.getElementById(
+        "closeAddCraft"
+      );
+
+
+    const cancelCraft =
+      document.getElementById(
+        "cancelCraft"
+      );
+
+
+    const craftCharacter =
+      document.getElementById(
+        "craftCharacter"
+      );
+
+
+    const craftProfessionList =
+      document.getElementById(
+        "craftProfessionList"
+      );
+
+
+    const craftItemList =
+      document.getElementById(
+        "craftItemList"
+      );
+
+
+    const craftMessage =
+      document.getElementById(
+        "craftMessage"
+      );
+
+
+    const submitCraft =
+      document.getElementById(
+        "submitCraft"
+      );
 
 
     /* ============================================================
@@ -981,72 +1667,117 @@
     ============================================================ */
 
     function clean(value) {
-      return String(value ?? "").trim();
+
+      return String(
+        value ?? ""
+      ).trim();
+
     }
 
 
     function normalize(value) {
-      return clean(value).toLowerCase();
+
+      return clean(
+        value
+      ).toLowerCase();
+
     }
 
 
     function escapeHTML(value) {
 
       return clean(value)
+
         .replaceAll("&", "&amp;")
+
         .replaceAll("<", "&lt;")
+
         .replaceAll(">", "&gt;")
+
         .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
+
+        .replaceAll(
+          "'",
+          "&#039;"
+        );
+
     }
 
 
     function uniqueSorted(values) {
 
       return [
+
         ...new Set(
+
           values
             .map(clean)
             .filter(Boolean)
+
         )
-      ].sort((a, b) =>
-        a.localeCompare(b)
+
+      ].sort(
+        (a, b) =>
+          a.localeCompare(b)
       );
+
     }
 
 
     function statusClass(status) {
 
-      switch (normalize(status)) {
+      switch (
+        normalize(status)
+      ) {
 
         case "active":
+
           return "status-active";
 
+
         case "casual":
+
           return "status-casual";
 
+
         case "fading":
+
           return "status-fading";
 
+
         case "faded":
+
           return "status-faded";
 
+
         case "inactive":
+
           return "status-inactive";
 
+
         default:
+
           return "status-unknown";
+
       }
+
     }
 
 
     function getCharacterName(character) {
 
       return (
-        clean(character.normalized_name) ||
-        clean(character.Name) ||
+        clean(
+          character.normalized_name
+        ) ||
+
+        clean(
+          character.Name
+        ) ||
+
         "Unknown Character"
       );
+
     }
 
 
@@ -1055,6 +1786,30 @@
       return clean(
         character.main_character_name
       );
+
+    }
+
+
+    function setCraftMessage(
+      message,
+      type = ""
+    ) {
+
+      craftMessage.textContent =
+        message;
+
+      craftMessage.className =
+        "craft-message";
+
+
+      if (type) {
+
+        craftMessage.classList.add(
+          type
+        );
+
+      }
+
     }
 
 
@@ -1066,13 +1821,6 @@
 
       try {
 
-        /*
-          Fetch the three tables separately.
-
-          This is intentionally more forgiving than relying on
-          Supabase's automatic nested relationship syntax.
-        */
-
         const [
           rareResponse,
           characterItemsResponse,
@@ -1081,8 +1829,7 @@
 
           db
             .from("rare_items")
-            .select("*")
-            .eq("active", true),
+            .select("*"),
 
           db
             .from("character_items")
@@ -1095,15 +1842,23 @@
         ]);
 
 
-        if (rareResponse.error) {
+        if (
+          rareResponse.error
+        ) {
           throw rareResponse.error;
         }
 
-        if (characterItemsResponse.error) {
+
+        if (
+          characterItemsResponse.error
+        ) {
           throw characterItemsResponse.error;
         }
 
-        if (guildResponse.error) {
+
+        if (
+          guildResponse.error
+        ) {
           throw guildResponse.error;
         }
 
@@ -1111,8 +1866,10 @@
         rareItems =
           rareResponse.data || [];
 
+
         characterItems =
           characterItemsResponse.data || [];
+
 
         guildRoster =
           guildResponse.data || [];
@@ -1135,177 +1892,348 @@
           error
         );
 
+
         resultsGrid.innerHTML = `
           <div class="state-message">
-            <strong>Unable to load crafting data.</strong>
+            <strong>
+              Unable to load crafting data.
+            </strong>
+
             <br><br>
+
             ${escapeHTML(error.message)}
           </div>
         `;
+
       }
 
     }
 
 
     /* ============================================================
-       JOIN TABLE DATA
+       JOIN DATA
     ============================================================ */
 
     function buildJoinedData() {
 
-      const rosterById = new Map();
-
-      guildRoster.forEach(character => {
-
-        rosterById.set(
-          Number(character.id),
-          character
-        );
-
-      });
+      const rosterById =
+        new Map();
 
 
-      const craftersByItemId = new Map();
+      guildRoster.forEach(
+        character => {
 
-
-      characterItems.forEach(link => {
-
-        if (
-          link.item_id == null ||
-          link.character_id == null
-        ) {
-          return;
-        }
-
-
-        const itemId =
-          Number(link.item_id);
-
-        const character =
-          rosterById.get(
-            Number(link.character_id)
+          rosterById.set(
+            Number(character.id),
+            character
           );
 
-
-        if (!character) {
-          return;
         }
+      );
 
 
-        if (!craftersByItemId.has(itemId)) {
-
-          craftersByItemId.set(
-            itemId,
-            []
-          );
-        }
+      const craftersByItemId =
+        new Map();
 
 
-        craftersByItemId
-          .get(itemId)
-          .push(character);
+      characterItems.forEach(
+        link => {
 
-      });
-
-
-      itemsWithCrafters =
-        rareItems.map(item => {
-
-          const crafters =
-            craftersByItemId.get(
-              Number(item.id)
-            ) || [];
+          if (
+            link.item_id == null ||
+            link.character_id == null
+          ) {
+            return;
+          }
 
 
-          /*
-            Prevent accidental duplicate character listings.
-          */
-
-          const uniqueCrafters =
-            Array.from(
-              new Map(
-                crafters.map(character => [
-                  Number(character.id),
-                  character
-                ])
-              ).values()
+          const itemId =
+            Number(
+              link.item_id
             );
 
 
-          return {
+          const character =
+            rosterById.get(
+              Number(
+                link.character_id
+              )
+            );
 
-            ...item,
 
-            crafters:
-              uniqueCrafters
+          if (!character) {
+            return;
+          }
 
-          };
 
-        });
+          if (
+            !craftersByItemId.has(
+              itemId
+            )
+          ) {
+
+            craftersByItemId.set(
+              itemId,
+              []
+            );
+
+          }
+
+
+          craftersByItemId
+            .get(itemId)
+            .push(character);
+
+        }
+      );
+
+
+      itemsWithCrafters =
+        rareItems.map(
+          item => {
+
+            const crafters =
+              craftersByItemId.get(
+                Number(item.id)
+              ) || [];
+
+
+            const uniqueCrafters =
+              Array.from(
+
+                new Map(
+
+                  crafters.map(
+                    character => [
+
+                      Number(
+                        character.id
+                      ),
+
+                      character
+
+                    ]
+                  )
+
+                ).values()
+
+              );
+
+
+            return {
+
+              ...item,
+
+              crafters:
+                uniqueCrafters
+
+            };
+
+          }
+        );
 
     }
 
 
     /* ============================================================
-       FILTER CONTROLS
+       FILTERS
     ============================================================ */
 
     function populateFilters() {
 
       const professions =
         uniqueSorted(
-          rareItems.map(
-            item => item.profession
-          )
-        );
 
-
-      const categories =
-        uniqueSorted(
           rareItems.map(
-            item => item.category
+            item =>
+              item.profession
           )
+
         );
 
 
       professionFilter.innerHTML =
-        `<option value="">
+        `
+        <option value="">
           All Professions
-        </option>`;
+        </option>
+        `;
 
 
-      professions.forEach(profession => {
+      professions.forEach(
+        profession => {
 
-        professionFilter.insertAdjacentHTML(
-          "beforeend",
-          `
-          <option value="${escapeHTML(profession)}">
-            ${escapeHTML(profession)}
-          </option>
-          `
+          professionFilter
+            .insertAdjacentHTML(
+              "beforeend",
+              `
+              <option
+                value="${escapeHTML(profession)}"
+              >
+                ${escapeHTML(profession)}
+              </option>
+              `
+            );
+
+        }
+      );
+
+
+      populateCategoryFilter();
+
+    }
+
+
+    function populateCategoryFilter() {
+
+      const selected =
+        clean(
+          professionFilter.value
         );
-
-      });
 
 
       categoryFilter.innerHTML =
-        `<option value="">
+        `
+        <option value="">
           All Categories
-        </option>`;
+        </option>
+        `;
 
 
-      categories.forEach(category => {
+      /*
+        If a profession is selected,
+        only show categories from
+        that profession.
+      */
 
-        categoryFilter.insertAdjacentHTML(
-          "beforeend",
-          `
-          <option value="${escapeHTML(category)}">
-            ${escapeHTML(category)}
-          </option>
-          `
+      if (selected) {
+
+        const categories =
+          uniqueSorted(
+
+            rareItems
+              .filter(
+                item =>
+                  item.profession ===
+                  selected
+              )
+              .map(
+                item =>
+                  item.category
+              )
+
+          );
+
+
+        categories.forEach(
+          category => {
+
+            categoryFilter
+              .insertAdjacentHTML(
+                "beforeend",
+                `
+                <option
+                  value="${escapeHTML(category)}"
+                >
+                  ${escapeHTML(category)}
+                </option>
+                `
+              );
+
+          }
         );
 
-      });
+
+        return;
+
+      }
+
+
+      /*
+        No profession selected:
+        organize categories by
+        profession, then alphabetically.
+      */
+
+      const professions =
+        uniqueSorted(
+
+          rareItems.map(
+            item =>
+              item.profession
+          )
+
+        );
+
+
+      professions.forEach(
+        profession => {
+
+          const categories =
+            uniqueSorted(
+
+              rareItems
+                .filter(
+                  item =>
+                    item.profession ===
+                    profession
+                )
+                .map(
+                  item =>
+                    item.category
+                )
+
+            );
+
+
+          if (
+            !categories.length
+          ) {
+            return;
+          }
+
+
+          const group =
+            document.createElement(
+              "optgroup"
+            );
+
+
+          group.label =
+            profession;
+
+
+          categories.forEach(
+            category => {
+
+              const option =
+                document.createElement(
+                  "option"
+                );
+
+
+              option.value =
+                category;
+
+
+              option.textContent =
+                category;
+
+
+              group.appendChild(
+                option
+              );
+
+            }
+          );
+
+
+          categoryFilter.appendChild(
+            group
+          );
+
+        }
+      );
 
     }
 
@@ -1318,241 +2246,342 @@
 
       const professions =
         uniqueSorted(
+
           rareItems.map(
-            item => item.profession
+            item =>
+              item.profession
           )
+
         );
 
 
-      professionGrid.innerHTML = "";
+      professionGrid.innerHTML =
+        "";
 
 
-      professions.forEach(profession => {
+      professions.forEach(
+        profession => {
 
-        const count =
-          rareItems.filter(
-            item =>
-              item.profession === profession
-          ).length;
-
-
-        const button =
-          document.createElement("button");
+          const count =
+            rareItems.filter(
+              item =>
+                item.profession ===
+                profession
+            ).length;
 
 
-        button.type = "button";
-
-        button.className =
-          "profession-button";
-
-
-        if (
-          selectedProfession === profession
-        ) {
-          button.classList.add("active");
-        }
+          const button =
+            document.createElement(
+              "button"
+            );
 
 
-        button.innerHTML = `
-          <span class="profession-name">
-            ${escapeHTML(profession)}
-          </span>
-
-          <span class="profession-count">
-            ${count} tracked crafts
-          </span>
-        `;
+          button.type =
+            "button";
 
 
-        button.addEventListener(
-          "click",
-          () => {
-
-            if (
-              selectedProfession === profession
-            ) {
-
-              selectedProfession = "";
-
-              professionFilter.value = "";
-
-            }
-
-            else {
-
-              selectedProfession =
-                profession;
-
-              professionFilter.value =
-                profession;
-
-            }
+          button.className =
+            "profession-button";
 
 
-            renderProfessionButtons();
+          if (
+            selectedProfession ===
+            profession
+          ) {
 
-            renderResults();
+            button.classList.add(
+              "active"
+            );
 
           }
-        );
 
 
-        professionGrid.appendChild(
-          button
-        );
+          button.innerHTML = `
+            <span class="profession-name">
+              ${escapeHTML(profession)}
+            </span>
 
-      });
+            <span class="profession-count">
+              ${count}
+              tracked crafts
+            </span>
+          `;
+
+
+          button.addEventListener(
+            "click",
+            () => {
+
+              if (
+                selectedProfession ===
+                profession
+              ) {
+
+                selectedProfession =
+                  "";
+
+                professionFilter.value =
+                  "";
+
+              }
+
+              else {
+
+                selectedProfession =
+                  profession;
+
+                professionFilter.value =
+                  profession;
+
+              }
+
+
+              categoryFilter.value =
+                "";
+
+
+              populateCategoryFilter();
+
+              renderProfessionButtons();
+
+              renderResults();
+
+            }
+          );
+
+
+          professionGrid.appendChild(
+            button
+          );
+
+        }
+      );
 
     }
 
 
     /* ============================================================
-       FILTER DATA
+       FILTER RESULT DATA
     ============================================================ */
 
     function getFilteredItems() {
 
       const search =
-        normalize(searchInput.value);
+        normalize(
+          searchInput.value
+        );
+
 
       const profession =
-        clean(professionFilter.value);
+        clean(
+          professionFilter.value
+        );
+
 
       const category =
-        clean(categoryFilter.value);
+        clean(
+          categoryFilter.value
+        );
+
 
       const includeInactive =
         showInactive.checked;
 
 
       return itemsWithCrafters
-        .map(item => {
 
-          /*
-            Filter crafter visibility separately
-            from item visibility.
-          */
+        .map(
+          item => {
 
-          const visibleCrafters =
-            item.crafters.filter(
-              character => {
+            const visibleCrafters =
+              item.crafters.filter(
+                character => {
 
-                if (includeInactive) {
-                  return true;
+                  if (
+                    includeInactive
+                  ) {
+                    return true;
+                  }
+
+
+                  return (
+                    normalize(
+                      character.active_status
+                    ) !==
+                    "inactive"
+                  );
+
                 }
-
-                return (
-                  normalize(
-                    character.active_status
-                  ) !== "inactive"
-                );
-
-              }
-            );
-
-
-          return {
-            ...item,
-            visibleCrafters
-          };
-
-        })
-
-        .filter(item => {
-
-          if (
-            profession &&
-            item.profession !== profession
-          ) {
-            return false;
-          }
-
-
-          if (
-            category &&
-            item.category !== category
-          ) {
-            return false;
-          }
-
-
-          if (!search) {
-            return true;
-          }
-
-
-          const itemSearchText = [
-
-            item.item_name,
-            item.profession,
-            item.category,
-            item.specialization,
-            item.source_name,
-            item.source_location,
-            item.related_content
-
-          ]
-            .map(normalize)
-            .join(" ");
-
-
-          if (
-            itemSearchText.includes(search)
-          ) {
-            return true;
-          }
-
-
-          /*
-            Also allow searching by character
-            or their main toon.
-          */
-
-          return item.visibleCrafters.some(
-            character => {
-
-              const characterText = [
-
-                getCharacterName(character),
-                getMainName(character),
-                character.normalized_main_alt,
-                character.Rank,
-                character.Class
-
-              ]
-                .map(normalize)
-                .join(" ");
-
-
-              return characterText.includes(
-                search
               );
+
+
+            return {
+
+              ...item,
+
+              visibleCrafters
+
+            };
+
+          }
+        )
+
+        .filter(
+          item => {
+
+            if (
+              profession &&
+              item.profession !==
+              profession
+            ) {
+
+              return false;
 
             }
-          );
 
-        })
 
-        .sort((a, b) => {
+            if (
+              category &&
+              item.category !==
+              category
+            ) {
 
-          const professionCompare =
-            clean(a.profession)
-              .localeCompare(
-                clean(b.profession)
+              return false;
+
+            }
+
+
+            if (!search) {
+
+              return true;
+
+            }
+
+
+            const itemSearchText = [
+
+              item.item_name,
+
+              item.profession,
+
+              item.category,
+
+              item.specialization,
+
+              item.source_name,
+
+              item.source_location,
+
+              item.related_content
+
+            ]
+              .map(normalize)
+              .join(" ");
+
+
+            if (
+              itemSearchText.includes(
+                search
+              )
+            ) {
+
+              return true;
+
+            }
+
+
+            return item
+              .visibleCrafters
+              .some(
+                character => {
+
+                  const characterText = [
+
+                    getCharacterName(
+                      character
+                    ),
+
+                    getMainName(
+                      character
+                    ),
+
+                    character
+                      .normalized_main_alt,
+
+                    character.Rank,
+
+                    character.Class
+
+                  ]
+                    .map(normalize)
+                    .join(" ");
+
+
+                  return characterText
+                    .includes(
+                      search
+                    );
+
+                }
               );
 
-
-          if (professionCompare !== 0) {
-            return professionCompare;
           }
+        )
+
+        .sort(
+          (a, b) => {
+
+            const professionCompare =
+              clean(
+                a.profession
+              )
+                .localeCompare(
+                  clean(
+                    b.profession
+                  )
+                );
 
 
-          return clean(a.item_name)
-            .localeCompare(
-              clean(b.item_name)
-            );
+            if (
+              professionCompare !== 0
+            ) {
 
-        });
+              return professionCompare;
+
+            }
+
+
+            const categoryCompare =
+              clean(
+                a.category
+              )
+                .localeCompare(
+                  clean(
+                    b.category
+                  )
+                );
+
+
+            if (
+              categoryCompare !== 0
+            ) {
+
+              return categoryCompare;
+
+            }
+
+
+            return clean(
+              a.item_name
+            )
+              .localeCompare(
+                clean(
+                  b.item_name
+                )
+              );
+
+          }
+        );
 
     }
 
@@ -1575,72 +2604,94 @@
         }`;
 
 
-      if (!items.length) {
+      if (
+        !items.length
+      ) {
 
-        resultsGrid.innerHTML = `
+        resultsGrid.innerHTML =
+          `
           <div class="state-message">
             No matching recipes or crafters found.
           </div>
-        `;
+          `;
+
 
         return;
+
       }
 
 
-      resultsGrid.innerHTML = "";
+      resultsGrid.innerHTML =
+        "";
 
 
-      items.forEach(item => {
+      items.forEach(
+        item => {
 
-        const card =
-          document.createElement("article");
-
-
-        card.className =
-          "item-card";
-
-
-        const names =
-          item.visibleCrafters
-            .map(getCharacterName)
-            .sort((a, b) =>
-              a.localeCompare(b)
+          const card =
+            document.createElement(
+              "article"
             );
 
 
-        let crafterText =
-          "No active guild crafters listed";
+          card.className =
+            "item-card";
 
 
-        if (names.length) {
+          const names =
+            item.visibleCrafters
+              .map(
+                getCharacterName
+              )
+              .sort(
+                (a, b) =>
+                  a.localeCompare(b)
+              );
 
-          const preview =
-            names.slice(0, 3);
+
+          let crafterText =
+            "No active guild crafters listed";
 
 
-          crafterText =
-            preview.join(", ");
+          if (
+            names.length
+          ) {
+
+            const preview =
+              names.slice(
+                0,
+                3
+              );
 
 
-          if (names.length > 3) {
+            crafterText =
+              preview.join(", ");
 
-            crafterText +=
-              ` +${names.length - 3} more`;
+
+            if (
+              names.length > 3
+            ) {
+
+              crafterText +=
+                ` +${
+                  names.length - 3
+                } more`;
+
+            }
 
           }
 
-        }
 
-
-        card.innerHTML = `
-
-          <div class="item-card-top">
+          card.innerHTML = `
 
             <div>
 
               <h3 class="item-name">
-                ${escapeHTML(item.item_name)}
+                ${escapeHTML(
+                  item.item_name
+                )}
               </h3>
+
 
               <div class="item-meta">
 
@@ -1648,17 +2699,22 @@
                   item.profession
                     ? `
                       <span class="badge gold">
-                        ${escapeHTML(item.profession)}
+                        ${escapeHTML(
+                          item.profession
+                        )}
                       </span>
                     `
                     : ""
                 }
 
+
                 ${
                   item.category
                     ? `
                       <span class="badge">
-                        ${escapeHTML(item.category)}
+                        ${escapeHTML(
+                          item.category
+                        )}
                       </span>
                     `
                     : ""
@@ -1668,49 +2724,64 @@
 
             </div>
 
-          </div>
+
+            <div class="crafter-preview">
+
+              <strong>
+
+                ${
+                  names.length
+                    ? `
+                      ${names.length}
+                      crafter${
+                        names.length === 1
+                          ? ""
+                          : "s"
+                      }
+                    `
+                    : "No active crafters"
+                }
+
+              </strong>
+
+              <br>
+
+              ${escapeHTML(
+                crafterText
+              )}
+
+            </div>
 
 
-          <div class="crafter-preview">
+            <button
+              type="button"
+              class="view-button"
+            >
+              View Details
+            </button>
 
-            <strong>
-              ${
-                names.length
-                  ? `${names.length} crafter${names.length === 1 ? "" : "s"}`
-                  : "No active crafters"
-              }
-            </strong>
-
-            <br>
-
-            ${escapeHTML(crafterText)}
-
-          </div>
+          `;
 
 
-          <button
-            type="button"
-            class="view-button"
-          >
-            View Details
-          </button>
+          card
+            .querySelector(
+              ".view-button"
+            )
+            .addEventListener(
+              "click",
+              () =>
+                openItemDetail(
+                  item.id
+                )
+            );
 
-        `;
 
-
-        card
-          .querySelector(".view-button")
-          .addEventListener(
-            "click",
-            () => openItemDetail(item.id)
+          resultsGrid.appendChild(
+            card
           );
 
-
-        resultsGrid.appendChild(
-          card
-        );
-
-      });
+        }
+      );
 
     }
 
@@ -1719,7 +2790,9 @@
        ITEM DETAIL
     ============================================================ */
 
-    function openItemDetail(itemId) {
+    function openItemDetail(
+      itemId
+    ) {
 
       const item =
         itemsWithCrafters.find(
@@ -1744,27 +2817,35 @@
           item.profession
             ? `
               <span class="badge gold">
-                ${escapeHTML(item.profession)}
+                ${escapeHTML(
+                  item.profession
+                )}
               </span>
             `
             : ""
         }
+
 
         ${
           item.category
             ? `
               <span class="badge">
-                ${escapeHTML(item.category)}
+                ${escapeHTML(
+                  item.category
+                )}
               </span>
             `
             : ""
         }
 
+
         ${
           item.specialization
             ? `
               <span class="badge">
-                ${escapeHTML(item.specialization)}
+                ${escapeHTML(
+                  item.specialization
+                )}
               </span>
             `
             : ""
@@ -1783,18 +2864,22 @@
       );
 
 
-      detailBackdrop.classList.add(
-        "open"
-      );
+      detailBackdrop
+        .classList.add(
+          "open"
+        );
 
 
-      document.body.style.overflow =
-        "hidden";
+      document.body
+        .style.overflow =
+          "hidden";
 
     }
 
 
-    function renderCrafterList(crafters) {
+    function renderCrafterList(
+      crafters
+    ) {
 
       const includeInactive =
         showInactive.checked;
@@ -1803,122 +2888,160 @@
       const visible =
         crafters
 
-          .filter(character => {
+          .filter(
+            character => {
 
-            if (includeInactive) {
-              return true;
+              if (
+                includeInactive
+              ) {
+
+                return true;
+
+              }
+
+
+              return (
+                normalize(
+                  character.active_status
+                ) !==
+                "inactive"
+              );
+
             }
+          )
 
-            return (
-              normalize(
-                character.active_status
-              ) !== "inactive"
-            );
-
-          })
-
-          .sort((a, b) =>
-            getCharacterName(a)
-              .localeCompare(
-                getCharacterName(b)
-              )
+          .sort(
+            (a, b) =>
+              getCharacterName(a)
+                .localeCompare(
+                  getCharacterName(b)
+                )
           );
 
 
-      if (!visible.length) {
+      if (
+        !visible.length
+      ) {
 
-        crafterList.innerHTML = `
+        crafterList.innerHTML =
+          `
           <div class="state-message">
             No active guild crafters are currently listed.
           </div>
-        `;
+          `;
+
 
         return;
+
       }
 
 
       crafterList.innerHTML =
-        visible.map(character => {
+        visible.map(
+          character => {
 
-          const name =
-            getCharacterName(character);
-
-          const type =
-            clean(
-              character.normalized_main_alt
-            );
-
-          const main =
-            getMainName(character);
-
-          const status =
-            clean(
-              character.active_status
-            ) || "Unknown";
+            const name =
+              getCharacterName(
+                character
+              );
 
 
-          let subtext = "";
+            const type =
+              clean(
+                character
+                  .normalized_main_alt
+              );
 
 
-          if (
-            normalize(type) === "alt" &&
-            main &&
-            normalize(main) !== normalize(name)
-          ) {
-
-            subtext =
-              `Alt of ${main}`;
-
-          }
-
-          else if (type) {
-
-            subtext = type;
-
-          }
+            const main =
+              getMainName(
+                character
+              );
 
 
-          return `
+            const status =
+              clean(
+                character.active_status
+              ) ||
+              "Unknown";
 
-            <div class="crafter-row">
 
-              <div>
+            let subtext =
+              "";
 
-                <div class="crafter-name">
-                  ${escapeHTML(name)}
+
+            if (
+              normalize(type) ===
+                "alt" &&
+              main &&
+              normalize(main) !==
+                normalize(name)
+            ) {
+
+              subtext =
+                `Alt of ${main}`;
+
+            }
+
+            else if (
+              type
+            ) {
+
+              subtext =
+                type;
+
+            }
+
+
+            return `
+
+              <div class="crafter-row">
+
+                <div>
+
+                  <div class="crafter-name">
+                    ${escapeHTML(name)}
+                  </div>
+
+                  ${
+                    subtext
+                      ? `
+                        <div class="crafter-subtext">
+                          ${escapeHTML(
+                            subtext
+                          )}
+                        </div>
+                      `
+                      : ""
+                  }
+
                 </div>
 
-                ${
-                  subtext
-                    ? `
-                      <div class="crafter-subtext">
-                        ${escapeHTML(subtext)}
-                      </div>
-                    `
-                    : ""
-                }
+
+                <span
+                  class="
+                    status-badge
+                    ${statusClass(
+                      status
+                    )}
+                  "
+                >
+                  ${escapeHTML(status)}
+                </span>
 
               </div>
 
-              <span
-                class="
-                  status-badge
-                  ${statusClass(status)}
-                "
-              >
-                ${escapeHTML(status)}
-              </span>
+            `;
 
-            </div>
-
-          `;
-
-        }).join("");
+          }
+        ).join("");
 
     }
 
 
-    function renderRecipeDetails(item) {
+    function renderRecipeDetails(
+      item
+    ) {
 
       const details = [
 
@@ -1939,7 +3062,9 @@
 
         [
           "Reputation",
-          formatReputation(item)
+          formatReputation(
+            item
+          )
         ],
 
         [
@@ -1954,32 +3079,53 @@
 
       ].filter(
         detail =>
-          clean(detail[1])
+          clean(
+            detail[1]
+          )
       );
 
 
-      recipeDetails.innerHTML =
-        details.map(
-          ([label, value]) => `
+      if (
+        details.length
+      ) {
 
-            <div class="detail-field">
+        recipeDetails.innerHTML =
+          details.map(
+            ([label, value]) => `
 
-              <div class="detail-label">
-                ${escapeHTML(label)}
+              <div class="detail-field">
+
+                <div class="detail-label">
+                  ${escapeHTML(label)}
+                </div>
+
+                <div class="detail-value">
+                  ${escapeHTML(value)}
+                </div>
+
               </div>
 
-              <div class="detail-value">
-                ${escapeHTML(value)}
-              </div>
+            `
+          ).join("");
 
-            </div>
+      }
 
+      else {
+
+        recipeDetails.innerHTML =
           `
-        ).join("");
+          <div class="state-message">
+            No additional recipe information is listed.
+          </div>
+          `;
+
+      }
 
 
       if (
-        clean(item.source_url)
+        clean(
+          item.source_url
+        )
       ) {
 
         sourceLink.href =
@@ -2000,12 +3146,15 @@
     }
 
 
-    function formatReputation(item) {
+    function formatReputation(
+      item
+    ) {
 
       const faction =
         clean(
           item.required_reputation
         );
+
 
       const level =
         clean(
@@ -2017,67 +3166,650 @@
         faction &&
         level
       ) {
+
         return `${faction} — ${level}`;
+
       }
 
 
-      return faction || level;
+      return (
+        faction ||
+        level
+      );
 
     }
 
-
-    /* ============================================================
-       MODAL CLOSE
-    ============================================================ */
 
     function closeItemDetail() {
 
-      detailBackdrop.classList.remove(
-        "open"
-      );
+      detailBackdrop
+        .classList.remove(
+          "open"
+        );
 
-      document.body.style.overflow =
-        "";
+
+      document.body
+        .style.overflow =
+          "";
 
     }
 
 
-    closeDetail.addEventListener(
-      "click",
-      closeItemDetail
-    );
+    /* ============================================================
+       UPDATE MY CRAFTS
+    ============================================================ */
+
+    function populateCraftForm() {
+
+      setCraftMessage("");
 
 
-    detailBackdrop.addEventListener(
-      "click",
-      event => {
+      /*
+        ALL characters currently present
+        in guild_roster are allowed.
+      */
 
-        if (
-          event.target === detailBackdrop
-        ) {
-          closeItemDetail();
+      const rosterCharacters =
+        [...guildRoster]
+          .sort(
+            (a, b) =>
+              getCharacterName(a)
+                .localeCompare(
+                  getCharacterName(b)
+                )
+          );
+
+
+      craftCharacter.innerHTML =
+        `
+        <option value="">
+          Select your character...
+        </option>
+        `;
+
+
+      rosterCharacters.forEach(
+        character => {
+
+          craftCharacter
+            .insertAdjacentHTML(
+              "beforeend",
+              `
+              <option
+                value="${character.id}"
+              >
+                ${escapeHTML(
+                  getCharacterName(
+                    character
+                  )
+                )}
+              </option>
+              `
+            );
+
         }
+      );
+
+
+      const professions =
+        uniqueSorted(
+
+          rareItems.map(
+            item =>
+              item.profession
+          )
+
+        );
+
+
+      craftProfessionList.innerHTML =
+        "";
+
+
+      professions.forEach(
+        profession => {
+
+          const checkboxId =
+            `craft-prof-${profession
+              .toLowerCase()
+              .replace(
+                /[^a-z0-9]+/g,
+                "-"
+              )}`;
+
+
+          craftProfessionList
+            .insertAdjacentHTML(
+              "beforeend",
+              `
+              <label
+                class="craft-checkbox-option"
+              >
+
+                <input
+                  type="checkbox"
+                  class="craft-profession-checkbox"
+                  value="${escapeHTML(
+                    profession
+                  )}"
+                  id="${checkboxId}"
+                >
+
+                <span>
+                  ${escapeHTML(
+                    profession
+                  )}
+                </span>
+
+              </label>
+              `
+            );
+
+        }
+      );
+
+
+      craftItemList.innerHTML =
+        `
+        Select one or more professions first.
+        `;
+
+
+      document
+        .querySelectorAll(
+          ".craft-profession-checkbox"
+        )
+        .forEach(
+          checkbox => {
+
+            checkbox.addEventListener(
+              "change",
+              renderCraftItemChoices
+            );
+
+          }
+        );
+
+    }
+
+
+    function renderCraftItemChoices() {
+
+      const selectedProfessions =
+        Array.from(
+
+          document.querySelectorAll(
+            ".craft-profession-checkbox:checked"
+          )
+
+        )
+          .map(
+            checkbox =>
+              checkbox.value
+          );
+
+
+      if (
+        !selectedProfessions.length
+      ) {
+
+        craftItemList.innerHTML =
+          `
+          Select one or more professions first.
+          `;
+
+
+        return;
 
       }
-    );
 
 
-    document.addEventListener(
-      "keydown",
-      event => {
+      const matchingItems =
+        rareItems
 
-        if (
-          event.key === "Escape"
-        ) {
-          closeItemDetail();
+          .filter(
+            item =>
+              selectedProfessions
+                .includes(
+                  item.profession
+                )
+          )
+
+          .sort(
+            (a, b) => {
+
+              const professionCompare =
+                clean(
+                  a.profession
+                )
+                  .localeCompare(
+                    clean(
+                      b.profession
+                    )
+                  );
+
+
+              if (
+                professionCompare !==
+                0
+              ) {
+
+                return professionCompare;
+
+              }
+
+
+              const categoryCompare =
+                clean(
+                  a.category
+                )
+                  .localeCompare(
+                    clean(
+                      b.category
+                    )
+                  );
+
+
+              if (
+                categoryCompare !==
+                0
+              ) {
+
+                return categoryCompare;
+
+              }
+
+
+              return clean(
+                a.item_name
+              )
+                .localeCompare(
+                  clean(
+                    b.item_name
+                  )
+                );
+
+            }
+          );
+
+
+      craftItemList.innerHTML =
+        "";
+
+
+      let lastProfession =
+        "";
+
+
+      let lastCategory =
+        "";
+
+
+      matchingItems.forEach(
+        item => {
+
+          if (
+            item.profession !==
+            lastProfession
+          ) {
+
+            lastProfession =
+              item.profession;
+
+
+            lastCategory =
+              "";
+
+
+            craftItemList
+              .insertAdjacentHTML(
+                "beforeend",
+                `
+                <div
+                  class="craft-profession-title"
+                >
+                  ${escapeHTML(
+                    item.profession
+                  )}
+                </div>
+                `
+              );
+
+          }
+
+
+          if (
+            item.category !==
+            lastCategory
+          ) {
+
+            lastCategory =
+              item.category;
+
+
+            craftItemList
+              .insertAdjacentHTML(
+                "beforeend",
+                `
+                <div
+                  class="craft-category-title"
+                >
+                  ${escapeHTML(
+                    item.category ||
+                    "Other"
+                  )}
+                </div>
+                `
+              );
+
+          }
+
+
+          craftItemList
+            .insertAdjacentHTML(
+              "beforeend",
+              `
+              <label
+                class="craft-checkbox-option"
+              >
+
+                <input
+                  type="checkbox"
+                  class="craft-item-checkbox"
+                  value="${item.id}"
+                >
+
+                <span>
+                  ${escapeHTML(
+                    item.item_name
+                  )}
+                </span>
+
+              </label>
+              `
+            );
+
         }
+      );
+
+    }
+
+
+    function openCraftModal() {
+
+      populateCraftForm();
+
+
+      addCraftBackdrop
+        .classList.add(
+          "open"
+        );
+
+
+      document.body
+        .style.overflow =
+          "hidden";
+
+    }
+
+
+    function closeCraftModal() {
+
+      addCraftBackdrop
+        .classList.remove(
+          "open"
+        );
+
+
+      document.body
+        .style.overflow =
+          "";
+
+    }
+
+
+    async function saveCrafts() {
+
+      setCraftMessage("");
+
+
+      const characterId =
+        Number(
+          craftCharacter.value
+        );
+
+
+      if (
+        !characterId
+      ) {
+
+        setCraftMessage(
+          "Please select a character.",
+          "error"
+        );
+
+
+        return;
 
       }
-    );
+
+
+      /*
+        Confirm the selected character
+        exists in guild_roster.
+
+        No rank, activity status,
+        Main/Alt, or other requirement.
+      */
+
+      const character =
+        guildRoster.find(
+          entry =>
+            Number(entry.id) ===
+            characterId
+        );
+
+
+      if (
+        !character
+      ) {
+
+        setCraftMessage(
+          "Professions and crafts are tracked for Syndicate guild members only.",
+          "error"
+        );
+
+
+        return;
+
+      }
+
+
+      const selectedItemIds =
+        Array.from(
+
+          document.querySelectorAll(
+            ".craft-item-checkbox:checked"
+          )
+
+        )
+          .map(
+            checkbox =>
+              Number(
+                checkbox.value
+              )
+          );
+
+
+      if (
+        !selectedItemIds.length
+      ) {
+
+        setCraftMessage(
+          "Please select at least one recipe.",
+          "error"
+        );
+
+
+        return;
+
+      }
+
+
+      const rows =
+        selectedItemIds
+
+          .map(
+            itemId => {
+
+              const item =
+                rareItems.find(
+                  entry =>
+                    Number(entry.id) ===
+                    itemId
+                );
+
+
+              if (!item) {
+
+                return null;
+
+              }
+
+
+              return {
+
+                character_id:
+                  characterId,
+
+                item_id:
+                  itemId,
+
+                character:
+                  getCharacterName(
+                    character
+                  ),
+
+                item:
+                  item.item_name,
+
+                profession:
+                  item.profession,
+
+                category:
+                  item.category
+
+              };
+
+            }
+          )
+
+          .filter(Boolean);
+
+
+      submitCraft.disabled =
+        true;
+
+
+      submitCraft.textContent =
+        "Saving...";
+
+
+      /*
+        Uses character_id + item_id
+        as the conflict pair.
+
+        Existing entries are ignored,
+        new ones are inserted.
+      */
+
+      const {
+        error
+      } = await db
+        .from(
+          "character_items"
+        )
+        .upsert(
+          rows,
+          {
+
+            onConflict:
+              "character_id,item_id",
+
+            ignoreDuplicates:
+              true
+
+          }
+        );
+
+
+      submitCraft.disabled =
+        false;
+
+
+      submitCraft.textContent =
+        "Save Crafts";
+
+
+      if (
+        error
+      ) {
+
+        console.error(
+          "Save crafts error:",
+          error
+        );
+
+
+        setCraftMessage(
+          "Unable to save crafts. Please try again.",
+          "error"
+        );
+
+
+        return;
+
+      }
+
+
+      setCraftMessage(
+        "Crafts saved successfully.",
+        "success"
+      );
+
+
+      /*
+        Reload everything so the
+        new crafts appear immediately.
+      */
+
+      await loadData();
+
+
+      setTimeout(
+        () => {
+
+          closeCraftModal();
+
+
+          window.scrollTo({
+
+            top: 0,
+
+            behavior:
+              "smooth"
+
+          });
+
+        },
+        650
+      );
+
+    }
 
 
     /* ============================================================
-       FILTER EVENTS
+       EVENTS
     ============================================================ */
 
     searchInput.addEventListener(
@@ -2086,31 +3818,169 @@
     );
 
 
-    professionFilter.addEventListener(
-      "change",
-      () => {
+    clearSearchButton
+      .addEventListener(
+        "click",
+        () => {
 
-        selectedProfession =
-          professionFilter.value;
-
-        renderProfessionButtons();
-
-        renderResults();
-
-      }
-    );
+          searchInput.value =
+            "";
 
 
-    categoryFilter.addEventListener(
-      "change",
-      renderResults
-    );
+          professionFilter.value =
+            "";
 
 
-    showInactive.addEventListener(
-      "change",
-      renderResults
-    );
+          categoryFilter.value =
+            "";
+
+
+          selectedProfession =
+            "";
+
+
+          populateCategoryFilter();
+
+          renderProfessionButtons();
+
+          renderResults();
+
+          searchInput.focus();
+
+        }
+      );
+
+
+    professionFilter
+      .addEventListener(
+        "change",
+        () => {
+
+          selectedProfession =
+            professionFilter.value;
+
+
+          categoryFilter.value =
+            "";
+
+
+          populateCategoryFilter();
+
+          renderProfessionButtons();
+
+          renderResults();
+
+        }
+      );
+
+
+    categoryFilter
+      .addEventListener(
+        "change",
+        renderResults
+      );
+
+
+    showInactive
+      .addEventListener(
+        "change",
+        renderResults
+      );
+
+
+    /* DETAIL MODAL */
+
+    closeDetail
+      .addEventListener(
+        "click",
+        closeItemDetail
+      );
+
+
+    detailBackdrop
+      .addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target ===
+            detailBackdrop
+          ) {
+
+            closeItemDetail();
+
+          }
+
+        }
+      );
+
+
+    /* CRAFT MODAL */
+
+    addCraftButton
+      .addEventListener(
+        "click",
+        openCraftModal
+      );
+
+
+    closeAddCraft
+      .addEventListener(
+        "click",
+        closeCraftModal
+      );
+
+
+    cancelCraft
+      .addEventListener(
+        "click",
+        closeCraftModal
+      );
+
+
+    addCraftBackdrop
+      .addEventListener(
+        "click",
+        event => {
+
+          if (
+            event.target ===
+            addCraftBackdrop
+          ) {
+
+            closeCraftModal();
+
+          }
+
+        }
+      );
+
+
+    submitCraft
+      .addEventListener(
+        "click",
+        saveCrafts
+      );
+
+
+    document
+      .addEventListener(
+        "keydown",
+        event => {
+
+          if (
+            event.key ===
+            "Escape"
+          ) {
+
+            closeItemDetail();
+
+            closeCraftModal();
+
+          }
+
+        }
+      );
 
 
     /* ============================================================
