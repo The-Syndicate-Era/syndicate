@@ -348,109 +348,74 @@
     /* ==================================================
        CLICKABLE CARDS
     ================================================== */
+.resource-card {
+  min-height: 180px;
 
-    .resource-card {
-      min-height: 180px;
+  padding: 28px 24px;
 
-      padding: 28px 24px;
+  background: #11100d;
 
-      background: var(--background-card);
+  border: 1px solid var(--gold-dark);
 
-      border: 1px solid var(--gold-dark);
+  border-radius: 8px;
 
-      border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-      display: flex;
-      flex-direction: column;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+}
 
-      justify-content: space-between;
+.resource-card:hover {
+  transform: translateY(-4px);
 
-      transition:
-        transform 0.2s ease,
-        border-color 0.2s ease,
-        box-shadow 0.2s ease,
-        background 0.2s ease;
-    }
+  background: #15130d;
 
+  border-color: var(--gold);
 
-    .resource-card:nth-child(odd) {
-      background:
-        linear-gradient(
-          135deg,
-          #e0bd3c,
-          #cfa82e
-        );
+  box-shadow:
+    0 8px 18px rgba(0, 0, 0, 0.45),
+    0 0 10px rgba(217, 180, 56, 0.10);
+}
 
-      color: #100d05;
-    }
+.resource-card h2 {
+  font-family: var(--font-heading);
 
+  font-size: 19px;
+  font-weight: 400;
 
-    .resource-card:hover {
-      transform: translateY(-5px);
+  color: var(--gold);
 
-      border-color: var(--gold-light);
+  text-decoration: underline;
 
-      box-shadow:
-        0 8px 20px rgba(0,0,0,0.45),
-        0 0 12px rgba(217,180,56,0.18);
-    }
+  margin-bottom: 18px;
+}
 
+.resource-card p {
+  font-size: 13px;
 
-    .resource-card h2 {
-      font-family: var(--font-heading);
+  line-height: 1.55;
 
-      font-size: 19px;
-      font-weight: 400;
+  color: #c8bea5;
+}
 
-      color: var(--gold);
+.card-link-text {
+  margin-top: 22px;
 
-      text-decoration: underline;
+  font-family: var(--font-heading);
 
-      margin-bottom: 18px;
-    }
+  font-size: 11px;
 
+  letter-spacing: 1px;
 
-    .resource-card:nth-child(odd) h2 {
-      color: #2c2106;
-    }
+  text-transform: uppercase;
 
-
-    .resource-card p {
-      font-size: 13px;
-
-      line-height: 1.55;
-
-      color: var(--gold);
-    }
-
-
-    .resource-card:nth-child(odd) p {
-      color: #1c1607;
-    }
-
-
-    /* SMALL CLICK INDICATOR */
-
-    .card-link-text {
-      margin-top: 22px;
-
-      font-family: var(--font-heading);
-
-      font-size: 11px;
-
-      letter-spacing: 1px;
-
-      text-transform: uppercase;
-
-      color: var(--gold-light);
-    }
-
-
-    .resource-card:nth-child(odd) .card-link-text {
-      color: #4b3909;
-    }
-
-
+  color: var(--gold-dark);
+}
     /* ==================================================
        FOOTER
     ================================================== */
