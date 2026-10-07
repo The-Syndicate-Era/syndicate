@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>The Syndicate | Our Guild</title>
+  <title>The Syndicate | Meet the Team</title>
 
   <link rel="stylesheet" href="styles.css">
 
@@ -225,7 +225,7 @@
 
 
     /* =========================
-       PAGE INTRO
+       GUILD INTRO
     ========================= */
 
     .guild-intro {
@@ -233,7 +233,7 @@
 
       margin: 0 auto;
 
-      padding: 65px 30px 55px;
+      padding: 60px 30px 55px;
 
       text-align: center;
     }
@@ -254,7 +254,7 @@
     .guild-intro p {
       max-width: 760px;
 
-      margin: 0 auto 28px;
+      margin: 0 auto 30px;
 
       color: var(--text-muted);
 
@@ -288,7 +288,6 @@
       font-size: 13px;
 
       border: 2px solid #2a1a10;
-
       border-radius: 5px;
 
       box-shadow:
@@ -315,11 +314,12 @@
     }
 
     .roster-note {
-      margin-top: 18px;
-
-      font-size: 12px !important;
+      margin-top: 18px !important;
+      margin-bottom: 0 !important;
 
       color: #807763 !important;
+
+      font-size: 12px !important;
     }
 
 
@@ -339,7 +339,7 @@
 
       margin: 0 auto;
 
-      padding: 0 30px 45px;
+      padding: 0 30px 48px;
     }
 
     .section-divider::before,
@@ -361,14 +361,16 @@
       font-size: 12px;
 
       letter-spacing: 3px;
+
+      white-space: nowrap;
     }
 
 
     /* =========================
-       OFFICERS SECTION
+       MEET THE TEAM
     ========================= */
 
-    .officers-section {
+    .team-section {
       max-width: 1050px;
 
       margin: 0 auto;
@@ -376,21 +378,29 @@
       padding: 0 30px 70px;
     }
 
-    .officers-heading {
+    .team-heading {
       text-align: center;
 
-      margin-bottom: 36px;
+      margin-bottom: 38px;
     }
 
-    .officers-heading h2 {
+    .team-heading h2 {
       font-family: var(--font-heading);
 
       color: var(--gold);
 
-      font-size: 34px;
+      font-size: 36px;
       font-weight: 400;
 
       letter-spacing: 2px;
+    }
+
+    .team-heading p {
+      margin-top: 10px;
+
+      color: var(--text-muted);
+
+      font-size: 13px;
     }
 
 
@@ -399,11 +409,11 @@
     ========================= */
 
     .matriarch-card {
-      max-width: 520px;
+      max-width: 560px;
 
-      margin: 0 auto 48px;
+      margin: 0 auto 52px;
 
-      padding: 30px;
+      padding: 32px 30px 28px;
 
       text-align: center;
 
@@ -443,6 +453,29 @@
       font-weight: 400;
 
       letter-spacing: 2px;
+
+      margin-bottom: 18px;
+    }
+
+
+    /* =========================
+       QUOTES
+    ========================= */
+
+    .officer-quote {
+      padding-top: 16px;
+
+      border-top:
+        1px solid rgba(217, 180, 56, 0.20);
+
+      color: var(--text-muted);
+
+      font-family: var(--font-body);
+
+      font-size: 12px;
+      font-style: italic;
+
+      line-height: 1.55;
     }
 
 
@@ -453,7 +486,7 @@
     .council-title {
       text-align: center;
 
-      margin-bottom: 24px;
+      margin-bottom: 25px;
 
       font-family: var(--font-heading);
 
@@ -474,7 +507,7 @@
     }
 
     .officer-card {
-      min-height: 125px;
+      min-height: 165px;
 
       display: flex;
       flex-direction: column;
@@ -484,11 +517,12 @@
 
       text-align: center;
 
-      padding: 24px 18px;
+      padding: 24px 20px;
 
       background: var(--background-card);
 
-      border: 1px solid rgba(125, 101, 28, 0.7);
+      border:
+        1px solid rgba(125, 101, 28, 0.7);
 
       transition:
         border-color 0.2s ease,
@@ -524,6 +558,12 @@
       font-size: 21px;
 
       letter-spacing: 1px;
+
+      margin-bottom: 18px;
+    }
+
+    .officer-card .officer-quote {
+      width: 100%;
     }
 
 
@@ -605,6 +645,7 @@
         font-size: 28px;
       }
 
+
       .side-menu {
         width: 85%;
         max-width: 85%;
@@ -630,23 +671,38 @@
       }
 
 
-      .officers-section {
-        padding: 0 18px 55px;
+      .section-divider {
+        padding:
+          0 20px 38px;
       }
 
-      .officers-heading h2 {
-        font-size: 28px;
+      .section-divider span {
+        font-size: 10px;
+
+        letter-spacing: 2px;
       }
+
+
+      .team-section {
+        padding:
+          0 18px 55px;
+      }
+
+      .team-heading h2 {
+        font-size: 29px;
+      }
+
 
       .matriarch-card {
-        margin-bottom: 38px;
+        margin-bottom: 40px;
 
-        padding: 26px 20px;
+        padding: 28px 20px;
       }
 
       .matriarch-card h3 {
         font-size: 26px;
       }
+
 
       .council-grid {
         grid-template-columns: 1fr;
@@ -655,7 +711,7 @@
       }
 
       .officer-card {
-        min-height: 105px;
+        min-height: 145px;
       }
 
 
@@ -680,7 +736,9 @@
 <body>
 
 
-  <!-- HEADER -->
+  <!-- =========================
+       HEADER
+  ========================= -->
 
   <header class="site-header">
 
@@ -712,7 +770,9 @@
 
 
 
-  <!-- SLIDE-OUT MENU -->
+  <!-- =========================
+       SLIDE-OUT MENU
+  ========================= -->
 
   <div
     class="menu-overlay"
@@ -747,15 +807,25 @@
 
     <nav class="side-menu-links">
 
-      <a href="index.html">HOME</a>
+      <a href="index.html">
+        HOME
+      </a>
 
-      <a href="guild.html">OUR GUILD</a>
+      <a href="guild.html">
+        OUR GUILD
+      </a>
 
-      <a href="calendar.html">CALENDAR</a>
+      <a href="calendar.html">
+        CALENDAR
+      </a>
 
-      <a href="raids.html">RAID HUB</a>
+      <a href="raids.html">
+        RAID HUB
+      </a>
 
-      <a href="resources.html">RESOURCES</a>
+      <a href="resources.html">
+        RESOURCES
+      </a>
 
     </nav>
 
@@ -768,12 +838,14 @@
 
 
 
-  <!-- GUILD INTRO -->
+  <!-- =========================
+       GUILD INTRO / ROSTER
+  ========================= -->
 
   <section class="guild-intro">
 
     <h1>
-      OUR GUILD
+      THE SYNDICATE
     </h1>
 
 
@@ -806,28 +878,37 @@
 
 
 
-  <!-- DIVIDER -->
+  <!-- =========================
+       TEAM DIVIDER
+  ========================= -->
 
   <div class="section-divider">
 
     <span>
-      ◆ LEADERSHIP ◆
+      ◆ MEET THE TEAM ◆
     </span>
 
   </div>
 
 
 
-  <!-- OFFICERS -->
+  <!-- =========================
+       OFFICERS
+  ========================= -->
 
-  <section class="officers-section">
+  <section class="team-section">
 
 
-    <div class="officers-heading">
+    <div class="team-heading">
 
       <h2>
-        MEET THE OFFICERS
+        MEET THE TEAM
       </h2>
+
+      <p>
+        The officers helping keep The Syndicate organized,
+        moving forward, and only moderately chaotic.
+      </p>
 
     </div>
 
@@ -845,6 +926,10 @@
         FARED
       </h3>
 
+      <div class="officer-quote">
+        "Officer-quote-here"
+      </div>
+
     </div>
 
 
@@ -859,57 +944,182 @@
     <div class="council-grid">
 
 
+      <!-- YOSHI -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">YOSHI</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          YOSHI
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- BELLE -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">BELLE</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          BELLE
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- RILDILIAN -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">RILDILIAN</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          RILDILIAN
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- TANKBOT -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">TANKBOT</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          TANKBOT
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- ROACHEE -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">ROACHEE</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          ROACHEE
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- JOE -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">JOE</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          JOE
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- KAERIXI -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">KAERIXI</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          KAERIXI
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- BEREAVEMENT -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">BEREAVEMENT</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          BEREAVEMENT
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
+
+      <!-- GRAWL -->
+
       <div class="officer-card">
-        <span class="officer-rank">DARK COUNCIL</span>
-        <span class="officer-name">GRAWL</span>
+
+        <span class="officer-rank">
+          DARK COUNCIL
+        </span>
+
+        <span class="officer-name">
+          GRAWL
+        </span>
+
+        <div class="officer-quote">
+          "Officer-quote-here"
+        </div>
+
       </div>
 
 
@@ -919,7 +1129,9 @@
 
 
 
-  <!-- FOOTER DIVIDER -->
+  <!-- =========================
+       FOOTER DIVIDER
+  ========================= -->
 
   <section class="divider-section">
 
@@ -935,7 +1147,9 @@
 
 
 
-  <!-- FOOTER -->
+  <!-- =========================
+       FOOTER
+  ========================= -->
 
   <footer class="site-footer">
 
@@ -952,7 +1166,9 @@
 
 
 
-  <!-- MENU SCRIPT -->
+  <!-- =========================
+       MENU SCRIPT
+  ========================= -->
 
   <script>
 
