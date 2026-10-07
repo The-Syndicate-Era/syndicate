@@ -1,0 +1,2581 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Reputations | The Syndicate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <style>
+
+    :root {
+      --background: #080806;
+      --background-dark: #050504;
+      --panel: #11100d;
+      --panel-hover: #16140f;
+
+      --gold: #d9b438;
+      --gold-dark: #6c5520;
+      --gold-soft: #b89a42;
+
+      --text: #d8d2c4;
+      --text-muted: #a79e8d;
+
+      --red-top: #b51414;
+      --red-mid: #8f0909;
+      --red-bottom: #650505;
+
+      --missing: #e07b5f;
+
+      --font-heading: "Cinzel", serif;
+      --font-body: "Montserrat", Arial, sans-serif;
+
+      /* Classic class colors */
+
+      --warrior: #c79c6e;
+      --mage: #69ccf0;
+      --rogue: #fff569;
+      --priest: #ffffff;
+      --warlock: #9482c9;
+      --hunter: #abd473;
+      --shaman: #0070de;
+      --druid: #ff7d0a;
+      --paladin: #f58cba;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(
+          circle at top,
+          rgba(217,180,56,.04),
+          transparent 30%
+        ),
+        var(--background);
+
+      color: var(--text);
+
+      font-family: var(--font-body);
+
+      min-height: 100vh;
+    }
+
+
+    /* ==============================
+       HEADER
+       ============================== */
+
+    .site-header {
+      height: 70px;
+
+      background: var(--background-dark);
+
+      border-bottom: 1px solid var(--gold-dark);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 30px;
+
+      position: relative;
+      z-index: 100;
+    }
+
+    .logo-area img {
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+
+      color: var(--gold);
+
+      font-size: 30px;
+
+      cursor: pointer;
+    }
+
+
+    /* ==============================
+       SIDE MENU
+       ============================== */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(0,0,0,.7);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition: .25s ease;
+
+      z-index: 999;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+
+      top: 0;
+      right: -440px;
+
+      width: 420px;
+      max-width: 48vw;
+      height: 100vh;
+
+      background: #0b0a08;
+
+      border-left: 1px solid var(--gold-dark);
+
+      padding: 38px 34px;
+
+      transition: right .3s ease;
+
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .close-menu {
+      align-self: flex-end;
+
+      background: none;
+      border: none;
+
+      color: var(--gold);
+
+      font-size: 34px;
+
+      cursor: pointer;
+
+      margin-bottom: 20px;
+    }
+
+    .side-menu-logo {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .side-menu-logo img {
+      width: 180px;
+      max-width: 100%;
+    }
+
+    .side-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-menu-links a {
+      color: var(--gold);
+
+      text-decoration: none;
+
+      font-family: var(--font-heading);
+
+      letter-spacing: 1px;
+
+      font-size: 18px;
+
+      padding: 13px 4px;
+
+      border-bottom:
+        1px solid rgba(108,85,32,.55);
+    }
+
+    .side-menu-links a:hover {
+      color: #f2d565;
+    }
+
+    .side-menu-motto {
+      margin-top: auto;
+
+      text-align: center;
+
+      color: var(--gold-dark);
+
+      font-family: var(--font-heading);
+
+      font-size: 13px;
+
+      letter-spacing: 2px;
+
+      padding-top: 25px;
+    }
+
+
+    /* ==============================
+       HERO
+       ============================== */
+
+    .page-hero {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 55px 40px 42px;
+
+      display: grid;
+
+      grid-template-columns:
+        .9fr 1.1fr;
+
+      gap: 45px;
+
+      align-items: center;
+    }
+
+    .hero-image {
+      height: 285px;
+
+      padding: 10px;
+
+      background: #0c0b09;
+
+      border:
+        1px solid var(--gold-dark);
+
+      box-shadow:
+        0 14px 35px rgba(0,0,0,.45);
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+
+      display: block;
+
+      object-fit: cover;
+    }
+
+    .hero-copy h1 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size:
+        clamp(40px,5vw,62px);
+
+      font-weight: 400;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 16px;
+    }
+
+    .hero-divider {
+      width: 110px;
+      height: 1px;
+
+      background: var(--gold-dark);
+
+      margin-bottom: 20px;
+    }
+
+    .hero-copy p {
+      color: var(--text);
+
+      font-size: 15px;
+      line-height: 1.8;
+
+      max-width: 640px;
+    }
+
+
+    /* ==============================
+       MAIN
+       ============================== */
+
+    .reputation-section {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 10px 40px 80px;
+    }
+
+    .section-heading {
+      text-align: center;
+
+      margin-bottom: 28px;
+    }
+
+    .section-heading h2 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size: 32px;
+
+      font-weight: 400;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 10px;
+    }
+
+    .section-heading p {
+      color: var(--text-muted);
+
+      font-size: 14px;
+
+      line-height: 1.7;
+    }
+
+
+    /* ==============================
+       FILTERS
+       ============================== */
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+
+      justify-content: center;
+
+      gap: 10px;
+
+      margin-bottom: 30px;
+    }
+
+    .filter-button {
+      padding: 10px 16px;
+
+      background: #0d0c09;
+
+      border:
+        1px solid var(--gold-dark);
+
+      color: var(--gold-soft);
+
+      font-family: var(--font-heading);
+
+      font-size: 11px;
+
+      letter-spacing: 1px;
+
+      cursor: pointer;
+
+      transition:
+        background .2s,
+        border-color .2s,
+        color .2s;
+    }
+
+    .filter-button:hover,
+    .filter-button.active {
+      background: #1a160d;
+
+      border-color: var(--gold);
+
+      color: var(--gold);
+    }
+
+
+    /* ==============================
+       REP DIRECTORY
+       ============================== */
+
+    .reputation-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(3,1fr);
+
+      gap: 14px;
+
+      margin-bottom: 45px;
+    }
+
+    .rep-card {
+      min-height: 125px;
+
+      padding: 20px;
+
+      background: var(--panel);
+
+      border:
+        1px solid #41361d;
+
+      cursor: pointer;
+
+      display: flex;
+      flex-direction: column;
+
+      justify-content:
+        space-between;
+
+      transition:
+        transform .2s,
+        background .2s,
+        border-color .2s;
+    }
+
+    .rep-card:hover {
+      transform:
+        translateY(-2px);
+
+      background:
+        var(--panel-hover);
+
+      border-color:
+        var(--gold-dark);
+    }
+
+    .rep-card.selected {
+      border-color:
+        var(--gold);
+
+      box-shadow:
+        inset 0 0 0 1px
+        rgba(217,180,56,.16);
+    }
+
+    .rep-card h3 {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 17px;
+
+      font-weight: 500;
+
+      line-height: 1.25;
+
+      margin-bottom: 15px;
+    }
+
+    .quick-tags {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 6px;
+    }
+
+    .tag {
+      display: inline-block;
+
+      padding: 4px 8px;
+
+      background: #090806;
+
+      border:
+        1px solid var(--gold-dark);
+
+      color: var(--gold-soft);
+
+      font-size: 9px;
+
+      letter-spacing: .7px;
+
+      text-transform: uppercase;
+    }
+
+    .tag.raid {
+      border-color: #743432;
+      color: #d77870;
+    }
+
+    .tag.crafting {
+      border-color: #716129;
+      color: #d9b438;
+    }
+
+    .tag.progression {
+      border-color: #a26c24;
+      color: #e7b34d;
+    }
+
+    .tag.specialty {
+      border-color: #4d5567;
+      color: #a9b4c9;
+    }
+
+
+    /* ==============================
+       DETAIL AREA
+       ============================== */
+
+    .rep-detail {
+      background: #0e0d0a;
+
+      border:
+        1px solid var(--gold-dark);
+
+      box-shadow:
+        0 15px 35px
+        rgba(0,0,0,.35);
+    }
+
+    .detail-header {
+      padding: 28px 30px;
+
+      border-bottom:
+        1px solid #44391f;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(217,180,56,.08),
+          transparent 45%
+        );
+    }
+
+    .detail-header h2 {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 30px;
+
+      font-weight: 400;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 12px;
+    }
+
+    .detail-body {
+      padding: 30px;
+
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 22px;
+    }
+
+    .detail-block {
+      padding: 22px;
+
+      background: #12110e;
+
+      border:
+        1px solid #332c1b;
+    }
+
+    .detail-block.full {
+      grid-column:
+        1 / -1;
+    }
+
+    .detail-block h3 {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 16px;
+
+      font-weight: 500;
+
+      margin-bottom: 15px;
+    }
+
+    .detail-block p {
+      color: #cbc4b5;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+    }
+
+    .detail-block ul {
+      padding-left: 20px;
+    }
+
+    .detail-block li {
+      color: #cbc4b5;
+
+      font-size: 13px;
+
+      line-height: 1.7;
+
+      margin-bottom: 7px;
+    }
+
+
+    /* ==============================
+       CLASS TAGS
+       ============================== */
+
+    .class-tags {
+      display: flex;
+
+      flex-wrap: wrap;
+
+      gap: 7px;
+
+      margin-top: 12px;
+    }
+
+    .class-tag {
+      padding: 5px 9px;
+
+      background: #090806;
+
+      border: 1px solid currentColor;
+
+      font-size: 9px;
+
+      font-weight: 600;
+
+      letter-spacing: .7px;
+
+      text-transform: uppercase;
+    }
+
+    .warrior {
+      color: var(--warrior);
+    }
+
+    .mage {
+      color: var(--mage);
+    }
+
+    .rogue {
+      color: var(--rogue);
+    }
+
+    .priest {
+      color: var(--priest);
+    }
+
+    .warlock {
+      color: var(--warlock);
+    }
+
+    .hunter {
+      color: var(--hunter);
+    }
+
+    .shaman {
+      color: var(--shaman);
+    }
+
+    .druid {
+      color: var(--druid);
+    }
+
+
+    /* ==============================
+       REP BREAKPOINTS
+       ============================== */
+
+    .rep-levels {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap: 9px;
+    }
+
+    .rep-level {
+      padding: 12px;
+
+      background: #090806;
+
+      border:
+        1px solid #3c331f;
+    }
+
+    .rep-level strong {
+      display: block;
+
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 11px;
+
+      margin-bottom: 6px;
+    }
+
+    .rep-level span {
+      color: var(--text-muted);
+
+      font-size: 11px;
+
+      line-height: 1.45;
+    }
+
+
+    /* ==============================
+       MISSING INFO
+       ============================== */
+
+    .missing-info {
+      color: var(--missing) !important;
+
+      font-weight: 600;
+    }
+
+
+    /* ==============================
+       SOURCE NOTE
+       ============================== */
+
+    .source-note {
+      margin-top: 24px;
+
+      padding: 15px 18px;
+
+      border-left:
+        2px solid var(--gold-dark);
+
+      background: #0b0a08;
+
+      color: var(--text-muted);
+
+      font-size: 11px;
+
+      line-height: 1.6;
+    }
+
+
+    /* ==============================
+       FOOTER
+       ============================== */
+
+    .site-footer {
+      border-top:
+        1px solid var(--gold-dark);
+
+      text-align: center;
+
+      padding: 45px 20px;
+
+      background: #060605;
+    }
+
+    .footer-motto {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 14px;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 20px;
+    }
+
+    .site-footer img {
+      width: 145px;
+
+      max-width: 70%;
+
+      opacity: .85;
+    }
+
+
+    /* ==============================
+       TABLET
+       ============================== */
+
+    @media(max-width: 950px) {
+
+      .page-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .reputation-grid {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .detail-body {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-block.full {
+        grid-column: auto;
+      }
+
+    }
+
+
+    /* ==============================
+       MOBILE
+       ============================== */
+
+    @media(max-width: 650px) {
+
+      .site-header {
+        padding: 0 18px;
+      }
+
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
+
+        padding:
+          28px 24px;
+      }
+
+      .page-hero {
+        padding:
+          38px 20px 30px;
+      }
+
+      .hero-image {
+        height: 220px;
+      }
+
+      .reputation-section {
+        padding:
+          10px 20px 60px;
+      }
+
+      .reputation-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .rep-levels {
+        grid-template-columns:
+          1fr 1fr;
+      }
+
+      .detail-header,
+      .detail-body {
+        padding: 20px;
+      }
+
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <a
+      class="logo-area"
+      href="index.html">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate">
+
+    </a>
+
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false">
+
+      ☰
+
+    </button>
+
+  </header>
+
+
+  <!-- SIDE MENU -->
+
+  <div
+    class="menu-overlay"
+    id="menuOverlay">
+  </div>
+
+
+  <aside
+    class="side-menu"
+    id="sideMenu">
+
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu">
+
+      ×
+
+    </button>
+
+
+    <div class="side-menu-logo">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate">
+
+    </div>
+
+
+    <nav class="side-menu-links">
+
+      <a href="index.html">
+        HOME
+      </a>
+
+      <a href="guild.html">
+        THE SYNDICATE
+      </a>
+
+      <a href="calendar.html">
+        CALENDAR
+      </a>
+
+      <a href="raids.html">
+        RAID HUB
+      </a>
+
+      <a href="resources.html">
+        RESOURCES
+      </a>
+
+    </nav>
+
+
+    <div class="side-menu-motto">
+
+      ◆ THIS IS THE WAY. ◆
+
+    </div>
+
+  </aside>
+
+
+  <main>
+
+
+    <!-- HERO -->
+
+    <section class="page-hero">
+
+      <div class="hero-image">
+
+        <!-- Change filename when reputation artwork is ready -->
+
+        <img
+          src="images/Reputations.png"
+          alt="Classic reputation resources">
+
+      </div>
+
+
+      <div class="hero-copy">
+
+        <h1>
+          REPUTATIONS
+        </h1>
+
+        <div class="hero-divider"></div>
+
+        <p>
+          Reputation in Classic can unlock raid progression,
+          gear, enchants, profession recipes, resistance gear,
+          consumables, and other useful rewards. Select a faction
+          below to see why it matters and the best ways to build
+          reputation with it.
+        </p>
+
+      </div>
+
+    </section>
+
+
+
+    <!-- REPUTATION DIRECTORY -->
+
+    <section class="reputation-section">
+
+
+      <div class="section-heading">
+
+        <h2>
+          FACTION DIRECTORY
+        </h2>
+
+        <p>
+          Choose a reputation to view its rewards,
+          turn-ins, progression uses, and crafting unlocks.
+        </p>
+
+      </div>
+
+
+      <div class="filter-bar">
+
+        <button
+          class="filter-button active"
+          data-filter="all">
+          ALL
+        </button>
+
+        <button
+          class="filter-button"
+          data-filter="progression">
+          RAID & PROGRESSION
+        </button>
+
+        <button
+          class="filter-button"
+          data-filter="crafting">
+          CRAFTING
+        </button>
+
+        <button
+          class="filter-button"
+          data-filter="specialty">
+          SPECIALTY
+        </button>
+
+      </div>
+
+
+      <div
+        class="reputation-grid"
+        id="reputationGrid">
+      </div>
+
+
+      <!-- DETAIL PANEL -->
+
+      <div
+        class="rep-detail"
+        id="repDetail">
+
+
+        <div class="detail-header">
+
+          <h2 id="detailName">
+            SELECT A REPUTATION
+          </h2>
+
+          <div
+            class="quick-tags"
+            id="detailTags">
+          </div>
+
+        </div>
+
+
+        <div class="detail-body">
+
+
+          <div class="detail-block">
+
+            <h3>
+              WHY THIS REP MATTERS
+            </h3>
+
+            <p id="detailWhy"></p>
+
+          </div>
+
+
+
+          <div class="detail-block">
+
+            <h3>
+              WHO BENEFITS MOST
+            </h3>
+
+            <p id="detailBenefit"></p>
+
+            <div
+              class="class-tags"
+              id="classTags">
+            </div>
+
+          </div>
+
+
+
+          <div class="detail-block">
+
+            <h3>
+              WAYS TO GAIN REPUTATION
+            </h3>
+
+            <ul id="gainList"></ul>
+
+          </div>
+
+
+
+          <div class="detail-block">
+
+            <h3>
+              IMPORTANT TURN-INS
+            </h3>
+
+            <ul id="turninList"></ul>
+
+          </div>
+
+
+
+          <div class="detail-block full">
+
+            <h3>
+              PROFESSION & CRAFTING UNLOCKS
+            </h3>
+
+            <ul id="professionList"></ul>
+
+          </div>
+
+
+
+          <div class="detail-block full">
+
+            <h3>
+              IMPORTANT REPUTATION BREAKPOINTS
+            </h3>
+
+            <div
+              class="rep-levels"
+              id="repLevels">
+            </div>
+
+          </div>
+
+
+
+          <div class="detail-block full">
+
+            <h3>
+              NOTABLE REWARDS & NOTES
+            </h3>
+
+            <ul id="rewardList"></ul>
+
+          </div>
+
+
+        </div>
+
+      </div>
+
+
+      <div class="source-note">
+
+        Reputation information is based primarily on
+        Classic Era reputation reference material.
+        Sections marked MISSING-INFO still require
+        additional verification before publication.
+
+      </div>
+
+
+    </section>
+
+  </main>
+
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="footer-motto">
+
+      ◆ THIS IS THE WAY. ◆
+
+    </div>
+
+    <img
+      src="images/HeaderLogo.png"
+      alt="The Syndicate">
+
+  </footer>
+
+
+
+  <script>
+
+
+    /* =========================================================
+       REPUTATION DATA
+       ========================================================= */
+
+
+    const reputations = [
+
+
+      /* =============================
+         ARGENT DAWN
+         ============================= */
+
+      {
+        name: "Argent Dawn",
+
+        category: [
+          "progression",
+          "crafting"
+        ],
+
+        tags: [
+          "NAXX ATTUNEMENT",
+          "SCHOLO",
+          "STRATHOLME",
+          "CRAFTING"
+        ],
+
+        why:
+          "An important endgame reputation tied to the Plaguelands, Scholomance, Stratholme, profession rewards, resistance rewards, and access to Naxxramas.",
+
+        benefit:
+          "Every player planning to raid Naxxramas benefits from Argent Dawn reputation. Specific class-priority rewards still need to be documented.",
+
+        classes: [],
+
+        gain: [
+          "Kill undead enemies in Western and Eastern Plaguelands.",
+          "Kill elite undead in the Plaguelands, Scholomance, and Stratholme.",
+          "Kill undead dungeon bosses.",
+          "Collect and turn in Scourgestones while using an appropriate Argent Dawn trinket.",
+          "Complete Argent Dawn quests in the Plaguelands."
+        ],
+
+        turnins: [
+          "Minion's Scourgestones",
+          "Invader's Scourgestones",
+          "Corruptor's Scourgestones",
+          "Additional late-game turn-ins: MISSING-INFO"
+        ],
+
+        professions: [
+          "Honored — Recipe: Transmute Air to Fire",
+          "Honored — Formula: Enchant Bracer - Mana Regeneration",
+          "Honored — Argent Dawn tailoring, leatherworking, and blacksmithing patterns",
+          "Revered — Formula: Enchant Bracer - Healing",
+          "Revered / Exalted — Naxxramas frost-resistance crafting patterns from Master Craftsman Omarion",
+          "Exact profession-by-profession Naxx recipe breakdown: MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "Enriched Manna Biscuit and early faction access.",
+
+          honored:
+            "Profession recipes and additional rewards.",
+
+          revered:
+            "Advanced rewards, enchants, and important Naxx-related crafting access.",
+
+          exalted:
+            "Highest reward tier. Naxxramas attunement becomes free."
+        },
+
+        rewards: [
+          "Naxxramas attunement cost decreases as Argent Dawn reputation increases.",
+          "Resistance shoulder enchants are available at higher standings.",
+          "Master Craftsman Omarion provides Naxxramas frost-resistance crafting patterns.",
+          "Specific class reward priorities: MISSING-INFO"
+        ]
+      },
+
+
+
+      /* =============================
+         BROOD OF NOZDORMU
+         ============================= */
+
+      {
+        name:
+          "Brood of Nozdormu",
+
+        category: [
+          "progression"
+        ],
+
+        tags: [
+          "AQ40",
+          "TIER 2.5",
+          "RINGS",
+          "RAID"
+        ],
+
+        why:
+          "This is the primary AQ40 reputation. It controls access to Tier 2.5 armor quests and the Bronze Dragonflight ring progression.",
+
+        benefit:
+          "Every AQ40 raider benefits. Ring paths support tanks, physical damage dealers, magical damage dealers, and healers.",
+
+        classes: [
+          "warrior",
+          "mage",
+          "rogue",
+          "priest",
+          "warlock",
+          "hunter",
+          "shaman",
+          "druid"
+        ],
+
+        gain: [
+          "AQ20 bosses provide small amounts of Brood reputation.",
+          "AQ40 trash provides major reputation gains until the end of Neutral.",
+          "AQ40 bosses provide reputation.",
+          "Qiraji Lord's Insignias can be turned in for reputation.",
+          "Ancient Qiraji Artifacts can be turned in for reputation.",
+          "Silithid Carapace Fragment turn-ins are available through the AQ opening quest chain."
+        ],
+
+        turnins: [
+          "Qiraji Lord's Insignia — save these until AQ40 trash stops awarding normal reputation near the end of Neutral.",
+          "Ancient Qiraji Artifact — also valuable to save until the end of Neutral.",
+          "Silithid Carapace Fragments through The Hand of the Righteous."
+        ],
+
+        professions: [
+          "No standard profession vendor is listed for this faction.",
+          "Profession-specific benefits: MISSING-INFO"
+        ],
+
+        levels: {
+          neutral:
+            "Shoulders and Boots for Tier 2.5 become available. First Bronze Dragonflight ring.",
+
+          friendly:
+            "Helm and Legs for Tier 2.5 become available. Ring upgrade.",
+
+          honored:
+            "Tier 2.5 Chest becomes available. Ring upgrade.",
+
+          revered:
+            "Further Bronze Dragonflight ring upgrade.",
+
+          exalted:
+            "Final Bronze Dragonflight ring upgrade."
+        },
+
+        rewards: [
+          "Tier 2.5 armor quests.",
+          "Bronze Dragonflight ring progression.",
+          "Three ring paths: Protector, Conqueror, and Invoker."
+        ]
+      },
+
+
+
+      /* =============================
+         CENARION CIRCLE
+         ============================= */
+
+      {
+        name:
+          "Cenarion Circle",
+
+        category: [
+          "progression",
+          "crafting"
+        ],
+
+        tags: [
+          "AQ20",
+          "AQ40",
+          "CRAFTING",
+          "GEAR"
+        ],
+
+        why:
+          "A major Silithus and Ahn'Qiraj reputation with raid gear, Field Duty rewards, resistance gear, enchants, and profession recipes.",
+
+        benefit:
+          "Caster DPS can gain especially valuable rewards through the Field Duty gear chains. Additional class-specific reward priorities still need to be documented.",
+
+        classes: [
+          "mage",
+          "warlock"
+        ],
+
+        gain: [
+          "Kill Twilight Cultists in Silithus.",
+          "Complete Silithus quests.",
+          "Complete repeatable Field Duty assignments.",
+          "Turn in Encrypted Twilight Texts.",
+          "Turn in Cenarion Combat, Logistics, and Tactical badges.",
+          "Complete Abyssal summon activities.",
+          "Kill trash and bosses in AQ20.",
+          "AQ40 boss-related turn-ins also provide some Cenarion Circle reputation."
+        ],
+
+        turnins: [
+          "Encrypted Twilight Text — 10 per turn-in.",
+          "Cenarion Combat Badge",
+          "Cenarion Logistics Badge",
+          "Cenarion Tactical Badge",
+          "Abyssal Crests",
+          "Qiraji Lord's Insignias also provide some Cenarion Circle reputation."
+        ],
+
+        professions: [
+          "Friendly — Bramblewood Belt, Sandstalker Bracers, Spitfire Bracers, Sylvan Shoulders, Heavy Obsidian Belt, Ironvine Belt.",
+          "Friendly — Enchant Cloak - Greater Fire Resistance.",
+          "Honored — Bramblewood Boots, Sandstalker Gauntlets, Spitfire Gauntlets, Sylvan Crown, Ironvine Gloves, Light Obsidian Belt.",
+          "Honored — Enchant Cloak - Greater Nature Resistance.",
+          "Revered — Bramblewood Helm, Gaea's Embrace, Sandstalker Breastplate, Satchel of Cenarius, Spitfire Breastplate, Sylvan Vest, Ironvine Breastplate.",
+          "Exalted — Dreamscale Breastplate and Obsidian Mail Tunic.",
+          "Profession labels for every individual recipe: MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "Early crafting rewards and Volunteer's Battlegear.",
+
+          honored:
+            "Additional recipes and Veteran's Battlegear.",
+
+          revered:
+            "Major crafting unlocks and Stalwart's Battlegear.",
+
+          exalted:
+            "Highest crafting rewards and Champion's Battlegear."
+        },
+
+        rewards: [
+          "AQ20 class set quests require increasing reputation levels.",
+          "Field Duty reward chains unlock additional gear.",
+          "Rockfury Bracers are an important caster reward from the Field Duty progression.",
+          "Full class/spec recommendation list: MISSING-INFO"
+        ]
+      },
+
+
+
+      /* =============================
+         HYDRAXIAN WATERLORDS
+         ============================= */
+
+      {
+        name:
+          "Hydraxian Waterlords",
+
+        category: [
+          "progression"
+        ],
+
+        tags: [
+          "MOLTEN CORE",
+          "RAID",
+          "QUINTESSENCE"
+        ],
+
+        why:
+          "Hydraxian Waterlords reputation is closely tied to Molten Core progression and the ability to douse the runes required to reach Majordomo Executus and Ragnaros.",
+
+        benefit:
+          "Most useful to Molten Core raiders, especially players responsible for carrying Quintessences.",
+
+        classes: [],
+
+        gain: [
+          "Kill Desert Rumblers, Dust Stormers, and Greater Obsidian Elementals.",
+          "Kill Lord Incendius, Huricanian, and Pyroguard Emberseer.",
+          "Kill Molten Core trash such as Molten Giants, Ancient Core Hounds, Lava Surgers, and Firelords.",
+          "Molten Core bosses continue providing reputation at higher standings."
+        ],
+
+        turnins: [
+          "Primary progression is through quests and kills rather than repeatable item turn-ins.",
+          "Additional item turn-ins: MISSING-INFO"
+        ],
+
+        professions: [
+          "No significant profession recipe rewards listed in the source.",
+          "MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "Additional Hydraxian quest progression.",
+
+          honored:
+            "Continued access to Molten Core-related progression.",
+
+          revered:
+            "Eternal Quintessence becomes available.",
+
+          exalted:
+            "Prestige / completion reputation."
+        },
+
+        rewards: [
+          "Aqual Quintessence is used to douse Molten Core runes.",
+          "At Revered, Eternal Quintessence eliminates the need to return for a new Quintessence each week."
+        ]
+      },
+
+
+
+      /* =============================
+         THORIUM BROTHERHOOD
+         ============================= */
+
+      {
+        name:
+          "Thorium Brotherhood",
+
+        category: [
+          "crafting",
+          "progression"
+        ],
+
+        tags: [
+          "CRAFTING",
+          "MC",
+          "BWL",
+          "FIRE RESIST"
+        ],
+
+        why:
+          "One of Classic's most important crafting reputations. Rewards include high-end Blacksmithing, Leatherworking, Tailoring, Alchemy, and Enchanting recipes.",
+
+        benefit:
+          "Guild crafters benefit heavily, especially players creating fire-resistance and raid gear.",
+
+        classes: [],
+
+        gain: [
+          "Complete quests in Thorium Point.",
+          "Complete related quests in Winterspring and Blackrock Depths.",
+          "Use repeatable material turn-ins.",
+          "At higher reputation, turn in materials obtained from Molten Core to Lokhtos Darkbargainer."
+        ],
+
+        turnins: [
+          "Thorium Bars",
+          "Heavy Leather",
+          "Dark Iron Residue",
+          "Kingsblood",
+          "Dark Iron Ore",
+          "Core Leather",
+          "Fiery Core",
+          "Lava Core",
+          "Blood of the Mountain"
+        ],
+
+        professions: [
+          "Friendly — Enchant Weapon - Strength.",
+          "Friendly — Dark Iron Bracers, Corehound Boots, Molten Helm, Flarecore Gloves.",
+          "Friendly — Transmute Elemental Fire.",
+          "Honored — Flarecore Mantle, Flarecore Robe, Black Dragonscale Boots, Lava Belt, Dark Iron recipes and Mighty Spirit.",
+          "Revered — Flarecore Leggings, Corehound Belt, Chromatic Gauntlets, Dark Iron Leggings/Gauntlets and Mighty Intellect.",
+          "Exalted — Blackguard, Nightfall, Ebon Hand and Dark Iron Boots."
+        ],
+
+        levels: {
+          friendly:
+            "First major crafting recipe tier.",
+
+          honored:
+            "More raid and resistance crafting recipes.",
+
+          revered:
+            "High-end crafting rewards.",
+
+          exalted:
+            "Top-tier plans including Nightfall."
+        },
+
+        rewards: [
+          "Especially important for guild crafters.",
+          "Many recipes support Molten Core and Blackwing Lair progression."
+        ]
+      },
+
+
+
+      /* =============================
+         ZANDALAR TRIBE
+         ============================= */
+
+      {
+        name:
+          "Zandalar Tribe",
+
+        category: [
+          "progression",
+          "crafting"
+        ],
+
+        tags: [
+          "ZG",
+          "ENCHANTS",
+          "CRAFTING",
+          "CLASS REWARDS"
+        ],
+
+        why:
+          "The Zul'Gurub reputation. It provides profession recipes, class rewards, consumables, and some of Classic's important head, leg, and shoulder enchants.",
+
+        benefit:
+          "Useful to nearly every raider. Specific class enchant and gear recommendations still need to be mapped.",
+
+        classes: [
+          "warrior",
+          "mage",
+          "rogue",
+          "priest",
+          "warlock",
+          "hunter",
+          "shaman",
+          "druid"
+        ],
+
+        gain: [
+          "Kill trash and bosses in Zul'Gurub.",
+          "Complete Zandalar quests.",
+          "Destroy Bijous at the Altar of Zanza.",
+          "Use Zandalar Honor Tokens.",
+          "Complete repeatable quests from Yojamba Isle."
+        ],
+
+        turnins: [
+          "Bijous — destroying one grants reputation and a Zandalar Honor Token.",
+          "Zandalar Honor Tokens provide additional reputation.",
+          "Coin turn-ins: MISSING-INFO"
+        ],
+
+        professions: [
+          "Friendly — Brilliant Mana Oil.",
+          "Friendly — Bloodvine Boots and additional profession recipes.",
+          "Friendly — Greater Dreamless Sleep and Bloodvine Lens.",
+          "Honored — Brilliant Wizard Oil.",
+          "Honored — Bloodvine Leggings and Bloodvine Goggles.",
+          "Honored — Major Troll's Blood Potion.",
+          "Revered — Bloodvine Vest.",
+          "Revered — Mageblood Potion.",
+          "Exalted — Living Action Potion.",
+          "Complete profession-by-profession list: MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "First profession recipes and class reward progression.",
+
+          honored:
+            "Brilliant Wizard Oil and additional crafting rewards.",
+
+          revered:
+            "Higher-tier crafting recipes and Zanza consumables.",
+
+          exalted:
+            "Zandalar shoulder enchants and final reputation rewards."
+        },
+
+        rewards: [
+          "Class-specific head and leg enchants.",
+          "Exalted shoulder enchants.",
+          "Zanza consumables.",
+          "Profession recipes.",
+          "Full class-by-class enchant mapping: MISSING-INFO"
+        ]
+      },
+
+
+
+      /* =============================
+         TIMBERMAW HOLD
+         ============================= */
+
+      {
+        name:
+          "Timbermaw Hold",
+
+        category: [
+          "crafting",
+          "specialty"
+        ],
+
+        tags: [
+          "CRAFTING",
+          "FELWOOD",
+          "WINTERSPRING"
+        ],
+
+        why:
+          "Useful primarily for profession recipes and safe access through Timbermaw Hold between Felwood, Winterspring, and Moonglade.",
+
+        benefit:
+          "Especially useful to Enchanters, Alchemists, Leatherworkers, and Blacksmiths.",
+
+        classes: [],
+
+        gain: [
+          "Kill Deadwood furbolgs in Felwood.",
+          "Kill Winterfall furbolgs in Winterspring.",
+          "Complete Timbermaw quests.",
+          "Complete repeatable reputation turn-ins."
+        ],
+
+        turnins: [
+          "Deadwood Headdress Feathers.",
+          "Winterfall Spirit Beads.",
+          "Deadwood Ritual Totem."
+        ],
+
+        professions: [
+          "Friendly — Transmute Earth to Water.",
+          "Friendly — Enchant 2H Weapon - Agility.",
+          "Friendly — Warbear Harness and Warbear Woolies.",
+          "Honored — Might of the Timbermaw and Wisdom of the Timbermaw.",
+          "Honored — Heavy Timbermaw Belt.",
+          "Honored — Enchant Weapon - Agility.",
+          "Revered — Mantle of the Timbermaw, Timbermaw Brawlers, and Heavy Timbermaw Boots."
+        ],
+
+        levels: {
+          unfriendly:
+            "Timbermaw NPCs stop attacking you.",
+
+          friendly:
+            "First profession recipe tier.",
+
+          honored:
+            "Additional profession rewards.",
+
+          revered:
+            "Final major profession recipe tier."
+        },
+
+        rewards: [
+          "Exalted reward includes Defender of the Timbermaw.",
+          "Most practical value comes from profession recipes."
+        ]
+      },
+
+
+
+      /* =============================
+         DARKMOON FAIRE
+         ============================= */
+
+      {
+        name:
+          "Darkmoon Faire",
+
+        category: [
+          "specialty"
+        ],
+
+        tags: [
+          "DARKMOON",
+          "DECKS",
+          "SPECIALTY"
+        ],
+
+        why:
+          "Darkmoon Faire reputation is primarily a completion-oriented reputation. The Faire also provides vendors, ticket rewards, and Darkmoon Deck rewards.",
+
+        benefit:
+          "Collectors and players pursuing specific Darkmoon Deck rewards.",
+
+        classes: [],
+
+        gain: [
+          "Turn in Darkmoon Faire trade goods for tickets and reputation.",
+          "After reaching the Friendly cap for normal turn-ins, Darkmoon Deck turn-ins provide further reputation."
+        ],
+
+        turnins: [
+          "Beasts Deck",
+          "Elementals Deck",
+          "Portals Deck",
+          "Warlords Deck"
+        ],
+
+        professions: [
+          "Profession-specific reputation unlocks: MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "Normal trade-goods reputation turn-ins eventually stop providing reputation.",
+
+          honored:
+            "Requires deck turn-ins.",
+
+          revered:
+            "Requires deck turn-ins.",
+
+          exalted:
+            "No major gameplay benefit listed beyond reputation completion."
+        },
+
+        rewards: [
+          "Complete Darkmoon Decks can be exchanged for epic rewards.",
+          "Full deck reward breakdown: MISSING-INFO"
+        ]
+      },
+
+
+
+      /* =============================
+         SHEN'DRALAR
+         ============================= */
+
+      {
+        name:
+          "Shen'dralar",
+
+        category: [
+          "specialty"
+        ],
+
+        tags: [
+          "DIRE MAUL",
+          "SPECIALTY"
+        ],
+
+        why:
+          "A Dire Maul reputation associated with the surviving Shen'dralar Highborne.",
+
+        benefit:
+          "MISSING-INFO",
+
+        classes: [],
+
+        gain: [
+          "Reputation is gained through specific Shen'dralar quests and repeatable turn-ins.",
+          "Exact current recommended method: MISSING-INFO"
+        ],
+
+        turnins: [
+          "Libram-related turn-ins and other high-level materials.",
+          "Exact turn-in list and values: MISSING-INFO"
+        ],
+
+        professions: [
+          "MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "MISSING-INFO",
+
+          honored:
+            "MISSING-INFO",
+
+          revered:
+            "MISSING-INFO",
+
+          exalted:
+            "MISSING-INFO"
+        },
+
+        rewards: [
+          "MISSING-INFO"
+        ]
+      },
+
+
+
+      /* =============================
+         RAVENHOLDT
+         ============================= */
+
+      {
+        name:
+          "Ravenholdt",
+
+        category: [
+          "specialty"
+        ],
+
+        tags: [
+          "ROGUE",
+          "SPECIALTY"
+        ],
+
+        why:
+          "Ravenholdt is primarily associated with Rogue content and Ravenholdt Manor.",
+
+        benefit:
+          "Rogues are the class most directly associated with this faction.",
+
+        classes: [
+          "rogue"
+        ],
+
+        gain: [
+          "MISSING-INFO"
+        ],
+
+        turnins: [
+          "MISSING-INFO"
+        ],
+
+        professions: [
+          "No notable profession rewards documented here.",
+          "MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "MISSING-INFO",
+
+          honored:
+            "MISSING-INFO",
+
+          revered:
+            "MISSING-INFO",
+
+          exalted:
+            "MISSING-INFO"
+        },
+
+        rewards: [
+          "MISSING-INFO"
+        ]
+      },
+
+
+
+      /* =============================
+         BLOODSAIL
+         ============================= */
+
+      {
+        name:
+          "Bloodsail Buccaneers",
+
+        category: [
+          "specialty"
+        ],
+
+        tags: [
+          "BOOTY BAY",
+          "PIRATE",
+          "SPECIALTY"
+        ],
+
+        why:
+          "A specialty reputation that directly conflicts with Steamwheedle Cartel reputation.",
+
+        benefit:
+          "Primarily useful for cosmetic and collection rewards.",
+
+        classes: [],
+
+        gain: [
+          "Kill Booty Bay NPCs and guards.",
+          "Certain pirate enemies can provide limited reputation gains."
+        ],
+
+        turnins: [
+          "MISSING-INFO"
+        ],
+
+        professions: [
+          "No major profession rewards documented."
+        ],
+
+        levels: {
+          neutral:
+            "Unlocks Dressing the Part rewards.",
+
+          friendly:
+            "Unlocks Avast Ye, Admiral! and the Bloodsail Admiral's Hat.",
+
+          honored:
+            "MISSING-INFO",
+
+          exalted:
+            "MISSING-INFO"
+        },
+
+        rewards: [
+          "Bloodsail clothing set.",
+          "Bloodsail Admiral's Hat.",
+          "Increasing Bloodsail reputation damages reputation with Booty Bay and other Steamwheedle factions."
+        ]
+      },
+
+
+
+      /* =============================
+         STEAMWHEEDLE
+         ============================= */
+
+      {
+        name:
+          "Steamwheedle Cartel",
+
+        category: [
+          "specialty"
+        ],
+
+        tags: [
+          "BOOTY BAY",
+          "GADGETZAN",
+          "RATCHET",
+          "EVERLOOK"
+        ],
+
+        why:
+          "The goblin factions control major neutral quest hubs and services throughout Azeroth.",
+
+        benefit:
+          "Useful for general world access, quests, vendors, and neutral goblin towns.",
+
+        classes: [],
+
+        gain: [
+          "Complete quests associated with Booty Bay, Gadgetzan, Ratchet, and Everlook.",
+          "Kill Southsea and Wastewander enemies for Gadgetzan reputation.",
+          "Additional cartel reputation methods: MISSING-INFO"
+        ],
+
+        turnins: [
+          "Several repeatable quests can restore damaged reputation.",
+          "Exact complete turn-in list: MISSING-INFO"
+        ],
+
+        professions: [
+          "Goblin towns contain many profession vendors and trainers.",
+          "Reputation-specific profession rewards: MISSING-INFO"
+        ],
+
+        levels: {
+          friendly:
+            "Guards will assist you if violence is initiated against you in some cartel towns.",
+
+          honored:
+            "MISSING-INFO",
+
+          revered:
+            "MISSING-INFO",
+
+          exalted:
+            "MISSING-INFO"
+        },
+
+        rewards: [
+          "Practical access to major neutral towns.",
+          "Directly affected by Bloodsail Buccaneers reputation."
+        ]
+      }
+
+
+    ];
+
+
+
+    /* =========================================================
+       BUILD DIRECTORY
+       ========================================================= */
+
+
+    const reputationGrid =
+      document.getElementById(
+        "reputationGrid"
+      );
+
+
+    function buildDirectory(filter = "all") {
+
+      reputationGrid.innerHTML = "";
+
+
+      const filtered =
+        reputations.filter(rep => {
+
+          if (filter === "all") {
+            return true;
+          }
+
+          return rep.category.includes(filter);
+
+        });
+
+
+      filtered.forEach((rep) => {
+
+        const card =
+          document.createElement("div");
+
+        card.className =
+          "rep-card";
+
+
+        card.innerHTML = `
+
+          <h3>
+            ${rep.name}
+          </h3>
+
+          <div class="quick-tags">
+
+            ${rep.tags.map(tag => `
+              <span class="tag">
+                ${tag}
+              </span>
+            `).join("")}
+
+          </div>
+
+        `;
+
+
+        card.addEventListener(
+          "click",
+          () => {
+
+            document
+              .querySelectorAll(".rep-card")
+              .forEach(c =>
+                c.classList.remove("selected")
+              );
+
+            card.classList.add("selected");
+
+            displayReputation(rep);
+
+          }
+        );
+
+
+        reputationGrid.appendChild(card);
+
+      });
+
+    }
+
+
+
+    /* =========================================================
+       DISPLAY DETAILS
+       ========================================================= */
+
+
+    function displayReputation(rep) {
+
+      document.getElementById(
+        "detailName"
+      ).textContent = rep.name;
+
+
+      document.getElementById(
+        "detailTags"
+      ).innerHTML = rep.tags
+        .map(tag =>
+          `<span class="tag">${tag}</span>`
+        )
+        .join("");
+
+
+      setTextWithMissing(
+        "detailWhy",
+        rep.why
+      );
+
+
+      setTextWithMissing(
+        "detailBenefit",
+        rep.benefit
+      );
+
+
+      buildClassTags(rep.classes);
+
+
+      buildList(
+        "gainList",
+        rep.gain
+      );
+
+
+      buildList(
+        "turninList",
+        rep.turnins
+      );
+
+
+      buildList(
+        "professionList",
+        rep.professions
+      );
+
+
+      buildLevels(rep.levels);
+
+
+      buildList(
+        "rewardList",
+        rep.rewards
+      );
+
+
+      document
+        .getElementById("repDetail")
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    }
+
+
+
+    /* =========================================================
+       HELPERS
+       ========================================================= */
+
+
+    function containsMissing(value) {
+
+      return String(value)
+        .includes("MISSING-INFO");
+
+    }
+
+
+    function setTextWithMissing(
+      id,
+      value
+    ) {
+
+      const element =
+        document.getElementById(id);
+
+      element.textContent = value;
+
+      element.classList.toggle(
+        "missing-info",
+        containsMissing(value)
+      );
+
+    }
+
+
+    function buildList(
+      id,
+      items
+    ) {
+
+      const element =
+        document.getElementById(id);
+
+      element.innerHTML = "";
+
+
+      items.forEach(item => {
+
+        const li =
+          document.createElement("li");
+
+        li.textContent = item;
+
+
+        if (
+          containsMissing(item)
+        ) {
+
+          li.classList.add(
+            "missing-info"
+          );
+
+        }
+
+
+        element.appendChild(li);
+
+      });
+
+    }
+
+
+
+    function buildClassTags(classes) {
+
+      const container =
+        document.getElementById(
+          "classTags"
+        );
+
+
+      container.innerHTML = "";
+
+
+      if (!classes.length) {
+
+        const missing =
+          document.createElement("span");
+
+        missing.className =
+          "missing-info";
+
+        missing.textContent =
+          "MISSING-INFO";
+
+        container.appendChild(
+          missing
+        );
+
+        return;
+
+      }
+
+
+      classes.forEach(
+        className => {
+
+          const tag =
+            document.createElement("span");
+
+          tag.className =
+            `class-tag ${className}`;
+
+          tag.textContent =
+            className;
+
+          container.appendChild(tag);
+
+        }
+      );
+
+    }
+
+
+
+    function buildLevels(levels) {
+
+      const container =
+        document.getElementById(
+          "repLevels"
+        );
+
+      container.innerHTML = "";
+
+
+      Object.entries(levels)
+        .forEach(([level,text]) => {
+
+          const box =
+            document.createElement("div");
+
+          box.className =
+            "rep-level";
+
+
+          box.innerHTML = `
+
+            <strong>
+              ${level.toUpperCase()}
+            </strong>
+
+            <span class="${
+              containsMissing(text)
+                ? "missing-info"
+                : ""
+            }">
+
+              ${text}
+
+            </span>
+
+          `;
+
+
+          container.appendChild(box);
+
+        });
+
+    }
+
+
+
+    /* =========================================================
+       FILTERS
+       ========================================================= */
+
+
+    const filterButtons =
+      document.querySelectorAll(
+        ".filter-button"
+      );
+
+
+    filterButtons.forEach(
+      button => {
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            filterButtons.forEach(
+              b =>
+                b.classList.remove(
+                  "active"
+                )
+            );
+
+
+            button.classList.add(
+              "active"
+            );
+
+
+            buildDirectory(
+              button.dataset.filter
+            );
+
+          }
+        );
+
+      }
+    );
+
+
+
+    /* =========================================================
+       MENU
+       ========================================================= */
+
+
+    const menuButton =
+      document.getElementById(
+        "menuButton"
+      );
+
+    const sideMenu =
+      document.getElementById(
+        "sideMenu"
+      );
+
+    const menuOverlay =
+      document.getElementById(
+        "menuOverlay"
+      );
+
+    const closeMenu =
+      document.getElementById(
+        "closeMenu"
+      );
+
+
+    function openMenu() {
+
+      sideMenu.classList.add(
+        "open"
+      );
+
+      menuOverlay.classList.add(
+        "open"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    }
+
+
+    function closeSideMenu() {
+
+      sideMenu.classList.remove(
+        "open"
+      );
+
+      menuOverlay.classList.remove(
+        "open"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+
+    menuButton.addEventListener(
+      "click",
+      openMenu
+    );
+
+    closeMenu.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+    menuOverlay.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeSideMenu();
+
+        }
+
+      }
+    );
+
+
+
+    /* =========================================================
+       INITIAL LOAD
+       ========================================================= */
+
+
+    buildDirectory();
+
+    displayReputation(
+      reputations[0]
+    );
+
+  </script>
+
+</body>
+
+</html>
