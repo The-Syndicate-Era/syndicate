@@ -1,0 +1,2126 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Professions & Crafting | The Syndicate</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --background-dark: #0d0d0d;
+      --background-panel: #161616;
+      --background-panel-light: #1d1d1d;
+      --background-hover: #242424;
+
+      --gold: #d4af37;
+      --gold-light: #e4c967;
+      --gold-dark: #7d6721;
+
+      --text-main: #eeeeee;
+      --text-muted: #a8a8a8;
+
+      --border: #383838;
+
+      --success: #77b879;
+      --warning: #d3a34a;
+      --danger: #a85d5d;
+
+      --font-heading: "Cinzel", serif;
+      --font-body: "Inter", sans-serif;
+
+      --radius: 10px;
+      --max-width: 1250px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      background:
+        radial-gradient(circle at top, rgba(212, 175, 55, 0.06), transparent 35%),
+        var(--background-dark);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    a {
+      color: var(--gold-light);
+    }
+
+    /* -----------------------------
+       HEADER
+    ----------------------------- */
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+
+      min-height: 68px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 20px;
+
+      background: rgba(13, 13, 13, 0.96);
+      border-bottom: 1px solid var(--gold-dark);
+      backdrop-filter: blur(10px);
+    }
+
+    .brand {
+      font-family: var(--font-heading);
+      color: var(--gold);
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+    }
+
+    .back-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 14px;
+    }
+
+    .back-link:hover {
+      color: var(--gold);
+    }
+
+    /* -----------------------------
+       MAIN
+    ----------------------------- */
+
+    main {
+      width: min(100% - 28px, var(--max-width));
+      margin: 0 auto;
+      padding: 34px 0 70px;
+    }
+
+    .page-heading {
+      margin-bottom: 28px;
+    }
+
+    .eyebrow {
+      margin: 0 0 7px;
+
+      color: var(--gold);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      font-weight: 700;
+    }
+
+    h1,
+    h2,
+    h3 {
+      font-family: var(--font-heading);
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--gold-light);
+      font-size: clamp(30px, 7vw, 48px);
+      line-height: 1.1;
+    }
+
+    .page-description {
+      max-width: 740px;
+      margin: 12px 0 0;
+
+      color: var(--text-muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* -----------------------------
+       SEARCH / FILTER AREA
+    ----------------------------- */
+
+    .search-panel {
+      background: linear-gradient(
+        180deg,
+        rgba(29, 29, 29, 0.96),
+        rgba(20, 20, 20, 0.96)
+      );
+
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+
+      padding: 18px;
+
+      margin-bottom: 25px;
+    }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-box input {
+      width: 100%;
+
+      background: #101010;
+      color: var(--text-main);
+
+      border: 1px solid #454545;
+      border-radius: 8px;
+
+      padding: 14px 15px;
+
+      outline: none;
+
+      transition:
+        border-color 0.2s,
+        box-shadow 0.2s;
+    }
+
+    .search-box input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.12);
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+
+    .filter-row select {
+      width: 100%;
+
+      background: #101010;
+      color: var(--text-main);
+
+      border: 1px solid #454545;
+      border-radius: 7px;
+
+      padding: 11px 12px;
+    }
+
+    .filter-row select:focus {
+      border-color: var(--gold);
+      outline: none;
+    }
+
+    .checkbox-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      color: var(--text-muted);
+      font-size: 13px;
+
+      margin-top: 13px;
+    }
+
+    .checkbox-row input {
+      accent-color: var(--gold);
+    }
+
+    /* -----------------------------
+       PROFESSION BUTTONS
+    ----------------------------- */
+
+    .profession-section {
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      margin: 0 0 13px;
+      color: var(--gold-light);
+      font-size: 19px;
+    }
+
+    .profession-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 9px;
+    }
+
+    .profession-button {
+      min-height: 64px;
+
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+
+      padding: 10px 13px;
+
+      background: var(--background-panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+
+      color: var(--text-main);
+
+      text-align: left;
+
+      transition:
+        border-color 0.2s,
+        background-color 0.2s,
+        transform 0.15s;
+    }
+
+    .profession-button:hover {
+      border-color: var(--gold-dark);
+      background: var(--background-hover);
+      transform: translateY(-1px);
+    }
+
+    .profession-button.active {
+      border-color: var(--gold);
+      background: rgba(212, 175, 55, 0.1);
+    }
+
+    .profession-name {
+      font-weight: 700;
+      margin-bottom: 3px;
+    }
+
+    .profession-count {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    /* -----------------------------
+       RESULTS
+    ----------------------------- */
+
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 15px;
+
+      margin-bottom: 13px;
+    }
+
+    .results-count {
+      color: var(--text-muted);
+      font-size: 13px;
+    }
+
+    .results-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    .item-card {
+      background: var(--background-panel);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+
+      padding: 16px;
+
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+
+      transition:
+        border-color 0.2s,
+        transform 0.15s;
+    }
+
+    .item-card:hover {
+      border-color: var(--gold-dark);
+      transform: translateY(-1px);
+    }
+
+    .item-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .item-name {
+      margin: 0;
+
+      font-family: var(--font-heading);
+      color: var(--gold-light);
+
+      font-size: 16px;
+      line-height: 1.35;
+    }
+
+    .item-meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+
+      margin-top: 7px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+
+      padding: 4px 7px;
+
+      border-radius: 999px;
+      border: 1px solid #434343;
+
+      background: #111;
+
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .badge.gold {
+      color: var(--gold-light);
+      border-color: var(--gold-dark);
+      background: rgba(212, 175, 55, 0.06);
+    }
+
+    .crafter-preview {
+      color: var(--text-muted);
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .crafter-preview strong {
+      color: var(--text-main);
+    }
+
+    .view-button {
+      align-self: flex-start;
+
+      padding: 9px 13px;
+
+      background: transparent;
+      color: var(--gold-light);
+
+      border: 1px solid var(--gold-dark);
+      border-radius: 6px;
+
+      font-weight: 600;
+      font-size: 13px;
+
+      transition:
+        background-color 0.2s,
+        border-color 0.2s;
+    }
+
+    .view-button:hover {
+      background: rgba(212, 175, 55, 0.1);
+      border-color: var(--gold);
+    }
+
+    /* -----------------------------
+       STATES
+    ----------------------------- */
+
+    .state-message {
+      padding: 28px 18px;
+
+      border: 1px dashed #444;
+      border-radius: 8px;
+
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .loading-spinner {
+      width: 28px;
+      height: 28px;
+
+      margin: 0 auto 13px;
+
+      border: 3px solid #333;
+      border-top-color: var(--gold);
+      border-radius: 50%;
+
+      animation: spin 0.8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* -----------------------------
+       DETAIL MODAL
+    ----------------------------- */
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+
+      z-index: 100;
+
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+
+      padding: 0;
+
+      background: rgba(0, 0, 0, 0.76);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .detail-modal {
+      width: 100%;
+      max-height: 90vh;
+
+      overflow-y: auto;
+
+      background: #131313;
+
+      border: 1px solid var(--gold-dark);
+      border-bottom: none;
+
+      border-radius: 16px 16px 0 0;
+
+      padding: 22px;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+
+      margin-bottom: 20px;
+    }
+
+    .modal-title {
+      margin: 0;
+
+      color: var(--gold-light);
+      font-size: 23px;
+      line-height: 1.3;
+    }
+
+    .close-button {
+      flex: 0 0 auto;
+
+      width: 38px;
+      height: 38px;
+
+      border: 1px solid #444;
+      border-radius: 50%;
+
+      background: #1c1c1c;
+      color: #ddd;
+
+      font-size: 21px;
+    }
+
+    .detail-section {
+      margin-top: 23px;
+    }
+
+    .detail-section h3 {
+      margin: 0 0 10px;
+
+      color: var(--gold);
+      font-size: 15px;
+      letter-spacing: 0.03em;
+    }
+
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .detail-field {
+      padding: 11px 12px;
+
+      background: #191919;
+      border: 1px solid #303030;
+      border-radius: 6px;
+    }
+
+    .detail-label {
+      color: var(--text-muted);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      color: var(--text-main);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    /* -----------------------------
+       CRAFTERS
+    ----------------------------- */
+
+    .crafter-list {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+    }
+
+    .crafter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      gap: 14px;
+
+      padding: 11px 12px;
+
+      background: #191919;
+      border: 1px solid #303030;
+      border-radius: 7px;
+    }
+
+    .crafter-name {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .crafter-subtext {
+      margin-top: 3px;
+
+      color: var(--text-muted);
+      font-size: 11px;
+    }
+
+    .status-badge {
+      flex: 0 0 auto;
+
+      padding: 4px 8px;
+      border-radius: 999px;
+
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .status-active {
+      color: #a8d7aa;
+      border: 1px solid #426644;
+      background: rgba(119, 184, 121, 0.08);
+    }
+
+    .status-casual {
+      color: #e7c987;
+      border: 1px solid #725e31;
+      background: rgba(211, 163, 74, 0.08);
+    }
+
+    .status-fading,
+    .status-faded {
+      color: #d8b27a;
+      border: 1px solid #6a5031;
+      background: rgba(174, 117, 56, 0.08);
+    }
+
+    .status-inactive {
+      color: #c48f8f;
+      border: 1px solid #674040;
+      background: rgba(168, 93, 93, 0.08);
+    }
+
+    .status-unknown {
+      color: #aaa;
+      border: 1px solid #555;
+      background: #1b1b1b;
+    }
+
+    .source-link {
+      display: inline-block;
+      margin-top: 10px;
+
+      color: var(--gold-light);
+      font-size: 13px;
+      text-decoration: none;
+    }
+
+    .source-link:hover {
+      text-decoration: underline;
+    }
+
+    /* -----------------------------
+       DESKTOP
+    ----------------------------- */
+
+    @media (min-width: 650px) {
+
+      main {
+        width: min(100% - 46px, var(--max-width));
+        padding-top: 45px;
+      }
+
+      .site-header {
+        padding: 0 30px;
+      }
+
+      .search-panel {
+        padding: 21px;
+      }
+
+      .filter-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .profession-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .detail-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .crafter-list {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .modal-backdrop {
+        align-items: center;
+        padding: 25px;
+      }
+
+      .detail-modal {
+        max-width: 850px;
+
+        border-bottom: 1px solid var(--gold-dark);
+        border-radius: 12px;
+      }
+    }
+
+    @media (min-width: 1000px) {
+
+      .profession-grid {
+        grid-template-columns: repeat(6, minmax(0, 1fr));
+      }
+
+      .results-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+  </style>
+</head>
+
+
+<body>
+
+  <header class="site-header">
+    <div class="brand">The Syndicate</div>
+
+    <a href="resources.html" class="back-link">
+      ← Resources
+    </a>
+  </header>
+
+
+  <main>
+
+    <section class="page-heading">
+      <p class="eyebrow">Guild Resources</p>
+
+      <h1>Professions & Crafting</h1>
+
+      <p class="page-description">
+        Find rare recipes, specialty crafts, and the Syndicate members
+        who can make them. Search by item, recipe, profession, or character.
+      </p>
+    </section>
+
+
+    <!-- SEARCH -->
+    <section class="search-panel">
+
+      <div class="search-box">
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search an item, profession, or character..."
+          autocomplete="off"
+        >
+      </div>
+
+      <div class="filter-row">
+
+        <select id="professionFilter">
+          <option value="">All Professions</option>
+        </select>
+
+        <select id="categoryFilter">
+          <option value="">All Categories</option>
+        </select>
+
+      </div>
+
+      <label class="checkbox-row">
+        <input type="checkbox" id="showInactive">
+        Show inactive crafters
+      </label>
+
+    </section>
+
+
+    <!-- PROFESSIONS -->
+    <section class="profession-section">
+
+      <h2 class="section-title">Browse by Profession</h2>
+
+      <div id="professionGrid" class="profession-grid">
+      </div>
+
+    </section>
+
+
+    <!-- RESULTS -->
+    <section>
+
+      <div class="results-header">
+
+        <h2 class="section-title">
+          Rare Recipes & Crafts
+        </h2>
+
+        <div id="resultsCount" class="results-count">
+        </div>
+
+      </div>
+
+      <div id="resultsGrid" class="results-grid">
+
+        <div class="state-message">
+          <div class="loading-spinner"></div>
+          Loading guild crafting data...
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- ITEM DETAIL MODAL -->
+  <div id="detailBackdrop" class="modal-backdrop">
+
+    <div class="detail-modal">
+
+      <div class="modal-header">
+
+        <div>
+          <p class="eyebrow">Crafting Details</p>
+          <h2 id="detailTitle" class="modal-title"></h2>
+
+          <div id="detailBadges" class="item-meta"></div>
+        </div>
+
+        <button
+          id="closeDetail"
+          class="close-button"
+          type="button"
+          aria-label="Close"
+        >
+          ×
+        </button>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h3>Guild Crafters</h3>
+
+        <div id="crafterList" class="crafter-list"></div>
+
+      </div>
+
+
+      <div class="detail-section">
+
+        <h3>Recipe Information</h3>
+
+        <div id="recipeDetails" class="detail-grid"></div>
+
+        <a
+          id="sourceLink"
+          class="source-link"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          View recipe source ↗
+        </a>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <script>
+
+    /* ============================================================
+       SUPABASE CONNECTION
+
+       Replace SUPABASE-URL-HERE with your project's URL.
+
+       Keep API-KEY-HERE until you're ready to insert the
+       Supabase public / anon key.
+    ============================================================ */
+
+    const SUPABASE_URL = "https://vjxbulbnozopbuzyxxob.supabase.co";
+    const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4";
+
+    const db = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    );
+
+
+    /* ============================================================
+       DATA
+    ============================================================ */
+
+    let rareItems = [];
+    let characterItems = [];
+    let guildRoster = [];
+
+    let itemsWithCrafters = [];
+
+    let selectedProfession = "";
+
+
+    /* ============================================================
+       DOM
+    ============================================================ */
+
+    const searchInput =
+      document.getElementById("searchInput");
+
+    const professionFilter =
+      document.getElementById("professionFilter");
+
+    const categoryFilter =
+      document.getElementById("categoryFilter");
+
+    const showInactive =
+      document.getElementById("showInactive");
+
+    const professionGrid =
+      document.getElementById("professionGrid");
+
+    const resultsGrid =
+      document.getElementById("resultsGrid");
+
+    const resultsCount =
+      document.getElementById("resultsCount");
+
+    const detailBackdrop =
+      document.getElementById("detailBackdrop");
+
+    const detailTitle =
+      document.getElementById("detailTitle");
+
+    const detailBadges =
+      document.getElementById("detailBadges");
+
+    const crafterList =
+      document.getElementById("crafterList");
+
+    const recipeDetails =
+      document.getElementById("recipeDetails");
+
+    const sourceLink =
+      document.getElementById("sourceLink");
+
+    const closeDetail =
+      document.getElementById("closeDetail");
+
+
+    /* ============================================================
+       HELPERS
+    ============================================================ */
+
+    function clean(value) {
+      return String(value ?? "").trim();
+    }
+
+
+    function normalize(value) {
+      return clean(value).toLowerCase();
+    }
+
+
+    function escapeHTML(value) {
+
+      return clean(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+
+    function uniqueSorted(values) {
+
+      return [
+        ...new Set(
+          values
+            .map(clean)
+            .filter(Boolean)
+        )
+      ].sort((a, b) =>
+        a.localeCompare(b)
+      );
+    }
+
+
+    function statusClass(status) {
+
+      switch (normalize(status)) {
+
+        case "active":
+          return "status-active";
+
+        case "casual":
+          return "status-casual";
+
+        case "fading":
+          return "status-fading";
+
+        case "faded":
+          return "status-faded";
+
+        case "inactive":
+          return "status-inactive";
+
+        default:
+          return "status-unknown";
+      }
+    }
+
+
+    function getCharacterName(character) {
+
+      return (
+        clean(character.normalized_name) ||
+        clean(character.Name) ||
+        "Unknown Character"
+      );
+    }
+
+
+    function getMainName(character) {
+
+      return clean(
+        character.main_character_name
+      );
+    }
+
+
+    /* ============================================================
+       LOAD DATA
+    ============================================================ */
+
+    async function loadData() {
+
+      try {
+
+        /*
+          Fetch the three tables separately.
+
+          This is intentionally more forgiving than relying on
+          Supabase's automatic nested relationship syntax.
+        */
+
+        const [
+          rareResponse,
+          characterItemsResponse,
+          guildResponse
+        ] = await Promise.all([
+
+          db
+            .from("rare_items")
+            .select("*")
+            .eq("active", true),
+
+          db
+            .from("character_items")
+            .select("*"),
+
+          db
+            .from("guild_roster")
+            .select("*")
+
+        ]);
+
+
+        if (rareResponse.error) {
+          throw rareResponse.error;
+        }
+
+        if (characterItemsResponse.error) {
+          throw characterItemsResponse.error;
+        }
+
+        if (guildResponse.error) {
+          throw guildResponse.error;
+        }
+
+
+        rareItems =
+          rareResponse.data || [];
+
+        characterItems =
+          characterItemsResponse.data || [];
+
+        guildRoster =
+          guildResponse.data || [];
+
+
+        buildJoinedData();
+
+        populateFilters();
+
+        renderProfessionButtons();
+
+        renderResults();
+
+      }
+
+      catch (error) {
+
+        console.error(
+          "Crafting page load error:",
+          error
+        );
+
+        resultsGrid.innerHTML = `
+          <div class="state-message">
+            <strong>Unable to load crafting data.</strong>
+            <br><br>
+            ${escapeHTML(error.message)}
+          </div>
+        `;
+      }
+
+    }
+
+
+    /* ============================================================
+       JOIN TABLE DATA
+    ============================================================ */
+
+    function buildJoinedData() {
+
+      const rosterById = new Map();
+
+      guildRoster.forEach(character => {
+
+        rosterById.set(
+          Number(character.id),
+          character
+        );
+
+      });
+
+
+      const craftersByItemId = new Map();
+
+
+      characterItems.forEach(link => {
+
+        if (
+          link.item_id == null ||
+          link.character_id == null
+        ) {
+          return;
+        }
+
+
+        const itemId =
+          Number(link.item_id);
+
+        const character =
+          rosterById.get(
+            Number(link.character_id)
+          );
+
+
+        if (!character) {
+          return;
+        }
+
+
+        if (!craftersByItemId.has(itemId)) {
+
+          craftersByItemId.set(
+            itemId,
+            []
+          );
+        }
+
+
+        craftersByItemId
+          .get(itemId)
+          .push(character);
+
+      });
+
+
+      itemsWithCrafters =
+        rareItems.map(item => {
+
+          const crafters =
+            craftersByItemId.get(
+              Number(item.id)
+            ) || [];
+
+
+          /*
+            Prevent accidental duplicate character listings.
+          */
+
+          const uniqueCrafters =
+            Array.from(
+              new Map(
+                crafters.map(character => [
+                  Number(character.id),
+                  character
+                ])
+              ).values()
+            );
+
+
+          return {
+
+            ...item,
+
+            crafters:
+              uniqueCrafters
+
+          };
+
+        });
+
+    }
+
+
+    /* ============================================================
+       FILTER CONTROLS
+    ============================================================ */
+
+    function populateFilters() {
+
+      const professions =
+        uniqueSorted(
+          rareItems.map(
+            item => item.profession
+          )
+        );
+
+
+      const categories =
+        uniqueSorted(
+          rareItems.map(
+            item => item.category
+          )
+        );
+
+
+      professionFilter.innerHTML =
+        `<option value="">
+          All Professions
+        </option>`;
+
+
+      professions.forEach(profession => {
+
+        professionFilter.insertAdjacentHTML(
+          "beforeend",
+          `
+          <option value="${escapeHTML(profession)}">
+            ${escapeHTML(profession)}
+          </option>
+          `
+        );
+
+      });
+
+
+      categoryFilter.innerHTML =
+        `<option value="">
+          All Categories
+        </option>`;
+
+
+      categories.forEach(category => {
+
+        categoryFilter.insertAdjacentHTML(
+          "beforeend",
+          `
+          <option value="${escapeHTML(category)}">
+            ${escapeHTML(category)}
+          </option>
+          `
+        );
+
+      });
+
+    }
+
+
+    /* ============================================================
+       PROFESSION BUTTONS
+    ============================================================ */
+
+    function renderProfessionButtons() {
+
+      const professions =
+        uniqueSorted(
+          rareItems.map(
+            item => item.profession
+          )
+        );
+
+
+      professionGrid.innerHTML = "";
+
+
+      professions.forEach(profession => {
+
+        const count =
+          rareItems.filter(
+            item =>
+              item.profession === profession
+          ).length;
+
+
+        const button =
+          document.createElement("button");
+
+
+        button.type = "button";
+
+        button.className =
+          "profession-button";
+
+
+        if (
+          selectedProfession === profession
+        ) {
+          button.classList.add("active");
+        }
+
+
+        button.innerHTML = `
+          <span class="profession-name">
+            ${escapeHTML(profession)}
+          </span>
+
+          <span class="profession-count">
+            ${count} tracked crafts
+          </span>
+        `;
+
+
+        button.addEventListener(
+          "click",
+          () => {
+
+            if (
+              selectedProfession === profession
+            ) {
+
+              selectedProfession = "";
+
+              professionFilter.value = "";
+
+            }
+
+            else {
+
+              selectedProfession =
+                profession;
+
+              professionFilter.value =
+                profession;
+
+            }
+
+
+            renderProfessionButtons();
+
+            renderResults();
+
+          }
+        );
+
+
+        professionGrid.appendChild(
+          button
+        );
+
+      });
+
+    }
+
+
+    /* ============================================================
+       FILTER DATA
+    ============================================================ */
+
+    function getFilteredItems() {
+
+      const search =
+        normalize(searchInput.value);
+
+      const profession =
+        clean(professionFilter.value);
+
+      const category =
+        clean(categoryFilter.value);
+
+      const includeInactive =
+        showInactive.checked;
+
+
+      return itemsWithCrafters
+        .map(item => {
+
+          /*
+            Filter crafter visibility separately
+            from item visibility.
+          */
+
+          const visibleCrafters =
+            item.crafters.filter(
+              character => {
+
+                if (includeInactive) {
+                  return true;
+                }
+
+                return (
+                  normalize(
+                    character.active_status
+                  ) !== "inactive"
+                );
+
+              }
+            );
+
+
+          return {
+            ...item,
+            visibleCrafters
+          };
+
+        })
+
+        .filter(item => {
+
+          if (
+            profession &&
+            item.profession !== profession
+          ) {
+            return false;
+          }
+
+
+          if (
+            category &&
+            item.category !== category
+          ) {
+            return false;
+          }
+
+
+          if (!search) {
+            return true;
+          }
+
+
+          const itemSearchText = [
+
+            item.item_name,
+            item.profession,
+            item.category,
+            item.specialization,
+            item.source_name,
+            item.source_location,
+            item.related_content
+
+          ]
+            .map(normalize)
+            .join(" ");
+
+
+          if (
+            itemSearchText.includes(search)
+          ) {
+            return true;
+          }
+
+
+          /*
+            Also allow searching by character
+            or their main toon.
+          */
+
+          return item.visibleCrafters.some(
+            character => {
+
+              const characterText = [
+
+                getCharacterName(character),
+                getMainName(character),
+                character.normalized_main_alt,
+                character.Rank,
+                character.Class
+
+              ]
+                .map(normalize)
+                .join(" ");
+
+
+              return characterText.includes(
+                search
+              );
+
+            }
+          );
+
+        })
+
+        .sort((a, b) => {
+
+          const professionCompare =
+            clean(a.profession)
+              .localeCompare(
+                clean(b.profession)
+              );
+
+
+          if (professionCompare !== 0) {
+            return professionCompare;
+          }
+
+
+          return clean(a.item_name)
+            .localeCompare(
+              clean(b.item_name)
+            );
+
+        });
+
+    }
+
+
+    /* ============================================================
+       RESULTS
+    ============================================================ */
+
+    function renderResults() {
+
+      const items =
+        getFilteredItems();
+
+
+      resultsCount.textContent =
+        `${items.length} ${
+          items.length === 1
+            ? "item"
+            : "items"
+        }`;
+
+
+      if (!items.length) {
+
+        resultsGrid.innerHTML = `
+          <div class="state-message">
+            No matching recipes or crafters found.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      resultsGrid.innerHTML = "";
+
+
+      items.forEach(item => {
+
+        const card =
+          document.createElement("article");
+
+
+        card.className =
+          "item-card";
+
+
+        const names =
+          item.visibleCrafters
+            .map(getCharacterName)
+            .sort((a, b) =>
+              a.localeCompare(b)
+            );
+
+
+        let crafterText =
+          "No active guild crafters listed";
+
+
+        if (names.length) {
+
+          const preview =
+            names.slice(0, 3);
+
+
+          crafterText =
+            preview.join(", ");
+
+
+          if (names.length > 3) {
+
+            crafterText +=
+              ` +${names.length - 3} more`;
+
+          }
+
+        }
+
+
+        card.innerHTML = `
+
+          <div class="item-card-top">
+
+            <div>
+
+              <h3 class="item-name">
+                ${escapeHTML(item.item_name)}
+              </h3>
+
+              <div class="item-meta">
+
+                ${
+                  item.profession
+                    ? `
+                      <span class="badge gold">
+                        ${escapeHTML(item.profession)}
+                      </span>
+                    `
+                    : ""
+                }
+
+                ${
+                  item.category
+                    ? `
+                      <span class="badge">
+                        ${escapeHTML(item.category)}
+                      </span>
+                    `
+                    : ""
+                }
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <div class="crafter-preview">
+
+            <strong>
+              ${
+                names.length
+                  ? `${names.length} crafter${names.length === 1 ? "" : "s"}`
+                  : "No active crafters"
+              }
+            </strong>
+
+            <br>
+
+            ${escapeHTML(crafterText)}
+
+          </div>
+
+
+          <button
+            type="button"
+            class="view-button"
+          >
+            View Details
+          </button>
+
+        `;
+
+
+        card
+          .querySelector(".view-button")
+          .addEventListener(
+            "click",
+            () => openItemDetail(item.id)
+          );
+
+
+        resultsGrid.appendChild(
+          card
+        );
+
+      });
+
+    }
+
+
+    /* ============================================================
+       ITEM DETAIL
+    ============================================================ */
+
+    function openItemDetail(itemId) {
+
+      const item =
+        itemsWithCrafters.find(
+          entry =>
+            Number(entry.id) ===
+            Number(itemId)
+        );
+
+
+      if (!item) {
+        return;
+      }
+
+
+      detailTitle.textContent =
+        item.item_name;
+
+
+      detailBadges.innerHTML = `
+
+        ${
+          item.profession
+            ? `
+              <span class="badge gold">
+                ${escapeHTML(item.profession)}
+              </span>
+            `
+            : ""
+        }
+
+        ${
+          item.category
+            ? `
+              <span class="badge">
+                ${escapeHTML(item.category)}
+              </span>
+            `
+            : ""
+        }
+
+        ${
+          item.specialization
+            ? `
+              <span class="badge">
+                ${escapeHTML(item.specialization)}
+              </span>
+            `
+            : ""
+        }
+
+      `;
+
+
+      renderCrafterList(
+        item.crafters
+      );
+
+
+      renderRecipeDetails(
+        item
+      );
+
+
+      detailBackdrop.classList.add(
+        "open"
+      );
+
+
+      document.body.style.overflow =
+        "hidden";
+
+    }
+
+
+    function renderCrafterList(crafters) {
+
+      const includeInactive =
+        showInactive.checked;
+
+
+      const visible =
+        crafters
+
+          .filter(character => {
+
+            if (includeInactive) {
+              return true;
+            }
+
+            return (
+              normalize(
+                character.active_status
+              ) !== "inactive"
+            );
+
+          })
+
+          .sort((a, b) =>
+            getCharacterName(a)
+              .localeCompare(
+                getCharacterName(b)
+              )
+          );
+
+
+      if (!visible.length) {
+
+        crafterList.innerHTML = `
+          <div class="state-message">
+            No active guild crafters are currently listed.
+          </div>
+        `;
+
+        return;
+      }
+
+
+      crafterList.innerHTML =
+        visible.map(character => {
+
+          const name =
+            getCharacterName(character);
+
+          const type =
+            clean(
+              character.normalized_main_alt
+            );
+
+          const main =
+            getMainName(character);
+
+          const status =
+            clean(
+              character.active_status
+            ) || "Unknown";
+
+
+          let subtext = "";
+
+
+          if (
+            normalize(type) === "alt" &&
+            main &&
+            normalize(main) !== normalize(name)
+          ) {
+
+            subtext =
+              `Alt of ${main}`;
+
+          }
+
+          else if (type) {
+
+            subtext = type;
+
+          }
+
+
+          return `
+
+            <div class="crafter-row">
+
+              <div>
+
+                <div class="crafter-name">
+                  ${escapeHTML(name)}
+                </div>
+
+                ${
+                  subtext
+                    ? `
+                      <div class="crafter-subtext">
+                        ${escapeHTML(subtext)}
+                      </div>
+                    `
+                    : ""
+                }
+
+              </div>
+
+              <span
+                class="
+                  status-badge
+                  ${statusClass(status)}
+                "
+              >
+                ${escapeHTML(status)}
+              </span>
+
+            </div>
+
+          `;
+
+        }).join("");
+
+    }
+
+
+    function renderRecipeDetails(item) {
+
+      const details = [
+
+        [
+          "Source Type",
+          item.source_type
+        ],
+
+        [
+          "Source",
+          item.source_name
+        ],
+
+        [
+          "Location",
+          item.source_location
+        ],
+
+        [
+          "Reputation",
+          formatReputation(item)
+        ],
+
+        [
+          "Content",
+          item.related_content
+        ],
+
+        [
+          "Notes",
+          item.notes
+        ]
+
+      ].filter(
+        detail =>
+          clean(detail[1])
+      );
+
+
+      recipeDetails.innerHTML =
+        details.map(
+          ([label, value]) => `
+
+            <div class="detail-field">
+
+              <div class="detail-label">
+                ${escapeHTML(label)}
+              </div>
+
+              <div class="detail-value">
+                ${escapeHTML(value)}
+              </div>
+
+            </div>
+
+          `
+        ).join("");
+
+
+      if (
+        clean(item.source_url)
+      ) {
+
+        sourceLink.href =
+          item.source_url;
+
+        sourceLink.style.display =
+          "inline-block";
+
+      }
+
+      else {
+
+        sourceLink.style.display =
+          "none";
+
+      }
+
+    }
+
+
+    function formatReputation(item) {
+
+      const faction =
+        clean(
+          item.required_reputation
+        );
+
+      const level =
+        clean(
+          item.required_rep_level
+        );
+
+
+      if (
+        faction &&
+        level
+      ) {
+        return `${faction} — ${level}`;
+      }
+
+
+      return faction || level;
+
+    }
+
+
+    /* ============================================================
+       MODAL CLOSE
+    ============================================================ */
+
+    function closeItemDetail() {
+
+      detailBackdrop.classList.remove(
+        "open"
+      );
+
+      document.body.style.overflow =
+        "";
+
+    }
+
+
+    closeDetail.addEventListener(
+      "click",
+      closeItemDetail
+    );
+
+
+    detailBackdrop.addEventListener(
+      "click",
+      event => {
+
+        if (
+          event.target === detailBackdrop
+        ) {
+          closeItemDetail();
+        }
+
+      }
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+          closeItemDetail();
+        }
+
+      }
+    );
+
+
+    /* ============================================================
+       FILTER EVENTS
+    ============================================================ */
+
+    searchInput.addEventListener(
+      "input",
+      renderResults
+    );
+
+
+    professionFilter.addEventListener(
+      "change",
+      () => {
+
+        selectedProfession =
+          professionFilter.value;
+
+        renderProfessionButtons();
+
+        renderResults();
+
+      }
+    );
+
+
+    categoryFilter.addEventListener(
+      "change",
+      renderResults
+    );
+
+
+    showInactive.addEventListener(
+      "change",
+      renderResults
+    );
+
+
+    /* ============================================================
+       START
+    ============================================================ */
+
+    loadData();
+
+  </script>
+
+</body>
+
+</html>
