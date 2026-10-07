@@ -529,7 +529,9 @@
         transform 0.2s ease,
         background 0.2s ease;
     }
-
+.council-grid .officer-card:last-child {
+  grid-column: 2;
+}
     .officer-card:hover {
       transform: translateY(-3px);
 
@@ -630,7 +632,9 @@
     ========================= */
 
     @media (max-width: 768px) {
-
+.council-grid .officer-card:last-child {
+  grid-column: auto;
+}
       .site-header {
         height: 60px;
 
