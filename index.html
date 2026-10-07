@@ -24,6 +24,9 @@
       padding: 0 30px;
 
       border-bottom: 1px solid var(--gold-dark);
+
+      position: relative;
+      z-index: 100;
     }
 
     .logo-area img {
@@ -40,6 +43,152 @@
       font-size: 32px;
 
       cursor: pointer;
+
+      text-decoration: none;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+
+    /* ---------------- SLIDE-OUT MENU ---------------- */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(0, 0, 0, 0.65);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+
+      z-index: 900;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+
+    .side-menu {
+      position: fixed;
+
+      top: 0;
+      right: 0;
+
+      width: 420px;
+      max-width: 48vw;
+      height: 100%;
+
+      background: #090909;
+
+      border-left: 1px solid var(--gold-dark);
+
+      transform: translateX(100%);
+
+      transition: transform 0.3s ease;
+
+      z-index: 1000;
+
+      padding: 70px 40px 40px;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      transform: translateX(0);
+    }
+
+
+    .close-menu {
+      position: absolute;
+
+      top: 18px;
+      right: 22px;
+
+      background: none;
+      border: none;
+
+      color: var(--gold);
+
+      font-size: 34px;
+
+      cursor: pointer;
+    }
+
+
+    .side-menu-logo {
+      text-align: center;
+
+      margin-bottom: 40px;
+    }
+
+    .side-menu-logo img {
+      width: 180px;
+      max-width: 80%;
+
+      height: auto;
+    }
+
+
+    .side-menu-links {
+      display: flex;
+      flex-direction: column;
+
+      gap: 10px;
+    }
+
+    .side-menu-links a {
+      padding: 18px 10px;
+
+      border-bottom:
+        1px solid rgba(217, 180, 56, 0.25);
+
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 20px;
+
+      text-decoration: none;
+
+      letter-spacing: 1px;
+
+      transition:
+        color 0.2s ease,
+        padding-left 0.2s ease;
+    }
+
+    .side-menu-links a:hover {
+      color: var(--gold-light);
+
+      padding-left: 18px;
+    }
+
+
+    .side-menu-motto {
+      margin-top: auto;
+
+      padding-top: 30px;
+
+      border-top: 1px solid var(--gold-dark);
+
+      text-align: center;
+
+      font-family: var(--font-heading);
+
+      color: var(--gold-dark);
+
+      font-size: 13px;
+
+      letter-spacing: 2px;
     }
 
 
@@ -250,118 +399,214 @@
 
       display: block;
     }
-/* ---------------- MOBILE ---------------- */
 
-@media (max-width: 768px) {
 
-  .site-header {
-    height: 60px;
-    padding: 0 18px;
-  }
+    /* ---------------- MOBILE ---------------- */
 
-  .logo-area img {
-    height: 36px;
-  }
+    @media (max-width: 768px) {
 
-  .menu-button {
-    font-size: 28px;
-  }
+      .site-header {
+        height: 60px;
+        padding: 0 18px;
+      }
 
-  .hero {
-    flex-direction: column;
-    min-height: auto;
-  }
+      .logo-area img {
+        height: 36px;
+      }
 
-  .hero-image {
-    width: 100%;
-    height: 240px;
-  }
+      .menu-button {
+        font-size: 28px;
+      }
 
-  .hero-content {
-    width: auto;
-    padding: 35px 22px;
-  }
 
-  .hero-content h2 {
-    font-size: 36px;
-    margin-bottom: 18px;
-  }
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
 
-  .hero-content h6 {
-    font-size: 16px;
-    margin-bottom: 18px;
-  }
+        padding: 70px 25px 30px;
+      }
 
-  .hero-content p {
-    font-size: 15px;
-  }
+      .side-menu-links a {
+        font-size: 18px;
+      }
 
-  .directory {
-    padding: 45px 20px;
-  }
 
-  .directory h3 {
-    font-size: 32px;
-    margin-bottom: 30px;
-  }
+      .hero {
+        flex-direction: column;
+        min-height: auto;
+      }
 
-  .directory-grid {
-    grid-template-columns: 1fr;
-    gap: 22px;
-  }
+      .hero-image {
+        width: 100%;
+        height: 240px;
+      }
 
-  .directory-card {
-    padding: 25px 20px;
-  }
+      .hero-content {
+        width: auto;
+        padding: 35px 22px;
+      }
 
-  .directory-card h4 {
-    font-size: 28px;
-  }
+      .hero-content h2 {
+        font-size: 36px;
+        margin-bottom: 18px;
+      }
 
-  .directory-card p {
-    min-height: auto;
-  }
+      .hero-content h6 {
+        font-size: 16px;
+        margin-bottom: 18px;
+      }
 
-  .directory-button {
-    min-width: 160px;
-  }
+      .hero-content p {
+        font-size: 15px;
+      }
 
-  .divider-section {
-    padding: 20px;
-  }
+      .directory {
+        padding: 45px 20px;
+      }
 
-  .divider-text {
-    font-size: 14px;
-  }
+      .directory h3 {
+        font-size: 32px;
+        margin-bottom: 30px;
+      }
 
-  .footer-logo img {
-    height: 45px;
-  }
+      .directory-grid {
+        grid-template-columns: 1fr;
+        gap: 22px;
+      }
 
-}
+      .directory-card {
+        padding: 25px 20px;
+      }
+
+      .directory-card h4 {
+        font-size: 28px;
+      }
+
+      .directory-card p {
+        min-height: auto;
+      }
+
+      .directory-button {
+        min-width: 160px;
+      }
+
+      .divider-section {
+        padding: 20px;
+      }
+
+      .divider-text {
+        font-size: 14px;
+      }
+
+      .footer-logo img {
+        height: 45px;
+      }
+
+    }
+
   </style>
 </head>
 
 
 <body>
 
+
   <!-- HEADER -->
 
   <header class="site-header">
 
     <div class="logo-area">
-      <img src="images/HeaderLogo.png" alt="The Syndicate">
+
+      <a href="index.html">
+
+        <img
+          src="images/HeaderLogo.png"
+          alt="The Syndicate"
+        >
+
+      </a>
+
     </div>
 
-<a
-  href="menu.html"
-  class="menu-button"
-  aria-label="Open menu"
->
-  ☰
-</a>
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false"
+    >
+      ☰
+    </button>
 
   </header>
+
+
+
+  <!-- SLIDE-OUT MENU -->
+
+  <div
+    class="menu-overlay"
+    id="menuOverlay"
+  ></div>
+
+
+  <aside
+    class="side-menu"
+    id="sideMenu"
+  >
+
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu"
+    >
+      ×
+    </button>
+
+
+    <div class="side-menu-logo">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate"
+      >
+
+    </div>
+
+
+    <nav class="side-menu-links">
+
+      <a href="index.html">
+        HOME
+      </a>
+
+      <a href="guild.html">
+        OUR GUILD
+      </a>
+
+      <a href="calendar.html">
+        CALENDAR
+      </a>
+
+      <a href="raids.html">
+        RAID HUB
+      </a>
+
+      <a href="resources.html">
+        RESOURCES
+      </a>
+
+    </nav>
+
+
+    <div class="side-menu-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+  </aside>
+
 
 
   <!-- HERO -->
@@ -369,14 +614,24 @@
   <section class="hero">
 
     <div class="hero-image">
-      <img src="images/WebsiteBackground.png" alt="The Syndicate">
+
+      <img
+        src="images/WebsiteBackground.png"
+        alt="The Syndicate"
+      >
+
     </div>
+
 
     <div class="hero-content">
 
-      <h2>THE SYNDICATE</h2>
+      <h2>
+        THE SYNDICATE
+      </h2>
 
-      <h6>◆ CLASSIC ERA • FOR THE HORDE ◆</h6>
+      <h6>
+        ◆ CLASSIC ERA • FOR THE HORDE ◆
+      </h6>
 
       <p>
         The Syndicate is a Horde guild built around good people,
@@ -391,76 +646,114 @@
   </section>
 
 
+
   <!-- GUILD DIRECTORY -->
 
   <section class="directory">
 
-    <h3>GUILD DIRECTORY</h3>
+    <h3>
+      GUILD DIRECTORY
+    </h3>
+
 
     <div class="directory-grid">
 
+
+      <!-- OUR GUILD -->
+
       <div class="directory-card">
 
-        <h4>OUR GUILD</h4>
+        <h4>
+          OUR GUILD
+        </h4>
 
         <p>
           Officers, members, and more.
         </p>
 
-        <a href="guild.html" class="directory-button">
+        <a
+          href="guild.html"
+          class="directory-button"
+        >
           MEET THE TEAM
         </a>
 
       </div>
 
 
+
+      <!-- CALENDAR -->
+
       <div class="directory-card">
 
-        <h4>CALENDAR</h4>
+        <h4>
+          CALENDAR
+        </h4>
 
         <p>
           Guild events, dungeons, and raids on the schedule this month.
         </p>
 
-        <a href="calendar.html" class="directory-button">
+        <a
+          href="calendar.html"
+          class="directory-button"
+        >
           SEE THE SCHEDULE
         </a>
 
       </div>
 
 
+
+      <!-- RAID HUB -->
+
       <div class="directory-card">
 
-        <h4>RAID HUB</h4>
+        <h4>
+          RAID HUB
+        </h4>
 
         <p>
           Rules, consumes, requirements, and raid-specific information.
         </p>
 
-        <a href="raids.html" class="directory-button">
+        <a
+          href="raids.html"
+          class="directory-button"
+        >
           PREPARE TO RAID
         </a>
 
       </div>
 
 
+
+      <!-- RESOURCES -->
+
       <div class="directory-card">
 
-        <h4>RESOURCES</h4>
+        <h4>
+          RESOURCES
+        </h4>
 
         <p>
           Addons, professions, supportive websites, and more.
         </p>
 
-        <a href="resources.html" class="directory-button">
+        <a
+          href="resources.html"
+          class="directory-button"
+        >
           BROWSE RESOURCES
         </a>
 
       </div>
 
+
     </div>
 
   </section>
+
 
 
   <!-- DIVIDER -->
@@ -478,15 +771,99 @@
   </section>
 
 
+
   <!-- FOOTER -->
 
   <footer class="site-footer">
 
     <div class="footer-logo">
-      <img src="images/HeaderLogo.png" alt="The Syndicate">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate"
+      >
+
     </div>
 
   </footer>
+
+
+
+  <!-- SLIDE-OUT MENU SCRIPT -->
+
+  <script>
+
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const sideMenu =
+      document.getElementById("sideMenu");
+
+    const menuOverlay =
+      document.getElementById("menuOverlay");
+
+    const closeMenu =
+      document.getElementById("closeMenu");
+
+
+    function openMenu() {
+
+      sideMenu.classList.add("open");
+
+      menuOverlay.classList.add("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    }
+
+
+    function closeSideMenu() {
+
+      sideMenu.classList.remove("open");
+
+      menuOverlay.classList.remove("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+
+    menuButton.addEventListener(
+      "click",
+      openMenu
+    );
+
+
+    closeMenu.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    menuOverlay.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      function(event) {
+
+        if (event.key === "Escape") {
+          closeSideMenu();
+        }
+
+      }
+    );
+
+  </script>
 
 
 </body>
