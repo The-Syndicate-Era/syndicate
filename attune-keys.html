@@ -1,0 +1,1789 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Attunements & Keys | The Syndicate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --background: #080806;
+      --background-dark: #050504;
+      --panel: #11100d;
+      --panel-hover: #16140f;
+
+      --gold: #d9b438;
+      --gold-dark: #6c5520;
+      --gold-soft: #b89a42;
+
+      --text: #d8d2c4;
+      --text-muted: #a79e8d;
+
+      --red-top: #b51414;
+      --red-mid: #8f0909;
+      --red-bottom: #650505;
+
+      --font-heading: "Cinzel", serif;
+      --font-body: "Montserrat", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top, rgba(217,180,56,.04), transparent 30%),
+        var(--background);
+
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .site-header {
+      height: 70px;
+      background: var(--background-dark);
+      border-bottom: 1px solid var(--gold-dark);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 30px;
+
+      position: relative;
+      z-index: 100;
+    }
+
+    .logo-area img {
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+
+      color: var(--gold);
+      font-size: 30px;
+
+      cursor: pointer;
+    }
+
+    /* =========================
+       SIDE MENU
+       ========================= */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(0,0,0,.7);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition: .25s ease;
+
+      z-index: 999;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+
+      top: 0;
+      right: -440px;
+
+      width: 420px;
+      max-width: 48vw;
+      height: 100vh;
+
+      background: #0b0a08;
+
+      border-left: 1px solid var(--gold-dark);
+
+      padding: 38px 34px;
+
+      transition: right .3s ease;
+
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .close-menu {
+      align-self: flex-end;
+
+      background: none;
+      border: none;
+
+      color: var(--gold);
+      font-size: 34px;
+
+      cursor: pointer;
+
+      margin-bottom: 20px;
+    }
+
+    .side-menu-logo {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .side-menu-logo img {
+      width: 180px;
+      max-width: 100%;
+    }
+
+    .side-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-menu-links a {
+      color: var(--gold);
+      text-decoration: none;
+
+      font-family: var(--font-heading);
+      letter-spacing: 1px;
+      font-size: 18px;
+
+      padding: 13px 4px;
+
+      border-bottom:
+        1px solid rgba(108,85,32,.55);
+    }
+
+    .side-menu-links a:hover {
+      color: #f2d565;
+    }
+
+    .side-menu-motto {
+      margin-top: auto;
+
+      text-align: center;
+
+      color: var(--gold-dark);
+
+      font-family: var(--font-heading);
+      font-size: 13px;
+      letter-spacing: 2px;
+
+      padding-top: 25px;
+    }
+
+    /* =========================
+       HERO
+       ========================= */
+
+    .page-hero {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 55px 40px 35px;
+
+      display: grid;
+
+      grid-template-columns:
+        .9fr 1.1fr;
+
+      gap: 45px;
+
+      align-items: center;
+    }
+
+    .hero-image {
+      height: 285px;
+
+      padding: 10px;
+
+      background: #0c0b09;
+
+      border:
+        1px solid var(--gold-dark);
+
+      box-shadow:
+        0 14px 35px rgba(0,0,0,.45);
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+
+      display: block;
+
+      object-fit: cover;
+    }
+
+    .hero-copy h1 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size:
+        clamp(38px,5vw,60px);
+
+      font-weight: 400;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 16px;
+    }
+
+    .hero-divider {
+      width: 110px;
+      height: 1px;
+
+      background: var(--gold-dark);
+
+      margin-bottom: 20px;
+    }
+
+    .hero-copy p {
+      color: var(--text);
+
+      font-size: 15px;
+      line-height: 1.8;
+
+      max-width: 640px;
+      margin-bottom: 22px;
+    }
+
+    /* =========================
+       BUTTON
+       ========================= */
+
+    .syndicate-button {
+      min-height: 42px;
+
+      padding: 10px 18px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          to bottom,
+          var(--red-top) 0%,
+          var(--red-mid) 45%,
+          var(--red-bottom) 100%
+        );
+
+      color: #ffd633;
+
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: .7px;
+
+      text-decoration: none;
+      text-align: center;
+
+      border: 2px solid #2a1a10;
+      border-radius: 5px;
+
+      box-shadow:
+        0 0 0 2px #6a4a25,
+        0 0 0 4px #120d09,
+        inset 0 2px 0 rgba(255,255,255,.14),
+        inset 0 -2px 0 rgba(0,0,0,.55),
+        0 3px 5px rgba(0,0,0,.65);
+
+      text-shadow: 1px 1px 2px #000;
+
+      transition:
+        transform .15s ease,
+        filter .15s ease;
+    }
+
+    .syndicate-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.12);
+    }
+
+    /* =========================
+       PAGE CONTENT
+       ========================= */
+
+    .attune-section {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 15px 40px 80px;
+    }
+
+    .section-heading {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .section-heading h2 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size: 31px;
+      font-weight: 400;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 10px;
+    }
+
+    .section-heading p {
+      color: var(--text-muted);
+
+      font-size: 14px;
+      line-height: 1.7;
+    }
+
+    /* =========================
+       SECTION LABEL
+       ========================= */
+
+    .directory-title {
+      color: var(--gold-soft);
+
+      font-family: var(--font-heading);
+
+      font-size: 18px;
+      letter-spacing: 1.4px;
+
+      margin: 32px 0 14px;
+    }
+
+    /* =========================
+       DIRECTORY
+       ========================= */
+
+    .directory-grid {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap: 12px;
+    }
+
+    .attune-card {
+      min-height: 125px;
+
+      padding: 18px;
+
+      background: var(--panel);
+
+      border:
+        1px solid #41361d;
+
+      cursor: pointer;
+
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+
+      transition:
+        transform .2s,
+        background .2s,
+        border-color .2s;
+    }
+
+    .attune-card:hover {
+      transform: translateY(-2px);
+
+      background: var(--panel-hover);
+
+      border-color: var(--gold-dark);
+    }
+
+    .attune-card.selected {
+      border-color: var(--gold);
+
+      box-shadow:
+        inset 0 0 0 1px
+        rgba(217,180,56,.16);
+    }
+
+    .attune-card h3 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size: 16px;
+      font-weight: 500;
+
+      line-height: 1.25;
+
+      margin-bottom: 8px;
+    }
+
+    .attune-card p {
+      color: var(--text-muted);
+
+      font-size: 11px;
+      line-height: 1.4;
+    }
+
+    /* =========================
+       TAGS
+       ========================= */
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 6px;
+
+      margin-top: 12px;
+    }
+
+    .tag {
+      display: inline-block;
+
+      padding: 4px 8px;
+
+      background: #090806;
+
+      border:
+        1px solid var(--gold-dark);
+
+      color: var(--gold-soft);
+
+      font-size: 9px;
+
+      letter-spacing: .7px;
+
+      text-transform: uppercase;
+    }
+
+    .tag.keep {
+      border-color: #6b6524;
+      color: #e0d866;
+    }
+
+    .tag.group {
+      border-color: #345f76;
+      color: #76b7d6;
+    }
+
+    .tag.personal {
+      border-color: #7a3030;
+      color: #df7878;
+    }
+
+    .tag.raid {
+      border-color: #874626;
+      color: #e99b61;
+    }
+
+    /* =========================
+       INFO CALLOUT
+       ========================= */
+
+    .info-callout {
+      margin-top: 28px;
+
+      padding: 18px 20px;
+
+      background: #0d0c09;
+
+      border-left:
+        3px solid var(--gold-dark);
+
+      color: #c9c1b1;
+
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .info-callout strong {
+      color: var(--gold);
+    }
+
+    /* =========================
+       DETAIL PANEL
+       ========================= */
+
+    .detail-panel {
+      margin-top: 40px;
+
+      background: #0e0d0a;
+
+      border:
+        1px solid var(--gold-dark);
+
+      box-shadow:
+        0 15px 35px rgba(0,0,0,.35);
+    }
+
+    .detail-header {
+      padding: 27px 30px;
+
+      border-bottom:
+        1px solid #44391f;
+
+      background:
+        linear-gradient(
+          90deg,
+          rgba(217,180,56,.08),
+          transparent 45%
+        );
+    }
+
+    .detail-header h2 {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 29px;
+      font-weight: 400;
+
+      letter-spacing: 1px;
+
+      margin-bottom: 9px;
+    }
+
+    .detail-subtitle {
+      color: var(--text-muted);
+
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    .detail-body {
+      padding: 30px;
+
+      display: grid;
+
+      grid-template-columns:
+        1fr 1fr;
+
+      gap: 22px;
+    }
+
+    .detail-block {
+      padding: 22px;
+
+      background: #12110e;
+
+      border:
+        1px solid #332c1b;
+    }
+
+    .detail-block.full {
+      grid-column:
+        1 / -1;
+    }
+
+    .detail-block h3 {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 15px;
+      font-weight: 500;
+
+      margin-bottom: 14px;
+    }
+
+    .detail-block p {
+      color: #cbc4b5;
+
+      font-size: 13px;
+      line-height: 1.7;
+    }
+
+    .detail-block ul,
+    .detail-block ol {
+      padding-left: 20px;
+    }
+
+    .detail-block li {
+      color: #cbc4b5;
+
+      font-size: 13px;
+      line-height: 1.7;
+
+      margin-bottom: 7px;
+    }
+
+    .quick-facts {
+      display: grid;
+
+      grid-template-columns:
+        repeat(4,1fr);
+
+      gap: 10px;
+    }
+
+    .fact {
+      background: #090806;
+
+      border:
+        1px solid #3c331f;
+
+      padding: 13px;
+    }
+
+    .fact strong {
+      display: block;
+
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 10px;
+
+      margin-bottom: 5px;
+    }
+
+    .fact span {
+      color: var(--text-muted);
+
+      font-size: 11px;
+
+      line-height: 1.4;
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    .site-footer {
+      border-top:
+        1px solid var(--gold-dark);
+
+      text-align: center;
+
+      padding: 45px 20px;
+
+      background: #060605;
+    }
+
+    .footer-motto {
+      color: var(--gold);
+
+      font-family:
+        var(--font-heading);
+
+      font-size: 14px;
+      letter-spacing: 2px;
+
+      margin-bottom: 20px;
+    }
+
+    .site-footer img {
+      width: 145px;
+      max-width: 70%;
+
+      opacity: .85;
+    }
+
+    /* =========================
+       TABLET
+       ========================= */
+
+    @media(max-width:950px) {
+
+      .page-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .directory-grid {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+
+      .detail-body {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-block.full {
+        grid-column: auto;
+      }
+
+      .quick-facts {
+        grid-template-columns:
+          repeat(2,1fr);
+      }
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media(max-width:650px) {
+
+      .site-header {
+        padding: 0 18px;
+      }
+
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
+
+        padding:
+          28px 24px;
+      }
+
+      .page-hero {
+        padding:
+          38px 20px 30px;
+      }
+
+      .hero-image {
+        height: 220px;
+      }
+
+      .attune-section {
+        padding:
+          10px 20px 60px;
+      }
+
+      .directory-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-header,
+      .detail-body {
+        padding: 20px;
+      }
+
+      .quick-facts {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <a
+      class="logo-area"
+      href="index.html">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate">
+
+    </a>
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false">
+      ☰
+    </button>
+
+  </header>
+
+  <!-- SIDE MENU -->
+
+  <div
+    class="menu-overlay"
+    id="menuOverlay">
+  </div>
+
+  <aside
+    class="side-menu"
+    id="sideMenu">
+
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu">
+      ×
+    </button>
+
+    <div class="side-menu-logo">
+
+      <img
+        src="images/HeaderLogo.png"
+        alt="The Syndicate">
+
+    </div>
+
+    <nav class="side-menu-links">
+
+      <a href="index.html">
+        HOME
+      </a>
+
+      <a href="guild.html">
+        THE SYNDICATE
+      </a>
+
+      <a href="calendar.html">
+        CALENDAR
+      </a>
+
+      <a href="raids.html">
+        RAID HUB
+      </a>
+
+      <a href="resources.html">
+        RESOURCES
+      </a>
+
+    </nav>
+
+    <div class="side-menu-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+  </aside>
+
+  <main>
+
+    <!-- HERO -->
+
+    <section class="page-hero">
+
+      <div class="hero-image">
+
+        <img
+          src="images/Attunements.png"
+          alt="Attunements and keys">
+
+      </div>
+
+      <div class="hero-copy">
+
+        <h1>
+          ATTUNEMENTS<br>& KEYS
+        </h1>
+
+        <div class="hero-divider"></div>
+
+        <p>
+          Dungeon keys and raid attunements can save long runs,
+          unlock important content, and in some cases are required
+          before you can enter at all. Start with the lower-level
+          dungeon keys and work your way toward endgame raid access.
+        </p>
+
+        <a
+          class="syndicate-button"
+          href="https://www.curseforge.com/wow/addons/attune"
+          target="_blank"
+          rel="noopener noreferrer">
+          GET ATTUNE ADD-ON
+        </a>
+
+      </div>
+
+    </section>
+
+    <!-- MAIN -->
+
+    <section class="attune-section">
+
+      <div class="section-heading">
+
+        <h2>
+          ACCESS GUIDE
+        </h2>
+
+        <p>
+          Select a key or attunement to see where to start,
+          the required steps, and whether you need to keep it.
+        </p>
+
+      </div>
+
+      <!-- DUNGEON KEYS -->
+
+      <h3 class="directory-title">
+        DUNGEON KEYS
+      </h3>
+
+      <div
+        class="directory-grid"
+        id="dungeonGrid">
+      </div>
+
+      <!-- RAID ATTUNEMENTS -->
+
+      <h3 class="directory-title">
+        RAID ATTUNEMENTS
+      </h3>
+
+      <div
+        class="directory-grid"
+        id="raidGrid">
+      </div>
+
+      <div class="info-callout">
+
+        <strong>AQ40:</strong>
+        Temple of Ahn'Qiraj does not require a normal personal raid attunement.
+        The Scepter of the Shifting Sands was part of opening the raid gates,
+        not a permanent individual entry requirement.
+
+      </div>
+
+      <!-- DETAIL PANEL -->
+
+      <div
+        class="detail-panel"
+        id="detailPanel">
+
+        <div class="detail-header">
+
+          <h2 id="detailName">
+            SELECT AN ENTRY
+          </h2>
+
+          <div
+            class="detail-subtitle"
+            id="detailSubtitle">
+          </div>
+
+          <div
+            class="tag-list"
+            id="detailTags">
+          </div>
+
+        </div>
+
+        <div class="detail-body">
+
+          <div class="detail-block full">
+
+            <h3>
+              QUICK FACTS
+            </h3>
+
+            <div
+              class="quick-facts"
+              id="quickFacts">
+            </div>
+
+          </div>
+
+          <div class="detail-block">
+
+            <h3>
+              WHERE TO START
+            </h3>
+
+            <p id="startText"></p>
+
+          </div>
+
+          <div class="detail-block">
+
+            <h3>
+              WHAT THIS UNLOCKS
+            </h3>
+
+            <p id="unlockText"></p>
+
+          </div>
+
+          <div class="detail-block full">
+
+            <h3>
+              STEPS
+            </h3>
+
+            <ol id="stepsList"></ol>
+
+          </div>
+
+          <div class="detail-block">
+
+            <h3>
+              DO I NEED TO KEEP IT?
+            </h3>
+
+            <p id="keepText"></p>
+
+          </div>
+
+          <div class="detail-block">
+
+            <h3>
+              DOES EVERYONE NEED IT?
+            </h3>
+
+            <p id="groupText"></p>
+
+          </div>
+
+          <div class="detail-block full">
+
+            <h3>
+              IMPORTANT NOTES
+            </h3>
+
+            <ul id="notesList"></ul>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="footer-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+    <img
+      src="images/HeaderLogo.png"
+      alt="The Syndicate">
+
+  </footer>
+
+  <script>
+
+    /* ======================================================
+       DATA
+       ====================================================== */
+
+    const attunements = [
+
+      /* =========================
+         DUNGEON KEYS
+         ========================= */
+
+      {
+        type: "dungeon",
+
+        name: "Scarlet Key",
+
+        subtitle: "Scarlet Monastery",
+
+        tags: [
+          "DUNGEON KEY",
+          "KEEP THIS"
+        ],
+
+        facts: [
+          ["Recommended Level", "Around SM Library level"],
+          ["Location", "Scarlet Monastery"],
+          ["Quest Required", "No"],
+          ["Key Item", "The Scarlet Key"]
+        ],
+
+        start:
+          "Run the Library wing of Scarlet Monastery and defeat Arcanist Doan.",
+
+        unlock:
+          "Opens the Armory and Cathedral wings of Scarlet Monastery. It is also useful for a Scarlet-side door in Stratholme.",
+
+        steps: [
+          "Enter Scarlet Monastery Library.",
+          "Clear the wing and defeat Arcanist Doan.",
+          "Open the small chest located behind him.",
+          "Loot The Scarlet Key."
+        ],
+
+        keep:
+          "Yes. Keep the Scarlet Key. It remains useful for opening Scarlet Monastery doors and later has use in Stratholme.",
+
+        group:
+          "No. Only one person in the party needs to be able to open the door.",
+
+        notes: [
+          "Rogues with sufficient Lockpicking can bypass the doors.",
+          "This is one of the simplest keys to obtain and is worth grabbing while leveling."
+        ]
+      },
+
+      {
+        type: "dungeon",
+
+        name: "Shadowforge Key",
+
+        subtitle: "Blackrock Depths",
+
+        tags: [
+          "DUNGEON KEY",
+          "KEEP THIS",
+          "BRD"
+        ],
+
+        facts: [
+          ["Recommended Level", "Around 50+"],
+          ["Location", "Blackrock Mountain / BRD"],
+          ["Quest", "Dark Iron Legacy"],
+          ["Key Item", "Shadowforge Key"]
+        ],
+
+        start:
+          "Die inside or near Blackrock Mountain and speak to the ghost of Franclorn Forgewright at Forgewright's Tomb.",
+
+        unlock:
+          "Opens Shadowforge Doors inside Blackrock Depths and enables several useful shortcuts through the dungeon.",
+
+        steps: [
+          "Speak to Franclorn Forgewright while you are a ghost.",
+          "Accept Dark Iron Legacy.",
+          "Enter Blackrock Depths.",
+          "Kill Fineous Darkvire and loot Ironfel.",
+          "Take Ironfel to the Shrine of Thaurissan.",
+          "Place it at the shrine to complete the quest.",
+          "Receive the Shadowforge Key."
+        ],
+
+        keep:
+          "Yes. Keep it. BRD has multiple Shadowforge doors and this key remains useful for future runs and shortcuts.",
+
+        group:
+          "No. One party member with the key can open the doors for everyone.",
+
+        notes: [
+          "The quest starter is only visible while you are dead.",
+          "The key helps bypass sections of BRD and gives easier access to areas such as the Grim Guzzler.",
+          "Rogues with high Lockpicking can open many Shadowforge doors."
+        ]
+      },
+
+      {
+        type: "dungeon",
+
+        name: "Skeleton Key",
+
+        subtitle: "Scholomance",
+
+        tags: [
+          "DUNGEON KEY",
+          "KEEP THIS",
+          "SCHOLO"
+        ],
+
+        facts: [
+          ["Recommended Level", "Around 55+"],
+          ["Location", "Western Plaguelands"],
+          ["Quest Chain", "Scholomance Key Chain"],
+          ["Key Item", "Skeleton Key"]
+        ],
+
+        start:
+          "Begin the Western Plaguelands quest chain that eventually leads into the Scholomance key sequence.",
+
+        unlock:
+          "Opens the locked entrance to Scholomance at Caer Darrow.",
+
+        steps: [
+          "Progress through the Western Plaguelands quest chain.",
+          "Complete the Scholomance-related prerequisite quests.",
+          "Collect Skeletal Fragments.",
+          "Complete the mold and Un'Goro volcano steps.",
+          "Defeat Araj the Summoner and obtain the required scarab.",
+          "Complete The Key to Scholomance.",
+          "Receive the Skeleton Key."
+        ],
+
+        keep:
+          "Yes. Keep it if you expect to run Scholomance regularly.",
+
+        group:
+          "No. Only one person in the group needs to open the entrance.",
+
+        notes: [
+          "This is a longer dungeon-key quest chain than the Scarlet or BRD keys.",
+          "A Rogue with enough Lockpicking can bypass the entrance lock."
+        ]
+      },
+
+      {
+        type: "dungeon",
+
+        name: "Seal of Ascension",
+
+        subtitle: "Upper Blackrock Spire",
+
+        tags: [
+          "DUNGEON KEY",
+          "KEEP THIS",
+          "UBRS"
+        ],
+
+        facts: [
+          ["Recommended Level", "Around 55-60"],
+          ["Location", "Lower Blackrock Spire"],
+          ["Quest", "Seal of Ascension"],
+          ["Key Item", "Seal of Ascension"]
+        ],
+
+        start:
+          "Find Vaelan inside Lower Blackrock Spire and accept the Seal of Ascension quest.",
+
+        unlock:
+          "Allows the group to enter Upper Blackrock Spire.",
+
+        steps: [
+          "Accept Seal of Ascension from Vaelan in LBRS.",
+          "Collect the required gemstones from LBRS bosses.",
+          "Complete the first Seal of Ascension turn-in.",
+          "Travel to Dustwallow Marsh.",
+          "Fight and control the black dragon Emberstrife as directed by the quest.",
+          "Use Emberstrife to forge the completed seal.",
+          "Return and finish the quest to receive the Seal of Ascension."
+        ],
+
+        keep:
+          "Yes. Keep the Seal of Ascension. It remains your UBRS access key.",
+
+        group:
+          "No. One person with the Seal can open UBRS for the group.",
+
+        notes: [
+          "This key is especially useful because UBRS is involved in several raid attunement chains.",
+          "The completed Seal can also be used during the Rend encounter to summon Vaelan."
+        ]
+      },
+
+      /* =========================
+         RAID ATTUNEMENTS
+         ========================= */
+
+      {
+        type: "raid",
+
+        name: "Molten Core",
+
+        subtitle: "Attunement to the Core",
+
+        tags: [
+          "40-MAN",
+          "RAID ATTUNEMENT",
+          "BRD"
+        ],
+
+        facts: [
+          ["Recommended Level", "55+"],
+          ["Location", "Blackrock Mountain"],
+          ["Quest", "Attunement to the Core"],
+          ["Personal Required", "No, but strongly recommended"]
+        ],
+
+        start:
+          "Pick up Attunement to the Core from Lothos Riftwaker at the bottom of Blackrock Mountain.",
+
+        unlock:
+          "Allows you to use Lothos Riftwaker for quick entry directly into Molten Core instead of traveling through Blackrock Depths.",
+
+        steps: [
+          "Accept Attunement to the Core from Lothos Riftwaker.",
+          "Enter Blackrock Depths.",
+          "Travel to the area near the Molten Core entrance.",
+          "Loot the Core Fragment.",
+          "Return to Lothos Riftwaker.",
+          "Complete the quest."
+        ],
+
+        keep:
+          "No key item needs to be carried afterward. The access is permanently unlocked on that character.",
+
+        group:
+          "Each character must complete the attunement to use the quick-entry method themselves.",
+
+        notes: [
+          "You can technically enter Molten Core without completing this attunement by reaching the raid entrance through BRD.",
+          "The attunement is primarily a permanent shortcut and is highly recommended."
+        ]
+      },
+
+      {
+        type: "raid",
+
+        name: "Onyxia's Lair",
+
+        subtitle: "Drakefire Amulet — Horde",
+
+        tags: [
+          "40-MAN",
+          "PERSONAL REQUIRED",
+          "KEEP THIS"
+        ],
+
+        facts: [
+          ["Recommended Level", "High 50s / 60"],
+          ["Start", "Kargath, Badlands"],
+          ["Starter", "Warlord Goretooth"],
+          ["Required Item", "Drakefire Amulet"]
+        ],
+
+        start:
+          "For Horde, begin with Warlord's Command from Warlord Goretooth in Kargath, Badlands.",
+
+        unlock:
+          "Allows that character to enter Onyxia's Lair.",
+
+        steps: [
+          "Complete Warlord's Command in Lower Blackrock Spire by killing Highlord Omokk, War Master Voone, and Overlord Wyrmthalak and recovering the Important Blackrock Documents.",
+          "Complete Eitrigg's Wisdom in Orgrimmar.",
+          "Complete For The Horde! by killing Warchief Rend Blackhand in UBRS and returning his head to Thrall.",
+          "Complete What the Wind Carries.",
+          "Begin Champion of the Horde and find Rexxar.",
+          "Continue Rexxar's quest chain through the required world objectives.",
+          "Complete the later chain involving Emberstrife and the dragonflight.",
+          "Finish the final step by killing General Drakkisath in UBRS and obtaining Blood of the Black Dragon Champion.",
+          "Turn in the final quest and receive the Drakefire Amulet."
+        ],
+
+        keep:
+          "Yes. You must carry the Drakefire Amulet in your bags when entering Onyxia's Lair.",
+
+        group:
+          "Yes. Every raider needs their own completed attunement and their own Drakefire Amulet.",
+
+        notes: [
+          "This is one of the longest Classic raid attunement chains.",
+          "The Horde chain uses both LBRS and UBRS.",
+          "The Drakefire Amulet also provides Fire Resistance."
+        ]
+      },
+
+      {
+        type: "raid",
+
+        name: "Blackwing Lair",
+
+        subtitle: "Blackhand's Command",
+
+        tags: [
+          "40-MAN",
+          "RAID ATTUNEMENT",
+          "UBRS"
+        ],
+
+        facts: [
+          ["Recommended Level", "60"],
+          ["Location", "Blackrock Mountain"],
+          ["Quest", "Blackhand's Command"],
+          ["Unlock", "Orb of Command"]
+        ],
+
+        start:
+          "Kill the Scarshield Quartermaster near the Blackrock Spire entrance and loot Blackhand's Command.",
+
+        unlock:
+          "Unlocks the Orb of Command shortcut entrance to Blackwing Lair.",
+
+        steps: [
+          "Kill the Scarshield Quartermaster.",
+          "Loot Blackhand's Command.",
+          "Use the item to begin the quest.",
+          "Enter Upper Blackrock Spire.",
+          "Defeat General Drakkisath.",
+          "Interact with the Orb of Ascension behind him.",
+          "The Orb of Command shortcut entrance is now permanently unlocked for that character."
+        ],
+
+        keep:
+          "No physical key needs to be kept after completion.",
+
+        group:
+          "Each character must complete the attunement to use the Orb of Command shortcut themselves.",
+
+        notes: [
+          "The original raid entrance is located deeper inside Upper Blackrock Spire.",
+          "The attunement mainly provides the convenient Blackrock Mountain shortcut."
+        ]
+      },
+
+      {
+        type: "raid",
+
+        name: "Naxxramas",
+
+        subtitle: "The Dread Citadel: Naxxramas",
+
+        tags: [
+          "40-MAN",
+          "PERSONAL REQUIRED",
+          "ARGENT DAWN"
+        ],
+
+        facts: [
+          ["Recommended Level", "60"],
+          ["Location", "Light's Hope Chapel"],
+          ["Minimum Reputation", "Honored Argent Dawn"],
+          ["Personal Required", "Yes"]
+        ],
+
+        start:
+          "Reach at least Honored with Argent Dawn and speak with Archmage Angela Dosantos at Light's Hope Chapel.",
+
+        unlock:
+          "Attunes that character to enter Naxxramas.",
+
+        steps: [
+          "Reach at least Honored with Argent Dawn.",
+          "Speak with Archmage Angela Dosantos at Light's Hope Chapel.",
+          "Accept The Dread Citadel: Naxxramas.",
+          "Provide the required gold and materials based on your Argent Dawn reputation.",
+          "Complete the quest to permanently unlock Naxxramas access."
+        ],
+
+        keep:
+          "No physical key needs to be carried once attuned.",
+
+        group:
+          "Yes. Every raider must be individually attuned.",
+
+        notes: [
+          "Honored: 60 gold, 5 Arcane Crystals, 2 Nexus Crystals, and 1 Righteous Orb.",
+          "Revered: 30 gold, 2 Arcane Crystals, and 1 Nexus Crystal.",
+          "Exalted: attunement is free.",
+          "Higher Argent Dawn reputation directly reduces the cost."
+        ]
+      }
+
+    ];
+
+    /* ======================================================
+       BUILD CARDS
+       ====================================================== */
+
+    const dungeonGrid =
+      document.getElementById("dungeonGrid");
+
+    const raidGrid =
+      document.getElementById("raidGrid");
+
+    function createCard(entry) {
+
+      const card =
+        document.createElement("div");
+
+      card.className =
+        "attune-card";
+
+      card.innerHTML = `
+
+        <div>
+
+          <h3>
+            ${entry.name}
+          </h3>
+
+          <p>
+            ${entry.subtitle}
+          </p>
+
+        </div>
+
+        <div class="tag-list">
+
+          ${entry.tags.map(tag => `
+            <span class="tag">
+              ${tag}
+            </span>
+          `).join("")}
+
+        </div>
+
+      `;
+
+      card.addEventListener(
+        "click",
+        () => {
+
+          document
+            .querySelectorAll(".attune-card")
+            .forEach(c =>
+              c.classList.remove("selected")
+            );
+
+          card.classList.add("selected");
+
+          displayEntry(entry);
+
+        }
+      );
+
+      return card;
+    }
+
+    attunements.forEach(entry => {
+
+      const card =
+        createCard(entry);
+
+      if (entry.type === "dungeon") {
+        dungeonGrid.appendChild(card);
+      } else {
+        raidGrid.appendChild(card);
+      }
+
+    });
+
+    /* ======================================================
+       DISPLAY DETAILS
+       ====================================================== */
+
+    function displayEntry(entry) {
+
+      document.getElementById(
+        "detailName"
+      ).textContent =
+        entry.name;
+
+      document.getElementById(
+        "detailSubtitle"
+      ).textContent =
+        entry.subtitle;
+
+      document.getElementById(
+        "detailTags"
+      ).innerHTML =
+        entry.tags
+          .map(tag =>
+            `<span class="tag">${tag}</span>`
+          )
+          .join("");
+
+      document.getElementById(
+        "startText"
+      ).textContent =
+        entry.start;
+
+      document.getElementById(
+        "unlockText"
+      ).textContent =
+        entry.unlock;
+
+      document.getElementById(
+        "keepText"
+      ).textContent =
+        entry.keep;
+
+      document.getElementById(
+        "groupText"
+      ).textContent =
+        entry.group;
+
+      const stepsList =
+        document.getElementById(
+          "stepsList"
+        );
+
+      stepsList.innerHTML = "";
+
+      entry.steps.forEach(step => {
+
+        const li =
+          document.createElement("li");
+
+        li.textContent = step;
+
+        stepsList.appendChild(li);
+
+      });
+
+      const notesList =
+        document.getElementById(
+          "notesList"
+        );
+
+      notesList.innerHTML = "";
+
+      entry.notes.forEach(note => {
+
+        const li =
+          document.createElement("li");
+
+        li.textContent = note;
+
+        notesList.appendChild(li);
+
+      });
+
+      const quickFacts =
+        document.getElementById(
+          "quickFacts"
+        );
+
+      quickFacts.innerHTML = "";
+
+      entry.facts.forEach(
+        ([label,value]) => {
+
+          const fact =
+            document.createElement("div");
+
+          fact.className =
+            "fact";
+
+          fact.innerHTML = `
+
+            <strong>
+              ${label.toUpperCase()}
+            </strong>
+
+            <span>
+              ${value}
+            </span>
+
+          `;
+
+          quickFacts.appendChild(fact);
+
+        }
+      );
+
+      document
+        .getElementById(
+          "detailPanel"
+        )
+        .scrollIntoView({
+          behavior: "smooth",
+          block: "start"
+        });
+
+    }
+
+    /* ======================================================
+       MENU
+       ====================================================== */
+
+    const menuButton =
+      document.getElementById(
+        "menuButton"
+      );
+
+    const sideMenu =
+      document.getElementById(
+        "sideMenu"
+      );
+
+    const menuOverlay =
+      document.getElementById(
+        "menuOverlay"
+      );
+
+    const closeMenu =
+      document.getElementById(
+        "closeMenu"
+      );
+
+    function openMenu() {
+
+      sideMenu.classList.add(
+        "open"
+      );
+
+      menuOverlay.classList.add(
+        "open"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    }
+
+    function closeSideMenu() {
+
+      sideMenu.classList.remove(
+        "open"
+      );
+
+      menuOverlay.classList.remove(
+        "open"
+      );
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+    menuButton.addEventListener(
+      "click",
+      openMenu
+    );
+
+    closeMenu.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+    menuOverlay.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+    document.addEventListener(
+      "keydown",
+      event => {
+
+        if (
+          event.key === "Escape"
+        ) {
+
+          closeSideMenu();
+
+        }
+
+      }
+    );
+
+    /* ======================================================
+       INITIAL LOAD
+       ====================================================== */
+
+    displayEntry(
+      attunements[0]
+    );
+
+  </script>
+
+</body>
+
+</html>
