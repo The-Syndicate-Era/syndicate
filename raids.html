@@ -3,399 +3,468 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+  <title>The Syndicate | Raid Hub</title>
 
-  <title>The Syndicate | Coming Soon</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  >
-
+  <link rel="stylesheet" href="styles.css">
 
   <style>
 
-    :root {
-      --background-dark: #090909;
-      --background-soft: #101010;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #a59b80;
-
-      --border: rgba(217, 180, 56, 0.35);
-
-      --font-heading: "Cinzel", serif;
-      --font-body: "Montserrat", sans-serif;
-    }
-
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-
-      min-height: 100vh;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
+    /* ---------------- HEADER ---------------- */
 
     .site-header {
       height: 70px;
+      background-color: var(--background-dark);
 
       display: flex;
       align-items: center;
       justify-content: space-between;
 
-      background: var(--background-dark);
+      padding: 0 30px;
 
       border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
     }
-
-
-    .logo-area {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-
-      padding-left: 14px;
-    }
-
 
     .logo-area img {
-      height: 46px;
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+
+      color: var(--gold);
+      font-size: 32px;
+
+      cursor: pointer;
+    }
+
+
+    /* ---------------- PAGE TITLE ---------------- */
+
+    .page-title {
+      padding: 18px 12px 12px;
+
+      border-bottom: 1px solid var(--gold-dark);
+    }
+
+    .page-title h1 {
+      margin: 0;
+
+      font-family: var(--font-heading);
+      font-size: 32px;
+      font-weight: 400;
+
+      color: var(--gold);
+
+      letter-spacing: 1px;
+    }
+
+
+    /* ---------------- RAID RESOURCE AREA ---------------- */
+
+    .raid-top {
+      display: grid;
+      grid-template-columns: 34% 66%;
+
+      border-bottom: 1px solid var(--gold-dark);
+    }
+
+
+    .raid-image {
+      border-right: 1px solid var(--gold-dark);
+
+      overflow: hidden;
+    }
+
+    .raid-image img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+    }
+
+
+    /* ---------------- RESOURCE LINKS ---------------- */
+
+    .raid-resources {
+      display: flex;
+      flex-direction: column;
+    }
+
+
+    .resource-row {
+      flex: 1;
+
+      display: grid;
+      grid-template-columns: 40px 1fr 1fr;
+
+      align-items: center;
+
+      gap: 15px;
+
+      padding: 18px 20px;
+
+      border-bottom: 1px solid var(--gold-dark);
+    }
+
+    .resource-row:last-child {
+      border-bottom: none;
+    }
+
+
+    .resource-number {
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 13px;
+    }
+
+
+    .resource-title {
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 21px;
+
+      text-decoration: underline;
+
+      transition: color 0.15s ease;
+    }
+
+
+    .resource-title:hover {
+      color: var(--gold-light);
+    }
+
+
+    .resource-description {
+      color: var(--gold);
+
+      font-size: 12px;
+
+      line-height: 1.45;
+    }
+
+
+    /* ---------------- RAID BUTTON GRID ---------------- */
+
+    .raid-grid-section {
+      padding: 65px 45px 60px;
+    }
+
+
+    .raid-grid {
+      max-width: 1100px;
+
+      margin: 0 auto;
+
+      display: grid;
+
+      grid-template-columns: repeat(3, 1fr);
+
+      gap: 38px 80px;
+
+      align-items: center;
+      justify-items: center;
+    }
+
+
+    /* ---------------- WOW STYLE BUTTON ---------------- */
+
+    .raid-button {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      width: 100%;
+      max-width: 220px;
+
+      min-height: 60px;
+
+      padding: 10px 20px;
+
+      background:
+        linear-gradient(
+          to bottom,
+          #b51414 0%,
+          #8f0909 45%,
+          #650505 100%
+        );
+
+      color: #ffd633;
+
+      font-family: var(--font-heading);
+
+      font-size: 13px;
+
+      text-decoration: none;
+      text-align: center;
+
+      border: 2px solid #2a1a10;
+
+      border-radius: 5px;
+
+      box-shadow:
+        0 0 0 2px #6a4a25,
+        0 0 0 4px #120d09,
+        inset 0 2px 0 rgba(255, 255, 255, 0.18),
+        inset 0 -2px 0 rgba(0, 0, 0, 0.55),
+        0 3px 5px rgba(0, 0, 0, 0.75);
+
+      text-shadow:
+        1px 1px 2px #000;
+
+      cursor: pointer;
+
+      transition:
+        filter 0.1s ease,
+        transform 0.1s ease;
+    }
+
+
+    .raid-button:hover {
+      filter: brightness(1.15);
+    }
+
+
+    .raid-button:active {
+      transform: translateY(2px);
+
+      box-shadow:
+        0 0 0 2px #6a4a25,
+        0 0 0 4px #120d09,
+        inset 0 3px 5px rgba(0, 0, 0, 0.7);
+    }
+
+
+    /* ---------------- DISABLED BUTTON ---------------- */
+
+    .raid-button.disabled {
+      opacity: 0.45;
+
+      cursor: default;
+
+      filter: grayscale(0.4);
+    }
+
+    .raid-button.disabled:hover {
+      filter: grayscale(0.4);
+    }
+
+
+    /* ---------------- GRID POSITIONS ---------------- */
+
+    .zg {
+      grid-column: 1;
+      grid-row: 1;
+    }
+
+    .ony {
+      grid-column: 2;
+      grid-row: 1;
+    }
+
+    .aq40 {
+      grid-column: 3;
+      grid-row: 1;
+    }
+
+    .aq20 {
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    .mc {
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    .naxx {
+      grid-column: 3;
+      grid-row: 2;
+    }
+
+    .bwl {
+      grid-column: 2;
+      grid-row: 3;
+    }
+
+
+    /* ---------------- DIVIDER ---------------- */
+
+    .divider-section {
+      display: flex;
+
+      align-items: center;
+      justify-content: center;
+
+      gap: 18px;
+
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 20px 40px;
+    }
+
+
+    .divider-line {
+      height: 1px;
+      flex: 1;
+
+      background-color: var(--gold-dark);
+    }
+
+
+    .divider-text {
+      font-family: var(--font-heading);
+
+      color: var(--gold-dark);
+
+      font-size: 18px;
+
+      letter-spacing: 2px;
+
+      white-space: nowrap;
+    }
+
+
+    /* ---------------- FOOTER ---------------- */
+
+    .site-footer {
+      display: flex;
+
+      justify-content: center;
+      align-items: center;
+
+      padding: 15px 20px 35px;
+
+      border-top: 1px solid var(--gold-dark);
+    }
+
+
+    .footer-logo img {
+      height: 55px;
+
       width: auto;
 
       display: block;
     }
 
 
-    .desktop-nav {
-      display: flex;
-      align-items: center;
+    /* ---------------- MOBILE ---------------- */
 
-      gap: 34px;
-
-      padding-right: 32px;
-
-      font-family: var(--font-heading);
-
-      font-size: 15px;
-
-      color: var(--gold);
-    }
-
-
-    .desktop-nav a {
-      transition: color 0.2s ease;
-    }
-
-
-    .desktop-nav a:hover {
-      color: var(--gold-light);
-    }
-
-
-    .menu-button {
-      display: none;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 28px;
-
-      cursor: pointer;
-
-      padding: 12px 20px;
-    }
-
-
-    .mobile-nav {
-      display: none;
-
-      position: absolute;
-
-      top: 70px;
-      right: 0;
-
-      width: 230px;
-
-      background: #0b0b0b;
-
-      border-left: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-
-      z-index: 200;
-    }
-
-
-    .mobile-nav.open {
-      display: block;
-    }
-
-
-    .mobile-nav a {
-      display: block;
-
-      padding: 15px 20px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.15);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 14px;
-    }
-
-
-    /* =========================
-       MAIN CONTENT
-    ========================= */
-
-    main {
-      flex: 1;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 60px 30px;
-    }
-
-
-    .coming-soon {
-      width: 100%;
-      max-width: 850px;
-
-      text-align: center;
-
-      padding: 60px 30px;
-
-      border-top: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-    }
-
-
-    .coming-soon h1 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: clamp(38px, 7vw, 72px);
-
-      font-weight: 400;
-
-      letter-spacing: 4px;
-
-      margin-bottom: 18px;
-    }
-
-
-    .coming-soon p {
-      color: var(--text-muted);
-
-      font-size: 15px;
-
-      line-height: 1.8;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-    }
-
-
-    .coming-soon-mark {
-      color: var(--gold-dark);
-
-      font-size: 24px;
-
-      margin-bottom: 18px;
-
-      letter-spacing: 8px;
-    }
-
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .site-footer {
-      border-top:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      padding: 26px 30px 20px;
-
-      text-align: center;
-    }
-
-
-    .footer-motto {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 12px;
-
-      font-family: var(--font-heading);
-
-      font-size: 14px;
-
-      letter-spacing: 3px;
-
-      color: var(--gold-dark);
-    }
-
-
-    .footer-motto::before,
-    .footer-motto::after {
-      content: "";
-
-      width: 90px;
-      height: 1px;
-
-      background: var(--gold-dark);
-    }
-
-
-    .footer-divider {
-      height: 1px;
-
-      max-width: 1100px;
-
-      margin: 16px auto;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
-    }
-
-
-    .footer-logo img {
-      width: 155px;
-      max-width: 65%;
-
-      height: auto;
-    }
-
-
-    /* =========================
-       TABLET / MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-    }
-
-
-    @media (max-width: 650px) {
+    @media (max-width: 768px) {
 
       .site-header {
         height: 60px;
-      }
 
-
-      .logo-area {
-        height: 60px;
+        padding: 0 18px;
       }
 
 
       .logo-area img {
-        height: 38px;
+        height: 36px;
       }
 
 
-      .mobile-nav {
-        top: 60px;
+      .menu-button {
+        font-size: 28px;
       }
 
 
-      main {
-        padding: 40px 18px;
+      .page-title h1 {
+        font-size: 28px;
       }
 
 
-      .coming-soon {
-        padding: 45px 16px;
+      .raid-top {
+        grid-template-columns: 1fr;
       }
 
 
-      .coming-soon h1 {
-        font-size: 38px;
+      .raid-image {
+        height: 250px;
 
-        letter-spacing: 2px;
+        border-right: none;
+
+        border-bottom: 1px solid var(--gold-dark);
       }
 
 
-      .coming-soon p {
+      .resource-row {
+        grid-template-columns: 25px 1fr;
+
+        gap: 10px;
+
+        padding: 18px 15px;
+      }
+
+
+      .resource-description {
+        grid-column: 2;
+
+        margin-top: 3px;
+      }
+
+
+      .resource-title {
+        font-size: 18px;
+      }
+
+
+      .raid-grid-section {
+        padding: 45px 25px;
+      }
+
+
+      .raid-grid {
+        grid-template-columns: 1fr;
+
+        gap: 26px;
+      }
+
+
+      .zg,
+      .ony,
+      .aq40,
+      .aq20,
+      .mc,
+      .naxx,
+      .bwl {
+        grid-column: 1;
+        grid-row: auto;
+      }
+
+
+      .raid-button {
+        max-width: 260px;
+
+        min-height: 58px;
+      }
+
+
+      .divider-section {
+        padding: 20px;
+      }
+
+
+      .divider-text {
         font-size: 13px;
       }
 
 
-      .footer-motto {
-        font-size: 11px;
-        letter-spacing: 2px;
-      }
-
-
-      .footer-motto::before,
-      .footer-motto::after {
-        width: 45px;
+      .footer-logo img {
+        height: 45px;
       }
 
     }
@@ -407,132 +476,245 @@
 <body>
 
 
-  <!-- =========================
-       HEADER
-  ========================== -->
+  <!-- HEADER -->
 
   <header class="site-header">
 
-    <a
-      href="index.html"
-      class="logo-area"
-    >
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-    </a>
-
-
-    <nav class="desktop-nav">
+    <div class="logo-area">
 
       <a href="index.html">
-        Home
+        <img
+          src="images/HeaderLogo.png"
+          alt="The Syndicate"
+        >
       </a>
 
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
+    </div>
 
 
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-    >
+    <button class="menu-button">
       ☰
     </button>
-
-
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
 
   </header>
 
 
-  <!-- =========================
-       COMING SOON
-  ========================== -->
 
-  <main>
+  <!-- PAGE TITLE -->
 
-    <section class="coming-soon">
+  <section class="page-title">
 
-      <div class="coming-soon-mark">
-        ✦ ✦ ✦
-      </div>
+    <h1>
+      RAID HUB
+    </h1>
 
-      <h1>
-        Coming Soon
-      </h1>
-
-      <p>
-        This section of The Syndicate is still being built.
-        Check back soon for more information, resources,
-        and questionable levels of organization.
-      </p>
-
-    </section>
-
-  </main>
+  </section>
 
 
-  <!-- =========================
-       FOOTER
-  ========================== -->
 
-  <footer class="site-footer">
+  <!-- RAID RESOURCES -->
 
-    <div class="footer-motto">
-      ✦ THIS IS THE WAY. ✦
+  <section class="raid-top">
+
+
+    <!-- RAID IMAGE -->
+
+    <div class="raid-image">
+
+      <img
+        src="images/Raiding.png"
+        alt="Raiding is for Everyone"
+      >
+
     </div>
 
-    <div class="footer-divider"></div>
+
+
+    <!-- RESOURCE LINKS -->
+
+    <div class="raid-resources">
+
+
+      <!-- RAID RULES -->
+
+      <div class="resource-row">
+
+        <span class="resource-number">
+          1
+        </span>
+
+        <a
+          href="raid-rules.html"
+          class="resource-title"
+        >
+          RAID RULES
+        </a>
+
+        <p class="resource-description">
+          Know what to expect before you zone in —
+          signups, loot, attendance, and raid expectations.
+        </p>
+
+      </div>
+
+
+
+      <!-- REQUIRED ADDONS -->
+
+      <div class="resource-row">
+
+        <span class="resource-number">
+          2
+        </span>
+
+        <a
+          href="required-addons.html"
+          class="resource-title"
+        >
+          REQUIRED ADD-ONS
+        </a>
+
+        <p class="resource-description">
+          Required and recommended add-ons to keep
+          raids running smoothly.
+        </p>
+
+      </div>
+
+
+
+      <!-- RAID CONSUMABLES -->
+
+      <div class="resource-row">
+
+        <span class="resource-number">
+          3
+        </span>
+
+        <a
+          href="raid-consumables.html"
+          class="resource-title"
+        >
+          RAID CONSUMABLES
+        </a>
+
+        <p class="resource-description">
+          Flasks, elixirs, food, potions, resistance
+          consumables, and other items to bring to raid.
+        </p>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+
+  <!-- RAID BUTTONS -->
+
+  <section class="raid-grid-section">
+
+    <div class="raid-grid">
+
+
+      <a
+        href="zg.html"
+        class="raid-button zg"
+      >
+        ZUL'GURUB
+      </a>
+
+
+      <a
+        href="ony.html"
+        class="raid-button ony"
+      >
+        ONYXIA'S LAIR
+      </a>
+
+
+      <a
+        href="aq40.html"
+        class="raid-button aq40"
+      >
+        TEMPLE OF AHN'QIRAJ
+        <br>
+        (AQ40)
+      </a>
+
+
+      <a
+        href="aq20.html"
+        class="raid-button aq20"
+      >
+        RUINS OF AHN'QIRAJ
+        <br>
+        (AQ20)
+      </a>
+
+
+      <a
+        href="mc.html"
+        class="raid-button mc"
+      >
+        MOLTEN CORE
+      </a>
+
+
+      <!--
+        NAXX LINK NOT PROVIDED YET.
+        Replace this div with an <a>
+        once naxx.html exists.
+      -->
+
+      <div
+        class="raid-button disabled naxx"
+      >
+        NAXXRAMAS
+      </div>
+
+
+      <a
+        href="bwl.html"
+        class="raid-button bwl"
+      >
+        BLACKWING LAIR
+      </a>
+
+
+    </div>
+
+  </section>
+
+
+
+  <!-- DIVIDER -->
+
+  <section class="divider-section">
+
+    <div class="divider-line"></div>
+
+
+    <div class="divider-text">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+
+    <div class="divider-line"></div>
+
+  </section>
+
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
 
     <div class="footer-logo">
 
       <img
-        src="HeaderLogo.png"
+        src="images/HeaderLogo.png"
         alt="The Syndicate"
       >
 
@@ -541,37 +723,6 @@
   </footer>
 
 
-  <!-- =========================
-       MOBILE MENU
-  ========================== -->
-
-  <script>
-
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const mobileNav =
-      document.getElementById("mobileNav");
-
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          mobileNav.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen
-        );
-
-      }
-    );
-
-  </script>
-
-
 </body>
-</html>
 
+</html>
