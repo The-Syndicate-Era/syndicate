@@ -1,0 +1,2125 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Add-Ons | The Syndicate</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@400;500;600&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --background: #080806;
+      --background-dark: #050504;
+      --panel: #11100d;
+      --panel-hover: #16140f;
+
+      --gold: #d9b438;
+      --gold-dark: #6c5520;
+      --gold-soft: #b89a42;
+
+      --text: #d8d2c4;
+      --text-muted: #a79e8d;
+
+      --red-top: #b51414;
+      --red-mid: #8f0909;
+      --red-bottom: #650505;
+
+      --font-heading: "Cinzel", serif;
+      --font-body: "Montserrat", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background:
+        radial-gradient(circle at top, rgba(217, 180, 56, 0.04), transparent 30%),
+        var(--background);
+
+      color: var(--text);
+      font-family: var(--font-body);
+      min-height: 100vh;
+    }
+
+    /* =========================
+       HEADER
+       ========================= */
+
+    .site-header {
+      height: 70px;
+
+      background: var(--background-dark);
+
+      border-bottom: 1px solid var(--gold-dark);
+
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      padding: 0 30px;
+
+      position: relative;
+      z-index: 100;
+    }
+
+    .logo-area img {
+      height: 45px;
+      width: auto;
+      display: block;
+    }
+
+    .menu-button {
+      background: none;
+      border: none;
+
+      color: var(--gold);
+      font-size: 30px;
+
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    /* =========================
+       SIDE MENU
+       ========================= */
+
+    .menu-overlay {
+      position: fixed;
+      inset: 0;
+
+      background: rgba(0, 0, 0, 0.7);
+
+      opacity: 0;
+      visibility: hidden;
+
+      transition: 0.25s ease;
+
+      z-index: 999;
+    }
+
+    .menu-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .side-menu {
+      position: fixed;
+      top: 0;
+      right: -440px;
+
+      width: 420px;
+      max-width: 48vw;
+      height: 100vh;
+
+      background: #0b0a08;
+
+      border-left: 1px solid var(--gold-dark);
+
+      padding: 38px 34px;
+
+      transition: right 0.3s ease;
+
+      z-index: 1000;
+
+      display: flex;
+      flex-direction: column;
+    }
+
+    .side-menu.open {
+      right: 0;
+    }
+
+    .close-menu {
+      align-self: flex-end;
+
+      background: none;
+      border: none;
+
+      color: var(--gold);
+      font-size: 34px;
+
+      cursor: pointer;
+
+      margin-bottom: 20px;
+    }
+
+    .side-menu-logo {
+      text-align: center;
+      margin-bottom: 35px;
+    }
+
+    .side-menu-logo img {
+      width: 180px;
+      max-width: 100%;
+    }
+
+    .side-menu-links {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .side-menu-links a {
+      color: var(--gold);
+
+      text-decoration: none;
+
+      font-family: var(--font-heading);
+      letter-spacing: 1px;
+      font-size: 18px;
+
+      padding: 13px 4px;
+
+      border-bottom: 1px solid rgba(108, 85, 32, 0.55);
+    }
+
+    .side-menu-links a:hover {
+      color: #f2d565;
+    }
+
+    .side-menu-motto {
+      margin-top: auto;
+
+      text-align: center;
+
+      color: var(--gold-dark);
+
+      font-family: var(--font-heading);
+      font-size: 13px;
+      letter-spacing: 2px;
+
+      padding-top: 25px;
+    }
+
+    /* =========================
+       HERO
+       ========================= */
+
+    .page-hero {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 55px 40px 40px;
+
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 44px;
+
+      align-items: center;
+    }
+
+    .hero-image {
+      height: 275px;
+
+      border: 1px solid var(--gold-dark);
+
+      background: #0c0b09;
+
+      padding: 10px;
+
+      box-shadow: 0 14px 35px rgba(0, 0, 0, 0.45);
+    }
+
+    .hero-image img {
+      width: 100%;
+      height: 100%;
+
+      object-fit: cover;
+
+      display: block;
+    }
+
+    .hero-copy h1 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size: clamp(40px, 5vw, 62px);
+
+      font-weight: 400;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 16px;
+    }
+
+    .hero-divider {
+      width: 110px;
+      height: 1px;
+
+      background: var(--gold-dark);
+
+      margin-bottom: 20px;
+    }
+
+    .hero-copy p {
+      color: var(--text);
+
+      font-size: 15px;
+      line-height: 1.8;
+
+      max-width: 620px;
+
+      margin-bottom: 24px;
+    }
+
+    /* =========================
+       BUTTON
+       ========================= */
+
+    .syndicate-button {
+      min-height: 42px;
+
+      padding: 10px 18px;
+
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      background:
+        linear-gradient(
+          to bottom,
+          var(--red-top) 0%,
+          var(--red-mid) 45%,
+          var(--red-bottom) 100%
+        );
+
+      color: #ffd633;
+
+      font-family: var(--font-heading);
+      font-size: 11px;
+      letter-spacing: 0.7px;
+
+      text-decoration: none;
+      text-align: center;
+
+      border: 2px solid #2a1a10;
+      border-radius: 5px;
+
+      box-shadow:
+        0 0 0 2px #6a4a25,
+        0 0 0 4px #120d09,
+        inset 0 2px 0 rgba(255,255,255,.14),
+        inset 0 -2px 0 rgba(0,0,0,.55),
+        0 3px 5px rgba(0,0,0,.65);
+
+      text-shadow: 1px 1px 2px #000;
+
+      transition:
+        transform 0.15s ease,
+        filter 0.15s ease;
+    }
+
+    .syndicate-button:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.12);
+    }
+
+    /* =========================
+       DIRECTORY
+       ========================= */
+
+    .addon-section {
+      max-width: 1200px;
+
+      margin: 0 auto;
+
+      padding: 15px 40px 80px;
+    }
+
+    .section-heading {
+      text-align: center;
+
+      margin-bottom: 30px;
+    }
+
+    .section-heading h2 {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size: 32px;
+      font-weight: 400;
+
+      letter-spacing: 2px;
+
+      margin-bottom: 10px;
+    }
+
+    .section-heading p {
+      color: var(--text-muted);
+
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* =========================
+       FILTER BAR
+       ========================= */
+
+    .filter-bar {
+      background: #0d0c09;
+
+      border: 1px solid var(--gold-dark);
+
+      padding: 18px;
+
+      display: grid;
+      grid-template-columns: 1fr 230px 210px;
+      gap: 12px;
+
+      margin-bottom: 24px;
+    }
+
+    .filter-bar input,
+    .filter-bar select {
+      width: 100%;
+      height: 44px;
+
+      background: #070706;
+
+      border: 1px solid #4e4020;
+
+      color: var(--text);
+
+      font-family: var(--font-body);
+
+      padding: 0 14px;
+
+      outline: none;
+    }
+
+    .filter-bar input:focus,
+    .filter-bar select:focus {
+      border-color: var(--gold);
+    }
+
+    .filter-bar input::placeholder {
+      color: #716b60;
+    }
+
+    /* =========================
+       ADDON ROWS
+       ========================= */
+
+    .addon-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .addon-row {
+      background:
+        linear-gradient(
+          90deg,
+          rgba(217, 180, 56, 0.035),
+          transparent 25%
+        ),
+        var(--panel);
+
+      border: 1px solid #40351d;
+
+      padding: 20px 22px;
+
+      display: grid;
+
+      grid-template-columns:
+        minmax(190px, 1.1fr)
+        minmax(160px, 0.85fr)
+        minmax(300px, 2fr)
+        auto;
+
+      gap: 22px;
+
+      align-items: center;
+
+      transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+    }
+
+    .addon-row:hover {
+      background: var(--panel-hover);
+      border-color: var(--gold-dark);
+      transform: translateY(-1px);
+    }
+
+    .addon-name {
+      font-family: var(--font-heading);
+
+      color: var(--gold);
+
+      font-size: 17px;
+      line-height: 1.3;
+    }
+
+    .addon-category {
+      color: var(--gold-soft);
+
+      font-size: 11px;
+
+      letter-spacing: 0.8px;
+
+      text-transform: uppercase;
+    }
+
+    .addon-description {
+      color: #c6bfae;
+
+      font-size: 13px;
+      line-height: 1.55;
+    }
+
+    .addon-actions {
+      text-align: right;
+    }
+
+    /* =========================
+       TAGS
+       ========================= */
+
+    .tag-list {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 6px;
+
+      margin-top: 8px;
+    }
+
+    .tag {
+      display: inline-block;
+
+      border: 1px solid var(--gold-dark);
+
+      color: var(--gold-soft);
+
+      background: #0a0907;
+
+      padding: 4px 8px;
+
+      font-size: 9px;
+
+      letter-spacing: 0.8px;
+
+      text-transform: uppercase;
+    }
+
+    .tag.required {
+      border-color: #8c2525;
+      color: #e56a5c;
+    }
+
+    .tag.guild {
+      border-color: #725c25;
+      color: #d9b438;
+    }
+
+    .tag.pvp {
+      border-color: #69498b;
+      color: #ad8ad3;
+    }
+
+    .tag.dependency {
+      border-color: #3d6f85;
+      color: #72b8d2;
+    }
+
+    .no-results {
+      display: none;
+
+      padding: 35px;
+
+      text-align: center;
+
+      border: 1px solid var(--gold-dark);
+
+      color: var(--text-muted);
+
+      background: var(--panel);
+    }
+
+    /* =========================
+       FOOTER
+       ========================= */
+
+    .site-footer {
+      border-top: 1px solid var(--gold-dark);
+
+      text-align: center;
+
+      padding: 45px 20px;
+
+      background: #060605;
+    }
+
+    .footer-motto {
+      color: var(--gold);
+
+      font-family: var(--font-heading);
+
+      font-size: 14px;
+      letter-spacing: 2px;
+
+      margin-bottom: 20px;
+    }
+
+    .site-footer img {
+      width: 145px;
+      max-width: 70%;
+
+      opacity: 0.85;
+    }
+
+    /* =========================
+       TABLET
+       ========================= */
+
+    @media (max-width: 1000px) {
+
+      .page-hero {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-image {
+        height: 280px;
+      }
+
+      .filter-bar {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .filter-bar input {
+        grid-column: 1 / -1;
+      }
+
+      .addon-row {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .addon-description {
+        grid-column: 1 / -1;
+      }
+
+      .addon-actions {
+        text-align: left;
+      }
+
+      .side-menu {
+        max-width: 60vw;
+      }
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 700px) {
+
+      .site-header {
+        padding: 0 18px;
+      }
+
+      .logo-area img {
+        height: 40px;
+      }
+
+      .side-menu {
+        width: 85%;
+        max-width: 85%;
+
+        padding: 28px 24px;
+      }
+
+      .page-hero {
+        padding: 38px 20px 28px;
+        gap: 26px;
+      }
+
+      .hero-image {
+        height: 220px;
+      }
+
+      .hero-copy h1 {
+        font-size: 40px;
+      }
+
+      .hero-copy p {
+        font-size: 14px;
+      }
+
+      .addon-section {
+        padding: 15px 20px 60px;
+      }
+
+      .filter-bar {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-bar input {
+        grid-column: auto;
+      }
+
+      .addon-row {
+        grid-template-columns: 1fr;
+
+        gap: 12px;
+
+        padding: 20px;
+      }
+
+      .addon-description {
+        grid-column: auto;
+      }
+
+      .addon-actions {
+        text-align: left;
+      }
+
+      .addon-actions .syndicate-button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- HEADER -->
+
+  <header class="site-header">
+
+    <a class="logo-area" href="index.html">
+      <img src="images/HeaderLogo.png" alt="The Syndicate">
+    </a>
+
+    <button
+      class="menu-button"
+      id="menuButton"
+      type="button"
+      aria-label="Open menu"
+      aria-expanded="false">
+      ☰
+    </button>
+
+  </header>
+
+
+  <!-- MENU -->
+
+  <div class="menu-overlay" id="menuOverlay"></div>
+
+  <aside class="side-menu" id="sideMenu">
+
+    <button
+      class="close-menu"
+      id="closeMenu"
+      type="button"
+      aria-label="Close menu">
+      ×
+    </button>
+
+    <div class="side-menu-logo">
+      <img src="images/HeaderLogo.png" alt="The Syndicate">
+    </div>
+
+    <nav class="side-menu-links">
+      <a href="index.html">HOME</a>
+      <a href="guild.html">THE SYNDICATE</a>
+      <a href="calendar.html">CALENDAR</a>
+      <a href="raids.html">RAID HUB</a>
+      <a href="resources.html">RESOURCES</a>
+    </nav>
+
+    <div class="side-menu-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+  </aside>
+
+
+  <!-- HERO -->
+
+  <main>
+
+    <section class="page-hero">
+
+      <div class="hero-image">
+
+        <!-- CHANGE THIS FILENAME WHEN YOUR ADD-ONS IMAGE IS READY -->
+
+        <img
+          src="images/Addons.png"
+          alt="The Syndicate add-on resources">
+
+      </div>
+
+
+      <div class="hero-copy">
+
+        <h1>ADD-ONS</h1>
+
+        <div class="hero-divider"></div>
+
+        <p>
+          Add-ons can make Classic Era a little easier to organize,
+          understand, and survive. Browse tools used by Syndicate
+          members for raiding, professions, guild management,
+          inventory, PvP, and everyday gameplay.
+        </p>
+
+        <a
+          class="syndicate-button"
+          href="https://www.curseforge.com/wow"
+          target="_blank"
+          rel="noopener noreferrer">
+          VISIT CURSEFORGE
+        </a>
+
+      </div>
+
+    </section>
+
+
+    <!-- ADDON DIRECTORY -->
+
+    <section class="addon-section">
+
+      <div class="section-heading">
+
+        <h2>ADD-ON DIRECTORY</h2>
+
+        <p>
+          Search by name or description, or narrow the list by category
+          and recommendation type.
+        </p>
+
+      </div>
+
+
+      <!-- FILTERS -->
+
+      <div class="filter-bar">
+
+        <input
+          type="search"
+          id="addonSearch"
+          placeholder="Search add-ons...">
+
+        <select id="categoryFilter">
+
+          <option value="all">
+            All Categories
+          </option>
+
+          <option value="guild">
+            Guild & Organization
+          </option>
+
+          <option value="raid">
+            Raiding & Combat
+          </option>
+
+          <option value="gear">
+            Gear & Character
+          </option>
+
+          <option value="economy">
+            Bags, Alts & Economy
+          </option>
+
+          <option value="gathering">
+            Gathering & Professions
+          </option>
+
+          <option value="pvp">
+            PvP
+          </option>
+
+        </select>
+
+
+        <select id="statusFilter">
+
+          <option value="all">
+            All Add-Ons
+          </option>
+
+          <option value="required">
+            Raid Required
+          </option>
+
+          <option value="recommended">
+            Recommended
+          </option>
+
+          <option value="guild-tool">
+            Guild Tool
+          </option>
+
+          <option value="pvp">
+            PvP
+          </option>
+
+        </select>
+
+      </div>
+
+
+      <!-- ADDON LIST -->
+
+      <div class="addon-list" id="addonList">
+
+
+        <!-- ALL THE THINGS -->
+
+        <article
+          class="addon-row"
+          data-category="gear"
+          data-status="recommended"
+          data-search="all the things completion quests items reputations collections gear">
+
+          <div>
+
+            <div class="addon-name">
+              All The Things
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gear & Character
+          </div>
+
+          <div class="addon-description">
+            Tracks quests, items, reputations, appearances, collections,
+            achievements, and other completion progress across the game.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/addons/all-the-things"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- GBANK -->
+
+        <article
+          class="addon-row"
+          data-category="guild"
+          data-status="guild-tool"
+          data-search="gbankclassic revived guild bank inventory alts organization">
+
+          <div>
+
+            <div class="addon-name">
+              GBankClassic – Revived
+            </div>
+
+            <div class="tag-list">
+              <span class="tag guild">Guild Tool</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Guild & Organization
+          </div>
+
+          <div class="addon-description">
+            Helps organize and view guild bank-alt inventories,
+            making it easier to see what the guild has available.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=GBankClassic"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- GRM -->
+
+        <article
+          class="addon-row"
+          data-category="guild"
+          data-status="guild-tool"
+          data-search="guild roster manager grm roster mains alts members guild">
+
+          <div>
+
+            <div class="addon-name">
+              Guild Roster Manager
+            </div>
+
+            <div class="tag-list">
+              <span class="tag guild">Guild Tool</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Guild & Organization
+          </div>
+
+          <div class="addon-description">
+            Helps track guild members, mains and alts, roster changes,
+            promotions, notes, and other guild-management information.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Guild%20Roster%20Manager"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- MINIMAP BUTTON BUTTON -->
+
+        <article
+          class="addon-row"
+          data-category="guild"
+          data-status="recommended"
+          data-search="minimapbuttonbutton minimap button button interface ui icons">
+
+          <div>
+
+            <div class="addon-name">
+              MinimapButtonButton
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Guild & Organization
+          </div>
+
+          <div class="addon-description">
+            Collects your many add-on minimap buttons into a single
+            cleaner location instead of covering the edge of your minimap.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=MinimapButtonButton"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- DETAILS -->
+
+        <article
+          class="addon-row"
+          data-category="raid"
+          data-status="required"
+          data-search="details damage meter tiny threat threat raid combat dps healing">
+
+          <div>
+
+            <div class="addon-name">
+              Details! Damage Meter
+            </div>
+
+            <div class="tag-list">
+              <span class="tag required">Raid Required</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Raiding & Combat
+          </div>
+
+          <div class="addon-description">
+            Combat analysis for damage, healing, deaths, dispels,
+            interrupts, and more. TinyThreat can be used within Details
+            for raid threat tracking.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/addons/details"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- THREAT PLATES -->
+
+        <article
+          class="addon-row"
+          data-category="raid"
+          data-status="recommended"
+          data-search="threat plates threatplates threat nameplates raid combat">
+
+          <div>
+
+            <div class="addon-name">
+              Threat Plates
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Raiding & Combat
+          </div>
+
+          <div class="addon-description">
+            Threat-aware nameplates that make it easier to see which
+            enemies you have threat on and what is targeting someone else.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Threat%20Plates"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- DECURSIVE -->
+
+        <article
+          class="addon-row"
+          data-category="raid"
+          data-status="required"
+          data-search="decursive dispel curse poison disease magic healer raid">
+
+          <div>
+
+            <div class="addon-name">
+              Decursive
+            </div>
+
+            <div class="tag-list">
+              <span class="tag required">Raid Required</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Raiding & Combat
+          </div>
+
+          <div class="addon-description">
+            Provides quick visibility and targeting for curses,
+            poisons, diseases, and magic effects your class can remove.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Decursive"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- LOGGERHEAD -->
+
+        <article
+          class="addon-row"
+          data-category="raid"
+          data-status="recommended"
+          data-search="loggerheadlite loggerhead combat logs logging raid">
+
+          <div>
+
+            <div class="addon-name">
+              LoggerHeadLite
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Raiding & Combat
+          </div>
+
+          <div class="addon-description">
+            Helps automatically manage combat logging when entering
+            raids and other selected instances.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=LoggerHeadLite"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- NOVA WORLD BUFFS -->
+
+        <article
+          class="addon-row"
+          data-category="raid"
+          data-status="recommended"
+          data-search="nova world buffs buffs ony rend songflower timers raid">
+
+          <div>
+
+            <div class="addon-name">
+              Nova World Buffs
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Raiding & Combat
+          </div>
+
+          <div class="addon-description">
+            Tracks world buffs, cooldowns, timers, announcements,
+            and other useful Classic world-buff information.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Nova%20World%20Buffs"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- NOVA INSTANCE TRACKER -->
+
+        <article
+          class="addon-row"
+          data-category="raid"
+          data-status="recommended"
+          data-search="nova instance tracker lockouts resets instances dungeons raids">
+
+          <div>
+
+            <div class="addon-name">
+              Nova Instance Tracker
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Raiding & Combat
+          </div>
+
+          <div class="addon-description">
+            Tracks instance entries, resets, lockouts, and other
+            useful dungeon and raid information.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Nova%20Instance%20Tracker"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- ITEMRACK -->
+
+        <article
+          class="addon-row"
+          data-category="gear"
+          data-status="recommended"
+          data-search="itemrack classic gear sets resistance pvp raid equipment">
+
+          <div>
+
+            <div class="addon-name">
+              ItemRack Classic
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gear & Character
+          </div>
+
+          <div class="addon-description">
+            Create and quickly swap between gear sets for raiding,
+            PvP, resistance sets, tanking, healing, and other situations.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=ItemRack%20Classic"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- ATTUNE -->
+
+        <article
+          class="addon-row"
+          data-category="gear"
+          data-status="recommended"
+          data-search="attune attunement raid dungeon quest progress">
+
+          <div>
+
+            <div class="addon-name">
+              Attune
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gear & Character
+          </div>
+
+          <div class="addon-description">
+            Tracks dungeon and raid attunement quest chains and helps
+            show exactly where your character is in the process.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Attune"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- ATLASLOOT -->
+
+        <article
+          class="addon-row"
+          data-category="gear"
+          data-status="recommended"
+          data-search="atlaslootclassic continued atlas loot dungeon raid items gear">
+
+          <div>
+
+            <div class="addon-name">
+              AtlasLootClassic Continued
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gear & Character
+          </div>
+
+          <div class="addon-description">
+            Browse dungeon and raid loot, reputation rewards,
+            crafted items, and other gear without leaving the game.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=AtlasLootClassic%20Continued"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- TACOTIP -->
+
+        <article
+          class="addon-row"
+          data-category="gear"
+          data-status="recommended"
+          data-search="tacotip taco tip tooltip gear talents player information">
+
+          <div>
+
+            <div class="addon-name">
+              TacoTip
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gear & Character
+          </div>
+
+          <div class="addon-description">
+            Adds useful character, talent, gear, and player information
+            directly to unit tooltips.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=TacoTip"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- WHATS TRAINING -->
+
+        <article
+          class="addon-row"
+          data-category="gear"
+          data-status="recommended"
+          data-search="whats training spells abilities trainer leveling class">
+
+          <div>
+
+            <div class="addon-name">
+              What's Training?
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gear & Character
+          </div>
+
+          <div class="addon-description">
+            Shows upcoming class abilities and training costs before
+            you make the trip back to your class trainer.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=What%27s%20Training"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- BAGSYNC -->
+
+        <article
+          class="addon-row"
+          data-category="economy"
+          data-status="recommended"
+          data-search="bagsync bags alts inventory bank items gold professions">
+
+          <div>
+
+            <div class="addon-name">
+              BagSync
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Bags, Alts & Economy
+          </div>
+
+          <div class="addon-description">
+            Tracks items, currencies, professions, banks, and other
+            inventory information across your characters.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=BagSync"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- BAGNON -->
+
+        <article
+          class="addon-row"
+          data-category="economy"
+          data-status="recommended"
+          data-search="bagnon bags inventory bank alts">
+
+          <div>
+
+            <div class="addon-name">
+              Bagnon
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Bags, Alts & Economy
+          </div>
+
+          <div class="addon-description">
+            Combines bags into a searchable inventory and helps
+            track item quantities across multiple characters.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Bagnon"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- JOURNALATOR -->
+
+        <article
+          class="addon-row"
+          data-category="economy"
+          data-status="recommended"
+          data-search="journalator gold money economy auction trading">
+
+          <div>
+
+            <div class="addon-name">
+              Journalator
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Bags, Alts & Economy
+          </div>
+
+          <div class="addon-description">
+            Tracks gold activity and helps show where your money
+            is coming from and where it keeps disappearing to.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Journalator"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- AUCTIONATOR -->
+
+        <article
+          class="addon-row"
+          data-category="economy"
+          data-status="recommended"
+          data-search="auctionator auction house ah prices shopping selling buying">
+
+          <div>
+
+            <div class="addon-name">
+              Auctionator
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Bags, Alts & Economy
+          </div>
+
+          <div class="addon-description">
+            Improves buying and selling on the Auction House with
+            price information, shopping lists, and cleaner workflows.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Auctionator"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- AUCTIONEER -->
+
+        <article
+          class="addon-row"
+          data-category="economy"
+          data-status="recommended"
+          data-search="auctioneer auction house ah price economy">
+
+          <div>
+
+            <div class="addon-name">
+              Auctioneer
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Bags, Alts & Economy
+          </div>
+
+          <div class="addon-description">
+            A feature-heavy Auction House suite with pricing,
+            market information, and buying and selling tools.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Auctioneer"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- BETTER VENDOR PRICE -->
+
+        <article
+          class="addon-row"
+          data-category="economy"
+          data-status="recommended"
+          data-search="bettervendorprice better vendor price item vendor gold sell">
+
+          <div>
+
+            <div class="addon-name">
+              BetterVendorPrice
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Bags, Alts & Economy
+          </div>
+
+          <div class="addon-description">
+            Shows vendor values for items so you can quickly see
+            what something is worth before selling it.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=BetterVendorPrice"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- GATHERMATE -->
+
+        <article
+          class="addon-row"
+          data-category="gathering"
+          data-status="recommended"
+          data-search="gathermate2 classic herbs mining treasure gathering nodes map">
+
+          <div>
+
+            <div class="addon-name">
+              GatherMate2 Classic
+            </div>
+
+            <div class="tag-list">
+              <span class="tag">Recommended</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gathering & Professions
+          </div>
+
+          <div class="addon-description">
+            Records gathering nodes and displays herb, mining,
+            treasure, and other gathering locations on your map.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=GatherMate2%20Classic"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- GATHERMATE DATA -->
+
+        <article
+          class="addon-row"
+          data-category="gathering"
+          data-status="recommended"
+          data-search="gathermate2 data wowhead classic gathering nodes herbs mining">
+
+          <div>
+
+            <div class="addon-name">
+              GatherMate2 Data Wowhead Classic
+            </div>
+
+            <div class="tag-list">
+              <span class="tag dependency">
+                Requires GatherMate2
+              </span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            Gathering & Professions
+          </div>
+
+          <div class="addon-description">
+            Imports known gathering-node locations into GatherMate2
+            so you do not have to discover every node yourself.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=GatherMate2%20Data%20Wowhead%20Classic"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+        <!-- RANKER -->
+
+        <article
+          class="addon-row"
+          data-category="pvp"
+          data-status="pvp"
+          data-search="ranker pvp honor rank ranking classic">
+
+          <div>
+
+            <div class="addon-name">
+              Ranker
+            </div>
+
+            <div class="tag-list">
+              <span class="tag pvp">PvP</span>
+            </div>
+
+          </div>
+
+          <div class="addon-category">
+            PvP
+          </div>
+
+          <div class="addon-description">
+            Helps track Classic Era honor and PvP ranking progress.
+          </div>
+
+          <div class="addon-actions">
+            <a
+              class="syndicate-button"
+              href="https://www.curseforge.com/wow/search?page=1&pageSize=20&sortBy=relevancy&class=addons&search=Ranker"
+              target="_blank"
+              rel="noopener noreferrer">
+              VIEW ADD-ON
+            </a>
+          </div>
+
+        </article>
+
+
+      </div>
+
+
+      <!-- NO RESULTS -->
+
+      <div class="no-results" id="noResults">
+        No add-ons match those filters.
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <!-- FOOTER -->
+
+  <footer class="site-footer">
+
+    <div class="footer-motto">
+      ◆ THIS IS THE WAY. ◆
+    </div>
+
+    <img
+      src="images/HeaderLogo.png"
+      alt="The Syndicate">
+
+  </footer>
+
+
+  <!-- JAVASCRIPT -->
+
+  <script>
+
+    /* =========================
+       SIDE MENU
+       ========================= */
+
+    const menuButton =
+      document.getElementById("menuButton");
+
+    const sideMenu =
+      document.getElementById("sideMenu");
+
+    const menuOverlay =
+      document.getElementById("menuOverlay");
+
+    const closeMenu =
+      document.getElementById("closeMenu");
+
+
+    function openMenu() {
+
+      sideMenu.classList.add("open");
+
+      menuOverlay.classList.add("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "true"
+      );
+
+    }
+
+
+    function closeSideMenu() {
+
+      sideMenu.classList.remove("open");
+
+      menuOverlay.classList.remove("open");
+
+      menuButton.setAttribute(
+        "aria-expanded",
+        "false"
+      );
+
+    }
+
+
+    menuButton.addEventListener(
+      "click",
+      openMenu
+    );
+
+
+    closeMenu.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    menuOverlay.addEventListener(
+      "click",
+      closeSideMenu
+    );
+
+
+    document.addEventListener(
+      "keydown",
+      (event) => {
+
+        if (event.key === "Escape") {
+          closeSideMenu();
+        }
+
+      }
+    );
+
+
+    /* =========================
+       ADDON FILTERING
+       ========================= */
+
+    const searchInput =
+      document.getElementById("addonSearch");
+
+    const categoryFilter =
+      document.getElementById("categoryFilter");
+
+    const statusFilter =
+      document.getElementById("statusFilter");
+
+    const addonRows =
+      document.querySelectorAll(".addon-row");
+
+    const noResults =
+      document.getElementById("noResults");
+
+
+    function filterAddons() {
+
+      const searchValue =
+        searchInput.value
+          .toLowerCase()
+          .trim();
+
+      const categoryValue =
+        categoryFilter.value;
+
+      const statusValue =
+        statusFilter.value;
+
+      let visibleCount = 0;
+
+
+      addonRows.forEach((row) => {
+
+        const rowSearch =
+          (
+            row.dataset.search +
+            " " +
+            row.textContent
+          ).toLowerCase();
+
+        const rowCategory =
+          row.dataset.category;
+
+        const rowStatus =
+          row.dataset.status;
+
+
+        const matchesSearch =
+          !searchValue ||
+          rowSearch.includes(searchValue);
+
+
+        const matchesCategory =
+          categoryValue === "all" ||
+          rowCategory === categoryValue;
+
+
+        const matchesStatus =
+          statusValue === "all" ||
+          rowStatus === statusValue;
+
+
+        if (
+          matchesSearch &&
+          matchesCategory &&
+          matchesStatus
+        ) {
+
+          row.style.display = "grid";
+
+          visibleCount++;
+
+        } else {
+
+          row.style.display = "none";
+
+        }
+
+      });
+
+
+      if (visibleCount === 0) {
+
+        noResults.style.display = "block";
+
+      } else {
+
+        noResults.style.display = "none";
+
+      }
+
+    }
+
+
+    searchInput.addEventListener(
+      "input",
+      filterAddons
+    );
+
+
+    categoryFilter.addEventListener(
+      "change",
+      filterAddons
+    );
+
+
+    statusFilter.addEventListener(
+      "change",
+      filterAddons
+    );
+
+  </script>
+
+</body>
+
+</html>
