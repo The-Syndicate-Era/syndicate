@@ -5,13 +5,36 @@
 <title>Officer Raid Rules Manager | The Syndicate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
 <style>
 :root{--bg:#090909;--panel:#121114;--panel2:#1c191b;--gold:#d9b438;--gold2:#eed17c;--line:#544526;--text:#ede5d2;--muted:#b5a88f;--green:#69bd8a;--red:#e18181;--blue:#9bc1ef}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 Inter,Arial,sans-serif}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}h1,h2,h3{font-family:Cinzel,Georgia,serif}a{color:inherit;text-decoration:none}[hidden]{display:none!important}
 header{height:70px;background:#0a090a;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(14px,4vw,42px)}header img{height:45px;max-width:220px;object-fit:contain}.header-links{display:flex;gap:18px;align-items:center;color:var(--gold2);font-size:13px}
 .hero{background:linear-gradient(90deg,#08080aeb,#141012a8),url('image/raiding.png') center/cover no-repeat;min-height:210px;display:flex;align-items:center;border-bottom:1px solid var(--line)}.hero>div{width:min(1280px,100%);margin:auto;padding:30px 20px}.eyebrow{color:var(--gold);font-size:11px;letter-spacing:.21em;text-transform:uppercase;font-weight:700}.hero h1{font-size:clamp(29px,4.4vw,48px);color:var(--gold2);margin:8px 0}.hero p{margin:0;max-width:700px;color:#e4d8bd}
 .wrap{max-width:1280px;margin:auto;padding:23px 18px 70px}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}.btn{background:#272126;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 13px}.btn:hover{border-color:var(--gold)}.btn.primary{background:#c69d42;color:#16120a;border-color:#e0b955;font-weight:700}.btn.danger{color:#ffbbbb;border-color:#795050}.btn.small{padding:6px 9px;font-size:12px}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.note{padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:#1b1919;color:var(--muted);margin:12px 0}.note.error{border-color:#ad5555;color:#ffd1d1}.note.success{border-color:#488862;color:#c4f6d5}
-.layout{display:grid;grid-template-columns:minmax(235px,320px) minmax(0,1fr);gap:18px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;min-width:0}.sidebar h2,.editor h2{font-size:19px;color:var(--gold2);margin:0 0 13px}.section-list{display:grid;gap:6px;max-height:72vh;overflow-y:auto}.section-item{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;width:100%;border:1px solid #3c342c;border-radius:8px;background:#1a181b;color:var(--text);padding:12px 10px}.section-item.active{border-color:var(--gold);background:#342a1d}.section-item .number{color:var(--muted);font-size:11px;margin-right:6px}.pill{border:1px solid #776342;border-radius:50px;padding:2px 7px;font-size:10px;color:#dfca9e;white-space:nowrap}.pill.live{border-color:#479566;color:#b2e6c2}.meta{font-size:12px;color:var(--muted)}.section-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.field{margin:17px 0}.field label{display:block;color:var(--gold2);font-weight:600;margin-bottom:6px}.field input,.field textarea{width:100%;background:#0c0b0e;border:1px solid #54442f;border-radius:8px;color:var(--text);padding:11px 12px}.field textarea{min-height:245px;resize:vertical;line-height:1.7}.field input:focus,.field textarea:focus{outline:2px solid #bd964655}.help{font-size:12px;color:var(--muted);margin-top:5px}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:var(--gold)}.preview{border:1px solid #57482f;background:#131114;border-radius:10px;padding:22px;min-height:140px}.preview h2{margin:0 0 12px}.preview .description{color:#d0c5b1;margin:0 0 15px}.preview-content{white-space:pre-wrap;overflow-wrap:anywhere;line-height:1.8}.preview-content p{margin:0 0 10px}.preview-tag{color:var(--gold);text-transform:uppercase;letter-spacing:.12em;font-size:11px}.footer{text-align:center;color:#8c7341;margin-top:37px;font-family:Cinzel;letter-spacing:2px;font-size:12px}.auth{max-width:550px;margin:0 auto 20px}.auth input{width:100%;background:#0b0a0c;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:11px}.auth .actions{margin-top:12px}.divider{border:0;border-top:1px solid #443926;margin:22px 0}.tiny{font-size:11px;color:var(--muted)}
+.layout{display:grid;grid-template-columns:minmax(235px,320px) minmax(0,1fr);gap:18px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;min-width:0}.sidebar h2,.editor h2{font-size:19px;color:var(--gold2);margin:0 0 13px}.section-list{display:grid;gap:6px;max-height:72vh;overflow-y:auto}.section-item{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;width:100%;border:1px solid #3c342c;border-radius:8px;background:#1a181b;color:var(--text);padding:12px 10px}.section-item.active{border-color:var(--gold);background:#342a1d}.section-item .number{color:var(--muted);font-size:11px;margin-right:6px}.pill{border:1px solid #776342;border-radius:50px;padding:2px 7px;font-size:10px;color:#dfca9e;white-space:nowrap}.pill.live{border-color:#479566;color:#b2e6c2}.meta{font-size:12px;color:var(--muted)}.section-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.field{margin:17px 0}.field label{display:block;color:var(--gold2);font-weight:600;margin-bottom:6px}.field input,.field textarea{width:100%;background:#0c0b0e;border:1px solid #54442f;border-radius:8px;color:var(--text);padding:11px 12px}.field textarea{min-height:245px;resize:vertical;line-height:1.7}.field input:focus,.field textarea:focus{outline:2px solid #bd964655}.help{font-size:12px;color:var(--muted);margin-top:5px}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:var(--gold)}.preview{border:1px solid #57482f;background:#131114;border-radius:10px;padding:22px;min-height:140px}.preview h2{margin:0 0 12px}.preview .description{color:#d0c5b1;margin:0 0 15px}.preview-content{overflow-wrap:anywhere;line-height:1.8}.preview-content ul,.preview-content ol{padding-left:26px}.preview-content h2,.preview-content h3{color:var(--gold2)}.preview-content .ql-indent-1{padding-left:2em}.preview-content .ql-indent-2{padding-left:4em}.preview-content .ql-indent-3{padding-left:6em}.preview-content p{margin:0 0 10px}.preview-tag{color:var(--gold);text-transform:uppercase;letter-spacing:.12em;font-size:11px}.footer{text-align:center;color:#8c7341;margin-top:37px;font-family:Cinzel;letter-spacing:2px;font-size:12px}.auth{max-width:550px;margin:0 auto 20px}.auth input{width:100%;background:#0b0a0c;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:11px}.auth .actions{margin-top:12px}.divider{border:0;border-top:1px solid #443926;margin:22px 0}.tiny{font-size:11px;color:var(--muted)}
+/* Quill editor – Syndicate theme */
+.rich-editor{background:#100e11;border:1px solid #665132;border-radius:8px;overflow:hidden}
+.rich-editor .ql-toolbar.ql-snow{background:#29232a;border:none;border-bottom:1px solid #665132;display:flex;flex-wrap:wrap;gap:2px}
+.rich-editor .ql-container.ql-snow{border:0;font:14px/1.7 Inter,Arial,sans-serif;color:var(--text)}
+.rich-editor .ql-editor{min-height:300px;max-height:65vh;overflow-y:auto}
+.rich-editor .ql-editor.ql-blank::before{color:#968b79}
+.rich-editor .ql-snow .ql-stroke{stroke:#ead7b0}.rich-editor .ql-snow .ql-fill{fill:#ead7b0}
+.rich-editor .ql-snow .ql-picker{color:#ead7b0}
+.rich-editor .ql-snow .ql-picker-options{background:#201b22;border-color:#665132;color:#ead7b0}
+.rich-editor .ql-snow button:hover,.rich-editor .ql-snow button.ql-active{background:#554128;border-radius:4px}
+.rich-editor .ql-editor h2,.rich-editor .ql-editor h3{color:var(--gold2)}
+.rich-editor a,.preview-content a{color:#ebc26a;text-decoration:underline}
+.version-switch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0 8px}
+.version-switch .btn.active{background:#49371e;border-color:var(--gold);color:var(--gold2)}
+.version-help{font-size:12px;color:var(--muted);margin-bottom:10px}
+.published-view{border:1px solid #57482f;background:#131114;border-radius:10px;padding:20px;min-height:200px}
+.published-view .description{color:#d0c5b1;white-space:pre-wrap}
+.published-view .preview-content ul,.published-view .preview-content ol{padding-left:26px}
+.published-view .preview-content h2,.published-view .preview-content h3{color:var(--gold2)}
+.published-view .preview-content .ql-indent-1{padding-left:2em}
+.published-view .preview-content .ql-indent-2{padding-left:4em}
+.published-view .preview-content .ql-indent-3{padding-left:6em}
 @media(max-width:780px){.layout{grid-template-columns:1fr}.section-list{max-height:250px}.two{grid-template-columns:1fr}.panel{padding:14px}.header-links{gap:10px;font-size:11px}.hero{min-height:180px}}
 </style>
 </head>
@@ -28,14 +51,21 @@ header{height:70px;background:#0a090a;border-bottom:1px solid var(--line);displa
 <section class="panel editor">
 <div id="emptyEditor" class="meta">Select a category to begin editing.</div>
 <div id="editArea" hidden><div class="section-top"><div><h2 id="sectionHeading"></h2><div id="sectionMeta" class="meta"></div></div><span id="publishedBadge" class="pill"></span></div>
+<div class="version-switch" role="group" aria-label="Choose rule version"><button id="draftVersion" class="btn active" type="button" aria-pressed="true">Draft Version</button><button id="publishedVersion" class="btn" type="button" aria-pressed="false">Published Version</button></div>
+<div id="versionHelp" class="version-help">Editing your saved draft. Only Publish sends these changes to the guild page.</div>
+<div id="draftFields">
 <div class="two"><div class="field"><label for="sectionTitle">Section title</label><input id="sectionTitle" maxlength="160"></div><div class="field"><label for="sortOrder">Display order</label><input id="sortOrder" type="number" min="0" step="1"></div></div>
 <div class="field"><label for="description">Short description</label><textarea id="description" rows="3" style="min-height:92px" placeholder="Short introduction to this section..."></textarea><div class="help">Displayed below the section heading on the public website.</div></div>
-<div class="field"><label for="content">Raid rules</label><textarea id="content" rows="15" placeholder="Write the rules for this category here..."></textarea><div class="help">Plain text with line breaks and bullet characters is supported. The public page should display content using textContent / white-space: pre-wrap to preserve formatting safely.</div></div>
+<div class="field"><label id="rulesLabel">Raid rules</label><div class="rich-editor" aria-labelledby="rulesLabel"><div id="content"></div></div><div class="help">Use headings, bold, italic, bullets, numbered lists, indents, and links. Formatted HTML is stored in your existing draft_content and published_content fields.</div></div>
 <div class="actions"><button id="saveDraft" class="btn primary">Save Draft</button><button id="previewBtn" class="btn">Preview Draft</button><button id="publishBtn" class="btn">Publish</button><button id="unpublishBtn" class="btn danger">Unpublish</button></div><div id="unsaved" class="help" hidden>You have unsaved changes.</div>
+</div>
+<div id="publishedFields" hidden><article class="published-view"><h3 id="publishedTitle"></h3><p id="publishedDesc" class="description"></p><div id="publishedText" class="preview-content"></div></article><p class="help">Read-only snapshot of the last published rules. Switch back to Draft Version to continue editing.</p></div>
 <div id="previewRegion" hidden><hr class="divider"><div class="section-top"><h2>Draft Preview</h2><button class="btn small" id="closePreview">Close</button></div><article class="preview"><div class="preview-tag">Raid Rules</div><h2 id="previewTitle"></h2><p class="description" id="previewDesc"></p><div id="previewText" class="preview-content"></div></article></div>
 </div></section></div></div>
 <div class="footer">◆ THIS IS THE WAY. ◆</div></main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 <script>
 'use strict';
 // Use the public/publishable key from calendar.html. Never place a service-role key in this file.
@@ -45,24 +75,70 @@ const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSI
 const TABLE='raid_rules';
 const $=id=>document.getElementById(id);
 const db=window.supabase&&SUPABASE_KEY&&!SUPABASE_KEY.startsWith('PASTE_')?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
-let rows=[],selectedId=null,dirty=false;
+let rows=[],selectedId=null,dirty=false,version='draft';
+const quill=window.Quill?new Quill('#content',{
+ theme:'snow',placeholder:'Write raid rules here...',
+ modules:{toolbar:[[{header:[2,3,false]}],['bold','italic','underline','strike'],[{list:'ordered'},{list:'bullet'}],[{indent:'-1'},{indent:'+1'}],['link','blockquote'],['clean']]}
+}):null;
+function safeHtml(html){if(!window.DOMPurify)throw new Error('Formatting sanitizer did not load. Please refresh the page.');return DOMPurify.sanitize(html,{ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],ALLOWED_ATTR:['href','target','rel','class'],ALLOW_DATA_ATTR:false});}
+function loadRich(value){if(!quill)return;const v=String(value||'');quill.setText('','silent');if(/^\s*<(?:p|h[1-6]|ul|ol|blockquote|div|br|strong|b|em|span)\b/i.test(v)){quill.clipboard.dangerouslyPasteHTML(safeHtml(v),'silent')}else quill.setText(v,'silent')}
+function richValue(){if(!quill)throw new Error('Rich text editor failed to load.');return quill.getText().trim()?safeHtml(quill.root.innerHTML):'';}
+quill?.on('text-change',()=>setDirty(true));
 function msg(t,type=''){const n=$('message');n.textContent=t;n.className='note '+type;n.hidden=false}
 function clearMsg(){$('message').hidden=true}
 function selected(){return rows.find(r=>String(r.id)===String(selectedId))}
 function setDirty(value){dirty=value;$('unsaved').hidden=!value}
 function protectChange(){return !dirty||confirm('You have unsaved changes. Discard them?')}
-function draft(){return {section_title:$('sectionTitle').value.trim(),sort_order:Number($('sortOrder').value)||0,draft_description:$('description').value,draft_content:$('content').value}}
-async function start(){if(!db){msg('Supabase is not connected. Add your existing publishable key to SUPABASE_KEY.','error');return}await loadSections()}
+function draft(){return {section_title:$('sectionTitle').value.trim(),sort_order:Number($('sortOrder').value)||0,draft_description:$('description').value,draft_content:richValue()}}
+async function start(){if(!quill||!window.DOMPurify){msg('Rich text editor or sanitizer did not load. Refresh the page.','error');return}if(!db){msg('Supabase is not connected. Add your existing publishable key to SUPABASE_KEY.','error');return}await loadSections()}
 $('refresh').onclick=async()=>{if(!protectChange())return;await loadSections()};
 async function loadSections(){clearMsg();const {data,error}=await db.from(TABLE).select('id,section_title,slug,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').order('sort_order',{ascending:true}).order('id',{ascending:true});if(error){msg('Unable to load editor categories: '+error.message+'. Check Supabase read policies for this page.','error');return}rows=data||[];if(!rows.some(r=>String(r.id)===String(selectedId)))selectedId=rows[0]?.id??null;renderList();renderEditor();setDirty(false)}
 function renderList(){const list=$('sectionList');list.replaceChildren();$('count').textContent=rows.length+' sections';for(const r of rows){const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(selectedId)?' active':'');const left=document.createElement('span');const number=document.createElement('span');number.className='number';number.textContent=String(r.sort_order).padStart(2,'0');left.append(number,document.createTextNode(' '+r.section_title));const badge=document.createElement('span');badge.className='pill'+(r.is_published?' live':'');badge.textContent=r.is_published?'Live':'Draft';b.append(left,badge);b.onclick=()=>{if(!protectChange())return;selectedId=r.id;renderList();renderEditor();setDirty(false)};list.append(b)}}
-function renderEditor(){const r=selected();$('emptyEditor').hidden=!!r;$('editArea').hidden=!r;if(!r)return;$('sectionHeading').textContent=r.section_title;$('sectionMeta').textContent='Updated: '+(r.updated_at?new Date(r.updated_at).toLocaleString():'—')+' · ID '+r.id;$('publishedBadge').textContent=r.is_published?'Published':'Not Published';$('publishedBadge').className='pill'+(r.is_published?' live':'');$('sectionTitle').value=r.section_title;$('sortOrder').value=r.sort_order;$('description').value=r.draft_description||'';$('content').value=r.draft_content||'';$('previewRegion').hidden=true;$('unpublishBtn').disabled=!r.is_published}
-for(const id of ['sectionTitle','sortOrder','description','content'])$(id).addEventListener('input',()=>setDirty(true));
-async function save(){const r=selected();if(!r)return false;const values=draft();if(!values.section_title){msg('Section title cannot be empty.','error');return false}const {error}=await db.from(TABLE).update(values).eq('id',r.id);if(error){msg('Draft save failed: '+error.message+'. Supabase may be blocking public UPDATE requests.','error');return false}await loadSections();msg('Draft saved successfully.','success');return true}
+function renderEditor(){
+ const r=selected();$('emptyEditor').hidden=!!r;$('editArea').hidden=!r;if(!r)return;
+ $('sectionHeading').textContent=r.section_title;
+ $('sectionMeta').textContent='Updated: '+(r.updated_at?new Date(r.updated_at).toLocaleString():'—')+' · ID '+r.id;
+ $('publishedBadge').textContent=r.is_published?'Published':'Not Published';
+ $('publishedBadge').className='pill'+(r.is_published?' live':'');
+ $('sectionTitle').value=r.section_title;$('sortOrder').value=r.sort_order;
+ $('description').value=r.draft_description||'';
+ loadRich(r.draft_content||'');
+ $('publishedTitle').textContent=r.section_title;
+ $('publishedDesc').textContent=r.published_description||'';
+ $('publishedText').innerHTML=safeHtml(r.published_content||'')||'<p class="muted">No published content yet.</p>';
+ $('previewRegion').hidden=true;$('unpublishBtn').disabled=!r.is_published;
+ showVersion(version);
+}
+function showVersion(next){
+ version=next;
+ $('draftFields').hidden=next!=='draft';$('publishedFields').hidden=next!=='published';
+ for(const [id,mode] of [['draftVersion','draft'],['publishedVersion','published']]){
+  const active=next===mode;$(id).classList.toggle('active',active);$(id).setAttribute('aria-pressed',String(active));
+ }
+ const r=selected();
+ $('versionHelp').textContent=next==='draft'
+  ?'Editing your saved draft. Only Publish sends these changes to the guild page.'
+  :r?.is_published?'Showing the last published version (read-only).':'This category has not been published yet. Showing its empty published snapshot.';
+ $('previewRegion').hidden=true;
+}
+$('draftVersion').onclick=()=>showVersion('draft');
+$('publishedVersion').onclick=()=>{if(!protectChange())return;if(dirty){renderEditor();setDirty(false)}showVersion('published');};
+for(const id of ['sectionTitle','sortOrder','description'])$(id).addEventListener('input',()=>setDirty(true));
+async function save(){
+ const r=selected();if(!r)return false;
+ const values=draft();if(!values.section_title){msg('Section title cannot be empty.','error');return false}
+ const {data,error}=await db.from(TABLE).update(values).eq('id',r.id).select('id,draft_description,draft_content,section_title,sort_order');
+ if(error){msg('Draft save failed: '+error.message+'. Check Supabase UPDATE permissions.','error');return false}
+ if(!data?.length){msg('Draft was not saved: Supabase did not update any rows. Check UPDATE permissions.','error');return false}
+ if(data[0].draft_content!==values.draft_content||data[0].draft_description!==values.draft_description){
+  msg('Draft could not be verified after saving. Please check database permissions.','error');return false;
+ }
+ await loadSections();showVersion('draft');msg('Draft saved. Reopen this category anytime to continue editing.','success');return true;
+}
 $('saveDraft').onclick=save;
-$('previewBtn').onclick=()=>{if(!selected())return;$('previewTitle').textContent=$('sectionTitle').value;$('previewDesc').textContent=$('description').value;$('previewText').textContent=$('content').value;$('previewRegion').hidden=false;$('previewRegion').scrollIntoView({behavior:'smooth',block:'nearest'})};
+$('previewBtn').onclick=()=>{if(!selected())return;$('previewTitle').textContent=$('sectionTitle').value;$('previewDesc').textContent=$('description').value;$('previewText').innerHTML=richValue();$('previewRegion').hidden=false;$('previewRegion').scrollIntoView({behavior:'smooth',block:'nearest'})};
 $('closePreview').onclick=()=>{$('previewRegion').hidden=true};
-$('publishBtn').onclick=async()=>{const r=selected();if(!r)return;if(!draft().section_title)return msg('Enter a title before publishing.','error');if(!confirm('Publish this section to the public Raid Rules page?'))return;const values=draft();const payload={...values,published_description:values.draft_description,published_content:values.draft_content,is_published:true};const {error}=await db.from(TABLE).update(payload).eq('id',r.id);if(error)return msg('Publish failed: '+error.message,'error');await loadSections();msg('Section published. Public readers will see the updated published content.','success')};
+$('publishBtn').onclick=async()=>{const r=selected();if(!r)return;if(!draft().section_title)return msg('Enter a title before publishing.','error');if(!confirm('Publish this section to the public Raid Rules page?'))return;const values=draft();const payload={...values,published_description:values.draft_description,published_content:values.draft_content,is_published:true};const {data,error}=await db.from(TABLE).update(payload).eq('id',r.id).select('id');if(error||!data?.length)return msg('Publish failed: '+(error?.message||'no rows updated; check permissions'),'error');await loadSections();showVersion('published');msg('Section published. Public readers will see the updated published content.','success')};
 $('unpublishBtn').onclick=async()=>{const r=selected();if(!r||!confirm('Hide this section from the public Raid Rules page?'))return;const {error}=await db.from(TABLE).update({is_published:false}).eq('id',r.id);if(error)return msg('Unpublish failed: '+error.message,'error');await loadSections();msg('Section unpublished.','success')};
 function makeSlug(title){return title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 $('addCategory').onclick=async()=>{if(!protectChange())return;const name=prompt('New raid rules category name:');if(name===null)return;const title=name.trim();if(!title)return;const slug=makeSlug(title);if(!slug)return msg('Enter a title containing letters or numbers.','error');const order=rows.reduce((m,r)=>Math.max(m,Number(r.sort_order)||0),0)+1;const {data,error}=await db.from(TABLE).insert({section_title:title,slug,sort_order:order}).select('id').single();if(error)return msg('Could not add category: '+error.message,'error');selectedId=data.id;await loadSections();msg('Category added as an unpublished draft.','success')};
