@@ -36,7 +36,32 @@
  
 const SUPABASE_URL = 'https://vjxbulbnozopbuzyxxob.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4';
-const client = window.supabase && window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+const client = window.supabase?.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+function ready() {
+  if (!window.supabase) {
+    notice(
+      'Supabase library failed to load. Check the script connection.',
+      'error'
+    );
+    return false;
+  }
+
+  if (!SUPABASE_KEY ||
+      SUPABASE_KEY.startsWith('PASTE_') ||
+      SUPABASE_KEY === 'REMOVED') {
+    notice(
+      'Supabase configuration is missing.',
+      'error'
+    );
+    return false;
+  }
+
+  return true;
+}
 const EVENT_TABLE='Events', SIGNUP_TABLE='raid_responsibility_signups', AVAIL_TABLE='raid_officer_unavailability';
 // The existing SQL requires BOTH preferences to be populated; 'no' is the default for the role not yet selected.
 const CHOICES=[{value:'want',label:"Going — I'd like to do it",desc:'Actively volunteering for the responsibility.'},{value:'can',label:'Going — Can if needed',desc:'Happy to help, but not requesting the position.'},{value:'bench',label:'Benched — Call me if needed',desc:'Available as backup if brought into the raid.'},{value:'no',label:'Not available',desc:'Cannot cover this responsibility.'}];
