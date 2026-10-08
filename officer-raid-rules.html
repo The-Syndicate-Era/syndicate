@@ -20,9 +20,9 @@ header{height:70px;background:#0a090a;border-bottom:1px solid var(--line);displa
 <section class="hero"><div><div class="eyebrow">The Syndicate · Officer Tools</div><h1>Raid Rules Manager</h1><p>Organize raid policies, save drafts, preview changes, and publish updates for the guild.</p></div></section>
 <main class="wrap">
 <div id="message" class="note" role="status" aria-live="polite" hidden></div>
-<section id="authPanel" class="panel auth"><h2>Officer Editor Sign-In</h2><p class="meta">Use your approved Supabase account to edit guild policies. Public visitors can view published rules on the main website.</p><div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="email" placeholder="officer@example.com"></div><div class="actions"><button id="sendLink" class="btn primary">Email Sign-In Link</button><button id="signOut" class="btn" hidden>Sign Out</button></div><p class="help">If the link is not received, confirm email sign-in is enabled in Supabase Auth and this GitHub Pages URL is permitted as a redirect URL.</p></section>
-<div id="manager" hidden>
-<div class="bar"><div><strong id="accountLine">Officer workspace</strong><div class="meta">Drafts stay private until you publish them.</div></div><div class="actions"><button id="refresh" class="btn">Refresh</button><button id="logout" class="btn">Sign Out</button></div></div>
+
+<div id="manager">
+<div class="bar"><div><strong>Officer workspace</strong><div class="meta">Save drafts and publish sections when ready.</div></div><div class="actions"><button id="refresh" class="btn">Refresh</button></div></div>
 <div class="layout">
 <aside class="panel sidebar"><div class="section-top"><h2>Categories</h2><span id="count" class="meta"></span></div><div id="sectionList" class="section-list"></div><hr class="divider"><button class="btn" id="addCategory">+ Add Category</button><p class="help">Select a category to edit. Publish only when the section is ready for guild members.</p></aside>
 <section class="panel editor">
@@ -38,30 +38,27 @@ header{height:70px;background:#0a090a;border-bottom:1px solid var(--line);displa
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
-// Paste your Supabase PUBLISHABLE / ANON key from calendar.html. Never use a service-role key in GitHub Pages.
+// Use the public/publishable key from calendar.html. Never place a service-role key in this file.
+// This page does not sign users in. Database permissions are still enforced by Supabase.
 const SUPABASE_URL='https://vjxbulbnozopbuzyxxob.supabase.co';
-const SUPABASE_KEY='PASTE_YOUR_EXISTING_CALENDAR_PUBLISHABLE_KEY_HERE';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4';
 const TABLE='raid_rules';
 const $=id=>document.getElementById(id);
 const db=window.supabase&&SUPABASE_KEY&&!SUPABASE_KEY.startsWith('PASTE_')?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
-let rows=[],selectedId=null,dirty=false,activeUser=null;
+let rows=[],selectedId=null,dirty=false;
 function msg(t,type=''){const n=$('message');n.textContent=t;n.className='note '+type;n.hidden=false}
 function clearMsg(){$('message').hidden=true}
 function selected(){return rows.find(r=>String(r.id)===String(selectedId))}
 function setDirty(value){dirty=value;$('unsaved').hidden=!value}
 function protectChange(){return !dirty||confirm('You have unsaved changes. Discard them?')}
 function draft(){return {section_title:$('sectionTitle').value.trim(),sort_order:Number($('sortOrder').value)||0,draft_description:$('description').value,draft_content:$('content').value}}
-function showAuth(signedIn){$('authPanel').hidden=signedIn;$('manager').hidden=!signedIn;if(signedIn)$('accountLine').textContent='Signed in: '+(activeUser?.email||'Officer')}
-async function start(){if(!db){msg('Add the same Supabase publishable key used by calendar.html to SUPABASE_KEY.','error');return}const {data,error}=await db.auth.getUser();if(error)console.warn(error.message);activeUser=data?.user||null;showAuth(!!activeUser);if(activeUser)await loadSections()}
-$('sendLink').onclick=async()=>{if(!db)return msg('Supabase connection is not configured.','error');const email=$('email').value.trim();if(!email)return msg('Enter your email address.','error');$('sendLink').disabled=true;const {error}=await db.auth.signInWithOtp({email,options:{emailRedirectTo:location.origin+location.pathname,shouldCreateUser:false}});$('sendLink').disabled=false;msg(error?'Sign-in failed: '+error.message:'Check your email for the sign-in link.',error?'error':'success')};
-async function logout(){if(!db)return;if(!protectChange())return;await db.auth.signOut();activeUser=null;rows=[];selectedId=null;showAuth(false);msg('Signed out.','success')}
-$('logout').onclick=logout;
+async function start(){if(!db){msg('Supabase is not connected. Add your existing publishable key to SUPABASE_KEY.','error');return}await loadSections()}
 $('refresh').onclick=async()=>{if(!protectChange())return;await loadSections()};
-async function loadSections(){clearMsg();const {data,error}=await db.from(TABLE).select('id,section_title,slug,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').order('sort_order',{ascending:true}).order('id',{ascending:true});if(error){msg('Unable to load editor categories: '+error.message+'. Check officer SELECT permissions.','error');return}rows=data||[];if(!rows.some(r=>String(r.id)===String(selectedId)))selectedId=rows[0]?.id??null;renderList();renderEditor();setDirty(false)}
+async function loadSections(){clearMsg();const {data,error}=await db.from(TABLE).select('id,section_title,slug,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').order('sort_order',{ascending:true}).order('id',{ascending:true});if(error){msg('Unable to load editor categories: '+error.message+'. Check Supabase read policies for this page.','error');return}rows=data||[];if(!rows.some(r=>String(r.id)===String(selectedId)))selectedId=rows[0]?.id??null;renderList();renderEditor();setDirty(false)}
 function renderList(){const list=$('sectionList');list.replaceChildren();$('count').textContent=rows.length+' sections';for(const r of rows){const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(selectedId)?' active':'');const left=document.createElement('span');const number=document.createElement('span');number.className='number';number.textContent=String(r.sort_order).padStart(2,'0');left.append(number,document.createTextNode(' '+r.section_title));const badge=document.createElement('span');badge.className='pill'+(r.is_published?' live':'');badge.textContent=r.is_published?'Live':'Draft';b.append(left,badge);b.onclick=()=>{if(!protectChange())return;selectedId=r.id;renderList();renderEditor();setDirty(false)};list.append(b)}}
 function renderEditor(){const r=selected();$('emptyEditor').hidden=!!r;$('editArea').hidden=!r;if(!r)return;$('sectionHeading').textContent=r.section_title;$('sectionMeta').textContent='Updated: '+(r.updated_at?new Date(r.updated_at).toLocaleString():'—')+' · ID '+r.id;$('publishedBadge').textContent=r.is_published?'Published':'Not Published';$('publishedBadge').className='pill'+(r.is_published?' live':'');$('sectionTitle').value=r.section_title;$('sortOrder').value=r.sort_order;$('description').value=r.draft_description||'';$('content').value=r.draft_content||'';$('previewRegion').hidden=true;$('unpublishBtn').disabled=!r.is_published}
 for(const id of ['sectionTitle','sortOrder','description','content'])$(id).addEventListener('input',()=>setDirty(true));
-async function save(){const r=selected();if(!r)return false;const values=draft();if(!values.section_title){msg('Section title cannot be empty.','error');return false}const {error}=await db.from(TABLE).update(values).eq('id',r.id);if(error){msg('Draft save failed: '+error.message+'. The officer account may not have UPDATE permission.','error');return false}await loadSections();msg('Draft saved successfully.','success');return true}
+async function save(){const r=selected();if(!r)return false;const values=draft();if(!values.section_title){msg('Section title cannot be empty.','error');return false}const {error}=await db.from(TABLE).update(values).eq('id',r.id);if(error){msg('Draft save failed: '+error.message+'. Supabase may be blocking public UPDATE requests.','error');return false}await loadSections();msg('Draft saved successfully.','success');return true}
 $('saveDraft').onclick=save;
 $('previewBtn').onclick=()=>{if(!selected())return;$('previewTitle').textContent=$('sectionTitle').value;$('previewDesc').textContent=$('description').value;$('previewText').textContent=$('content').value;$('previewRegion').hidden=false;$('previewRegion').scrollIntoView({behavior:'smooth',block:'nearest'})};
 $('closePreview').onclick=()=>{$('previewRegion').hidden=true};
@@ -69,7 +66,6 @@ $('publishBtn').onclick=async()=>{const r=selected();if(!r)return;if(!draft().se
 $('unpublishBtn').onclick=async()=>{const r=selected();if(!r||!confirm('Hide this section from the public Raid Rules page?'))return;const {error}=await db.from(TABLE).update({is_published:false}).eq('id',r.id);if(error)return msg('Unpublish failed: '+error.message,'error');await loadSections();msg('Section unpublished.','success')};
 function makeSlug(title){return title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 $('addCategory').onclick=async()=>{if(!protectChange())return;const name=prompt('New raid rules category name:');if(name===null)return;const title=name.trim();if(!title)return;const slug=makeSlug(title);if(!slug)return msg('Enter a title containing letters or numbers.','error');const order=rows.reduce((m,r)=>Math.max(m,Number(r.sort_order)||0),0)+1;const {data,error}=await db.from(TABLE).insert({section_title:title,slug,sort_order:order}).select('id').single();if(error)return msg('Could not add category: '+error.message,'error');selectedId=data.id;await loadSections();msg('Category added as an unpublished draft.','success')};
-if(db)db.auth.onAuthStateChange((event,session)=>{if(event==='SIGNED_OUT'){activeUser=null;showAuth(false)}else if(event==='SIGNED_IN'&&session?.user&&!activeUser){activeUser=session.user;showAuth(true);setTimeout(()=>loadSections(),0)}});
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 start();
 </script>
