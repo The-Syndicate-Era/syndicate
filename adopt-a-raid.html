@@ -14,7 +14,7 @@
 </style>
 </head>
 <body>
-<header class="site-header"><a class="logo" href="index.html"><img src="image/HeaderLogo.png" alt="The Syndicate"></a><button class="menu-btn" id="openMenu" aria-label="Open navigation">☰</button></header>
+<header class="site-header"><a class="logo" href="index.html"><img src="images/HeaderLogo.png" alt="The Syndicate"></a><button class="menu-btn" id="openMenu" aria-label="Open navigation">☰</button></header>
 <div class="shade" id="shade"></div><nav class="drawer" id="drawer" aria-label="Website navigation"><button class="btn close" id="closeMenu" aria-label="Close navigation">✕</button><h2>The Syndicate</h2><a href="index.html">Home</a><a href="officers.html">Officers</a><a href="calendar.html">Calendar</a><a href="raid-hub.html">Raid Hub</a><a href="class-hall.html">Class Hall</a><a href="resources.html">Resources</a></nav>
 <section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Operations</div><h1>Raid Responsibilities</h1><p>Volunteer to raid lead or master loot, arrange main and bench coverage, and keep the crew's availability in one place.</p></div></section>
 <main class="wrap">
@@ -23,7 +23,7 @@
 <section id="calendarView" class="view"><div class="toolbar"><div><h2>Monthly Raid Coverage</h2><div class="muted small">Events automatically come from the existing calendar.</div></div><div class="month-controls"><button id="prev" class="btn" aria-label="Previous month">‹</button><strong id="monthTitle"></strong><button id="next" class="btn" aria-label="Next month">›</button><button id="today" class="btn">Today</button></div></div>
 <div class="legend"><span><i class="dot red"></i>Main RL or ML missing</span><span><i class="dot amber"></i>Mains filled, bench missing</span><span><i class="dot green"></i>Fully covered</span></div>
 <section class="panel"><div class="week"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div class="calendar" id="calendar"></div></section>
-</section></section>
+</section>
 <section id="unavailableView" class="view" hidden><div class="panel"><h2>Officer Unavailability</h2><p class="muted">Record days you are away or unable to help. This schedule is separate from raid sign-ups.</p><form id="unavailableForm"><div class="grid2"><div class="field"><label for="unavailName">Character name</label><input id="unavailName" maxlength="80" required placeholder="e.g. Kaerixi"></div><div class="field"><label for="unavailReason">Note (optional)</label><input id="unavailReason" maxlength="180" placeholder="Out of town / unavailable"></div><div class="field"><label for="unavailStart">From</label><input id="unavailStart" type="date" required></div><div class="field"><label for="unavailEnd">Through</label><input id="unavailEnd" type="date" required></div></div><button class="btn primary" type="submit">Add Unavailable Dates</button></form><div class="unavail-list" id="unavailableList"></div></div></section>
 <section id="summaryView" class="view" hidden><div class="panel"><div class="toolbar"><h2>Monthly Coverage Overview</h2><div class="muted small" id="summaryTitle"></div></div><div class="table-scroll"><table><thead><tr><th>Raid</th><th>Date</th><th>Main RL</th><th>Bench RL</th><th>Main ML</th><th>Bench ML</th><th>Status</th></tr></thead><tbody id="summaryRows"></tbody></table></div></div></section>
 <div class="footer">◆ THIS IS THE WAY. ◆</div></main>
@@ -34,7 +34,7 @@
     const SUPABASE_URL = "https://vjxbulbnozopbuzyxxob.supabase.co";
     const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4";
 /* ========================================================================== */
-const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const client = window.supabase?.createClient(SUPABASE_URL, SUPABASE_KEY);
 const EVENT_TABLE = 'Events';
 const SIGNUP_TABLE = 'raid_responsibility_signups';
 const ASSIGN_TABLE = 'raid_responsibility_assignments';
@@ -42,7 +42,7 @@ const AWAY_TABLE = 'raid_officer_unavailability';
 const RAID_NAMES = /\b(onyxia|ony|zg|zul.?gurub|aq20|aq40|ahn.?qiraj|molten core|\bmc\b|blackwing lair|\bbwl\b|naxx|ruins of ahn|temple of ahn)\b/i;
 const OPTIONS = [{value:'',label:'Choose your availability'},{value:'want',label:'Going — I want to do it'},{value:'can',label:'Going — Can if needed'},{value:'bench',label:'Benched — Let me know if needed'},{value:'no',label:'Unavailable for this role'}];
 const today = new Date(); let year=today.getFullYear(),month=today.getMonth(),selected=null;
-let raids=[],signups=[],assignments=[],away=[];
+let raids=[],signups=[],assignments=[],away=[];let requestVersion=0;
 const $=id=>document.getElementById(id);
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!==undefined)e.textContent=txt;return e;}
 function dateStr(y,m,d){return `${y}-${String(m+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;}
@@ -51,31 +51,34 @@ function nextMonthStr(){return new Date(year,month+1,1).toLocaleDateString('en-C
 function isoDay(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
 function say(text,kind=''){const m=$('message');m.hidden=false;m.textContent=text;m.className='notice '+kind;m.scrollIntoView({block:'nearest'});}
 function clearMsg(){$('message').hidden=true;}
-function isRaid(e){return String(e.type||'').trim().toLowerCase()==='raid'||RAID_NAMES.test(String(e.event||e.event_name||e.name||''));}
+function isRaid(e){return String(e.type||'').trim().toLowerCase()==='raid';}
 function title(e){return String(e.event||e.event_name||e.name||'Raid');}
 function idFor(e){return String(e.id);}
 function assignFor(id){return assignments.find(a=>String(a.event_id)===String(id))||{};}
 function signFor(id){return signups.filter(s=>String(s.event_id)===String(id));}
 function coverage(e){const a=assignFor(idFor(e));if(!a.main_rl||!a.main_ml)return 'red';if(!a.bench_rl||!a.bench_ml)return 'amber';return 'green';}
 function statusName(v){return v==='green'?'Fully covered':v==='amber'?'Needs bench coverage':'Needs main coverage';}
-function formatWhen(e){return `${new Date(String(e.date).slice(0,10)+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}${e.time?' · '+e.time:''}`;}
-function checkReady(){if(!client||SUPABASE_ANON_KEY.includes('PASTE_YOUR')){say('Set SUPABASE_ANON_KEY in this HTML to the publishable key already used by your calendar page.','error');return false;}return true;}
-async function load(){clearMsg();if(!checkReady())return;const start=isoDay(new Date(year,month,1)),end=isoDay(new Date(year,month+1,1));
-const eventResponse=await client.from(EVENT_TABLE).select('*').gte('date',start).lt('date',end).order('date',{ascending:true});
+function formatWhen(e){return `${new Date(String(e.date).slice(0,10)+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'})}${e.time?' · '+formatTime(e.time):''}`;}
+function formatTime(time){if(!time)return '';const match=String(time).match(/^(\d{1,2}):(\d{2})/);if(!match)return String(time);const h=Number(match[1]);return `${h%12||12}:${match[2]} ${h>=12?'PM':'AM'}`;}
+function checkReady(){if(!client||!SUPABASE_KEY||SUPABASE_KEY==='REMOVED'||SUPABASE_KEY.includes('PASTE_YOUR')){say('Set SUPABASE_KEY in this HTML to the publishable key already used by your calendar page.','error');return false;}return true;}
+async function load(){const version=++requestVersion;clearMsg();raids=[];signups=[];assignments=[];away=[];render();if(!checkReady())return;const start=isoDay(new Date(year,month,1)),end=isoDay(new Date(year,month+1,1));
+const eventResponse=await client.from(EVENT_TABLE).select('*').gte('date',start).lt('date',end).order('date',{ascending:true}).order('time',{ascending:true});
+if(version!==requestVersion)return;
 if(eventResponse.error){say('Calendar load failed: '+eventResponse.error.message,'error');return;}
 raids=(eventResponse.data||[]).filter(isRaid);
 const ids=raids.map(idFor);let s=[],a=[];
 if(ids.length){const results=await Promise.all([client.from(SIGNUP_TABLE).select('*').in('event_id',ids),client.from(ASSIGN_TABLE).select('*').in('event_id',ids)]);
 if(results[0].error)say('Could not read sign-ups: '+results[0].error.message,'error');else s=results[0].data||[];
 if(results[1].error)say('Could not read assignments: '+results[1].error.message,'error');else a=results[1].data||[];}
-signups=s;assignments=a;
+if(version!==requestVersion)return;signups=s;assignments=a;
 const awayResponse=await client.from(AWAY_TABLE).select('*').lte('start_date',end).gte('end_date',start).order('start_date',{ascending:true});
+if(version!==requestVersion)return;
 if(awayResponse.error)say('Could not read unavailability: '+awayResponse.error.message,'error');else away=awayResponse.data||[];
 if(selected&&!raids.some(r=>idFor(r)===selected))selected=null;
 render();}
 function render(){const monthText=new Date(year,month,1).toLocaleDateString('en-US',{month:'long',year:'numeric'});$('monthTitle').textContent=monthText;$('summaryTitle').textContent=monthText;renderCalendar();renderAway();renderSummary();}
 function renderCalendar(){const host=$('calendar');host.replaceChildren();const offset=new Date(year,month,1).getDay(),days=new Date(year,month+1,0).getDate();for(let i=0;i<offset;i++)host.append(el('div','day other'));
-for(let day=1;day<=days;day++){const dayCell=el('div','day');dayCell.append(el('div','date',day));for(const e of raids.filter(x=>String(x.date).slice(0,10)===dateStr(year,month,day))){const c=coverage(e),btn=el('button','event-chip '+(c==='amber'?'amber-chip':c==='green'?'green-chip':'')+(selected===idFor(e)?' selected':''));btn.type='button';btn.append(el('b','',title(e)));btn.append(el('small','',String(e.time||'')));btn.append(el('em','',statusName(c)));btn.addEventListener('click',()=>openRaid(e.id));dayCell.append(btn);}host.append(dayCell);}}
+for(let day=1;day<=days;day++){const dayCell=el('div','day');dayCell.append(el('div','date',day));for(const e of raids.filter(x=>String(x.date).slice(0,10)===dateStr(year,month,day))){const c=coverage(e),btn=el('button','event-chip '+(c==='amber'?'amber-chip':c==='green'?'green-chip':'')+(selected===idFor(e)?' selected':''));btn.type='button';btn.append(el('b','',title(e)));btn.append(el('small','',formatTime(e.time)));btn.append(el('em','',statusName(c)));btn.addEventListener('click',()=>openRaid(e.id));dayCell.append(btn);}host.append(dayCell);}}
 function labelFor(v){return OPTIONS.find(o=>o.value===v)?.label||'—';}
 function slot(label,value){const d=el('div','slot');d.append(el('label','',label),el('strong','',value||'Unassigned'));return d;}
 function field(label,type='text'){const wrapper=el('div','field');const l=el('label','',label);const inp=document.createElement('input');inp.type=type;inp.required=true;wrapper.append(l,inp);return {wrapper,inp};}
@@ -164,7 +167,7 @@ $('closeModal').onclick=closeRaid;
 $('raidModal').addEventListener('click',ev=>{if(ev.target===$('raidModal'))closeRaid();});
 document.addEventListener('keydown',ev=>{if(!$('raidModal').hidden&&ev.key==='Escape')closeRaid();});
 
-load();
+load().catch(err=>say('Unable to load raid calendar: '+err.message,'error'));
 </script>
 </body>
 </html>
