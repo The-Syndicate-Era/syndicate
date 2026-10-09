@@ -23,44 +23,12 @@
     { label: 'Resources', path: 'resources.html', children: [
       { label: 'Addons', path: 'resources/addons.html' },
       { label: 'Attunement Keys', path: 'resources/attune-key.html' },
-      { label: 'Class Information', path: 'resources/class.html' },
+    /*  { label: 'Class Information', path: 'resources/class.html' }, */
       { label: 'Professions & Crafting', path: 'resources/professions-crafting.html' },
       { label: 'Reputations', path: 'resources/reputations.html' },
-      { label: 'Helpful Websites', path: 'resources/support-websites.html' }
+      { label: 'Supportive Websites', path: 'resources/support-websites.html' }
     ] }
   ];
-
-  const css = `
-    .syn-menu, .syn-menu * { box-sizing: border-box; }
-    .syn-menu { position: relative; z-index: 3000; background: #0b0a0c; border-bottom: 1px solid #80662d; color: #f1e5c7; font-family: var(--font-body, Georgia, serif); font-size: 1rem; }
-    .syn-menu__inner { max-width: 1440px; margin: auto; min-height: 4.7rem; padding: .5rem clamp(1rem, 3vw, 2rem); display: flex; align-items: center; gap: 1.2rem; justify-content: space-between; }
-    .syn-menu__logo img { display: block; width: auto; height: 3.2rem; max-width: 13rem; object-fit: contain; }
-    .syn-menu a { color: inherit; text-decoration: none; }
-    .syn-menu a:hover, .syn-menu a[aria-current="page"] { color: #f3cb65; }
-    .syn-menu__nav { display:flex; align-items:center; gap: .18rem; }
-    .syn-menu__group { position:relative; display:flex; align-items:center; }
-    .syn-menu__link, .syn-menu__expand { border: 0; background: transparent; color:inherit; font:inherit; border-radius:.4rem; }
-    .syn-menu__link { display:block; padding:.65rem .6rem; white-space:nowrap; }
-    .syn-menu__expand { padding: .55rem .25rem; cursor:pointer; font-size:.85em; }
-    .syn-menu__toggle { display:none; border:1px solid #9b7d3f; color:#f1d795; background:#211b14; padding:.55rem .8rem; border-radius:.5rem; font:inherit; cursor:pointer; }
-    .syn-menu__sub { position:absolute; top:100%; left:0; min-width: 13rem; max-height:70vh; overflow:auto; background:#191519; border:1px solid #74603b; border-radius:.5rem; padding:.35rem; box-shadow:0 12px 28px #000a; display:none; }
-    .syn-menu__group[data-open="true"] > .syn-menu__sub, .syn-menu__group:focus-within > .syn-menu__sub { display:block; }
-    .syn-menu__sub a { display:block; padding:.55rem .65rem; border-radius:.3rem; }
-    .syn-menu__sub a:hover, .syn-menu__sub a[aria-current="page"] { background:#35291a; }
-    .syn-menu :focus-visible { outline:3px solid #d4af37; outline-offset:2px; }
-    @media (max-width: 1100px) {
-      .syn-menu__toggle { display:block; }
-      .syn-menu__inner { flex-wrap:wrap; }
-      .syn-menu__nav { display:none; width:100%; flex-direction:column; align-items:stretch; border-top:1px solid #47391f; padding:.55rem 0; }
-      .syn-menu[data-mobile-open="true"] .syn-menu__nav { display:flex; }
-      .syn-menu__group { flex-wrap:wrap; justify-content:space-between; }
-      .syn-menu__link { flex:1; }
-      .syn-menu__expand { min-width:2.7rem; min-height:2.7rem; }
-      .syn-menu__sub { position:static; box-shadow:none; width:100%; max-height:none; margin:0 0 .35rem .6rem; }
-      .syn-menu__group:focus-within > .syn-menu__sub { display:none; }
-      .syn-menu__group[data-open="true"] > .syn-menu__sub { display:block; }
-    }
-  `;
 
   const el = (tag, className, text) => {
     const node = document.createElement(tag);
@@ -72,12 +40,11 @@
   const at = path => current.pathname === new URL(path, siteRoot).pathname;
   function render() {
     if (document.querySelector('.syn-menu')) return;
-    const style = el('style'); style.textContent = css; document.head.appendChild(style);
     const header = el('header','syn-menu');
     const inner = el('div','syn-menu__inner');
     const brand = el('a','syn-menu__logo'); brand.href=siteUrl('index.html'); brand.setAttribute('aria-label','The Syndicate home');
     const logo = el('img'); logo.src=siteUrl('images/HeaderLogo.png'); logo.alt='The Syndicate'; brand.appendChild(logo); inner.appendChild(brand);
-    const toggle = el('button','syn-menu__toggle','☰ Menu'); toggle.type='button'; toggle.setAttribute('aria-expanded','false'); toggle.setAttribute('aria-controls','syn-menu-links'); inner.appendChild(toggle);
+    const toggle = el('button','syn-menu__toggle','☰'); toggle.type='button'; toggle.setAttribute('aria-label','Open navigation menu'); toggle.setAttribute('aria-expanded','false'); toggle.setAttribute('aria-controls','syn-menu-links'); inner.appendChild(toggle);
     const nav = el('nav','syn-menu__nav'); nav.id='syn-menu-links'; nav.setAttribute('aria-label','Main navigation');
     for (const item of links) {
       const group = el('div','syn-menu__group');
@@ -106,10 +73,10 @@
     const target=document.getElementById('syndicate-menu');
     if(target) target.replaceWith(header); else document.body.prepend(header);
     toggle.addEventListener('click',()=>{
-      const open=header.dataset.mobileOpen!=='true'; header.dataset.mobileOpen=String(open); toggle.setAttribute('aria-expanded',String(open)); toggle.textContent=open?'✕ Close':'☰ Menu';
+      const open=header.dataset.mobileOpen!=='true'; header.dataset.mobileOpen=String(open); toggle.setAttribute('aria-expanded',String(open)); toggle.textContent=open?'✕':'☰'; toggle.setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu');
     });
-    document.addEventListener('click',ev=>{if(!header.contains(ev.target)) nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{g.dataset.open='false';g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false')});});
-    document.addEventListener('keydown',ev=>{if(ev.key==='Escape') {header.dataset.mobileOpen='false';toggle.setAttribute('aria-expanded','false');toggle.textContent='☰ Menu';nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{g.dataset.open='false';g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false')});}});
+    document.addEventListener('click',ev=>{if(!header.contains(ev.target)) {header.dataset.mobileOpen='false';toggle.setAttribute('aria-expanded','false'); toggle.textContent='☰'; nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{g.dataset.open='false';g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false')});}});
+    document.addEventListener('keydown',ev=>{if(ev.key==='Escape') {header.dataset.mobileOpen='false';toggle.setAttribute('aria-expanded','false');toggle.textContent='☰'; toggle.setAttribute('aria-label','Open navigation menu');nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{g.dataset.open='false';g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false')});}});
   }
   if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',render,{once:true}); else render();
 })();
