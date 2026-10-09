@@ -1,1010 +1,136 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>The Syndicate | Resources</title>
-
-  <link rel="stylesheet" href="styles.css">
-
+  <link rel="stylesheet" href="settings/styles.css">
+  <script src="settings/font-setting.js" defer></script>
+  <script src="settings/menu.js" defer></script>
+  <script src="settings/site-layout.js" defer></script>
   <style>
-
-    :root {
-      --background-dark: #090909;
-      --background-card: #11100d;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #b7ad94;
-
-      --font-heading: "Cinzel", serif;
-      --font-body: Arial, sans-serif;
-    }
-
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* ==================================================
-       HEADER
-    ================================================== */
-
-    .site-header {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 30px;
-
-      background: var(--background-dark);
-
-      border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
-    }
-
-
-    .logo-area img {
-      height: 45px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    .menu-button {
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 32px;
-
-      cursor: pointer;
-
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-
-    /* ==================================================
-       SLIDE-OUT MENU
-    ================================================== */
-
-    .menu-overlay {
-      position: fixed;
-      inset: 0;
-
-      background: rgba(0, 0, 0, 0.65);
-
-      opacity: 0;
-      visibility: hidden;
-
-      transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-
-      z-index: 900;
-    }
-
-
-    .menu-overlay.open {
-      opacity: 1;
-      visibility: visible;
-    }
-
-
-    .side-menu {
-      position: fixed;
-
-      top: 0;
-      right: 0;
-
-      width: 420px;
-      max-width: 48vw;
-      height: 100%;
-
-      background: #090909;
-
-      border-left: 1px solid var(--gold-dark);
-
-      transform: translateX(100%);
-
-      transition: transform 0.3s ease;
-
-      z-index: 1000;
-
-      padding: 70px 40px 40px;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    .side-menu.open {
-      transform: translateX(0);
-    }
-
-
-    .close-menu {
-      position: absolute;
-
-      top: 18px;
-      right: 22px;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 34px;
-
-      cursor: pointer;
-    }
-
-
-    .side-menu-logo {
-      text-align: center;
-      margin-bottom: 40px;
-    }
-
-
-    .side-menu-logo img {
-      width: 180px;
-      max-width: 80%;
-
-      height: auto;
-    }
-
-
-    .side-menu-links {
-      display: flex;
-      flex-direction: column;
-
-      gap: 10px;
-    }
-
-
-    .side-menu-links a {
-      padding: 18px 10px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 20px;
-
-      letter-spacing: 1px;
-
-      transition:
-        color 0.2s ease,
-        padding-left 0.2s ease;
-    }
-
-
-    .side-menu-links a:hover {
-      color: var(--gold-light);
-
-      padding-left: 18px;
-    }
-
-
-    .side-menu-motto {
-      margin-top: auto;
-
-      padding-top: 30px;
-
-      border-top: 1px solid var(--gold-dark);
-
-      text-align: center;
-
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 13px;
-
-      letter-spacing: 2px;
-    }
-
-
-    /* ==================================================
-       HERO
-    ================================================== */
-
-    .resources-hero {
-      position: relative;
-
-      min-height: 260px;
-
-      display: flex;
-      align-items: center;
-
-      overflow: hidden;
-
-      border-bottom: 1px solid var(--gold-dark);
-    }
-
-
-    .resources-hero img {
-      position: absolute;
-      inset: 0;
-
-      width: 100%;
-      height: 100%;
-
-      object-fit: cover;
-
-      z-index: 0;
-    }
-
-
-    .resources-hero::after {
-      content: "";
-
-      position: absolute;
-      inset: 0;
-
-      background:
-        linear-gradient(
-          90deg,
-          rgba(0,0,0,0.55),
-          rgba(0,0,0,0.10),
-          rgba(0,0,0,0.30)
-        );
-
-      z-index: 1;
-    }
-
-
-    .resources-hero h1 {
-      position: relative;
-
-      z-index: 2;
-
-      margin-left: 40px;
-
-      font-family: var(--font-heading);
-
-      font-size: 54px;
-      font-weight: 400;
-
-      color: var(--gold);
-
-      letter-spacing: 2px;
-
-      text-shadow:
-        2px 2px 4px #000;
-    }
-
-
-    /* ==================================================
-       RESOURCE SECTION
-    ================================================== */
-
-    .resources-section {
-      max-width: 1200px;
-
-      margin: 0 auto;
-
-      padding: 24px 30px 60px;
-    }
-
-
-    .resources-divider {
-      height: 1px;
-
-      margin-bottom: 32px;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
-    }
-
-
-    .resource-grid {
-      display: grid;
-
-      grid-template-columns: repeat(3, 1fr);
-
-      gap: 28px;
-    }
-
-
-    /* ==================================================
-       CLICKABLE CARDS
-    ================================================== */
-.resource-card {
-  min-height: 180px;
-
-  padding: 28px 24px;
-
-  background: #11100d;
-
-  border: 1px solid var(--gold-dark);
-
-  border-radius: 8px;
-
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-
-  transition:
-    transform 0.2s ease,
-    border-color 0.2s ease,
-    box-shadow 0.2s ease,
-    background 0.2s ease;
-}
-
-.resource-card:hover {
-  transform: translateY(-4px);
-
-  background: #15130d;
-
-  border-color: var(--gold);
-
-  box-shadow:
-    0 8px 18px rgba(0, 0, 0, 0.45),
-    0 0 10px rgba(217, 180, 56, 0.10);
-}
-
-.resource-card h2 {
-  font-family: var(--font-heading);
-
-  font-size: 19px;
-  font-weight: 400;
-
-  color: var(--gold);
-
-  text-decoration: underline;
-
-  margin-bottom: 18px;
-}
-
-.resource-card p {
-  font-size: 13px;
-
-  line-height: 1.55;
-
-  color: #c8bea5;
-}
-
-.card-link-text {
-  margin-top: 22px;
-
-  font-family: var(--font-heading);
-
-  font-size: 11px;
-
-  letter-spacing: 1px;
-
-  text-transform: uppercase;
-
-  color: var(--gold-dark);
-}
-    /* ==================================================
-       FOOTER
-    ================================================== */
-
-    .divider-section {
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      gap: 18px;
-
-      max-width: 1200px;
-
-      margin: 0 auto;
-
-      padding: 20px 40px;
-    }
-
-
-    .divider-line {
-      height: 1px;
-
-      flex: 1;
-
-      background: var(--gold-dark);
-    }
-
-
-    .divider-text {
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 15px;
-
-      letter-spacing: 2px;
-
-      white-space: nowrap;
-    }
-
-
-    .site-footer {
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      padding: 15px 20px 35px;
-
-      border-top: 1px solid var(--gold-dark);
-    }
-
-
-    .footer-logo img {
-      height: 55px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    /* ==================================================
-       MOBILE
-    ================================================== */
-
-    @media (max-width: 768px) {
-
-      .site-header {
-        height: 60px;
-
-        padding: 0 18px;
-      }
-
-
-      .logo-area img {
-        height: 36px;
-      }
-
-
-      .menu-button {
-        font-size: 28px;
-      }
-
-
-      .side-menu {
-        width: 85%;
-        max-width: 85%;
-
-        padding: 70px 25px 30px;
-      }
-
-
-      .side-menu-links a {
-        font-size: 18px;
-      }
-
-
-      .resources-hero {
-        min-height: 210px;
-      }
-
-
-      .resources-hero h1 {
-        margin-left: 22px;
-
-        font-size: 38px;
-      }
-
-
-      .resources-section {
-        padding: 24px 18px 50px;
-      }
-
-
-      .resource-grid {
-        grid-template-columns: 1fr;
-
-        gap: 20px;
-      }
-
-
-      .resource-card {
-        min-height: auto;
-
-        padding: 24px 20px;
-      }
-
-
-      .resource-card h2 {
-        font-size: 18px;
-      }
-
-
-      .resource-card p {
-        font-size: 13px;
-      }
-
-
-      .divider-section {
-        padding: 18px 20px;
-      }
-
-
-      .divider-text {
-        font-size: 12px;
-      }
-
-
-      .footer-logo img {
-        height: 45px;
-      }
-
-    }
-
-  </style>
+/* Resources-specific layout. Text uses rem and scales through settings/styles.css. */
+.resources-page {background:#090909; color:#e6dfc9; min-height:65vh;}
+.resources-page a {text-decoration:none;}
+.resources-hero {position:relative;min-height:16rem;display:flex;align-items:center;overflow:hidden;border-bottom:1px solid var(--gold-dark,#8f7320);}
+.resources-hero img {position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
+.resources-hero::after {content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,.65),rgba(0,0,0,.12),rgba(0,0,0,.35));}
+.resources-hero h1 {position:relative;z-index:1;margin:0;padding:1.5rem 2rem;font-family:var(--font-heading,Cinzel,serif);font-size:clamp(2.2rem,5vw,3.1rem);font-weight:400;letter-spacing:.06em;color:var(--gold,#d4af37);text-shadow:2px 2px 4px #000;}
+.resources-section {max-width:76rem;margin:0 auto;padding:1.5rem 1.5rem 4rem;}
+.resources-divider {height:1px;margin-bottom:2rem;background:linear-gradient(90deg,transparent,var(--gold-dark,#8f7320),transparent);}
+.resource-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1.4rem;}
+.resource-card {min-height:11rem;padding:1.55rem 1.35rem;background:#11100d;border:1px solid var(--gold-dark,#8f7320);border-radius:8px;display:flex;flex-direction:column;justify-content:space-between;color:#e6dfc9;transition:transform .2s,border-color .2s,box-shadow .2s,background .2s;min-width:0;}
+.resource-card:hover {transform:translateY(-4px);background:#15130d;border-color:var(--gold,#d4af37);box-shadow:0 8px 18px #0007,0 0 10px #d9b43820;}
+.resource-card:focus-visible {outline:3px solid var(--gold,#d4af37);outline-offset:3px;}
+.resource-card h2 {font-family:var(--font-heading,Cinzel,serif);font-size:1.2rem;font-weight:500;color:var(--gold,#d4af37);text-decoration:underline;margin:0 0 1rem;line-height:1.35;}
+.resource-card p {font-size:1rem;line-height:1.6;color:#d5c9ad;margin:0;}
+.card-link-text {display:block;margin-top:1.2rem;font-family:var(--font-heading,Cinzel,serif);font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;color:#cfb36d;}
+@media(max-width:950px){.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+@media(max-width:600px){.resources-hero{min-height:12rem}.resources-hero h1{padding:1rem 1.2rem}.resources-section{padding:1.25rem 1rem 3rem}.resource-grid{grid-template-columns:1fr;gap:1rem}.resource-card{min-height:0;padding:1.35rem 1.1rem}}
+</style>
 </head>
-
-
 <body>
-
-
-  <!-- ==================================================
-       HEADER
-  ================================================== -->
-
-  <header class="site-header">
-
-    <div class="logo-area">
-
-      <a href="index.html">
-
-        <img
-          src="images/HeaderLogo.png"
-          alt="The Syndicate"
-        >
-
-      </a>
-
-    </div>
-
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open menu"
-      aria-expanded="false"
-    >
-      ☰
-    </button>
-
-  </header>
-
-
-
-  <!-- ==================================================
-       SLIDE-OUT MENU
-  ================================================== -->
-
-  <div
-    class="menu-overlay"
-    id="menuOverlay"
-  ></div>
-
-
-  <aside
-    class="side-menu"
-    id="sideMenu"
-  >
-
-    <button
-      class="close-menu"
-      id="closeMenu"
-      type="button"
-      aria-label="Close menu"
-    >
-      ×
-    </button>
-
-
-    <div class="side-menu-logo">
-
-      <img
-        src="images/HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-
-    <nav class="side-menu-links">
-
-      <a href="index.html">
-        HOME
-      </a>
-
-      <a href="guild.html">
-        The Syndicate
-      </a>
-
-      <a href="calendar.html">
-        CALENDAR
-      </a>
-
-      <a href="raids.html">
-        RAID HUB
-      </a>
-
-      <a href="resources.html">
-        RESOURCES
-      </a>
-
-    </nav>
-
-
-    <div class="side-menu-motto">
-      ◆ THIS IS THE WAY. ◆
-    </div>
-
-  </aside>
-
-
-
-  <!-- ==================================================
-       HERO
-  ================================================== -->
-
-  <section class="resources-hero">
-
-     <img
-      src="images/Map-desk.png"
-      alt=""
-    >
-
-    <h1>
-      RESOURCES
-    </h1>
-
-  </section>
-
-
-
-  <!-- ==================================================
-       RESOURCE CARDS
-  ================================================== -->
-
-  <section class="resources-section">
-
-    <div class="resources-divider"></div>
-
-
-    <div class="resource-grid">
-
-
-      <!-- ADD-ONS -->
-
-      <a
-        href="addons.html"
-        class="resource-card"
-      >
-
-        <div>
-
-          <h2>
+  <div id="syndicate-menu"></div>
+  <main class="resources-page">
+    <section class="resources-hero" aria-labelledby="resources-title">
+      <img src="images/Map-desk.png" alt="" aria-hidden="true">
+      <h1 id="resources-title">RESOURCES</h1>
+    </section>
+    <section class="resources-section" aria-label="Guild resource directory">
+      <div class="resources-divider"></div>
+      <div class="resource-grid">
+<a class="resource-card" href="resources/addons.html">
+<div>
+<h2>
             USEFUL ADD-ONS
           </h2>
-
-          <p>
+<p>
             Recommended guild add-ons and
             raid-required add-ons.
           </p>
-
-        </div>
-
-        <span class="card-link-text">
+</div>
+<span class="card-link-text">
           View Add-Ons →
         </span>
-
-      </a>
-
-
-
-      <!-- PROFESSIONS -->
-
-      <a
-        href="professions-crafting.html"
-        class="resource-card"
-      >
-
-        <div>
-
-          <h2>
+</a>
+<a class="resource-card" href="resources/professions-crafting.html">
+<div>
+<h2>
             PROFESSIONS/CRAFTING
           </h2>
-
-          <p>
+<p>
             Profession leveling guides, rare recipes,
             specializations, important raid crafts,
             who in Syndicate can craft what.
           </p>
-
-        </div>
-
-        <span class="card-link-text">
+</div>
+<span class="card-link-text">
           View Crafting →
         </span>
-
-      </a>
-
-
-
-      <!-- WEBSITES -->
-
-      <a
-        href="support-websites.html"
-        class="resource-card"
-      >
-
-        <div>
-
-          <h2>
+</a>
+<a class="resource-card" href="resources/support-websites.html">
+<div>
+<h2>
             SUPPORTIVE WEBSITES
           </h2>
-
-          <p>
+<p>
             Wowhead, Warcraft Logs, Wago,
             profession sites, talent calculators,
             gear planners/databases.
           </p>
-
-        </div>
-
-        <span class="card-link-text">
+</div>
+<span class="card-link-text">
           View Websites →
         </span>
-
-      </a>
-
-
-
-      <!-- CLASS CHANNELS -->
-
-      <a
-        href="class.html"
-        class="resource-card"
-      >
-
-        <div>
-
-          <h2>
+</a>
+<a class="resource-card" href="resources/class.html">
+<div>
+<h2>
             CLASS CHANNELS
           </h2>
-
-          <p>
+<p>
             Find experienced Syndicate players
             to ask for class-specific advice,
             builds, gear help, and raid tips.
           </p>
-
-        </div>
-
-        <span class="card-link-text">
+</div>
+<span class="card-link-text">
           Find Your Class →
         </span>
-
-      </a>
-
-
-
-      <!-- ATTUNEMENTS -->
-
-      <a
-        href="attune-key.html"
-        class="resource-card"
-      >
-
-        <div>
-
-          <h2>
-            ATTUNEMENTS & KEYS
+</a>
+<a class="resource-card" href="resources/attune-key.html">
+<div>
+<h2>
+            ATTUNEMENTS &amp; KEYS
           </h2>
-
-          <p>
+<p>
             Ony attunement, MC, BWL,
             UBRS key, dungeon keys,
             quest chains, and shortcuts.
           </p>
-
-        </div>
-
-        <span class="card-link-text">
+</div>
+<span class="card-link-text">
           View Attunements →
         </span>
-
-      </a>
-
-
-
-      <!-- REPUTATIONS -->
-
-      <a
-        href="reputations.html"
-        class="resource-card"
-      >
-
-        <div>
-
-          <h2>
+</a>
+<a class="resource-card" href="resources/reputations.html">
+<div>
+<h2>
             REPUTATIONS
           </h2>
-
-          <p>
+<p>
             Argent Dawn, Hydraxian Waterlords,
             Zandalar Tribe, Cenarion Circle,
             Brood of Nozdormu — rewards and why you care.
           </p>
-
-        </div>
-
-        <span class="card-link-text">
+</div>
+<span class="card-link-text">
           View Reputations →
         </span>
-
-      </a>
-
-
-    </div>
-
-  </section>
-
-
-
-  <!-- ==================================================
-       FOOTER DIVIDER
-  ================================================== -->
-
-  <section class="divider-section">
-
-    <div class="divider-line"></div>
-
-    <div class="divider-text">
-      ◆ THIS IS THE WAY. ◆
-    </div>
-
-    <div class="divider-line"></div>
-
-  </section>
-
-
-
-  <!-- ==================================================
-       FOOTER
-  ================================================== -->
-
-  <footer class="site-footer">
-
-    <div class="footer-logo">
-
-      <img
-        src="images/HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-  </footer>
-
-
-
-  <!-- ==================================================
-       MENU SCRIPT
-  ================================================== -->
-
-  <script>
-
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const sideMenu =
-      document.getElementById("sideMenu");
-
-    const menuOverlay =
-      document.getElementById("menuOverlay");
-
-    const closeMenu =
-      document.getElementById("closeMenu");
-
-
-    function openMenu() {
-
-      sideMenu.classList.add("open");
-
-      menuOverlay.classList.add("open");
-
-      menuButton.setAttribute(
-        "aria-expanded",
-        "true"
-      );
-
-    }
-
-
-    function closeSideMenu() {
-
-      sideMenu.classList.remove("open");
-
-      menuOverlay.classList.remove("open");
-
-      menuButton.setAttribute(
-        "aria-expanded",
-        "false"
-      );
-
-    }
-
-
-    menuButton.addEventListener(
-      "click",
-      openMenu
-    );
-
-
-    closeMenu.addEventListener(
-      "click",
-      closeSideMenu
-    );
-
-
-    menuOverlay.addEventListener(
-      "click",
-      closeSideMenu
-    );
-
-
-    document.addEventListener(
-      "keydown",
-      function(event) {
-
-        if (event.key === "Escape") {
-          closeSideMenu();
-        }
-
-      }
-    );
-
-  </script>
-
-
+</a>
+      </div>
+    </section>
+  </main>
+  <div id="syndicate-footer"></div>
 </body>
-
 </html>
