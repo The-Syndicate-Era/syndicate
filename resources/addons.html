@@ -12,10 +12,10 @@
 .addons-intro { margin: 0 0 2rem; max-width: 950px; }
 .addons-intro h1 { font: 500 clamp(2rem,4vw,3.1rem)/1.15 var(--font-heading, Cinzel,serif); color: var(--addon-gold); margin: 0 0 0.8rem; }
 .addons-intro p { font-size: 1rem; line-height: 1.65; margin: 0 0 1rem; }
-.addons-layout { display: grid; grid-template-columns: minmax(0, 72fr) minmax(230px, 28fr); gap: clamp(1.25rem,3vw,2.8rem); align-items: start; }
-.addons-directory { min-width: 0; }
-.addons-image { width:100%; min-width:0; }
-.addons-image img { display:block; width:100%; height:auto; max-height: 1050px; object-fit: contain; object-position: top; border: 1px solid var(--addon-outline); background:#0b0a08; }
+.addons-layout { display: grid; grid-template-columns: minmax(220px, 28fr) minmax(0, 72fr); gap: clamp(1.25rem,3vw,2.8rem); align-items: start; }
+.addons-directory { min-width: 0; grid-column:2; grid-row:1; }
+.addons-image { width:100%; min-width:0; grid-column:1; grid-row:1; position:sticky; top:1.5rem; align-self:start; }
+.addons-image img { display:block; width:100%; height:auto; max-height: calc(100dvh - 3rem); object-fit: contain; object-position: top; border: 1px solid var(--addon-outline); background:#0b0a08; }
 .filters { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(160px,1fr) minmax(140px,0.85fr); gap: 0.7rem; margin-bottom: 1rem; }
 .filters input, .filters select { width:100%; min-width:0; min-height:2.75rem; padding:0.55rem 0.75rem; border:1px solid var(--addon-outline); border-radius: 4px; background:#110f0c; color:#f0e7d3; font:inherit; font-size:0.9rem; }
 .filters input::placeholder {color:#ada18b;opacity:1}
@@ -27,7 +27,7 @@
 .addon-entry { background:linear-gradient(90deg,rgba(212,175,55,.035),transparent 32%),#11100d; border:1px solid #504225; border-radius:4px; }
 .addon-entry:has(.addon-toggle[aria-expanded="true"]) {border-color:#b49542;}
 .addon-heading {margin:0; font-size:inherit; }
-.addon-toggle {display:flex; justify-content:space-between; align-items:center; gap:1rem; width:100%; padding:0.85rem 1rem; background:transparent; color:inherit; border:0; text-align:left; cursor:pointer; font:inherit; }
+.addon-toggle {display:flex; justify-content:space-between; align-items:center; gap:1rem; width:100%; padding:0.72rem 1rem; background:transparent; color:inherit; border:0; text-align:left; cursor:pointer; font:inherit; }
 .addon-toggle:hover {background:rgba(212,175,55,.05)}
 .addon-label {display:flex; flex-direction:column; gap:0.35rem; min-width:0;}
 .addon-name {font:500 1rem/1.4 var(--font-heading, Cinzel,serif); color:var(--addon-gold); overflow-wrap:anywhere; }
@@ -44,9 +44,9 @@
 .syndicate-button:hover {filter:brightness(1.15)}
 .no-results {display:none; padding:1.5rem; border:1px solid var(--addon-outline); text-align:center;color:#d3c4a3;}
 /* Make use of sitewide root font scaling instead of fixed pixel text. */
-@media(max-width:1080px){.addons-layout{grid-template-columns:minmax(0, 1.65fr) minmax(210px, 1fr)} .filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}}
-@media(max-width:768px){.addons-page{padding:1.3rem 1rem 3rem}.addons-layout{grid-template-columns:1fr}.addons-image{grid-row:1;display:flex;justify-content:center}.addons-image picture{display:block;width:min(100%,280px)}.addons-image img{max-height:280px;aspect-ratio:1/1;object-fit:contain}.addons-directory{grid-row:2}.filters{grid-template-columns:1fr 1fr}}
-@media(max-width:480px){.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.addon-toggle{padding:0.85rem 0.75rem}.addon-panel{padding-left:0.75rem;padding-right:0.75rem}}
+@media(max-width:1080px){.addons-layout{grid-template-columns:minmax(210px, 1fr) minmax(0, 1.65fr)} .filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}}
+@media(max-width:768px){.addons-page{padding:1.3rem 1rem 3rem}.addons-layout{grid-template-columns:1fr}.addons-image{grid-column:1;grid-row:1;position:static;display:flex;justify-content:center}.addons-image picture{display:block;width:min(100%,280px)}.addons-image img{max-height:280px;aspect-ratio:1/1;object-fit:contain}.addons-directory{grid-column:1;grid-row:2}.filters{grid-template-columns:1fr 1fr}}
+@media(max-width:480px){.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.addon-toggle{padding:0.72rem 0.75rem}.addon-panel{padding-left:0.75rem;padding-right:0.75rem}}
 </style>
 <script src="../settings/font-setting.js" defer></script>
 <script src="../settings/menu.js" defer></script>
