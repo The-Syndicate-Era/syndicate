@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Officer Hub | The Syndicate</title>
+  <link rel="stylesheet" href="settings/styles.css">
+  <script src="settings/font-setting.js" defer></script>
+  <script src="settings/menu.js" defer></script>
+  <script src="settings/site-layout.js" defer></script>
+  <style>
+    .officer-hub{max-width:1200px;margin:0 auto;padding:3rem 1.4rem 5rem;color:#ded2b8;}
+    .hub-eyebrow{color:#c7aa61;text-transform:uppercase;font-family:var(--font-heading,"Cinzel",serif);letter-spacing:.1em;font-size:.82rem;margin:0 0 .65rem;}
+    .hub-heading{font-size:clamp(2rem,4vw,3.4rem);color:var(--gold,#d4af37);margin:0 0 .6rem;}
+    .hub-intro{font-size:1.05rem;color:#d8c98f;line-height:1.65;margin:0 0 1.7rem;}
+    .hub-divider{height:1px;background:linear-gradient(90deg,transparent,#9a792d,transparent);margin:1.65rem 0 2rem;}
+    .hub-section{margin-top:2.2rem;}
+    .hub-section-header{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;flex-wrap:wrap;margin-bottom:1rem;}
+    .hub-section h2{font-size:1.5rem;color:var(--gold,#d4af37);margin:0;}
+    .hub-section-note{color:#b7a781;font-size:.87rem;}
+    .hub-tool-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem;}
+    .hub-tool{display:flex;flex-direction:column;gap:.7rem;min-height:185px;padding:1.25rem;border:1px solid #695229;border-radius:.65rem;background:#17140e;text-decoration:none;color:#e0d4bb;transition:transform .15s,border-color .15s,background .15s;}
+    a.hub-tool:hover,a.hub-tool:focus-visible{border-color:#deb85a;background:#201a0f;transform:translateY(-2px);}
+    .hub-tool-head{display:flex;align-items:center;justify-content:space-between;gap:.7rem;}
+    .hub-symbol{color:#e2bc52;font-size:1.5rem;line-height:1;}
+    .hub-tool h3{font-family:var(--font-heading,"Cinzel",serif);font-weight:500;color:#e8c864;font-size:1.05rem;margin:0;}
+    .hub-tool p{font-size:.9rem;line-height:1.55;color:#d3c6ac;margin:0;}
+    .hub-tool .hub-state{font-size:.76rem;color:#c5aa6f;text-transform:uppercase;letter-spacing:.06em;margin-top:auto;}
+    .hub-tool.pending{background:#141311;border-color:#413d34;cursor:default;}
+    .hub-tool.pending h3,.hub-tool.pending .hub-symbol{color:#ada79b;}
+    .hub-tool.pending p,.hub-tool.pending .hub-state{color:#aaa294;}
+    .hub-stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;}
+    .hub-stat{border:1px solid #574523;background:#16130d;border-radius:.55rem;text-align:center;padding:1.3rem .65rem;min-height:124px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.4rem;}
+    .hub-stat-value{font-family:var(--font-heading,"Cinzel",serif);font-size:clamp(1.6rem,3vw,2.1rem);color:#e0bd55;font-variant-numeric:tabular-nums;line-height:1.2;}
+    .hub-stat-label{font-size:.86rem;color:#d3c5a8;line-height:1.35;}
+    .hub-data-note{color:#ad9f82;font-size:.82rem;line-height:1.6;margin:.85rem 0 0;}
+    .hub-attention{border:1px solid #4c4230;border-radius:.5rem;background:#15130f;padding:0 1.1rem;}
+    .hub-attention-row{display:flex;align-items:center;gap:.8rem;justify-content:space-between;padding:1rem .1rem;font-size:.91rem;color:#c8bea9;}
+    .hub-attention-row+.hub-attention-row{border-top:1px solid #363022;}
+    .hub-attention-row .hub-pending{color:#9f9685;font-size:.76rem;white-space:nowrap;}
+    @media(max-width:850px){.hub-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
+    @media(max-width:560px){.officer-hub{padding:2.1rem 1rem 3rem;}.hub-tool-grid{grid-template-columns:1fr;}.hub-tool{min-height:155px;}.hub-stats{grid-template-columns:repeat(2,minmax(0,1fr));}.hub-attention-row{align-items:flex-start;}.hub-attention-row .hub-pending{white-space:normal;text-align:right;}}
+  </style>
+</head>
+<body>
+  <div id="syndicate-menu"></div>
+  <main class="officer-hub">
+    <header>
+      <p class="hub-eyebrow">◆ The Syndicate · Leadership</p>
+      <h1 class="hub-heading">OFFICER HUB</h1>
+      <p class="hub-intro">A little organization behind all the chaos.</p>
+    </header>
+    <div class="hub-divider" aria-hidden="true"></div>
+    <section class="hub-section" aria-labelledby="toolsHeading">
+      <div class="hub-section-header"><h2 id="toolsHeading">Officer Tools</h2><span class="hub-section-note">Quick access</span></div>
+      <div class="hub-tool-grid">
+        <a class="hub-tool" href="officer/raid-responsibilities.html">
+          <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">▦</span><span aria-hidden="true">↗</span></div>
+          <h3>Adopt a Raid</h3><p>Coordinate Raid Leads, Master Looters, and raid coverage.</p><span class="hub-state">Available</span>
+        </a>
+        <a class="hub-tool" href="officer/officer-raid-rules.html">
+          <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">✎</span><span aria-hidden="true">↗</span></div>
+          <h3>Rule Management</h3><p>Edit, review, and publish guild raid rules.</p><span class="hub-state">Available</span>
+        </a>
+        <div class="hub-tool pending" aria-disabled="true"><div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">⚔</span></div><h3>Master Looter</h3><p>Manage raid loot and roll bonuses.</p><span class="hub-state">Coming Soon</span></div>
+        <div class="hub-tool pending" aria-disabled="true"><div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">✓</span></div><h3>SR Approvals</h3><p>Review submitted soft reserve and roll bonus requests.</p><span class="hub-state">Coming Soon</span></div>
+        <div class="hub-tool pending" aria-disabled="true"><div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">♟</span></div><h3>Raid Attendance</h3><p>Track raid participation using imported logs.</p><span class="hub-state">Coming Soon</span></div>
+        <div class="hub-tool pending" aria-disabled="true"><div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">▥</span></div><h3>Historical Raid Data</h3><p>Explore guild attendance, progression, and raid history.</p><span class="hub-state">Coming Soon</span></div>
+      </div>
+    </section>
+    <section class="hub-section" aria-labelledby="overviewHeading">
+      <div class="hub-section-header"><h2 id="overviewHeading">Guild Overview</h2><span class="hub-section-note">Roster & raid statistics</span></div>
+      <div class="hub-stats">
+        <div class="hub-stat"><strong class="hub-stat-value" id="totalCharacters">—</strong><span class="hub-stat-label">Total Characters</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value" id="mainCharacters">—</strong><span class="hub-stat-label">Main Characters</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value" id="altCharacters">—</strong><span class="hub-stat-label">Alt Characters</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Active Raiders</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Raids This Month</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Attendance Rate</span></div>
+      </div>
+      <p class="hub-data-note" id="rosterMessage" role="status">Loading roster counts…</p>
+      <p class="hub-data-note">Main/alt counts use the guild roster. Raid metrics will be added after Warcraft Logs attendance imports; calendar signups are not counted as attendance.</p>
+    </section>
+    <section class="hub-section" aria-labelledby="attentionHeading">
+      <div class="hub-section-header"><h2 id="attentionHeading">Needs Attention</h2><span class="hub-section-note">Future alerts</span></div>
+      <div class="hub-attention">
+        <div class="hub-attention-row"><span>Upcoming raids missing an RL or ML</span><span class="hub-pending">Coming Soon</span></div>
+        <div class="hub-attention-row"><span>SR requests awaiting review</span><span class="hub-pending">Coming Soon</span></div>
+        <div class="hub-attention-row"><span>Attendance watchlist and exemptions</span><span class="hub-pending">Coming Soon</span></div>
+      </div>
+    </section>
+  </main>
+  <div id="syndicate-footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="settings/supabase-config.js"></script>
+  <script>
+    (async function loadOverview(){
+      const status = document.getElementById('rosterMessage');
+      const db = window.syndicateDB;
+      if (!db || typeof db.from !== 'function') {
+        status.textContent = 'Roster counts unavailable: check settings/supabase-config.js.';
+        return;
+      }
+      try {
+        const rows = [];
+        // Read in batches so Supabase's default row limit does not silently undercount characters.
+        for(let start=0;start<100000;start+=1000){
+          const {data,error}=await db.from('guild_roster').select('id,normalized_main_alt').order('id',{ascending:true}).range(start,start+999);
+          if(error) throw error;
+          rows.push(...(data||[]));
+          if(!data||data.length<1000)break;
+        }
+        const mains=rows.filter(r=>String(r.normalized_main_alt||'').trim().toLowerCase()==='main').length;
+        const alts=rows.filter(r=>String(r.normalized_main_alt||'').trim().toLowerCase()==='alt').length;
+        document.getElementById('totalCharacters').textContent=rows.length.toLocaleString();
+        document.getElementById('mainCharacters').textContent=mains.toLocaleString();
+        document.getElementById('altCharacters').textContent=alts.toLocaleString();
+        const other=rows.length-mains-alts;
+        status.textContent='Live guild roster counts.'+(other>0?' '+other+' characters are not classified as Main or Alt.':'');
+      }catch(error){
+        console.error('Officer Hub roster error',error);
+        status.textContent='Roster counts unavailable: '+(error.message||'check database read permissions.');
+      }
+    })();
+  </script>
+</body>
+</html>
