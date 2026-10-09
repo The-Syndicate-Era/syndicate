@@ -12,27 +12,36 @@
 /* Page-specific layout only. All text uses rem, scaled from settings/styles.css. */
 .supportive-page{background:radial-gradient(circle at top,#d9b43808,transparent 35%),#080806;color:#ded6c3;min-height:60vh}
 .supportive-page a{text-decoration:none}
-.supportive-intro{max-width:82rem;margin:auto;padding:3rem 1.5rem 2.1rem;text-align:center}
-.supportive-intro h1{font-family:var(--font-heading,Cinzel,serif);font-size:clamp(2rem,4.6vw,3.2rem);color:var(--gold,#d4af37);font-weight:400;letter-spacing:.035em;margin:0 0 1rem}
-.supportive-intro p{font-size:1.05rem;line-height:1.7;color:#d8cdb5;max-width:59rem;margin:0 auto}
+.supportive-intro{max-width:82rem;margin:auto;padding:2.4rem 1.5rem 1.8rem;text-align:center}
+.supportive-intro h1{font-family:var(--font-heading,Cinzel,serif);font-size:clamp(1.85rem,4.2vw,2.7rem);color:var(--gold,#d4af37);font-weight:400;letter-spacing:.035em;margin:0 0 1rem}
+.supportive-intro p{font-size:1rem;line-height:1.65;color:#d8cdb5;max-width:59rem;margin:0 auto}
 .supportive-section{max-width:92rem;margin:auto;padding:0 1.5rem 4.5rem}
-.website-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1.1rem}
-.website-card{min-width:0;min-height:18rem;background:#11100d;border:1px solid #78632e;border-radius:.35rem;padding:1.3rem 1.1rem;display:flex;flex-direction:column;transition:background .2s,border-color .2s,transform .2s}
+.website-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1rem}
+.website-card{min-width:0;min-height:16rem;background:#11100d;border:1px solid #78632e;border-radius:.35rem;padding:1.15rem 1rem;display:flex;flex-direction:column;transition:background .2s,border-color .2s,transform .2s}
 .website-card:hover{background:#19160f;border-color:var(--gold,#d4af37);transform:translateY(-2px)}
-.site-category{font-family:var(--font-heading,Cinzel,serif);font-size:.82rem;letter-spacing:.05em;color:#e1be65;text-transform:uppercase;margin-bottom:.7rem}
-.website-card h2{font-family:var(--font-heading,Cinzel,serif);color:var(--gold,#d4af37);font-size:1.15rem;line-height:1.35;font-weight:500;margin:0 0:.8rem;overflow-wrap:anywhere}
-.website-card p{font-size:.99rem;line-height:1.55;color:#e1d9c8;margin:0 0:1.3rem;overflow-wrap:anywhere}
+.site-category{font-family:var(--font-heading,Cinzel,serif);font-size:.75rem;letter-spacing:.05em;color:#e1be65;text-transform:uppercase;margin-bottom:.7rem}
+.website-card h3{font-family:var(--font-heading,Cinzel,serif);color:var(--gold,#d4af37);font-size:1.08rem;line-height:1.3;font-weight:500;margin:0 0:.8rem;overflow-wrap:anywhere}
+.website-card p{font-size:.91rem;line-height:1.55;color:#e1d9c8;margin:0 0:1.3rem;overflow-wrap:anywhere}
 .card-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:auto}
-.syndicate-button{display:inline-flex;align-items:center;justify-content:center;min-height:2.7rem;padding:.6rem .75rem;border:2px solid #2a1a10;border-radius:5px;background:linear-gradient(#b51414,#8f0909 45%,#650505);color:#ffe06a;font:500 .81rem/1.3 var(--font-heading,Cinzel,serif);text-align:center;box-shadow:0 0 0 2px #6a4a25,0 2px 5px #000b;overflow-wrap:anywhere}
+.syndicate-button{display:inline-flex;align-items:center;justify-content:center;min-height:2.5rem;padding:.6rem .75rem;border:2px solid #2a1a10;border-radius:5px;background:linear-gradient(#b51414,#8f0909 45%,#650505);color:#ffe06a;font:500 .77rem/1.3 var(--font-heading,Cinzel,serif);text-align:center;box-shadow:0 0 0 2px #6a4a25,0 2px 5px #000b;overflow-wrap:anywhere}
 .syndicate-button:hover{filter:brightness(1.2)}
 .secondary-button{background:#211b10;color:#f5d578;border:1px solid #81672e;box-shadow:none}
 @media(max-width:1150px){.website-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:640px){.website-grid{grid-template-columns:1fr}.supportive-intro{padding:2rem 1rem}.supportive-section{padding:0 1rem 3rem}.website-card{min-height:0;padding:1.3rem}.website-card p{font-size:1rem}}
+@media(max-width:640px){.website-grid{grid-template-columns:1fr}.supportive-intro{padding:2rem 1rem}.supportive-section{padding:0 1rem 3rem}.website-card{min-height:0;padding:1.3rem}.website-card p{font-size:.94rem}}
 </style>
 </head>
 <body>
 <div id="syndicate-menu"></div>
-<div id="syndicate-subheader" data-section="resources" data-title="Supportive Websites"></div>
+<div id="syndicate-subheader" data-section="resources" data-title="Supportive Websites">
+  <!-- Fallback link remains usable even if site-layout.js fails to load. -->
+  <nav class="syn-subheader" aria-label="Section navigation">
+    <div class="syn-subheader__inner">
+      <a class="syn-subheader__back" href="../resources.html">← Resources</a>
+      <span class="syn-subheader__separator" aria-hidden="true">❯</span>
+      <span class="syn-subheader__current" aria-current="page">Supportive Websites</span>
+    </div>
+  </nav>
+</div>
 <main class="supportive-page">
 <section class="supportive-intro"><h1>SUPPORTIVE WEBSITES</h1><p>Useful corners of the internet for finding answers, planning characters, researching loot, checking logs, finding add-ons, and spending significantly too much time thinking about Classic WoW.</p></section>
 <section class="supportive-section" aria-label="Recommended Classic Era websites">
