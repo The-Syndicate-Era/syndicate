@@ -140,7 +140,6 @@ const matches = (data || []).filter(r =>
           if(!window.DOMPurify){showFallback('Published formatting is unavailable right now.');return;}
           target.replaceChildren();
           matches.forEach(r=>{
-            if(r.published_description){const p=document.createElement('p');p.textContent=r.published_description;target.append(p);}
             const block=document.createElement('div');
             block.innerHTML=DOMPurify.sanitize(String(r.published_content||''),{ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],ALLOWED_ATTR:['href','target','rel','class'],ALLOW_DATA_ATTR:false});
             block.querySelectorAll('a').forEach(a=>{a.rel='noopener noreferrer';});
