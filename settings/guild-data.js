@@ -61,7 +61,7 @@
       rows.push(...batch);
       if (batch.length < 1000) break;
       if (start === 99000) throw new Error('Roster exceeds supported counting range.');
-    }
+    } 
     let mains = 0;
     let alts = 0;
     for (const character of rows) {
