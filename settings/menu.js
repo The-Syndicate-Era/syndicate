@@ -8,7 +8,7 @@
     ['HOME', 'index.html'],
     ['The Syndicate', 'guild.html'],
     ['CALENDAR', 'calendar.html'],
-    ['RAID HUB', 'raids.html'],
+    ['RAID HUB', 'raid-hub.html'],
     ['RESOURCES', 'resources.html']
   ];
 
