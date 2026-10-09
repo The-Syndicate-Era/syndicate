@@ -51,6 +51,9 @@
 <script src="../settings/font-setting.js" defer></script>
 <script src="../settings/menu.js" defer></script>
 <script src="../settings/site-layout.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="../settings/supabase-config.js"></script>
+<script src="../settings/addon-data.js"></script>
 </head>
 <body>
 <div id="syndicate-menu"></div>
@@ -73,224 +76,7 @@
         </select>
       </div>
       <div class="addon-tools"><span id="addonCount" role="status" aria-live="polite"></span><button type="button" id="toggleAll">Expand All</button></div>
-      <div class="addon-list" id="addonList">
-<article class="addon-entry" data-category="gear" data-status="recommended" data-search="all the things completion quests items reputations collections gear">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-0" id="addon-button-0">
-    <span class="addon-label"><span class="addon-name">All The Things</span><span class="addon-meta"><span class="addon-category">Gear &amp; Character</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-0" role="region" aria-labelledby="addon-button-0" hidden>
-    <p>Tracks quests, items, reputations, appearances, collections,
-            achievements, and other completion progress across the game.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/addons/all-the-things" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="guild" data-status="guild-tool" data-search="gbankclassic revived guild bank inventory alts organization">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-1" id="addon-button-1">
-    <span class="addon-label"><span class="addon-name">GBankClassic – Revived</span><span class="addon-meta"><span class="addon-category">Guild &amp; Organization</span><span class="tag guild">Guild Tool</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-1" role="region" aria-labelledby="addon-button-1" hidden>
-    <p>Helps organize and view guild bank-alt inventories,
-            making it easier to see what the guild has available.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=GBankClassic" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="guild" data-status="guild-tool" data-search="guild roster manager grm roster mains alts members guild">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-2" id="addon-button-2">
-    <span class="addon-label"><span class="addon-name">Guild Roster Manager</span><span class="addon-meta"><span class="addon-category">Guild &amp; Organization</span><span class="tag guild">Guild Tool</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-2" role="region" aria-labelledby="addon-button-2" hidden>
-    <p>Helps track guild members, mains and alts, roster changes,
-            promotions, notes, and other guild-management information.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Guild%20Roster%20Manager" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="guild" data-status="recommended" data-search="minimapbuttonbutton minimap button button interface ui icons">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-3" id="addon-button-3">
-    <span class="addon-label"><span class="addon-name">MinimapButtonButton</span><span class="addon-meta"><span class="addon-category">Guild &amp; Organization</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-3" role="region" aria-labelledby="addon-button-3" hidden>
-    <p>Collects your many add-on minimap buttons into a single
-            cleaner location instead of covering the edge of your minimap.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=MinimapButtonButton" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="raid" data-status="required" data-search="details damage meter tiny threat threat raid combat dps healing">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-4" id="addon-button-4">
-    <span class="addon-label"><span class="addon-name">Details! Damage Meter</span><span class="addon-meta"><span class="addon-category">Raiding &amp; Combat</span><span class="tag required">Raid Required</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-4" role="region" aria-labelledby="addon-button-4" hidden>
-    <p>Combat analysis for damage, healing, deaths, dispels,
-            interrupts, and more. TinyThreat can be used within Details
-            for raid threat tracking.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/addons/details" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="raid" data-status="recommended" data-search="threat plates threatplates threat nameplates raid combat">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-5" id="addon-button-5">
-    <span class="addon-label"><span class="addon-name">Threat Plates</span><span class="addon-meta"><span class="addon-category">Raiding &amp; Combat</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-5" role="region" aria-labelledby="addon-button-5" hidden>
-    <p>Threat-aware nameplates that make it easier to see which
-            enemies you have threat on and what is targeting someone else.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Threat%20Plates" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="raid" data-status="required" data-search="decursive dispel curse poison disease magic healer raid">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-6" id="addon-button-6">
-    <span class="addon-label"><span class="addon-name">Decursive</span><span class="addon-meta"><span class="addon-category">Raiding &amp; Combat</span><span class="tag required">Raid Required</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-6" role="region" aria-labelledby="addon-button-6" hidden>
-    <p>Provides quick visibility and targeting for curses,
-            poisons, diseases, and magic effects your class can remove.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Decursive" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="raid" data-status="recommended" data-search="loggerheadlite loggerhead combat logs logging raid">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-7" id="addon-button-7">
-    <span class="addon-label"><span class="addon-name">LoggerHeadLite</span><span class="addon-meta"><span class="addon-category">Raiding &amp; Combat</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-7" role="region" aria-labelledby="addon-button-7" hidden>
-    <p>Helps automatically manage combat logging when entering
-            raids and other selected instances.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=LoggerHeadLite" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="raid" data-status="recommended" data-search="nova world buffs buffs ony rend songflower timers raid">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-8" id="addon-button-8">
-    <span class="addon-label"><span class="addon-name">Nova World Buffs</span><span class="addon-meta"><span class="addon-category">Raiding &amp; Combat</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-8" role="region" aria-labelledby="addon-button-8" hidden>
-    <p>Tracks world buffs, cooldowns, timers, announcements,
-            and other useful Classic world-buff information.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Nova%20World%20Buffs" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="raid" data-status="recommended" data-search="nova instance tracker lockouts resets instances dungeons raids">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-9" id="addon-button-9">
-    <span class="addon-label"><span class="addon-name">Nova Instance Tracker</span><span class="addon-meta"><span class="addon-category">Raiding &amp; Combat</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-9" role="region" aria-labelledby="addon-button-9" hidden>
-    <p>Tracks instance entries, resets, lockouts, and other
-            useful dungeon and raid information.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Nova%20Instance%20Tracker" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gear" data-status="recommended" data-search="itemrack classic gear sets resistance pvp raid equipment">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-10" id="addon-button-10">
-    <span class="addon-label"><span class="addon-name">ItemRack Classic</span><span class="addon-meta"><span class="addon-category">Gear &amp; Character</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-10" role="region" aria-labelledby="addon-button-10" hidden>
-    <p>Create and quickly swap between gear sets for raiding,
-            PvP, resistance sets, tanking, healing, and other situations.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=ItemRack%20Classic" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gear" data-status="recommended" data-search="attune attunement raid dungeon quest progress">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-11" id="addon-button-11">
-    <span class="addon-label"><span class="addon-name">Attune</span><span class="addon-meta"><span class="addon-category">Gear &amp; Character</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-11" role="region" aria-labelledby="addon-button-11" hidden>
-    <p>Tracks dungeon and raid attunement quest chains and helps
-            show exactly where your character is in the process.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Attune" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gear" data-status="recommended" data-search="atlaslootclassic continued atlas loot dungeon raid items gear">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-12" id="addon-button-12">
-    <span class="addon-label"><span class="addon-name">AtlasLootClassic Continued</span><span class="addon-meta"><span class="addon-category">Gear &amp; Character</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-12" role="region" aria-labelledby="addon-button-12" hidden>
-    <p>Browse dungeon and raid loot, reputation rewards,
-            crafted items, and other gear without leaving the game.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=AtlasLootClassic%20Continued" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gear" data-status="recommended" data-search="tacotip taco tip tooltip gear talents player information">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-13" id="addon-button-13">
-    <span class="addon-label"><span class="addon-name">TacoTip</span><span class="addon-meta"><span class="addon-category">Gear &amp; Character</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-13" role="region" aria-labelledby="addon-button-13" hidden>
-    <p>Adds useful character, talent, gear, and player information
-            directly to unit tooltips.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=TacoTip" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gear" data-status="recommended" data-search="whats training spells abilities trainer leveling class">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-14" id="addon-button-14">
-    <span class="addon-label"><span class="addon-name">What&#x27;s Training?</span><span class="addon-meta"><span class="addon-category">Gear &amp; Character</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-14" role="region" aria-labelledby="addon-button-14" hidden>
-    <p>Shows upcoming class abilities and training costs before
-            you make the trip back to your class trainer.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=What%27s%20Training" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="economy" data-status="recommended" data-search="bagsync bags alts inventory bank items gold professions">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-15" id="addon-button-15">
-    <span class="addon-label"><span class="addon-name">BagSync</span><span class="addon-meta"><span class="addon-category">Bags, Alts &amp; Economy</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-15" role="region" aria-labelledby="addon-button-15" hidden>
-    <p>Tracks items, currencies, professions, banks, and other
-            inventory information across your characters.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=BagSync" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="economy" data-status="recommended" data-search="bagnon bags inventory bank alts">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-16" id="addon-button-16">
-    <span class="addon-label"><span class="addon-name">Bagnon</span><span class="addon-meta"><span class="addon-category">Bags, Alts &amp; Economy</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-16" role="region" aria-labelledby="addon-button-16" hidden>
-    <p>Combines bags into a searchable inventory and helps
-            track item quantities across multiple characters.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Bagnon" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="economy" data-status="recommended" data-search="journalator gold money economy auction trading">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-17" id="addon-button-17">
-    <span class="addon-label"><span class="addon-name">Journalator</span><span class="addon-meta"><span class="addon-category">Bags, Alts &amp; Economy</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-17" role="region" aria-labelledby="addon-button-17" hidden>
-    <p>Tracks gold activity and helps show where your money
-            is coming from and where it keeps disappearing to.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Journalator" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="economy" data-status="recommended" data-search="auctionator auction house ah prices shopping selling buying">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-18" id="addon-button-18">
-    <span class="addon-label"><span class="addon-name">Auctionator</span><span class="addon-meta"><span class="addon-category">Bags, Alts &amp; Economy</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-18" role="region" aria-labelledby="addon-button-18" hidden>
-    <p>Improves buying and selling on the Auction House with
-            price information, shopping lists, and cleaner workflows.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Auctionator" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="economy" data-status="recommended" data-search="auctioneer auction house ah price economy">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-19" id="addon-button-19">
-    <span class="addon-label"><span class="addon-name">Auctioneer</span><span class="addon-meta"><span class="addon-category">Bags, Alts &amp; Economy</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-19" role="region" aria-labelledby="addon-button-19" hidden>
-    <p>A feature-heavy Auction House suite with pricing,
-            market information, and buying and selling tools.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Auctioneer" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="economy" data-status="recommended" data-search="bettervendorprice better vendor price item vendor gold sell">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-20" id="addon-button-20">
-    <span class="addon-label"><span class="addon-name">BetterVendorPrice</span><span class="addon-meta"><span class="addon-category">Bags, Alts &amp; Economy</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-20" role="region" aria-labelledby="addon-button-20" hidden>
-    <p>Shows vendor values for items so you can quickly see
-            what something is worth before selling it.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=BetterVendorPrice" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gathering" data-status="recommended" data-search="gathermate2 classic herbs mining treasure gathering nodes map">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-21" id="addon-button-21">
-    <span class="addon-label"><span class="addon-name">GatherMate2 Classic</span><span class="addon-meta"><span class="addon-category">Gathering &amp; Professions</span><span class="tag ">Recommended</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-21" role="region" aria-labelledby="addon-button-21" hidden>
-    <p>Records gathering nodes and displays herb, mining,
-            treasure, and other gathering locations on your map.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=GatherMate2%20Classic" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="gathering" data-status="recommended" data-search="gathermate2 data wowhead classic gathering nodes herbs mining">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-22" id="addon-button-22">
-    <span class="addon-label"><span class="addon-name">GatherMate2 Data Wowhead Classic</span><span class="addon-meta"><span class="addon-category">Gathering &amp; Professions</span><span class="tag dependency">Requires GatherMate2</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-22" role="region" aria-labelledby="addon-button-22" hidden>
-    <p>Imports known gathering-node locations into GatherMate2
-            so you do not have to discover every node yourself.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=GatherMate2%20Data%20Wowhead%20Classic" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-<article class="addon-entry" data-category="pvp" data-status="pvp" data-search="ranker pvp honor rank ranking classic">
-  <h2 class="addon-heading"><button class="addon-toggle" type="button" aria-expanded="false" aria-controls="addon-panel-23" id="addon-button-23">
-    <span class="addon-label"><span class="addon-name">Ranker</span><span class="addon-meta"><span class="addon-category">PvP</span><span class="tag pvp">PvP</span></span></span>
-    <span class="addon-chevron" aria-hidden="true">⌄</span></button></h2>
-  <div class="addon-panel" id="addon-panel-23" role="region" aria-labelledby="addon-button-23" hidden>
-    <p>Helps track Classic Era honor and PvP ranking progress.</p><a class="syndicate-button" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Ranker" target="_blank" rel="noopener noreferrer">View add-on ↗</a>
-  </div>
-</article>
-      </div>
+      <div class="addon-list" id="addonList"></div>
       <p class="no-results" id="noResults" role="status">No add-ons match your search and filters.</p>
     </section>
     <aside class="addons-image" aria-label="Syndicate add-on artwork">
@@ -300,30 +86,30 @@
 </main>
 <div id="syndicate-footer"></div>
 <script>
-(function(){
+(async function () {
   'use strict';
-  const rows = Array.from(document.querySelectorAll('.addon-entry'));
-  const search = document.getElementById('addonSearch');
-  const category = document.getElementById('categoryFilter');
-  const status = document.getElementById('statusFilter');
-  const count = document.getElementById('addonCount');
-  const noResults = document.getElementById('noResults');
-  const toggleAll = document.getElementById('toggleAll');
-  const visible = () => rows.filter(row => !row.hidden);
-  function setOpen(row, open){
+  const list=document.getElementById('addonList');
+  const search=document.getElementById('addonSearch');
+  const category=document.getElementById('categoryFilter');
+  const status=document.getElementById('statusFilter');
+  const count=document.getElementById('addonCount');
+  const noResults=document.getElementById('noResults');
+  const toggleAll=document.getElementById('toggleAll');
+  const rows=[];
+  const visible=()=>rows.filter(row=>!row.hidden);
+  const labelForStatus={required:'Raid Required',recommended:'Recommended','guild-tool':'Guild Tool',pvp:'PvP'};
+  function setOpen(row,open){
     const btn=row.querySelector('.addon-toggle');
-    const panel=row.querySelector('.addon-panel');
     btn.setAttribute('aria-expanded',String(open));
-    panel.hidden=!open;
+    row.querySelector('.addon-panel').hidden=!open;
   }
   function filter(){
-    const term=search.value.trim().toLocaleLowerCase();
-    rows.forEach(row=>{
-      const haystack=(row.dataset.search+' '+row.textContent).toLocaleLowerCase();
-      const match=haystack.includes(term) && (category.value==='all'||row.dataset.category===category.value) && (status.value==='all'||row.dataset.status===status.value);
+    const term=search.value.trim().toLowerCase();
+    for (const row of rows) {
+      const match=row.dataset.search.includes(term) && (category.value==='all'||row.dataset.category===category.value) && (status.value==='all'||row.dataset.status===status.value);
       row.hidden=!match;
-      if(!match) setOpen(row,false);
-    });
+      if(!match)setOpen(row,false);
+    }
     const shown=visible();
     count.textContent=`Showing ${shown.length} of ${rows.length} add-ons`;
     noResults.style.display=shown.length?'none':'block';
@@ -331,27 +117,46 @@
   }
   function updateToggleAll(){
     const shown=visible();
-    toggleAll.textContent=shown.length>0 && shown.every(r=>r.querySelector('.addon-toggle').getAttribute('aria-expanded')==='true')?'Collapse All':'Expand All';
-    toggleAll.disabled=shown.length===0;
+    toggleAll.textContent=shown.length && shown.every(r=>r.querySelector('.addon-toggle').getAttribute('aria-expanded')==='true')?'Collapse All':'Expand All';
+    toggleAll.disabled=!shown.length;
   }
-  rows.forEach(row=>{
-    row.querySelector('.addon-toggle').addEventListener('click',()=>{
-      const btn=row.querySelector('.addon-toggle');
-      setOpen(row,btn.getAttribute('aria-expanded')!=='true');updateToggleAll();
-    });
-  });
+  function render(item,i){
+    const row=document.createElement('article');row.className='addon-entry';
+    row.dataset.category=item.category;row.dataset.status=item.directory_status;
+    row.dataset.search=[item.name,item.description,item.search_terms,item.category_label].join(' ').toLowerCase();
+    const heading=document.createElement('h2');heading.className='addon-heading';
+    const button=document.createElement('button');button.className='addon-toggle';button.type='button';button.id='addon-button-'+i;button.setAttribute('aria-expanded','false');button.setAttribute('aria-controls','addon-panel-'+i);
+    const label=document.createElement('span');label.className='addon-label';
+    const name=document.createElement('span');name.className='addon-name';name.textContent=item.name;
+    const meta=document.createElement('span');meta.className='addon-meta';
+    const cat=document.createElement('span');cat.className='addon-category';cat.textContent=item.category_label;
+    const tag=document.createElement('span');tag.className='tag '+({required:'required','guild-tool':'guild',pvp:'pvp'}[item.directory_status]||'');tag.textContent=labelForStatus[item.directory_status]||'Recommended';
+    meta.append(cat,tag);label.append(name,meta);
+    const chevron=document.createElement('span');chevron.className='addon-chevron';chevron.setAttribute('aria-hidden','true');chevron.textContent='⌄';
+    button.append(label,chevron);heading.append(button);
+    const panel=document.createElement('div');panel.className='addon-panel';panel.id='addon-panel-'+i;panel.setAttribute('role','region');panel.setAttribute('aria-labelledby',button.id);panel.hidden=true;
+    const p=document.createElement('p');p.textContent=item.description;
+    panel.append(p);
+    if (item.url && /^https:\/\//i.test(item.url)) {
+      const a=document.createElement('a');a.className='syndicate-button';a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='View add-on ↗';panel.append(a);
+    }
+    row.append(heading,panel);
+    button.addEventListener('click',()=>{setOpen(row,button.getAttribute('aria-expanded')!=='true');updateToggleAll()});
+    rows.push(row);list.append(row);
+  }
   toggleAll.addEventListener('click',()=>{
-    const shown=visible();
-    const expand=!shown.every(r=>r.querySelector('.addon-toggle').getAttribute('aria-expanded')==='true');
-    shown.forEach(row=>setOpen(row,expand));updateToggleAll();
+    const shown=visible();const expand=!shown.every(r=>r.querySelector('.addon-toggle').getAttribute('aria-expanded')==='true');
+    shown.forEach(r=>setOpen(r,expand));updateToggleAll();
   });
   [search,category,status].forEach(control=>control.addEventListener(control===search?'input':'change',filter));
-  filter();
-  // Link fallback only when an older site-layout.js does not provide its own subheader.
-  document.addEventListener('DOMContentLoaded',()=>{
-    const sub=document.getElementById('syndicate-subheader');
-    if(sub && !sub.textContent.trim()) sub.innerHTML='<nav class="syndicate-subheader-fallback" aria-label="Page location" style="padding:.7rem 1.2rem;border-bottom:1px solid #6c5520;background:#17130c"><a href="../resources.html" style="color:#d4af37">← Resources</a><span style="color:#9c865b">　›　</span><span>Add-ons</span></nav>';
-  });
+  count.textContent='Loading add-ons…';
+  try {
+    if(!window.SyndicateAddons)throw new Error('Shared addon-data.js could not load.');
+    const records=await window.SyndicateAddons.getAddons();records.forEach(render);filter();
+  } catch(error) {
+    count.textContent='Unable to load add-ons: '+error.message;
+    toggleAll.disabled=true;
+  }
 })();
 </script>
 </body>
