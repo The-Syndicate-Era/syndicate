@@ -88,14 +88,14 @@
       <div class="hub-section-header"><h2 id="overviewHeading">Guild Overview</h2><span class="hub-section-note">Roster & raid statistics</span></div>
       <div class="hub-stats">
         <div class="hub-stat"><strong class="hub-stat-value" id="totalCharacters">—</strong><span class="hub-stat-label">Total Characters</span></div>
-        <div class="hub-stat"><strong class="hub-stat-value" id="mainCharacters">—</strong><span class="hub-stat-label">Main Characters</span></div>
-        <div class="hub-stat"><strong class="hub-stat-value" id="altCharacters">—</strong><span class="hub-stat-label">Alt Characters</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value" id="mainCharacters">—</strong><span class="hub-stat-label">Main Characters (Active / Casual)</span></div>
+        <div class="hub-stat"><strong class="hub-stat-value" id="altCharacters">—</strong><span class="hub-stat-label">Alt Characters (Active / Casual)</span></div>
         <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Active Raiders</span></div>
         <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Raids This Month</span></div>
         <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Attendance Rate</span></div>
       </div>
-      <p class="hub-data-note" id="rosterMessage" role="status">Checking roster data (Hub build 4)…</p>
-      <p class="hub-data-note">Main/alt counts use the guild roster. Raid metrics will be added after Warcraft Logs attendance imports; calendar signups are not counted as attendance.</p>
+      <p class="hub-data-note" id="rosterMessage" role="status">Checking roster data (Hub build 6)…</p>
+      <p class="hub-data-note">Total Characters includes every toon on the roster. Main/Alt counts include only Active and Casual toons. Raid metrics will be added after Warcraft Logs attendance imports; calendar signups are not counted as attendance.</p>
     </section>
     <section class="hub-section" aria-labelledby="attentionHeading">
       <div class="hub-section-header"><h2 id="attentionHeading">Needs Attention</h2><span class="hub-section-note">Future alerts</span></div>
@@ -107,9 +107,9 @@
     </section>
   </main>
   <div id="syndicate-footer"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="settings/supabase-config.js"></script>
-  <script src="/syndicate-website/settings/guild-data.js" onerror="window.syndicateGuildScriptFailed=true; console.error('Could not load settings/guild-data.js from GitHub Pages')"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" onerror="window.syndicateSupabaseLibraryFailed=true"></script>
+  <script src="/syndicate-website/settings/supabase-config.js?v=5" onerror="window.syndicateSupabaseConfigFailed=true"></script>
+  <script src="/syndicate-website/settings/guild-data.js?v=6" onerror="window.syndicateGuildScriptFailed=true; console.error('Could not load settings/guild-data.js from GitHub Pages')"></script>
   <script>
     (async function loadOverview(){
       const status = document.getElementById('rosterMessage');
@@ -117,14 +117,20 @@
         if (!window.SyndicateGuild || typeof window.SyndicateGuild.getRosterCounts !== 'function') {
           throw new Error(window.syndicateGuildScriptFailed ? 'The browser blocked or failed to load /syndicate-website/settings/guild-data.js. Open Developer Tools → Network, filter guild-data.js, and check the request status.' : 'The guild-data.js script loaded but did not define SyndicateGuild. Check the browser Console for errors.');
         }
+        if (!window.syndicateDB || typeof window.syndicateDB.from !== 'function') {
+          if (window.syndicateSupabaseLibraryFailed) throw new Error('Supabase library CDN did not load. Check browser Network tab for cdn.jsdelivr.net.');
+          if (window.syndicateSupabaseConfigFailed) throw new Error('settings/supabase-config.js did not load (404 or blocked). Open /syndicate-website/settings/supabase-config.js directly.');
+          if (!window.supabase || typeof window.supabase.createClient !== 'function') throw new Error('Supabase library did not initialize. Check browser Console for a CDN error.');
+          throw new Error('supabase-config.js loaded but did not create window.syndicateDB. Check the Console for a configuration error and confirm it uses window.syndicateDB.');
+        }
         const { total, mains, alts, unclassified } = await window.SyndicateGuild.getRosterCounts();
         document.getElementById('totalCharacters').textContent = total.toLocaleString();
         document.getElementById('mainCharacters').textContent = mains.toLocaleString();
         document.getElementById('altCharacters').textContent = alts.toLocaleString();
-        status.textContent = 'Hub build 4 · Live guild roster counts.' + (unclassified ? ` ${unclassified} characters are not classified as Main or Alt.` : '');
+        status.textContent = 'Hub build 6 · Live guild roster counts.' + (unclassified ? ` ${unclassified} Active/Casual characters are not classified as Main or Alt.` : '');
       } catch (error) {
         console.error('Officer Hub roster error', error);
-        status.textContent = 'Hub build 4 · Roster counts unavailable: ' + (error.message || 'check database read permissions.');
+        status.textContent = 'Hub build 6 · Roster counts unavailable: ' + (error.message || 'check database read permissions.');
       }
     })();
   </script>
