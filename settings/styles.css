@@ -28,10 +28,12 @@
 }
 
 html {
-  font-size: calc(18px * var(--font-scale, 1));
+  font-size: 18px;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
+html[data-syndicate-text-size="large"] { font-size: 21px; }
+html[data-syndicate-text-size="extra-large"] { font-size: 24px; }
 
 *, *::before, *::after { box-sizing: border-box; }
 body {
@@ -114,29 +116,73 @@ th, td { padding: 0.65rem 0.75rem; }
   .syndicate-font-controls__label { display: none; }
   th, td { padding: 0.45rem; }
 }
+
+
 /* =========================================
-   OFFICER RAID RULES - SCALABLE TEXT
+   SHARED SITE HEADER / MENU
+   Controlled by settings/menu.js
    ========================================= */
-
-.section-list .section-item {
-  font-size: 1rem;
-  line-height: 1.5;
+.syn-menu, .syn-menu * { box-sizing: border-box; }
+.syn-menu {
+  position: relative; z-index: 3000;
+  background: #080808; border-bottom: 1px solid var(--gold-dark);
+  color: #f1e5c7; font-family: var(--font-body);
 }
-
-.section-list .section-item .number {
-  font-size: 0.9rem;
+.syn-menu__inner {
+  width: 100%; min-height: 4.6rem;
+  display: flex; justify-content: space-between; align-items: center;
+  gap: 1.5rem; padding: .55rem clamp(1rem, 1.6vw, 2rem);
+  flex-wrap: wrap;
 }
-
-.section-list .section-item .pill {
-  font-size: 0.8rem;
+.syn-menu__logo img { display: block; height: 3rem; width: auto; max-width: 12rem; object-fit: contain; }
+.syn-menu a { color: inherit; text-decoration: none; }
+.syn-menu a:hover, .syn-menu a[aria-current="page"] { color: #f3cb65; }
+.syn-menu__toggle {
+  margin-left: auto; display: inline-flex; align-items: center; justify-content: center;
+  width: 3.1rem; min-height: 3rem; padding: .2rem;
+  border: 0; background: transparent; color: var(--gold);
+  font-size: 2rem; line-height: 1; cursor: pointer;
 }
-
-.sidebar .meta,
-.editor .meta {
-  font-size: 0.9rem;
+.syn-menu__nav {
+  display: none; flex: 0 0 100%; flex-direction: column; align-items: stretch;
+  border-top: 1px solid #46391f; padding: .5rem 0 .8rem;
 }
+.syn-menu[data-mobile-open="true"] .syn-menu__nav { display: flex; }
+.syn-menu__group { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; }
+.syn-menu__link { flex: 1; display: block; padding: .65rem .75rem; }
+.syn-menu__expand {
+  background: transparent; border: 0; color: var(--gold); font: inherit;
+  min-width: 2.8rem; min-height: 2.8rem; cursor: pointer;
+}
+.syn-menu__sub {
+  display: none; flex: 0 0 100%; margin: .1rem 0 .6rem 1rem;
+  border-left: 1px solid var(--gold-dark); padding: .3rem 0 .3rem .6rem;
+}
+.syn-menu__group[data-open="true"] > .syn-menu__sub { display: block; }
+.syn-menu__sub a { display: block; padding: .55rem .75rem; }
+.syn-menu :focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
 
-.section-list .section-item,
-.section-list .section-item span {
-  overflow-wrap: anywhere;
+/* =========================================
+   SHARED SITE FOOTER
+   Controlled by settings/site-layout.js
+   ========================================= */
+.syn-footer { background: #080808; color: var(--gold-dark); width: 100%; text-align: center; }
+.syn-footer__motto {
+  display: flex; align-items: center; justify-content: center;
+  gap: 1.3rem; padding: 2.6rem clamp(1rem,4vw,3rem) 1.2rem;
+  color: var(--gold-dark); font-family: var(--font-heading);
+  font-size: .9rem; letter-spacing: .13em;
+}
+.syn-footer__motto::before, .syn-footer__motto::after {
+  content: ""; height: 1px; background: var(--gold-dark);
+  width: min(27vw, 29rem); flex: 1 1 auto; max-width: 29rem;
+}
+.syn-footer__motto-text { white-space: nowrap; }
+.syn-footer__bottom { border-top: 1px solid var(--gold-dark); padding: 1rem 1rem 1.7rem; }
+.syn-footer__logo { display: inline-block; }
+.syn-footer__logo img { display: block; height: 3.5rem; max-width: min(70vw, 15rem); width: auto; margin: auto; object-fit: contain; }
+@media (max-width: 600px) {
+  .syn-menu__inner { min-height: 4rem; }
+  .syn-menu__logo img { height: 2.7rem; }
+  .syn-footer__motto { gap: .55rem; font-size: .75rem; letter-spacing: .07em; }
 }
