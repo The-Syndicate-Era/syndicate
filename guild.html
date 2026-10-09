@@ -1,859 +1,54 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
   <title>The Syndicate | Behind the Chaos</title>
-
-  <link rel="stylesheet" href="styles.css">
-
+  <link rel="stylesheet" href="settings/styles.css">
+  <script src="settings/font-setting.js" defer></script>
+  <script src="settings/menu.js" defer></script>
+  <script src="settings/site-layout.js" defer></script>
   <style>
 
-    :root {
-      --background-dark: #090909;
-      --background-card: #11100d;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #b7ad94;
-
-      --font-heading: "Cinzel", serif;
-      --font-body: Arial, sans-serif;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-    }
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .site-header {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      padding: 0 30px;
-
-      background: var(--background-dark);
-
-      border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
-    }
-
-    .logo-area img {
-      height: 45px;
-      width: auto;
-
-      display: block;
-    }
-
-    .menu-button {
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 32px;
-
-      cursor: pointer;
-
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-
-    /* =========================
-       SLIDE-OUT MENU
-    ========================= */
-
-    .menu-overlay {
-      position: fixed;
-      inset: 0;
-
-      background: rgba(0, 0, 0, 0.65);
-
-      opacity: 0;
-      visibility: hidden;
-
-      transition:
-        opacity 0.25s ease,
-        visibility 0.25s ease;
-
-      z-index: 900;
-    }
-
-    .menu-overlay.open {
-      opacity: 1;
-      visibility: visible;
-    }
-
-    .side-menu {
-      position: fixed;
-
-      top: 0;
-      right: 0;
-
-      width: 420px;
-      max-width: 48vw;
-      height: 100%;
-
-      background: #090909;
-
-      border-left: 1px solid var(--gold-dark);
-
-      transform: translateX(100%);
-
-      transition: transform 0.3s ease;
-
-      z-index: 1000;
-
-      padding: 70px 40px 40px;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-    .side-menu.open {
-      transform: translateX(0);
-    }
-
-    .close-menu {
-      position: absolute;
-
-      top: 18px;
-      right: 22px;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 34px;
-
-      cursor: pointer;
-    }
-
-    .side-menu-logo {
-      text-align: center;
-
-      margin-bottom: 40px;
-    }
-
-    .side-menu-logo img {
-      width: 180px;
-      max-width: 80%;
-
-      height: auto;
-    }
-
-    .side-menu-links {
-      display: flex;
-      flex-direction: column;
-
-      gap: 10px;
-    }
-
-    .side-menu-links a {
-      padding: 18px 10px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 20px;
-
-      letter-spacing: 1px;
-
-      transition:
-        color 0.2s ease,
-        padding-left 0.2s ease;
-    }
-
-    .side-menu-links a:hover {
-      color: var(--gold-light);
-
-      padding-left: 18px;
-    }
-
-    .side-menu-motto {
-      margin-top: auto;
-
-      padding-top: 30px;
-
-      border-top: 1px solid var(--gold-dark);
-
-      text-align: center;
-
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 13px;
-
-      letter-spacing: 2px;
-    }
-
-
-    /* =========================
-       GUILD INTRO
-    ========================= */
-
-    .guild-intro {
-      max-width: 950px;
-
-      margin: 0 auto;
-
-      padding: 60px 30px 55px;
-
-      text-align: center;
-    }
-
-    .guild-intro h1 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 52px;
-      font-weight: 400;
-
-      letter-spacing: 3px;
-
-      margin-bottom: 20px;
-    }
-
-    .guild-intro p {
-      max-width: 760px;
-
-      margin: 0 auto 30px;
-
-      color: var(--text-muted);
-
-      font-size: 15px;
-
-      line-height: 1.8;
-    }
-
-
-    /* =========================
-       ROSTER BUTTON
-    ========================= */
-
-    .roster-button {
-      display: inline-block;
-
-      padding: 11px 28px;
-
-      background:
-        linear-gradient(
-          to bottom,
-          #b51414 0%,
-          #8f0909 45%,
-          #650505 100%
-        );
-
-      color: #ffd633;
-
-      font-family: var(--font-heading);
-
-      font-size: 13px;
-
-      border: 2px solid #2a1a10;
-      border-radius: 5px;
-
-      box-shadow:
-        0 0 0 2px #6a4a25,
-        0 0 0 4px #120d09,
-        inset 0 2px 0 rgba(255,255,255,0.18),
-        inset 0 -2px 0 rgba(0,0,0,0.55),
-        0 3px 5px rgba(0,0,0,0.75);
-
-      text-shadow:
-        1px 1px 2px #000;
-
-      transition:
-        filter 0.15s ease,
-        transform 0.15s ease;
-    }
-
-    .roster-button:hover {
-      filter: brightness(1.15);
-    }
-
-    .roster-button:active {
-      transform: translateY(2px);
-    }
-
-    .roster-note {
-      margin-top: 18px !important;
-      margin-bottom: 0 !important;
-
-      color: #807763 !important;
-
-      font-size: 12px !important;
-    }
-
-
-    /* =========================
-       DIVIDER
-    ========================= */
-
-    .section-divider {
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      gap: 18px;
-
-      max-width: 1100px;
-
-      margin: 0 auto;
-
-      padding: 0 30px 48px;
-    }
-
-    .section-divider::before,
-    .section-divider::after {
-      content: "";
-
-      height: 1px;
-
-      flex: 1;
-
-      background: var(--gold-dark);
-    }
-
-    .section-divider span {
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 12px;
-
-      letter-spacing: 3px;
-
-      white-space: nowrap;
-    }
-
-
-    /* =========================
-       MEET THE TEAM
-    ========================= */
-
-    .team-section {
-      max-width: 1050px;
-
-      margin: 0 auto;
-
-      padding: 0 30px 70px;
-    }
-
-    .team-heading {
-      text-align: center;
-
-      margin-bottom: 38px;
-    }
-
-    .team-heading h2 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 36px;
-      font-weight: 400;
-
-      letter-spacing: 2px;
-    }
-
-    .team-heading p {
-      margin-top: 10px;
-
-      color: var(--text-muted);
-
-      font-size: 13px;
-    }
-
-
-    /* =========================
-       DARK MATRIARCH
-    ========================= */
-
-    .matriarch-card {
-      max-width: 560px;
-
-      margin: 0 auto 52px;
-
-      padding: 32px 30px 28px;
-
-      text-align: center;
-
-      background:
-        linear-gradient(
-          180deg,
-          #16130d,
-          #0d0c09
-        );
-
-      border: 1px solid var(--gold);
-
-      box-shadow:
-        0 0 18px rgba(217, 180, 56, 0.08);
-    }
-
-    .rank-title {
-      display: block;
-
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 12px;
-
-      letter-spacing: 3px;
-
-      margin-bottom: 13px;
-    }
-
-    .matriarch-card h3 {
-      font-family: var(--font-heading);
-
-      color: var(--gold-light);
-
-      font-size: 30px;
-      font-weight: 400;
-
-      letter-spacing: 2px;
-
-      margin-bottom: 18px;
-    }
-
-
-    /* =========================
-       QUOTES
-    ========================= */
-
-    .officer-quote {
-      padding-top: 16px;
-
-      border-top:
-        1px solid rgba(217, 180, 56, 0.20);
-
-      color: var(--text-muted);
-
-      font-family: var(--font-body);
-
-      font-size: 12px;
-      font-style: italic;
-
-      line-height: 1.55;
-    }
-
-
-    /* =========================
-       DARK COUNCIL
-    ========================= */
-
-    .council-title {
-      text-align: center;
-
-      margin-bottom: 25px;
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 22px;
-      font-weight: 400;
-
-      letter-spacing: 2px;
-    }
-
-    .council-grid {
-      display: grid;
-
-      grid-template-columns: repeat(3, 1fr);
-
-      gap: 18px;
-    }
-
-    .officer-card {
-      min-height: 165px;
-
-      display: flex;
-      flex-direction: column;
-
-      align-items: center;
-      justify-content: center;
-
-      text-align: center;
-
-      padding: 24px 20px;
-
-      background: var(--background-card);
-
-      border:
-        1px solid rgba(125, 101, 28, 0.7);
-
-      transition:
-        border-color 0.2s ease,
-        transform 0.2s ease,
-        background 0.2s ease;
-    }
-.council-grid .officer-card:last-child {
-  grid-column: 2;
-}
-    .officer-card:hover {
-      transform: translateY(-3px);
-
-      background: #15130e;
-
-      border-color: var(--gold);
-    }
-
-    .officer-rank {
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 10px;
-
-      letter-spacing: 2px;
-
-      margin-bottom: 10px;
-    }
-
-    .officer-name {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 21px;
-
-      letter-spacing: 1px;
-
-      margin-bottom: 18px;
-    }
-
-    .officer-card .officer-quote {
-      width: 100%;
-    }
-
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .divider-section {
-      display: flex;
-
-      align-items: center;
-      justify-content: center;
-
-      gap: 18px;
-
-      max-width: 1200px;
-
-      margin: 0 auto;
-
-      padding: 20px 40px;
-    }
-
-    .divider-line {
-      height: 1px;
-
-      flex: 1;
-
-      background: var(--gold-dark);
-    }
-
-    .divider-text {
-      font-family: var(--font-heading);
-
-      color: var(--gold-dark);
-
-      font-size: 15px;
-
-      letter-spacing: 2px;
-
-      white-space: nowrap;
-    }
-
-    .site-footer {
-      display: flex;
-
-      justify-content: center;
-      align-items: center;
-
-      padding: 15px 20px 35px;
-
-      border-top: 1px solid var(--gold-dark);
-    }
-
-    .footer-logo img {
-      height: 55px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    /* =========================
-       MOBILE
-    ========================= */
-
-    @media (max-width: 768px) {
-.council-grid .officer-card:last-child {
-  grid-column: auto;
-}
-      .site-header {
-        height: 60px;
-
-        padding: 0 18px;
-      }
-
-      .logo-area img {
-        height: 36px;
-      }
-
-      .menu-button {
-        font-size: 28px;
-      }
-
-
-      .side-menu {
-        width: 85%;
-        max-width: 85%;
-
-        padding: 70px 25px 30px;
-      }
-
-      .side-menu-links a {
-        font-size: 18px;
-      }
-
-
-      .guild-intro {
-        padding: 45px 20px 40px;
-      }
-
-      .guild-intro h1 {
-        font-size: 38px;
-      }
-
-      .guild-intro p {
-        font-size: 14px;
-      }
-
-
-      .section-divider {
-        padding:
-          0 20px 38px;
-      }
-
-      .section-divider span {
-        font-size: 10px;
-
-        letter-spacing: 2px;
-      }
-
-
-      .team-section {
-        padding:
-          0 18px 55px;
-      }
-
-      .team-heading h2 {
-        font-size: 29px;
-      }
-
-
-      .matriarch-card {
-        margin-bottom: 40px;
-
-        padding: 28px 20px;
-      }
-
-      .matriarch-card h3 {
-        font-size: 26px;
-      }
-
-
-      .council-grid {
-        grid-template-columns: 1fr;
-
-        gap: 14px;
-      }
-
-      .officer-card {
-        min-height: 145px;
-      }
-
-
-      .divider-section {
-        padding: 18px 20px;
-      }
-
-      .divider-text {
-        font-size: 12px;
-      }
-
-      .footer-logo img {
-        height: 45px;
-      }
-
-    }
-
+/* Page-specific layout only. All font sizes derive from the shared root rem scale. */
+.guild-page{--guild-page-gold:var(--gold,#d4af37);--guild-page-gold-dim:var(--gold-dark,#8f7320);--guild-page-light:#e6dfc9;--guild-page-muted:#c2b69d;background:#090909;color:var(--guild-page-light);font-family:var(--font-body,Georgia,serif)}
+.guild-page a{color:inherit;text-decoration:none}
+.guild-intro{max-width:62rem;margin:0 auto;padding:3.5rem 1.5rem 3rem;text-align:center}
+.guild-intro h1{color:var(--guild-page-gold);font-family:var(--font-heading,Cinzel,serif);font-size:clamp(2.2rem,4.2vw,3rem);font-weight:400;letter-spacing:.08em;margin:0 0 1.2rem}
+.guild-intro p{max-width:49rem;margin:0 auto 1.65rem;font-size:1rem;line-height:1.8;color:var(--guild-page-muted)}
+.guild-intro .roster-button{display:inline-flex;align-items:center;justify-content:center;min-height:2.7rem;padding:.65rem 1.5rem;background:linear-gradient(to bottom,#b51414 0%,#8f0909 45%,#650505 100%);color:#ffd633;font-family:var(--font-heading,Cinzel,serif);font-size:.88rem;border:2px solid #2a1a10;border-radius:5px;box-shadow:0 0 0 2px #6a4a25,0 0 0 4px #120d09,inset 0 2px 0 #ffffff2e,inset 0 -2px 0 #0009,0 3px 5px #000b;text-shadow:1px 1px 2px #000;transition:filter .15s ease,transform .15s ease}
+.guild-intro .roster-button:hover{filter:brightness(1.15)}.guild-intro .roster-button:active{transform:translateY(2px)}
+.guild-intro .roster-note{font-size:.9rem;line-height:1.6;color:#ad9e80;margin:1.5rem auto 0;max-width:51rem}
+.guild-team-divider{display:flex;align-items:center;justify-content:center;gap:1rem;max-width:72rem;margin:0 auto;padding:0 1.5rem 2.5rem}
+.guild-team-divider:before,.guild-team-divider:after{content:"";height:1px;flex:1;background:var(--guild-page-gold-dim)}
+.guild-team-divider span{font-family:var(--font-heading,Cinzel,serif);font-size:.95rem;letter-spacing:.13em;color:var(--guild-page-gold);text-align:center}
+.team-section{max-width:70rem;margin:0 auto;padding:0 1.5rem 4rem}
+.team-heading{text-align:center;margin-bottom:2.3rem}.team-heading h2{font-family:var(--font-heading,Cinzel,serif);color:var(--guild-page-gold);font-size:clamp(2.2rem,4vw,2.85rem);font-weight:400;letter-spacing:.065em;margin:0}
+.team-heading p{margin:.75rem auto 0;color:var(--guild-page-muted);font-size:1rem;line-height:1.6;max-width:52rem}
+.matriarch-card{max-width:36rem;margin:0 auto 3rem;padding:2rem 1.7rem 1.8rem;text-align:center;background:linear-gradient(180deg,#16130d,#0d0c09);border:1px solid var(--guild-page-gold);box-shadow:0 0 18px #d9b43814}
+.rank-title{display:block;font-family:var(--font-heading,Cinzel,serif);color:#c5a455;font-size:.82rem;letter-spacing:.16em;margin-bottom:.8rem}
+.matriarch-card h3{font-family:var(--font-heading,Cinzel,serif);color:#efcc54;font-size:1.8rem;font-weight:400;letter-spacing:.07em;margin:0 0 1rem}
+.officer-quote{padding-top:.85rem;border-top:1px solid #d9b43833;color:var(--guild-page-muted);font-family:var(--font-body,Georgia,serif);font-size:.9rem;font-style:italic;line-height:1.6}
+.council-title{text-align:center;margin:0 0 1.5rem;font-family:var(--font-heading,Cinzel,serif);color:var(--guild-page-gold);font-size:1.5rem;font-weight:400;letter-spacing:.08em}
+.council-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1rem}
+.officer-card{min-height:10rem;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:1.5rem 1.1rem;background:#11100d;border:1px solid #7d651cb3;transition:border-color .2s ease,transform .2s ease,background .2s ease;min-width:0}
+.officer-card:hover{transform:translateY(-3px);background:#15130e;border-color:var(--guild-page-gold)}
+.officer-rank{font-family:var(--font-heading,Cinzel,serif);color:#b8994c;font-size:.78rem;letter-spacing:.14em;margin-bottom:.65rem}
+.officer-name{font-family:var(--font-heading,Cinzel,serif);color:var(--guild-page-gold);font-size:1.35rem;letter-spacing:.04em;margin-bottom:1rem;overflow-wrap:anywhere}
+.officer-card .officer-quote{width:100%}
+@media(min-width:801px){.council-grid>.officer-card:last-child:nth-child(3n+1){grid-column:2}}
+@media(max-width:800px){.council-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:540px){.guild-intro{padding:2.5rem 1.1rem 2.25rem}.guild-team-divider{padding:0 1rem 2rem;gap:.6rem}.guild-team-divider span{font-size:.8rem}.team-section{padding:0 1rem 3rem}.council-grid{grid-template-columns:1fr}.officer-card{min-height:8rem}.matriarch-card{padding:1.6rem 1.1rem}}
   </style>
 </head>
-
-
 <body>
-
-
-  <!-- =========================
-       HEADER
-  ========================= -->
-
-  <header class="site-header">
-
-    <div class="logo-area">
-
-      <a href="index.html">
-
-        <img
-          src="images/HeaderLogo.png"
-          alt="The Syndicate"
-        >
-
-      </a>
-
-    </div>
-
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open menu"
-      aria-expanded="false"
-    >
-      ☰
-    </button>
-
-  </header>
-
-
-
-  <!-- =========================
-       SLIDE-OUT MENU
-  ========================= -->
-
-  <div
-    class="menu-overlay"
-    id="menuOverlay"
-  ></div>
-
-
-  <aside
-    class="side-menu"
-    id="sideMenu"
-  >
-
-    <button
-      class="close-menu"
-      id="closeMenu"
-      type="button"
-      aria-label="Close menu"
-    >
-      ×
-    </button>
-
-
-    <div class="side-menu-logo">
-
-      <img
-        src="images/HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-
-    <nav class="side-menu-links">
-
-      <a href="index.html">
-        HOME
-      </a>
-
-      <a href="guild.html">
-        OUR GUILD
-      </a>
-
-      <a href="calendar.html">
-        CALENDAR
-      </a>
-
-      <a href="raids.html">
-        RAID HUB
-      </a>
-
-      <a href="resources.html">
-        RESOURCES
-      </a>
-
-    </nav>
-
-
-    <div class="side-menu-motto">
-      ◆ THIS IS THE WAY. ◆
-    </div>
-
-  </aside>
-
-
-
-  <!-- =========================
-       GUILD INTRO / ROSTER
-  ========================= -->
-
-  <section class="guild-intro">
-
-    <h1>
+  <div id="syndicate-menu"></div>
+  <main class="guild-page">
+    <section class="guild-intro">
+<h1>
       THE SYNDICATE
     </h1>
-
-
-    <p>
+<p>
       The Syndicate is a Horde guild on Classic Era
       built around good people, organized chaos, and getting
       things done together. From leveling and dungeons to
@@ -861,412 +56,163 @@
       community, help each other out, and enjoy the game
       along the way. See you in Azeroth!
     </p>
-
-
-    <a
-      href="https://worldofwarcraft.blizzard.com/en-us/classic1x/us/armory/guild/mankrik/the-syndicate?class=all&page=1"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="roster-button"
-    >
+<a class="roster-button" href="https://worldofwarcraft.blizzard.com/en-us/classic1x/us/armory/guild/mankrik/the-syndicate?class=all&amp;page=1" rel="noopener noreferrer" target="_blank">
       VIEW ACTIVE GUILD ROSTER
     </a>
-
-
-    <p class="roster-note">
+<p class="roster-note">
       Blizzard's guild roster includes both mains and alts
       and provides the most current view of our membership.
     </p>
-
-  </section>
-
-
-
-  <!-- =========================
-       TEAM DIVIDER
-  ========================= -->
-
-  <div class="section-divider">
-
-    <span>
-      ◆ Behind the Chaos ◆
-    </span>
-
-  </div>
-
-
-
-  <!-- =========================
-       OFFICERS
-  ========================= -->
-
-  <section class="team-section">
-
-
-    <div class="team-heading">
-
-      <h2>
-        MEET THE TEAM
-      </h2>
-
-      <p>
+</section>
+    <div class="guild-team-divider"><span>◆ MEET THE LEADERS ◆</span></div>
+    <section class="team-section">
+<div class="team-heading">
+<h2>BEHIND THE CHAOS</h2>
+<p>
         The officers helping keep The Syndicate organized,
         moving forward, and only moderately chaotic.
       </p>
-
-    </div>
-
-
-
-    <!-- DARK MATRIARCH -->
-
-    <div class="matriarch-card">
-
-      <span class="rank-title">
+</div>
+<!-- DARK MATRIARCH -->
+<div class="matriarch-card">
+<span class="rank-title">
         DARK MATRIARCH
       </span>
-
-      <h3>
+<h3>
         FARED
       </h3>
-
-      <div class="officer-quote">
+<div class="officer-quote">
         "Don't let your dreams just be meme's"
       </div>
-
-    </div>
-
-
-
-    <!-- DARK COUNCIL -->
-
-    <h3 class="council-title">
+</div>
+<!-- DARK COUNCIL -->
+<h3 class="council-title">
       DARK COUNCIL
     </h3>
-
-
-    <div class="council-grid">
-
-
-      <!-- YOSHI -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+<div class="council-grid">
+<!-- YOSHI -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           YOSHI
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "Dhaddy's Home"
         </div>
-
-      </div>
-
-
-
-      <!-- BELLE -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- BELLE -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           BELLE
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "Let me tell you about All. The. Things."
         </div>
-
-      </div>
-
-
-
-      <!-- RILDILIAN -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- RILDILIAN -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           RILDILIAN
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "For this fight, kill boss get loot!"
         </div>
-
-      </div>
-
-
-
-      <!-- TANKBOT -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- TANKBOT -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           TANKBOT
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "TBD"
         </div>
-
-      </div>
-
-
-
-      <!-- ROACHEE -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- ROACHEE -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           ROACHEE
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "Ugh... we have too many discord channels"
         </div>
-
-      </div>
-
-
+</div>
 <!-- JOE -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           JOESTRUMMER
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "This is the way"
         </div>
-
-      </div>
-
-
-
-      <!-- CHOCKI -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- CHOCKI -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           CHOCKI
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "TBD"
         </div>
-
-      </div>
-
-
-
-      <!-- KAERIXI -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- KAERIXI -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           KAERIXI
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "I didn’t do it. I just organized it."
         </div>
-
-      </div>
-
-
-      <!-- BEREAVEMENT -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- BEREAVEMENT -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           BEREAVEMENT
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "TBD"
         </div>
-
-      </div>
-
-
-
-      <!-- GRAWL -->
-
-      <div class="officer-card">
-
-        <span class="officer-rank">
+</div>
+<!-- GRAWL -->
+<div class="officer-card">
+<span class="officer-rank">
           DARK COUNCIL
         </span>
-
-        <span class="officer-name">
+<span class="officer-name">
           GRAWL
         </span>
-
-        <div class="officer-quote">
+<div class="officer-quote">
           "TBD"
         </div>
-
-      </div>
-
-
-    </div>
-
-  </section>
-
-
-
-  <!-- =========================
-       FOOTER DIVIDER
-  ========================= -->
-
-  <section class="divider-section">
-
-    <div class="divider-line"></div>
-
-    <div class="divider-text">
-      ◆ THIS IS THE WAY. ◆
-    </div>
-
-    <div class="divider-line"></div>
-
-  </section>
-
-
-
-  <!-- =========================
-       FOOTER
-  ========================= -->
-
-  <footer class="site-footer">
-
-    <div class="footer-logo">
-
-      <img
-        src="images/HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-  </footer>
-
-
-
-  <!-- =========================
-       MENU SCRIPT
-  ========================= -->
-
-  <script>
-
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const sideMenu =
-      document.getElementById("sideMenu");
-
-    const menuOverlay =
-      document.getElementById("menuOverlay");
-
-    const closeMenu =
-      document.getElementById("closeMenu");
-
-
-    function openMenu() {
-
-      sideMenu.classList.add("open");
-
-      menuOverlay.classList.add("open");
-
-      menuButton.setAttribute(
-        "aria-expanded",
-        "true"
-      );
-
-    }
-
-
-    function closeSideMenu() {
-
-      sideMenu.classList.remove("open");
-
-      menuOverlay.classList.remove("open");
-
-      menuButton.setAttribute(
-        "aria-expanded",
-        "false"
-      );
-
-    }
-
-
-    menuButton.addEventListener(
-      "click",
-      openMenu
-    );
-
-
-    closeMenu.addEventListener(
-      "click",
-      closeSideMenu
-    );
-
-
-    menuOverlay.addEventListener(
-      "click",
-      closeSideMenu
-    );
-
-
-    document.addEventListener(
-      "keydown",
-      function(event) {
-
-        if (event.key === "Escape") {
-          closeSideMenu();
-        }
-
-      }
-    );
-
-  </script>
-
-
+</div>
+</div>
+</section>
+  </main>
+  <div id="syndicate-footer"></div>
 </body>
-
 </html>
