@@ -54,12 +54,27 @@ main { min-width:0; }
 .fact span {font-size:.92rem;color:#e0d3bd;line-height:1.4;overflow-wrap:anywhere;}
 @media(max-width:950px){.page-hero{grid-template-columns:1fr;gap:1.4rem}.hero-image{height:16rem}.directory-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.detail-body{grid-template-columns:1fr}.detail-block.full{grid-column:auto}.quick-facts{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:600px){.page-hero,.attune-section{width:min(calc(100% - 1.5rem),1200px)}.page-hero{padding-top:2rem}.hero-image{height:12.5rem}.directory-grid{grid-template-columns:1fr}.attune-card{min-height:6.5rem}.detail-header,.detail-body{padding:1rem}.quick-facts{grid-template-columns:1fr 1fr}.section-heading h2{font-size:1.45rem}}
+/* Resource subheader fallback: visible even if shared JS does not populate its container. */
+.attune-resource-subheader {
+  display:flex;align-items:center;flex-wrap:wrap;gap:.65rem;
+  padding:.75rem max(1.25rem,calc((100% - 1200px)/2));
+  background:#17130c;border-bottom:1px solid #6c5520;
+  color:#e8d9b9;font-size:.95rem;line-height:1.5;
+}
+.attune-resource-subheader a {color:#d4af37;text-decoration:none;font-weight:600;}
+.attune-resource-subheader a:hover {text-decoration:underline;}
+.attune-crumb-separator {color:#997a37;}
 </style>
 </head>
 
 <body>
   <div id="syndicate-menu"></div>
-  <div id="syndicate-subheader" data-section="resources" data-title="Attunements & Keys"></div>
+  <!-- Visible fallback breadcrumb; shared site-layout.js can enhance/replace its contents. -->
+  <nav id="syndicate-subheader" class="attune-resource-subheader" data-section="resources" data-title="Attunements & Keys" aria-label="Resources navigation">
+    <a href="../resources.html">← Resources</a>
+    <span class="attune-crumb-separator" aria-hidden="true">›</span>
+    <span aria-current="page">Attunements &amp; Keys</span>
+  </nav>
   <main>
 
     <!-- HERO -->
@@ -848,7 +863,7 @@ main { min-width:0; }
 
         }
       );
- 
+
       document.getElementById("detailPanel").hidden = false;
 
       document
