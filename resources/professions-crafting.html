@@ -1068,7 +1068,19 @@ main { padding-top: 1.7rem; }
 .profession-button { padding:.7rem .85rem; min-height:4.25rem; flex-direction:column; align-items:flex-start; }
 .profession-button.active { border-color:#f4d46a; box-shadow:0 0 0 2px #e9c95780; }
 .profession-name { font-size:.94rem; }
-.profession-count { color:#f3d69b; }
+/* Compact one-row desktop profession selector */
+.profession-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .65rem; }
+.profession-button.syndicate-wow-button {
+  min-height: 2.8rem;
+  padding: .52rem .32rem;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  white-space: normal;
+}
+.profession-name { font-size: .81rem; line-height: 1.25; overflow-wrap: anywhere; margin: 0; }
+@media (min-width: 650px) { .profession-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (min-width: 1180px) { .profession-grid { grid-template-columns: repeat(8, minmax(0, 1fr)); } }
 .secondary-button,.clear-search-button { min-height:2.65rem; font-size:.9rem; }
 @media(max-width:650px) { .profession-hero { min-height:240px; background-position:center; } .profession-hero::before {background:rgba(0,0,0,.72)} .profession-hero .page-description {font-size:1rem;} }
 
@@ -2249,14 +2261,6 @@ main { padding-top: 1.7rem; }
       professions.forEach(
         profession => {
 
-          const count =
-            rareItems.filter(
-              item =>
-                item.profession ===
-                profession
-            ).length;
-
-
           const button =
             document.createElement(
               "button"
@@ -2284,16 +2288,9 @@ main { padding-top: 1.7rem; }
 
 
           button.innerHTML = `
-            <span class="profession-name">
-              ${escapeHTML(profession)}
-            </span>
-
-            <span class="profession-count">
-              ${count}
-              tracked crafts
-            </span>
+            <span class="profession-name">${escapeHTML(profession)}</span>
           `;
-
+          button.setAttribute("aria-pressed", String(selectedProfession === profession));
 
           button.addEventListener(
             "click",
