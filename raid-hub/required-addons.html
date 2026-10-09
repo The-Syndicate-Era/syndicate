@@ -7,6 +7,9 @@
   <link rel="stylesheet" href="../settings/styles.css">
   <script src="../settings/font-setting.js" defer></script>
   <script src="../settings/site-layout.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../settings/supabase-config.js"></script>
+  <script src="../settings/addon-data.js"></script>
   <style>
     body { background:#080807 !important; color:#e5dcca; }
     #syndicate-subheader { background:#100e0b; border-bottom:1px solid #695329; }
@@ -53,27 +56,42 @@
     <div class="raid-addon-layout">
       <aside class="raid-addon-art" aria-label="Syndicate add-on artwork"><picture><source media="(max-width: 780px)" srcset="../images/addons2.png"><img src="../images/addons.png" alt="The Syndicate add-on resources" loading="eager"></picture></aside>
       <div class="raid-addon-content">
-        <section class="raid-addon-section" aria-labelledby="required-title"><h2 id="required-title">Required for Raiding</h2><p class="section-desc">Currently listed as raid-required in our Add-ons directory.</p><div class="addon-list">
-        <article class="addon-card"><div class="addon-card-top"><h3>Details! Damage Meter</h3><span class="flag required">Raid Required</span></div><p>Combat analysis for damage, healing, deaths, dispels,
-            interrupts, and more. TinyThreat can be used within Details
-            for raid threat tracking.</p><a class="wow-link" href="https://www.curseforge.com/wow/addons/details" target="_blank" rel="noopener noreferrer" aria-label="Find Details! Damage Meter on CurseForge">VIEW ADD-ON ↗</a></article>
-<article class="addon-card"><div class="addon-card-top"><h3>Decursive</h3><span class="flag required">Raid Required</span></div><p>Provides quick visibility and targeting for curses,
-            poisons, diseases, and magic effects your class can remove.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Decursive" target="_blank" rel="noopener noreferrer" aria-label="Find Decursive on CurseForge">VIEW ADD-ON ↗</a></article>
-        </div></section>
-        <section class="raid-addon-section" aria-labelledby="recommended-title"><h2 id="recommended-title">Recommended Raid Tools</h2><p class="section-desc">Useful additions, but not currently marked as required.</p><div class="addon-list">
-        <article class="addon-card"><div class="addon-card-top"><h3>Threat Plates</h3><span class="flag recommended">Recommended</span></div><p>Threat-aware nameplates that make it easier to see which
-            enemies you have threat on and what is targeting someone else.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Threat%20Plates" target="_blank" rel="noopener noreferrer" aria-label="Find Threat Plates on CurseForge">VIEW ADD-ON ↗</a></article>
-<article class="addon-card"><div class="addon-card-top"><h3>LoggerHeadLite</h3><span class="flag recommended">Recommended</span></div><p>Helps automatically manage combat logging when entering
-            raids and other selected instances.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=LoggerHeadLite" target="_blank" rel="noopener noreferrer" aria-label="Find LoggerHeadLite on CurseForge">VIEW ADD-ON ↗</a></article>
-<article class="addon-card"><div class="addon-card-top"><h3>Nova World Buffs</h3><span class="flag recommended">Recommended</span></div><p>Tracks world buffs, cooldowns, timers, announcements,
-            and other useful Classic world-buff information.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Nova%20World%20Buffs" target="_blank" rel="noopener noreferrer" aria-label="Find Nova World Buffs on CurseForge">VIEW ADD-ON ↗</a></article>
-<article class="addon-card"><div class="addon-card-top"><h3>Nova Instance Tracker</h3><span class="flag recommended">Recommended</span></div><p>Tracks instance entries, resets, lockouts, and other
-            useful dungeon and raid information.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Nova%20Instance%20Tracker" target="_blank" rel="noopener noreferrer" aria-label="Find Nova Instance Tracker on CurseForge">VIEW ADD-ON ↗</a></article>
-        </div></section>
+        <section class="raid-addon-section" aria-labelledby="required-title"><h2 id="required-title">Required for Raiding</h2><p class="section-desc">Currently listed as raid-required in our Add-ons directory.</p><div class="addon-list" id="requiredAddons"></div></section>
+        <section class="raid-addon-section" aria-labelledby="recommended-title"><h2 id="recommended-title">Recommended Raid Tools</h2><p class="section-desc">Useful additions, but not currently marked as required.</p><div class="addon-list" id="recommendedAddons"></div></section>
         <div class="addon-footnote">Looking for other tools? Visit our <a href="../resources/addons.html">full Add-ons directory</a> for more Classic Era resources. Always select an add-on version compatible with your game client.</div>
       </div>
     </div>
   </main>
   <div id="syndicate-footer"></div>
+  <script>
+  (async function(){
+    'use strict';
+    const target={required:document.getElementById('requiredAddons'),recommended:document.getElementById('recommendedAddons')};
+    function render(item,where){
+      const card=document.createElement('article');card.className='addon-card';
+      const top=document.createElement('div');top.className='addon-card-top';
+      const name=document.createElement('h3');name.textContent=item.name;
+      const flag=document.createElement('span');flag.className='flag '+item.raid_status;flag.textContent=item.raid_status==='required'?'Raid Required':'Recommended';
+      top.append(name,flag);
+      const desc=document.createElement('p');desc.textContent=item.description;
+      card.append(top,desc);
+      if(item.url && /^https:\/\//i.test(item.url)){
+        const a=document.createElement('a');a.className='wow-link';a.href=item.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='VIEW ADD-ON ↗';card.append(a);
+      }
+      where.append(card);
+    }
+    for(const el of Object.values(target))el.textContent='Loading add-ons…';
+    try{
+      if(!window.SyndicateAddons)throw new Error('Shared add-on loader did not load.');
+      const items=await window.SyndicateAddons.getAddons();
+      for(const key of Object.keys(target)){
+        const el=target[key];el.replaceChildren();
+        const filtered=items.filter(x=>x.raid_status===key);
+        if(!filtered.length)el.textContent='No '+key+' raid add-ons listed yet.';
+        filtered.forEach(x=>render(x,el));
+      }
+    }catch(err){for(const el of Object.values(target))el.textContent='Unable to load add-ons: '+err.message;}
+  })();
+  </script>
 </body>
 </html>
