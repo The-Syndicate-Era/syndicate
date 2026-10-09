@@ -9,6 +9,8 @@
   <script src="settings/menu.js" defer></script>
   <script src="settings/site-layout.js" defer></script>
   <style>
+    html, body { background:#080807 !important; color:#e4dac6; min-height:100%; }
+    body { background-image:none !important; }
     .officer-hub{max-width:1200px;margin:0 auto;padding:3rem 1.4rem 5rem;color:#ded2b8;}
     .hub-eyebrow{color:#c7aa61;text-transform:uppercase;font-family:var(--font-heading,"Cinzel",serif);letter-spacing:.1em;font-size:.82rem;margin:0 0 .65rem;}
     .hub-heading{font-size:clamp(2rem,4vw,3.4rem);color:var(--gold,#d4af37);margin:0 0 .6rem;}
@@ -38,6 +40,20 @@
     .hub-attention-row{display:flex;align-items:center;gap:.8rem;justify-content:space-between;padding:1rem .1rem;font-size:.91rem;color:#c8bea9;}
     .hub-attention-row+.hub-attention-row{border-top:1px solid #363022;}
     .hub-attention-row .hub-pending{color:#9f9685;font-size:.76rem;white-space:nowrap;}
+    /* Readability: rem-based sizes respect the shared font-size setting. */
+    .hub-eyebrow{font-size:.94rem;}
+    .hub-heading{font-size:clamp(2.25rem,4.5vw,3.7rem);}
+    .hub-intro{font-size:1.14rem;}
+    .hub-section h2{font-size:1.72rem;}
+    .hub-section-note{font-size:1rem;}
+    .hub-tool h3{font-size:1.2rem;}
+    .hub-tool p{font-size:1.02rem;}
+    .hub-tool .hub-state{font-size:.9rem;}
+    .hub-stat-value{font-size:clamp(2rem,3.4vw,2.6rem);}
+    .hub-stat-label{font-size:1.04rem;}
+    .hub-data-note{font-size:.95rem;}
+    .hub-attention-row{font-size:1.04rem;}
+    .hub-attention-row .hub-pending{font-size:.88rem;}
     @media(max-width:850px){.hub-tool-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
     @media(max-width:560px){.officer-hub{padding:2.1rem 1rem 3rem;}.hub-tool-grid{grid-template-columns:1fr;}.hub-tool{min-height:155px;}.hub-stats{grid-template-columns:repeat(2,minmax(0,1fr));}.hub-attention-row{align-items:flex-start;}.hub-attention-row .hub-pending{white-space:normal;text-align:right;}}
   </style>
@@ -54,11 +70,11 @@
     <section class="hub-section" aria-labelledby="toolsHeading">
       <div class="hub-section-header"><h2 id="toolsHeading">Officer Tools</h2><span class="hub-section-note">Quick access</span></div>
       <div class="hub-tool-grid">
-        <a class="hub-tool" href="officer/adopt-a-raid.html">
+        <a class="hub-tool" href="officer/raid-responsibilities.html">
           <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">▦</span><span aria-hidden="true">↗</span></div>
           <h3>Adopt a Raid</h3><p>Coordinate Raid Leads, Master Looters, and raid coverage.</p><span class="hub-state">Available</span>
         </a>
-        <a class="hub-tool" href="officer/rule-management.html">
+        <a class="hub-tool" href="officer/officer-raid-rules.html">
           <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">✎</span><span aria-hidden="true">↗</span></div>
           <h3>Rule Management</h3><p>Edit, review, and publish guild raid rules.</p><span class="hub-state">Available</span>
         </a>
@@ -93,33 +109,22 @@
   <div id="syndicate-footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="settings/supabase-config.js"></script>
+  <script src="settings/guild-data.js"></script>
   <script>
     (async function loadOverview(){
       const status = document.getElementById('rosterMessage');
-      const db = window.syndicateDB;
-      if (!db || typeof db.from !== 'function') {
-        status.textContent = 'Roster counts unavailable: check settings/supabase-config.js.';
-        return;
-      }
       try {
-        const rows = [];
-        // Read in batches so Supabase's default row limit does not silently undercount characters.
-        for(let start=0;start<100000;start+=1000){
-          const {data,error}=await db.from('guild_roster').select('id,normalized_main_alt').order('id',{ascending:true}).range(start,start+999);
-          if(error) throw error;
-          rows.push(...(data||[]));
-          if(!data||data.length<1000)break;
+        if (!window.SyndicateGuild || typeof window.SyndicateGuild.getRosterCounts !== 'function') {
+          throw new Error('Shared guild data helper is not available. Check settings/guild-data.js.');
         }
-        const mains=rows.filter(r=>String(r.normalized_main_alt||'').trim().toLowerCase()==='main').length;
-        const alts=rows.filter(r=>String(r.normalized_main_alt||'').trim().toLowerCase()==='alt').length;
-        document.getElementById('totalCharacters').textContent=rows.length.toLocaleString();
-        document.getElementById('mainCharacters').textContent=mains.toLocaleString();
-        document.getElementById('altCharacters').textContent=alts.toLocaleString();
-        const other=rows.length-mains-alts;
-        status.textContent='Live guild roster counts.'+(other>0?' '+other+' characters are not classified as Main or Alt.':'');
-      }catch(error){
-        console.error('Officer Hub roster error',error);
-        status.textContent='Roster counts unavailable: '+(error.message||'check database read permissions.');
+        const { total, mains, alts, unclassified } = await window.SyndicateGuild.getRosterCounts();
+        document.getElementById('totalCharacters').textContent = total.toLocaleString();
+        document.getElementById('mainCharacters').textContent = mains.toLocaleString();
+        document.getElementById('altCharacters').textContent = alts.toLocaleString();
+        status.textContent = 'Live guild roster counts.' + (unclassified ? ` ${unclassified} characters are not classified as Main or Alt.` : '');
+      } catch (error) {
+        console.error('Officer Hub roster error', error);
+        status.textContent = 'Roster counts unavailable: ' + (error.message || 'check database read permissions.');
       }
     })();
   </script>
