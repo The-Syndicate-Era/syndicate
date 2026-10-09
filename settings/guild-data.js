@@ -53,7 +53,7 @@
     for (let start = 0; start < 100000; start += 1000) {
       const { data, error } = await db()
         .from(rosterTable)
-        .select('Name,normalized_main_alt')
+        .select('Name,normalized_main_alt,active_status')
         .order('Name', { ascending: true })
         .range(start, start + 999);
       if (error) throw error;
@@ -65,11 +65,17 @@
     let mains = 0;
     let alts = 0;
     for (const character of rows) {
+      const status = String(character.active_status ?? '').trim().toLowerCase();
+      if (status !== 'active' && status !== 'casual') continue;
       const classification = String(character.normalized_main_alt ?? '').trim().toLowerCase();
       if (classification === 'main') mains++;
       else if (classification === 'alt') alts++;
     }
-    return { total: rows.length, mains, alts, unclassified: rows.length - mains - alts };
+    return { total: rows.length, mains, alts, unclassified: rows.filter(character => {
+      const status = String(character.active_status ?? "").trim().toLowerCase();
+      const classification = String(character.normalized_main_alt ?? "").trim().toLowerCase();
+      return (status === "active" || status === "casual") && classification !== "main" && classification !== "alt";
+    }).length };
   }
 
   window.SyndicateGuild = Object.freeze({
