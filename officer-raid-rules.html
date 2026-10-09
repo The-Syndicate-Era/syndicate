@@ -2,6 +2,13 @@
 <html lang="en">
 <head>
  <link rel="stylesheet" href="styles.css">
+
+<script src="font-settings.js" defer></script>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<script src="supabase-config.js" defer></script>
+ <link rel="stylesheet" href="styles.css">
 <script src="font-settings.js" defer></script>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Officer Raid Rules Manager | The Syndicate</title>
@@ -65,18 +72,18 @@ header{height:70px;background:#0a090a;border-bottom:1px solid var(--line);displa
 <div id="previewRegion" hidden><hr class="divider"><div class="section-top"><h2>Draft Preview</h2><button class="btn small" id="closePreview">Close</button></div><article class="preview"><div class="preview-tag">Raid Rules</div><h2 id="previewTitle"></h2><p class="description" id="previewDesc"></p><div id="previewText" class="preview-content"></div></article></div>
 </div></section></div></div>
 <div class="footer">◆ THIS IS THE WAY. ◆</div></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 <script>
 'use strict';
 // Use the public/publishable key from calendar.html. Never place a service-role key in this file.
 // This page does not sign users in. Database permissions are still enforced by Supabase.
-const SUPABASE_URL='https://vjxbulbnozopbuzyxxob.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4';
-const TABLE='raid_rules';
-const $=id=>document.getElementById(id);
-const db=window.supabase&&SUPABASE_KEY&&!SUPABASE_KEY.startsWith('PASTE_')?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+const TABLE = 'raid_rules';
+
+const $ = id => document.getElementById(id);
+
+const db = window.syndicateDB;
 let rows=[],selectedId=null,dirty=false,version='draft';
 const quill=window.Quill?new Quill('#content',{
  theme:'snow',placeholder:'Write raid rules here...',
