@@ -1,576 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>The Syndicate | Coming Soon</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  >
-
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Required Raid Add-ons | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
   <style>
-
-    :root {
-      --background-dark: #090909;
-      --background-soft: #101010;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #a59b80;
-
-      --border: rgba(217, 180, 56, 0.35);
-
-      --font-heading: "Cinzel", serif;
-      --font-body: "Montserrat", sans-serif;
-    }
-
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-
-      min-height: 100vh;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .site-header {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      background: var(--background-dark);
-
-      border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
-    }
-
-
-    .logo-area {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-
-      padding-left: 14px;
-    }
-
-
-    .logo-area img {
-      height: 46px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-
-      gap: 34px;
-
-      padding-right: 32px;
-
-      font-family: var(--font-heading);
-
-      font-size: 15px;
-
-      color: var(--gold);
-    }
-
-
-    .desktop-nav a {
-      transition: color 0.2s ease;
-    }
-
-
-    .desktop-nav a:hover {
-      color: var(--gold-light);
-    }
-
-
-    .menu-button {
-      display: none;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 28px;
-
-      cursor: pointer;
-
-      padding: 12px 20px;
-    }
-
-
-    .mobile-nav {
-      display: none;
-
-      position: absolute;
-
-      top: 70px;
-      right: 0;
-
-      width: 230px;
-
-      background: #0b0b0b;
-
-      border-left: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-
-      z-index: 200;
-    }
-
-
-    .mobile-nav.open {
-      display: block;
-    }
-
-
-    .mobile-nav a {
-      display: block;
-
-      padding: 15px 20px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.15);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 14px;
-    }
-
-
-    /* =========================
-       MAIN CONTENT
-    ========================= */
-
-    main {
-      flex: 1;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 60px 30px;
-    }
-
-
-    .coming-soon {
-      width: 100%;
-      max-width: 850px;
-
-      text-align: center;
-
-      padding: 60px 30px;
-
-      border-top: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-    }
-
-
-    .coming-soon h1 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: clamp(38px, 7vw, 72px);
-
-      font-weight: 400;
-
-      letter-spacing: 4px;
-
-      margin-bottom: 18px;
-    }
-
-
-    .coming-soon p {
-      color: var(--text-muted);
-
-      font-size: 15px;
-
-      line-height: 1.8;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-    }
-
-
-    .coming-soon-mark {
-      color: var(--gold-dark);
-
-      font-size: 24px;
-
-      margin-bottom: 18px;
-
-      letter-spacing: 8px;
-    }
-
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .site-footer {
-      border-top:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      padding: 26px 30px 20px;
-
-      text-align: center;
-    }
-
-
-    .footer-motto {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 12px;
-
-      font-family: var(--font-heading);
-
-      font-size: 14px;
-
-      letter-spacing: 3px;
-
-      color: var(--gold-dark);
-    }
-
-
-    .footer-motto::before,
-    .footer-motto::after {
-      content: "";
-
-      width: 90px;
-      height: 1px;
-
-      background: var(--gold-dark);
-    }
-
-
-    .footer-divider {
-      height: 1px;
-
-      max-width: 1100px;
-
-      margin: 16px auto;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
-    }
-
-
-    .footer-logo img {
-      width: 155px;
-      max-width: 65%;
-
-      height: auto;
-    }
-
-
-    /* =========================
-       TABLET / MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-    }
-
-
-    @media (max-width: 650px) {
-
-      .site-header {
-        height: 60px;
-      }
-
-
-      .logo-area {
-        height: 60px;
-      }
-
-
-      .logo-area img {
-        height: 38px;
-      }
-
-
-      .mobile-nav {
-        top: 60px;
-      }
-
-
-      main {
-        padding: 40px 18px;
-      }
-
-
-      .coming-soon {
-        padding: 45px 16px;
-      }
-
-
-      .coming-soon h1 {
-        font-size: 38px;
-
-        letter-spacing: 2px;
-      }
-
-
-      .coming-soon p {
-        font-size: 13px;
-      }
-
-
-      .footer-motto {
-        font-size: 11px;
-        letter-spacing: 2px;
-      }
-
-
-      .footer-motto::before,
-      .footer-motto::after {
-        width: 45px;
-      }
-
-    }
-
+    body { background:#080807 !important; color:#e5dcca; }
+    #syndicate-subheader { background:#100e0b; border-bottom:1px solid #695329; }
+    .raid-addon-crumb { max-width:1260px;margin:auto;padding:.85rem clamp(1rem,3vw,2rem); display:flex;flex-wrap:wrap;gap:.65rem;align-items:center;font-size:1rem; }
+    .raid-addon-crumb a { color:#e6bf55;text-decoration:none; }
+    .raid-addon-crumb a:hover { text-decoration:underline; }
+    .raid-addon-crumb span { color:#bfb09a; }
+    .raid-addon-main { max-width:1260px; margin:auto; padding:2rem clamp(1rem,3vw,2rem) 5rem; }
+    .raid-addon-intro { margin:0 0 2.15rem; }
+    .raid-addon-eyebrow {font:600 .85rem/1.4 var(--font-heading,Cinzel,serif);color:#c7a351;letter-spacing:.12em;text-transform:uppercase;}
+    .raid-addon-intro h1 { color:#e6c359;font:500 clamp(2.1rem,4vw,3.2rem)/1.2 var(--font-heading,Cinzel,serif);margin:.5rem 0 .8rem; }
+    .raid-addon-intro p { color:#d7cbbb;max-width:64rem;font-size:1.08rem;line-height:1.8;margin:0; }
+    .raid-addon-layout { display:grid;grid-template-columns:minmax(225px,30fr) minmax(0,70fr);gap:clamp(1.3rem,3vw,3rem);align-items:start; }
+    .raid-addon-art { position:sticky;top:1.5rem;align-self:start;min-width:0; }
+    .raid-addon-art img { display:block;width:100%;height:auto;max-height:calc(100dvh - 3rem);object-fit:contain;object-position:top; border:1px solid #675329;background:#0d0c0a; }
+    .raid-addon-content { min-width:0; }
+    .raid-addon-section { margin-bottom:2.7rem; }
+    .raid-addon-section h2 {font:500 clamp(1.35rem,2.6vw,1.7rem)/1.35 var(--font-heading,Cinzel,serif);color:#e6bf57;margin:0 0 .5rem;}
+    .section-desc { margin:0 0 1.35rem;color:#c6baa5;font-size:1rem;line-height:1.75; }
+    .addon-list { display:grid;gap:1rem; }
+    .addon-card { padding:1.4rem 1.5rem; background:#11100d;border:1px solid #514327;border-radius:5px; }
+    .addon-card-top { display:flex;flex-wrap:wrap;align-items:center;gap:.55rem 1rem;justify-content:space-between; }
+    .addon-card h3 { font:500 1.22rem/1.4 var(--font-heading,Cinzel,serif);color:#e5c360;margin:0; }
+    .addon-card p { color:#ded2be;line-height:1.78;font-size:1.02rem;margin:.7rem 0 1.15rem; }
+    .flag { font-size:.72rem;letter-spacing:.07em;text-transform:uppercase;border:1px solid #75602e;padding:.25rem .55rem;color:#d9c58a;white-space:nowrap; }
+    .flag.required { border-color:#94524b;color:#f1b0a5; }
+    .wow-link { display:inline-flex;align-items:center;justify-content:center;padding:.6rem 1.1rem;min-height:2.65rem;background:linear-gradient(#b51414,#8f0909 52%,#650505);border:2px solid #382414;outline:1px solid #80602e;border-radius:4px;box-shadow:inset 0 1px #ffffff30,0 4px 8px #0008;color:#ffe078;font:600 .84rem/1.25 var(--font-heading,Cinzel,serif);text-decoration:none; }
+    .wow-link:hover,.wow-link:focus-visible { filter:brightness(1.2); }
+    .addon-footnote { margin-top:1.4rem;padding:1rem 1.2rem;border-left:3px solid #9d7b35;background:#13110d;color:#d3c8b2;line-height:1.7;font-size:1rem; }
+    .addon-footnote a { color:#f0cf70;text-decoration:underline; }
+    @media(max-width:780px) {.raid-addon-layout {grid-template-columns:1fr;}.raid-addon-art{position:static;display:flex;justify-content:center;}.raid-addon-art picture{width:min(100%,300px);}.raid-addon-art img{max-height:300px;aspect-ratio:1/1;object-fit:contain;}.raid-addon-main{padding-top:1.4rem;}}
+    @media(max-width:450px) {.addon-card{padding:1rem;}.raid-addon-intro h1{font-size:2rem;}}
   </style>
 </head>
-
-
 <body>
-
-
-  <!-- =========================
-       HEADER
-  ========================== -->
-
-  <header class="site-header">
-
-    <a
-      href="index.html"
-      class="logo-area"
-    >
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-    </a>
-
-
-    <nav class="desktop-nav">
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-    >
-      ☰
-    </button>
-
-
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-  </header>
-
-
-  <!-- =========================
-       COMING SOON
-  ========================== -->
-
-  <main>
-
-    <section class="coming-soon">
-
-      <div class="coming-soon-mark">
-        ✦ ✦ ✦
+  <!-- No hamburger header on this raid-resource reading page. -->
+  <div id="syndicate-subheader" data-section="raid-hub" data-title="Required Add-ons"><nav class="raid-addon-crumb" aria-label="Raid Hub navigation"><a href="../raid-hub.html">← Raid Hub</a><span aria-hidden="true">›</span><span aria-current="page">Required Add-ons</span></nav></div>
+  <main class="raid-addon-main">
+    <header class="raid-addon-intro">
+      <span class="raid-addon-eyebrow">The Syndicate · Raid Resources</span>
+      <h1>REQUIRED RAID ADD-ONS</h1>
+      <p>These add-ons help keep the raid informed and coordinated. Install the required tools before raid night, and browse the recommendations below for a little extra help.</p>
+    </header>
+    <div class="raid-addon-layout">
+      <aside class="raid-addon-art" aria-label="Syndicate add-on artwork"><picture><source media="(max-width: 780px)" srcset="../images/addons2.png"><img src="../images/addons.png" alt="The Syndicate add-on resources" loading="eager"></picture></aside>
+      <div class="raid-addon-content">
+        <section class="raid-addon-section" aria-labelledby="required-title"><h2 id="required-title">Required for Raiding</h2><p class="section-desc">Currently listed as raid-required in our Add-ons directory.</p><div class="addon-list">
+        <article class="addon-card"><div class="addon-card-top"><h3>Details! Damage Meter</h3><span class="flag required">Raid Required</span></div><p>Combat analysis for damage, healing, deaths, dispels,
+            interrupts, and more. TinyThreat can be used within Details
+            for raid threat tracking.</p><a class="wow-link" href="https://www.curseforge.com/wow/addons/details" target="_blank" rel="noopener noreferrer" aria-label="Find Details! Damage Meter on CurseForge">VIEW ADD-ON ↗</a></article>
+<article class="addon-card"><div class="addon-card-top"><h3>Decursive</h3><span class="flag required">Raid Required</span></div><p>Provides quick visibility and targeting for curses,
+            poisons, diseases, and magic effects your class can remove.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Decursive" target="_blank" rel="noopener noreferrer" aria-label="Find Decursive on CurseForge">VIEW ADD-ON ↗</a></article>
+        </div></section>
+        <section class="raid-addon-section" aria-labelledby="recommended-title"><h2 id="recommended-title">Recommended Raid Tools</h2><p class="section-desc">Useful additions, but not currently marked as required.</p><div class="addon-list">
+        <article class="addon-card"><div class="addon-card-top"><h3>Threat Plates</h3><span class="flag recommended">Recommended</span></div><p>Threat-aware nameplates that make it easier to see which
+            enemies you have threat on and what is targeting someone else.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Threat%20Plates" target="_blank" rel="noopener noreferrer" aria-label="Find Threat Plates on CurseForge">VIEW ADD-ON ↗</a></article>
+<article class="addon-card"><div class="addon-card-top"><h3>LoggerHeadLite</h3><span class="flag recommended">Recommended</span></div><p>Helps automatically manage combat logging when entering
+            raids and other selected instances.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=LoggerHeadLite" target="_blank" rel="noopener noreferrer" aria-label="Find LoggerHeadLite on CurseForge">VIEW ADD-ON ↗</a></article>
+<article class="addon-card"><div class="addon-card-top"><h3>Nova World Buffs</h3><span class="flag recommended">Recommended</span></div><p>Tracks world buffs, cooldowns, timers, announcements,
+            and other useful Classic world-buff information.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Nova%20World%20Buffs" target="_blank" rel="noopener noreferrer" aria-label="Find Nova World Buffs on CurseForge">VIEW ADD-ON ↗</a></article>
+<article class="addon-card"><div class="addon-card-top"><h3>Nova Instance Tracker</h3><span class="flag recommended">Recommended</span></div><p>Tracks instance entries, resets, lockouts, and other
+            useful dungeon and raid information.</p><a class="wow-link" href="https://www.curseforge.com/wow/search?page=1&amp;pageSize=20&amp;sortBy=relevancy&amp;class=addons&amp;search=Nova%20Instance%20Tracker" target="_blank" rel="noopener noreferrer" aria-label="Find Nova Instance Tracker on CurseForge">VIEW ADD-ON ↗</a></article>
+        </div></section>
+        <div class="addon-footnote">Looking for other tools? Visit our <a href="../resources/addons.html">full Add-ons directory</a> for more Classic Era resources. Always select an add-on version compatible with your game client.</div>
       </div>
-
-      <h1>
-        Coming Soon
-      </h1>
-
-      <p>
-        This section of The Syndicate is still being built.
-        Check back soon for more information, resources,
-        and questionable levels of organization.
-      </p>
-
-    </section>
-
+    </div>
   </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-
-  <footer class="site-footer">
-
-    <div class="footer-motto">
-      ✦ THIS IS THE WAY. ✦
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-logo">
-
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-  </footer>
-
-
-  <!-- =========================
-       MOBILE MENU
-  ========================== -->
-
-  <script>
-
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const mobileNav =
-      document.getElementById("mobileNav");
-
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          mobileNav.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen
-        );
-
-      }
-    );
-
-  </script>
-
-
+  <div id="syndicate-footer"></div>
 </body>
 </html>
