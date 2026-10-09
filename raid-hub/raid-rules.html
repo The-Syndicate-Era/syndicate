@@ -1,323 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <link rel="stylesheet" href="../settings/styles.css">
-<script src="../settings/font-setting.js" defer></script>
-<script src="../settings/menu.js" defer></script>
-<script src="../settings/site-layout.js" defer></script>
-<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Rule Management | The Syndicate</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
-<style>
-:root{--bg:#090909;--panel:#121114;--panel2:#1c191b;--gold:#d9b438;--gold2:#eed17c;--line:#544526;--text:#ede5d2;--muted:#b5a88f;--green:#69bd8a;--red:#e18181;--blue:#9bc1ef}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:1rem/1.55 var(--font-body, "Palatino Linotype", Palatino, serif)}button,input,textarea,select{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}h1,h2,h3{font-family:Cinzel,Georgia,serif}a{color:inherit;text-decoration:none}[hidden]{display:none!important}
-
-.hero{background:linear-gradient(90deg,#08080aeb,#141012a8),url('../images/Raiding.png') center/cover no-repeat;min-height:210px;display:flex;align-items:center;border-bottom:1px solid var(--line)}.hero>div{width:min(1280px,100%);margin:auto;padding:30px 20px}.eyebrow{color:var(--gold);font-size:.78rem;letter-spacing:.21em;text-transform:uppercase;font-weight:700}.hero h1{font-size:clamp(1.9rem,4.4vw,2.75rem);color:var(--gold2);margin:8px 0}.hero p{margin:0;max-width:700px;color:#e4d8bd}
-.wrap{max-width:1280px;margin:auto;padding:23px 18px 70px}.bar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}.btn{background:#272126;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 13px}.btn:hover{border-color:var(--gold)}.btn.primary{background:#c69d42;color:#16120a;border-color:#e0b955;font-weight:700}.btn.danger{color:#ffbbbb;border-color:#795050}.btn.small{padding:6px 9px;font-size:.83rem}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.note{padding:12px 14px;border:1px solid var(--line);border-radius:9px;background:#1b1919;color:var(--muted);margin:12px 0}.note.error{border-color:#ad5555;color:#ffd1d1}.note.success{border-color:#488862;color:#c4f6d5}
-.layout{display:grid;grid-template-columns:minmax(16rem,20rem) minmax(0,1fr);gap:18px;align-items:start}.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:18px;min-width:0}.sidebar h2,.editor h2{font-size:1.3rem;color:var(--gold2);margin:0 0 13px}.section-list{display:grid;gap:6px;max-height:72vh;overflow-y:auto}.section-item{display:flex;align-items:center;justify-content:space-between;gap:10px;text-align:left;width:100%;border:1px solid #3c342c;border-radius:8px;background:#1a181b;color:var(--text);padding:12px 10px}.section-item.active{border-color:var(--gold);background:#342a1d}.section-item .number{color:var(--muted);font-size:.78rem;margin-right:6px}.pill{border:1px solid #776342;border-radius:50px;padding:2px 7px;font-size:.75rem;color:#dfca9e;white-space:nowrap}.pill.live{border-color:#479566;color:#b2e6c2}.meta{font-size:.83rem;color:var(--muted)}.section-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.field{margin:17px 0}.field label{display:block;color:var(--gold2);font-weight:600;margin-bottom:6px}.field input,.field textarea{width:100%;background:#0c0b0e;border:1px solid #54442f;border-radius:8px;color:var(--text);padding:11px 12px}.field textarea{min-height:245px;resize:vertical;line-height:1.7}.field input:focus,.field textarea:focus{outline:2px solid #bd964655}.help{font-size:.83rem;color:var(--muted);margin-top:5px}.two{display:grid;grid-template-columns:1fr 1fr;gap:13px}.check{display:flex;align-items:center;gap:8px}.check input{accent-color:var(--gold)}.preview{border:1px solid #57482f;background:#131114;border-radius:10px;padding:22px;min-height:140px}.preview h2{margin:0 0 12px}.preview .description{color:#d0c5b1;margin:0 0 15px}.preview-content{overflow-wrap:anywhere;line-height:1.8}.preview-content ul,.preview-content ol{padding-left:26px}.preview-content h2,.preview-content h3{color:var(--gold2)}.preview-content .ql-indent-1{padding-left:2em}.preview-content .ql-indent-2{padding-left:4em}.preview-content .ql-indent-3{padding-left:6em}.preview-content p{margin:0 0 10px}.preview-tag{color:var(--gold);text-transform:uppercase;letter-spacing:.12em;font-size:.78rem}.footer{text-align:center;color:#8c7341;margin-top:37px;font-family:Cinzel;letter-spacing:2px;font-size:.83rem}.auth{max-width:550px;margin:0 auto 20px}.auth input{width:100%;background:#0b0a0c;color:var(--text);border:1px solid var(--line);border-radius:7px;padding:11px}.auth .actions{margin-top:12px}.divider{border:0;border-top:1px solid #443926;margin:22px 0}.tiny{font-size:.78rem;color:var(--muted)}
-/* Quill editor – Syndicate theme */
-.rich-editor{background:#100e11;border:1px solid #665132;border-radius:8px;overflow:hidden}
-.rich-editor .ql-toolbar.ql-snow{background:#29232a;border:none;border-bottom:1px solid #665132;display:flex;flex-wrap:wrap;gap:2px}
-.rich-editor .ql-container.ql-snow{border:0;font:1rem/1.7 var(--font-body, "Palatino Linotype", Palatino, serif);color:var(--text)}
-.rich-editor .ql-editor{min-height:300px;max-height:65vh;overflow-y:auto}
-.rich-editor .ql-editor.ql-blank::before{color:#968b79}
-.rich-editor .ql-snow .ql-stroke{stroke:#ead7b0}.rich-editor .ql-snow .ql-fill{fill:#ead7b0}
-.rich-editor .ql-snow .ql-picker{color:#ead7b0}
-.rich-editor .ql-snow .ql-picker-options{background:#201b22;border-color:#665132;color:#ead7b0}
-.rich-editor .ql-snow button:hover,.rich-editor .ql-snow button.ql-active{background:#554128;border-radius:4px}
-.rich-editor .ql-editor h2,.rich-editor .ql-editor h3{color:var(--gold2)}
-.rich-editor a,.preview-content a{color:#ebc26a;text-decoration:underline}
-.version-switch{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:18px 0 8px}
-.version-switch .btn.active{background:#49371e;border-color:var(--gold);color:var(--gold2)}
-.version-help{font-size:.83rem;color:var(--muted);margin-bottom:10px}
-.published-view{border:1px solid #57482f;background:#131114;border-radius:10px;padding:20px;min-height:200px}
-.published-view .description{color:#d0c5b1;white-space:pre-wrap}
-.published-view .preview-content ul,.published-view .preview-content ol{padding-left:26px}
-.published-view .preview-content h2,.published-view .preview-content h3{color:var(--gold2)}
-.published-view .preview-content .ql-indent-1{padding-left:2em}
-.published-view .preview-content .ql-indent-2{padding-left:4em}
-.published-view .preview-content .ql-indent-3{padding-left:6em}
-@media(max-width:980px){.layout{grid-template-columns:1fr}.section-list{max-height:250px}.two{grid-template-columns:1fr}.panel{padding:14px}.hero{min-height:180px}}
-
-/* Typography follows the shared root font size managed by font-setting.js. */
-.rich-editor .ql-toolbar.ql-snow .ql-picker-label,.rich-editor .ql-toolbar.ql-snow .ql-picker-item{font-size:.88rem}
-.rich-editor .ql-editor{font-size:1rem;line-height:1.7}
-@media(max-width:580px){.hero h1{font-size:1.9rem}.section-item{flex-wrap:wrap}}
-
-/* Officer page-specific styles; site header/footer belong to shared scripts. */
-body {background:#080807; font-size:1rem;}
-.officer-breadcrumb{display:flex;align-items:center;gap:.65rem;max-width:1280px;margin:auto;padding:13px 20px;color:#bda66c;font-size:.95rem;}
-.officer-breadcrumb a{color:#e1bf5f;text-decoration:none;}
-.officer-breadcrumb a:hover{text-decoration:underline;}
-.hero {background:linear-gradient(90deg,rgba(6,6,7,.94),rgba(20,16,15,.82)),url('../images/Raiding.png') center / cover no-repeat;}
-.hero p,.meta,.help,.version-help,.section-item,.field,.preview-content,.published-view{font-size:1rem;}
-.section-item{min-height:3.25rem;}
-.pill,.section-item .number,.preview-tag{font-size:.85rem;}
-.btn{font-size:.96rem;min-height:2.6rem;}
-.btn.small{font-size:.9rem;}
-@media(max-width:580px){.officer-breadcrumb{padding:12px 16px;}.wrap{padding-inline:14px;}}
-
-.workspace-tabs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--line)}
-.workspace-tabs .btn{min-width:180px;font-size:1.05rem}
-.management-title{font:500 1.5rem Cinzel,serif;color:var(--gold2);margin:0 0 7px}
-#addonsManager .field select{width:100%;background:#0c0b0e;border:1px solid #54442f;border-radius:8px;color:var(--text);padding:12px;font-size:1rem}
-#addonsManager .addon-description{min-height:130px}
-#addonsManager .addon-active-check{display:flex;align-items:center;gap:12px;font-size:1rem;color:var(--gold2);margin-top:16px}
-#addonsManager .addon-active-check input{width:20px;height:20px;accent-color:var(--gold)}
-#addonsManager .addon-save-row{margin-top:23px}
-#addonsManager .addon-login-form{max-width:580px}
-#addonsManager .addon-login-form .field input{width:100%;background:#0c0b0e;border:1px solid var(--line);border-radius:8px;padding:12px;color:var(--text)}
-#addonList .section-item{font-size:1rem}
-#addonsManager h2{color:var(--gold2)}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raid Rules | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
+  <style>
+    /* Public, read-only Raid Rules. Shared settings own the typography scale and footer. */
+    :root { --rules-gold:#d9b438; --rules-line:#554521; --rules-text:#e7dfd0; --rules-muted:#c2b8a2; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:#080807 !important; color:var(--rules-text); }
+    #syndicate-subheader { display:block; background:#100f0c; border-bottom:1px solid var(--rules-line); }
+    .rules-breadcrumb { max-width:1160px; margin:0 auto; padding:.85rem clamp(1rem,4vw,2rem); display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; font-size:.96rem; }
+    .rules-breadcrumb a { color:#e8c75e; text-decoration:none; }
+    .rules-breadcrumb a:hover { text-decoration:underline; }
+    .rules-breadcrumb span { color:#b4a585; }
+    .rules-hero { border-bottom:1px solid var(--rules-line); background:#0c0b09; }
+    .rules-hero-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns: minmax(0,1.3fr) minmax(250px,.7fr); gap:clamp(1.4rem,4vw,3.5rem); align-items:center; padding:clamp(1.5rem,4vw,3rem) clamp(1rem,4vw,2rem); }
+    .rules-eyebrow { font:600 .87rem/1.4 var(--font-heading,Georgia,serif); color:#bf9e4d; letter-spacing:.1em; text-transform:uppercase; }
+    .rules-hero h1 { margin:.6rem 0 1.1rem; font:500 clamp(2rem,4vw,3.1rem)/1.16 var(--font-heading,Georgia,serif); color:#e2bd4b; }
+    .rules-hero p { max-width:40rem; margin:0; font-size:1.08rem; line-height:1.8; color:var(--rules-muted); }
+    .rules-hero-image { border:1px solid #655128; background:#100e0a; padding:.5rem; }
+    .rules-hero-image img { display:block; width:100%; max-height:230px; object-fit:contain; }
+    .rules-main { max-width:1100px; margin:auto; padding:clamp(1.7rem,4vw,3rem) clamp(1rem,4vw,2rem) 5rem; }
+    .rules-intro { margin:0 0 2rem; border-left:3px solid var(--rules-gold); padding:.55rem 1rem; line-height:1.65; color:#cfc3a8; font-size:1rem; }
+    .rules-status { margin:1rem 0 1.5rem; padding:1rem 1.2rem; background:#15130e; border:1px solid var(--rules-line); color:#dfcfab; border-radius:5px; font-size:1rem; }
+    .rules-status.error { border-color:#995858; color:#f1b3b3; }
+    .rules-toc { border:1px solid #4d4027; background:#11100c; padding:1.3rem 1.5rem; margin-bottom:2.6rem; }
+    .rules-toc h2 { margin:0 0 .9rem; color:#e3bf55; font:500 1.24rem/1.4 var(--font-heading,Georgia,serif); }
+    .rules-toc ol { margin:0; padding-left:1.5rem; columns:2; column-gap:2.5rem; }
+    .rules-toc li { break-inside:avoid; padding:.35rem 0; color:#c8a75b; }
+    .rules-toc a { color:#e5dcc6; text-decoration:none; font-size:1.02rem; }
+    .rules-toc a:hover, .rules-toc a:focus-visible { color:#f0d47a; text-decoration:underline; text-underline-offset:3px; }
+    .rule-section { padding:0 0 2.1rem; margin-bottom:2.5rem; border-bottom:1px solid #403821; scroll-margin-top:1rem; }
+    .rule-section:last-child { border-bottom:0; }
+    .rule-section h2 { margin:0 0 .7rem; font:500 clamp(1.45rem,2.8vw,1.85rem)/1.35 var(--font-heading,Georgia,serif); color:#e1bd52; }
+    .rule-desc { color:#cfc4af; font-size:1.03rem; line-height:1.75; margin:0 0 1rem; white-space:pre-wrap; }
+    .rule-copy.ql-editor { padding:0; min-height:0; color:var(--rules-text); font:inherit; font-size:1.04rem; line-height:1.85; overflow-wrap:anywhere; }
+    .rule-copy.ql-editor p { margin:0 0 .8rem; }
+    .rule-copy.ql-editor h2 { font-size:1.38rem; margin:1.5rem 0 .65rem; color:#e0bc52; }
+    .rule-copy.ql-editor h3 { font-size:1.15rem; margin:1.15rem 0 .45rem; color:#ddc37b; }
+    .rule-copy.ql-editor li { padding-bottom:.22rem; }
+    .rule-copy.ql-editor a { color:#ebc96f; text-decoration:underline; }
+    .rule-copy.ql-editor blockquote { color:#d1c6ae; border-left:3px solid #7f682f; margin:1.2rem 0; padding:.1rem 1rem; }
+    .rule-copy.ql-editor strong { color:#f3e8d1; }
+    .rules-end { text-align:center; color:#a99a7c; font-size:.93rem; padding-top:.65rem; }
+    @media(max-width:760px) { .rules-hero-inner { grid-template-columns:1fr; } .rules-hero-image { max-width:500px; width:100%; } .rules-toc ol { columns:1; } }
+  </style>
 </head>
 <body>
-<div id="syndicate-menu"></div>
-<nav class="officer-breadcrumb" aria-label="Officer navigation"><a href="../officer-hub.html">← Officer Hub</a><span aria-hidden="true">›</span><span>Rule Management</span></nav>
-<section class="hero"><div><div class="eyebrow">The Syndicate · Officer Tools</div><h1>Rule Management</h1><p>Manage guild policies, raiding guidelines, member expectations, and other Syndicate rules. Save drafts, preview changes, and publish when ready.</p></div></section>
-<main class="wrap">
-<div id="message" class="note" role="status" aria-live="polite" hidden></div>
-
-<div class="workspace-tabs" role="tablist" aria-label="Management area">
-<button class="btn primary" id="rulesTab" role="tab" aria-controls="manager" aria-selected="true">Guild Rules</button>
-<button class="btn" id="addonsTab" role="tab" aria-controls="addonsManager" aria-selected="false">Add-on Management</button>
-</div>
-<div id="manager" role="tabpanel">
-<div class="bar"><div><strong>Officer workspace</strong><div class="meta">Save drafts and publish sections when ready.</div></div><div class="actions"><button id="refresh" class="btn">Refresh</button></div></div>
-<div class="layout">
-<aside class="panel sidebar"><div class="section-top"><h2>Categories</h2><span id="count" class="meta"></span></div><div id="sectionList" class="section-list"></div><hr class="divider"><button class="btn" id="addCategory">+ Add Category</button><p class="help">Select a category to edit. Publish only when the section is ready for guild members.</p></aside>
-<section class="panel editor">
-<div id="emptyEditor" class="meta">Select a category to begin editing.</div>
-<div id="editArea" hidden><div class="section-top"><div><h2 id="sectionHeading"></h2><div id="sectionMeta" class="meta"></div></div><span id="publishedBadge" class="pill"></span></div>
-<div class="version-switch" role="group" aria-label="Choose rule version"><button id="draftVersion" class="btn active" type="button" aria-pressed="true">Draft Version</button><button id="publishedVersion" class="btn" type="button" aria-pressed="false">Published Version</button></div>
-<div id="versionHelp" class="version-help">Editing your saved draft. Only Publish sends these changes to the guild page.</div>
-<div id="draftFields">
-<div class="two"><div class="field"><label for="sectionTitle">Section title</label><input id="sectionTitle" maxlength="160"></div><div class="field"><label for="sortOrder">Display order</label><input id="sortOrder" type="number" min="0" step="1"></div></div>
-<div class="field"><label for="description">Short description</label><textarea id="description" rows="3" style="min-height:92px" placeholder="Short introduction to this section..."></textarea><div class="help">Displayed below the section heading on the public website.</div></div>
-<div class="field"><label id="rulesLabel">Rules and guidelines</label><div class="rich-editor" aria-labelledby="rulesLabel"><div id="content"></div></div><div class="help">Use headings, bold, italic, bullets, numbered lists, indents, and links. Formatted HTML is stored in your existing draft_content and published_content fields.</div></div>
-<div class="actions"><button id="saveDraft" class="btn primary">Save Draft</button><button id="previewBtn" class="btn">Preview Draft</button><button id="publishBtn" class="btn">Publish</button><button id="unpublishBtn" class="btn danger">Unpublish</button></div><div id="unsaved" class="help" hidden>You have unsaved changes.</div>
-</div>
-<div id="publishedFields" hidden><article class="published-view"><h3 id="publishedTitle"></h3><p id="publishedDesc" class="description"></p><div id="publishedText" class="preview-content"></div></article><p class="help">Read-only snapshot of the last published rules. Switch back to Draft Version to continue editing.</p></div>
-<div id="previewRegion" hidden><hr class="divider"><div class="section-top"><h2>Draft Preview</h2><button class="btn small" id="closePreview">Close</button></div><article class="preview"><div class="preview-tag">Guild Rules</div><h2 id="previewTitle"></h2><p class="description" id="previewDesc"></p><div id="previewText" class="preview-content"></div></article></div>
-</div></section></div></div>
-
-<section id="addonsManager" role="tabpanel" hidden>
-  <div class="bar"><div><h2 class="management-title">Add-on Management</h2><div class="meta">Changes save to Supabase and appear on the public add-ons pages on their next load.</div></div><button class="btn" type="button" id="addonRefresh">Refresh Add-ons</button></div>
-  <div id="addonMessage" class="note" role="status" aria-live="polite" hidden></div>
-  <div class="panel" id="addonLoginBox">
-    <h2>Officer Sign-in Required</h2><p class="help">An approved Supabase Auth account is required to change add-ons. The Officer Hub link alone does not grant editing access.</p>
-    <form id="addonLoginForm" class="addon-login-form">
-      <div class="field"><label for="officerEmail">Email</label><input type="email" id="officerEmail" autocomplete="username" required></div>
-      <div class="field"><label for="officerPassword">Password</label><input type="password" id="officerPassword" autocomplete="current-password" required></div>
-      <div class="actions"><button class="btn primary" type="submit">Sign In</button></div>
-    </form>
+  <!-- Intentionally no #syndicate-menu: this reading page has only Raid Hub breadcrumb navigation. -->
+  <div id="syndicate-subheader" data-section="raid-hub" data-title="Raid Rules">
+    <nav class="rules-breadcrumb" aria-label="Raid Hub navigation">
+      <a href="../raid-hub.html">← Raid Hub</a><span aria-hidden="true">›</span><span aria-current="page">Raid Rules</span>
+    </nav>
   </div>
-  <div id="addonEditorArea" hidden>
-    <div class="bar"><span id="addonSignedIn" class="meta"></span><div class="actions"><button type="button" class="btn primary" id="addonNew">+ Add Add-on</button><button type="button" class="btn" id="addonSignOut">Sign Out</button></div></div>
-    <div class="layout addons-layout">
-      <aside class="panel sidebar"><div class="section-top"><h2>All Add-ons</h2><span id="addonCount" class="meta"></span></div>
-       <div class="field"><label for="addonSearch">Find add-on</label><input id="addonSearch" type="search" placeholder="Search add-ons…"></div>
-       <div class="section-list" id="addonList"></div>
-      </aside>
-      <section class="panel editor"><div id="addonEmpty" class="meta">Select an add-on or choose + Add Add-on.</div>
-      <form id="addonForm" hidden>
-      <div class="section-top"><h2 id="addonFormTitle">Edit Add-on</h2><span id="addonCurrentState" class="pill"></span></div>
-      <div class="two">
-       <div class="field"><label for="addonName">Add-on name *</label><input id="addonName" maxlength="150" required></div>
-       <div class="field"><label for="addonOrder">Display order</label><input id="addonOrder" type="number" step="1" value="100"></div>
+  <header class="rules-hero">
+    <div class="rules-hero-inner">
+      <div>
+        <span class="rules-eyebrow">The Syndicate · Raid Resources</span>
+        <h1>RAID RULES</h1>
+        <p>Our shared expectations for a smooth raid: preparation, participation, loot, and looking out for one another. These are the current rules published by Syndicate leadership.</p>
       </div>
-      <div class="field"><label for="addonDescription">Description</label><textarea id="addonDescription" rows="4" class="addon-description"></textarea></div>
-      <div class="field"><label for="addonUrl">CurseForge / add-on URL (https://)</label><input id="addonUrl" type="url" placeholder="https://www.curseforge.com/wow/addons/..." pattern="https://.*"></div>
-      <div class="two">
-       <div class="field"><label for="addonCategory">Category</label><select id="addonCategory"><option value="raid">Raiding &amp; Combat</option><option value="guild">Guild &amp; Organization</option><option value="gear">Gear &amp; Character</option><option value="economy">Bags, Alts &amp; Economy</option><option value="profession">Professions &amp; Crafting</option><option value="world">World &amp; Exploration</option><option value="pvp">PvP</option><option value="other">Other</option></select></div>
-       <div class="field"><label for="addonDirectoryStatus">Directory label</label><select id="addonDirectoryStatus"><option value="recommended">Recommended</option><option value="required">Required</option><option value="guild-tool">Guild Tool</option><option value="pvp">PvP</option></select></div>
-      </div>
-      <div class="two">
-       <div class="field"><label for="addonRaidStatus">Raid status</label><select id="addonRaidStatus"><option value="none">Not on raid add-ons page</option><option value="recommended">Raid Recommended</option><option value="required">Raid Required</option></select><p class="help">Only Required and Recommended appear on the Raid Hub add-ons page.</p></div>
-       <div class="field"><label for="addonSearchTerms">Search keywords</label><input id="addonSearchTerms" placeholder="Optional words for searching"></div>
-      </div>
-      <label class="addon-active-check"><input type="checkbox" id="addonActive" checked> Show on public website (Active)</label>
-      <p class="help">Uncheck to hide the add-on on both public pages without deleting its record.</p>
-      <div class="actions addon-save-row"><button class="btn primary" type="submit" id="addonSave">Save Add-on</button><button class="btn" type="button" id="addonCancel">Cancel</button><button class="btn danger" type="button" id="addonDelete" hidden>Delete Permanently</button></div>
-      </form></section>
+      <div class="rules-hero-image"><img src="../images/Raiding.png" alt="The Syndicate — Raiding is for Everyone"></div>
     </div>
-  </div>
-</section>
-</main>
-<div id="syndicate-footer"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../settings/supabase-config.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
-<script>
-'use strict';
-// Database client is initialized by the shared supabase-config.js file.
-// Use only a publishable key there; RLS controls database access.
-// Existing database table retained to preserve drafts and published raid rules.
-// Guild-wide categories can be added here; public pages must explicitly query them.
-const TABLE='raid_rules';
-const $=id=>document.getElementById(id);
-const db=window.syndicateDB || null;
-let rows=[],selectedId=null,dirty=false,version='draft';
-const quill=window.Quill?new Quill('#content',{
- theme:'snow',placeholder:'Write guild rules and guidelines here...',
- modules:{toolbar:[[{header:[2,3,false]}],['bold','italic','underline','strike'],[{list:'ordered'},{list:'bullet'}],[{indent:'-1'},{indent:'+1'}],['link','blockquote'],['clean']]}
-}):null;
-function safeHtml(html){if(!window.DOMPurify)throw new Error('Formatting sanitizer did not load. Please refresh the page.');return DOMPurify.sanitize(html,{ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],ALLOWED_ATTR:['href','target','rel','class'],ALLOW_DATA_ATTR:false});}
-function loadRich(value){if(!quill)return;const v=String(value||'');quill.setText('','silent');if(/^\s*<(?:p|h[1-6]|ul|ol|blockquote|div|br|strong|b|em|span)\b/i.test(v)){quill.clipboard.dangerouslyPasteHTML(safeHtml(v),'silent')}else quill.setText(v,'silent')}
-function richValue(){if(!quill)throw new Error('Rich text editor failed to load.');return quill.getText().trim()?safeHtml(quill.root.innerHTML):'';}
-quill?.on('text-change',()=>setDirty(true));
-function msg(t,type=''){const n=$('message');n.textContent=t;n.className='note '+type;n.hidden=false}
-function clearMsg(){$('message').hidden=true}
-function selected(){return rows.find(r=>String(r.id)===String(selectedId))}
-function setDirty(value){dirty=value;$('unsaved').hidden=!value}
-function protectChange(){return !dirty||confirm('You have unsaved changes. Discard them?')}
-function draft(){return {section_title:$('sectionTitle').value.trim(),sort_order:Number($('sortOrder').value)||0,draft_description:$('description').value,draft_content:richValue()}}
-async function start(){if(!quill||!window.DOMPurify){msg('Rich text editor or sanitizer did not load. Refresh the page.','error');return}if(!db){msg('Supabase is not connected. Check ../settings/supabase-config.js and the Supabase library.','error');return}await loadSections()}
-$('refresh').onclick=async()=>{if(!protectChange())return;await loadSections()};
-async function loadSections(){clearMsg();const {data,error}=await db.from(TABLE).select('id,section_title,slug,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').order('sort_order',{ascending:true}).order('id',{ascending:true});if(error){msg('Unable to load editor categories: '+error.message+'. Check Supabase read policies for this page.','error');return}rows=data||[];if(!rows.some(r=>String(r.id)===String(selectedId)))selectedId=rows[0]?.id??null;renderList();renderEditor();setDirty(false)}
-function renderList(){const list=$('sectionList');list.replaceChildren();$('count').textContent=rows.length+' sections';for(const r of rows){const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(selectedId)?' active':'');const left=document.createElement('span');const number=document.createElement('span');number.className='number';number.textContent=String(r.sort_order).padStart(2,'0');left.append(number,document.createTextNode(' '+r.section_title));const badge=document.createElement('span');badge.className='pill'+(r.is_published?' live':'');badge.textContent=r.is_published?'Live':'Draft';b.append(left,badge);b.onclick=()=>{if(!protectChange())return;selectedId=r.id;renderList();renderEditor();setDirty(false)};list.append(b)}}
-function renderEditor(){
- const r=selected();$('emptyEditor').hidden=!!r;$('editArea').hidden=!r;if(!r)return;
- $('sectionHeading').textContent=r.section_title;
- $('sectionMeta').textContent='Updated: '+(r.updated_at?new Date(r.updated_at).toLocaleString():'—')+' · ID '+r.id;
- $('publishedBadge').textContent=r.is_published?'Published':'Not Published';
- $('publishedBadge').className='pill'+(r.is_published?' live':'');
- $('sectionTitle').value=r.section_title;$('sortOrder').value=r.sort_order;
- $('description').value=r.draft_description||'';
- loadRich(r.draft_content||'');
- $('publishedTitle').textContent=r.section_title;
- $('publishedDesc').textContent=r.published_description||'';
- $('publishedText').innerHTML=safeHtml(r.published_content||'')||'<p class="muted">No published content yet.</p>';
- $('previewRegion').hidden=true;$('unpublishBtn').disabled=!r.is_published;
- showVersion(version);
-}
-function showVersion(next){
- version=next;
- $('draftFields').hidden=next!=='draft';$('publishedFields').hidden=next!=='published';
- for(const [id,mode] of [['draftVersion','draft'],['publishedVersion','published']]){
-  const active=next===mode;$(id).classList.toggle('active',active);$(id).setAttribute('aria-pressed',String(active));
- }
- const r=selected();
- $('versionHelp').textContent=next==='draft'
-  ?'Editing your saved draft. Only Publish sends these changes to the guild page.'
-  :r?.is_published?'Showing the last published version (read-only).':'This category has not been published yet. Showing its empty published snapshot.';
- $('previewRegion').hidden=true;
-}
-$('draftVersion').onclick=()=>showVersion('draft');
-$('publishedVersion').onclick=()=>{if(!protectChange())return;if(dirty){renderEditor();setDirty(false)}showVersion('published');};
-for(const id of ['sectionTitle','sortOrder','description'])$(id).addEventListener('input',()=>setDirty(true));
-async function save(){
- const r=selected();if(!r)return false;
- const values=draft();if(!values.section_title){msg('Section title cannot be empty.','error');return false}
- const {data,error}=await db.from(TABLE).update(values).eq('id',r.id).select('id,draft_description,draft_content,section_title,sort_order');
- if(error){msg('Draft save failed: '+error.message+'. Check Supabase UPDATE permissions.','error');return false}
- if(!data?.length){msg('Draft was not saved: Supabase did not update any rows. Check UPDATE permissions.','error');return false}
- if(data[0].draft_content!==values.draft_content||data[0].draft_description!==values.draft_description){
-  msg('Draft could not be verified after saving. Please check database permissions.','error');return false;
- }
- await loadSections();showVersion('draft');msg('Draft saved. Reopen this category anytime to continue editing.','success');return true;
-}
-$('saveDraft').onclick=save;
-$('previewBtn').onclick=()=>{if(!selected())return;$('previewTitle').textContent=$('sectionTitle').value;$('previewDesc').textContent=$('description').value;$('previewText').innerHTML=richValue();$('previewRegion').hidden=false;$('previewRegion').scrollIntoView({behavior:'smooth',block:'nearest'})};
-$('closePreview').onclick=()=>{$('previewRegion').hidden=true};
-$('publishBtn').onclick=async()=>{const r=selected();if(!r)return;if(!draft().section_title)return msg('Enter a title before publishing.','error');if(!confirm('Publish this section? Any public page reading this category will show the new version.'))return;const values=draft();const payload={...values,published_description:values.draft_description,published_content:values.draft_content,is_published:true};const {data,error}=await db.from(TABLE).update(payload).eq('id',r.id).select('id');if(error||!data?.length)return msg('Publish failed: '+(error?.message||'no rows updated; check permissions'),'error');await loadSections();showVersion('published');msg('Section published. Public readers will see the updated published content.','success')};
-$('unpublishBtn').onclick=async()=>{const r=selected();if(!r||!confirm('Unpublish this section from public rule pages?'))return;const {error}=await db.from(TABLE).update({is_published:false}).eq('id',r.id);if(error)return msg('Unpublish failed: '+error.message,'error');await loadSections();msg('Section unpublished.','success')};
-function makeSlug(title){return title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
-$('addCategory').onclick=async()=>{if(!protectChange())return;const name=prompt('New guild rules category name:');if(name===null)return;const title=name.trim();if(!title)return;const slug=makeSlug(title);if(!slug)return msg('Enter a title containing letters or numbers.','error');const order=rows.reduce((m,r)=>Math.max(m,Number(r.sort_order)||0),0)+1;const {data,error}=await db.from(TABLE).insert({section_title:title,slug,sort_order:order}).select('id').single();if(error)return msg('Could not add category: '+error.message,'error');selectedId=data.id;await loadSections();msg('Category added as an unpublished draft.','success')};
-window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
-
-/* ========================= ADD-ON MANAGEMENT ========================= */
-const addonTable = 'guild_addons';
-const addonCategoryLabels = {raid:'Raiding & Combat',guild:'Guild & Organization',gear:'Gear & Character',economy:'Bags, Alts & Economy',profession:'Professions & Crafting',world:'World & Exploration',pvp:'PvP',other:'Other'};
-let addonRows = [], addonSelectedId = null, addonEditingNew = false, addonDirty = false;
-const addon$ = id => document.getElementById(id);
-function addonNotice(text,type=''){const n=addon$('addonMessage');n.textContent=text;n.className='note '+type;n.hidden=false}
-function addonClearNotice(){addon$('addonMessage').hidden=true}
-function addonConfirmDiscard(){return !addonDirty || confirm('Discard unsaved add-on changes?')}
-function addonAuth(){return db && typeof db.auth?.getUser === 'function'}
-async function addonCheckLogin(){
- if(!addonAuth()){addonNotice('Supabase Auth is not available. Check settings/supabase-config.js.','error');return}
- const {data,error}=await db.auth.getUser();const signedIn=!error && !!data?.user;
- addon$('addonLoginBox').hidden=signedIn;addon$('addonEditorArea').hidden=!signedIn;
- if(signedIn){addon$('addonSignedIn').textContent='Signed in as '+(data.user.email||'Officer');await addonLoad()}
- else {addon$('addonList').replaceChildren();addon$('addonForm').hidden=true;addon$('addonEmpty').hidden=false}
-}
-addon$('addonLoginForm').addEventListener('submit',async event=>{
- event.preventDefault();addonClearNotice();if(!addonAuth())return addonNotice('Supabase Auth is unavailable.','error');
- const email=addon$('officerEmail').value.trim(),password=addon$('officerPassword').value;
- const {error}=await db.auth.signInWithPassword({email,password});addon$('officerPassword').value='';
- if(error)return addonNotice('Sign-in failed: '+error.message,'error');await addonCheckLogin();
-});
-addon$('addonSignOut').onclick=async()=>{if(!addonConfirmDiscard())return;await db.auth.signOut();addonRows=[];addonSelectedId=null;addonDirty=false;await addonCheckLogin();addonNotice('Signed out.');};
-addon$('rulesTab').onclick=()=>addonShowTab('rules');
-addon$('addonsTab').onclick=()=>addonShowTab('addons');
-async function addonShowTab(tab){
- if(tab==='rules'&&!addonConfirmDiscard())return;
- const addons=tab==='addons';addon$('manager').hidden=addons;addon$('addonsManager').hidden=!addons;
- addon$('rulesTab').classList.toggle('primary',!addons);addon$('addonsTab').classList.toggle('primary',addons);
- addon$('rulesTab').setAttribute('aria-selected',String(!addons));addon$('addonsTab').setAttribute('aria-selected',String(addons));
- if(addons)await addonCheckLogin();
-}
-async function addonLoad(){
- addonClearNotice();
- if(!db)return addonNotice('Database connection not ready.','error');
- const {data,error}=await db.from(addonTable).select('id,name,description,url,category,category_label,directory_status,raid_status,search_terms,sort_order,is_active').order('sort_order',{ascending:true}).order('name',{ascending:true}).limit(1000);
- if(error)return addonNotice('Unable to load add-ons: '+error.message+' — check officer SELECT permissions.','error');
- addonRows=data||[];addon$('addonCount').textContent=addonRows.length+' entries';addonDrawList();
- if(addonEditingNew){addonShowForm(null);return}
- const found=addonRows.find(r=>String(r.id)===String(addonSelectedId));
- if(found)addonShowForm(found);else {addon$('addonForm').hidden=true;addon$('addonEmpty').hidden=false;addonSelectedId=null}
-}
-function addonDrawList(){
- const list=addon$('addonList'),needle=addon$('addonSearch').value.trim().toLowerCase();list.replaceChildren();
- for(const r of addonRows.filter(x=>[x.name,x.category_label,x.raid_status].join(' ').toLowerCase().includes(needle))){
-  const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(addonSelectedId)?' active':'');
-  const label=document.createElement('span');label.textContent=r.name;
-  const badge=document.createElement('span');badge.className='pill'+(r.is_active?' live':'');badge.textContent=r.is_active?(r.raid_status==='required'?'Raid Required':r.raid_status==='recommended'?'Raid Recommended':'Active'):'Hidden';
-  b.append(label,badge);b.onclick=()=>{if(!addonConfirmDiscard())return;addonSelectedId=r.id;addonEditingNew=false;addonShowForm(r);addonDrawList()};list.append(b);
- }
-}
-function addonShowForm(r){
- addon$('addonEmpty').hidden=true;addon$('addonForm').hidden=false;addonDirty=false;
- addon$('addonFormTitle').textContent=r?'Edit Add-on':'New Add-on';addon$('addonCurrentState').textContent=r?(r.is_active?'Active':'Hidden'):'New';
- addon$('addonDelete').hidden=!r;
- const fields={addonName:r?.name||'',addonDescription:r?.description||'',addonUrl:r?.url||'',addonCategory:r?.category||'raid',addonDirectoryStatus:r?.directory_status||'recommended',addonRaidStatus:r?.raid_status||'none',addonSearchTerms:r?.search_terms||'',addonOrder:r?.sort_order??100};
- for(const [id,value] of Object.entries(fields))addon$(id).value=value;
- addon$('addonActive').checked=r?.is_active??true;
-}
-addon$('addonNew').onclick=()=>{if(!addonConfirmDiscard())return;addonEditingNew=true;addonSelectedId=null;addonShowForm(null);addonDrawList();addon$('addonName').focus()};
-addon$('addonSearch').addEventListener('input',addonDrawList);
-addon$('addonRefresh').onclick=async()=>{if(!addonConfirmDiscard())return;await addonCheckLogin()};
-addon$('addonCancel').onclick=()=>{if(!addonConfirmDiscard())return;addonDirty=false;addonEditingNew=false;addonSelectedId=null;addon$('addonForm').hidden=true;addon$('addonEmpty').hidden=false;addonDrawList()};
-for(const field of addon$('addonForm').querySelectorAll('input,select,textarea'))field.addEventListener('input',()=>{addonDirty=true});
-addon$('addonForm').addEventListener('submit',async e=>{
- e.preventDefault();addonClearNotice();
- if(!db)return addonNotice('Supabase is not connected.','error');
- const name=addon$('addonName').value.trim(),url=addon$('addonUrl').value.trim(),category=addon$('addonCategory').value;
- if(!name)return addonNotice('Enter an add-on name.','error');
- if(url&&!/^https:\/\//i.test(url))return addonNotice('The URL must begin with https://.','error');
- const payload={name,description:addon$('addonDescription').value.trim(),url,category,category_label:addonCategoryLabels[category]||'Other',directory_status:addon$('addonDirectoryStatus').value,raid_status:addon$('addonRaidStatus').value,search_terms:addon$('addonSearchTerms').value.trim(),sort_order:Number(addon$('addonOrder').value)||0,is_active:addon$('addonActive').checked};
- const query=addonEditingNew?db.from(addonTable).insert(payload):db.from(addonTable).update(payload).eq('id',addonSelectedId);
- addon$('addonSave').disabled=true;
- try{
-  const {data,error}=await query.select('id').single();
-  if(error)throw error;
-  addonSelectedId=data.id;addonEditingNew=false;addonDirty=false;
-  await addonLoad();addonNotice('Add-on saved. Public pages will reflect the change when reloaded.','success');
- }catch(err){addonNotice('Save failed: '+err.message+' — your account may not have officer write permission.','error')}
- finally{addon$('addonSave').disabled=false}
-});
-addon$('addonDelete').onclick=async()=>{
- const r=addonRows.find(x=>String(x.id)===String(addonSelectedId));if(!r)return;
- if(!confirm('Permanently DELETE '+r.name+'? This cannot be undone. To simply remove it from the public pages, uncheck Active instead.'))return;
- const {data,error}=await db.from(addonTable).delete().eq('id',r.id).select('id');
- if(error||!data?.length)return addonNotice('Delete failed: '+(error?.message||'no row deleted; check permissions'),'error');
- addonDirty=false;addonSelectedId=null;addonEditingNew=false;await addonLoad();addonNotice('Add-on permanently deleted.','success');
-};
-
-start();
-</script>
-</body></html>
+  </header>
+  <main class="rules-main">
+    <p class="rules-intro">Please review the guidelines before raiding. Changes published by officers appear here automatically.</p>
+    <div id="rulesStatus" class="rules-status" role="status" aria-live="polite">Loading published rules…</div>
+    <nav id="rulesToc" class="rules-toc" aria-label="On this page" hidden><h2>On this page</h2><ol id="rulesLinks"></ol></nav>
+    <div id="rulesContent" aria-label="Published raid rules"></div>
+    <p id="rulesEnd" class="rules-end" hidden>◆ This is the way. ◆</p>
+  </main>
+  <div id="syndicate-footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../settings/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+  <script>
+    (() => {
+      'use strict';
+      const status = document.getElementById('rulesStatus');
+      const toc = document.getElementById('rulesToc');
+      const links = document.getElementById('rulesLinks');
+      const content = document.getElementById('rulesContent');
+      const end = document.getElementById('rulesEnd');
+      const db = window.syndicateDB;
+      function setStatus(message, isError = false) {
+        status.textContent = message;
+        status.classList.toggle('error', isError);
+        status.hidden = false;
+      }
+      // Sanitizes Quill rich text. Quill 2 uses data-list for ordered and bullet lists.
+      function safeRichText(html) {
+        return window.DOMPurify.sanitize(String(html || ''), {
+          ALLOWED_TAGS: ['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],
+          ALLOWED_ATTR: ['href','target','rel','class','data-list'],
+          ALLOW_DATA_ATTR: false
+        });
+      }
+      async function loadRules() {
+        if (!db || typeof db.from !== 'function') {
+          setStatus('Rules are temporarily unavailable: Supabase is not initialized. Check settings/supabase-config.js.', true);
+          return;
+        }
+        if (!window.DOMPurify) {
+          setStatus('Rules formatting could not load. Please refresh this page.', true);
+          return;
+        }
+        try {
+          const { data, error } = await db.from('raid_rules')
+            .select('id,section_title,slug,sort_order,published_description,published_content')
+            .eq('is_published', true)
+            .order('sort_order', { ascending: true })
+            .order('id', { ascending: true });
+          if (error) throw error;
+          const rows = data || [];
+          if (!rows.length) {
+            setStatus('No raid rules have been published yet. Please check back soon.');
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          rows.forEach((row, i) => {
+            const section = document.createElement('section');
+            section.className = 'rule-section';
+            section.id = 'rule-' + i;
+            const heading = document.createElement('h2');
+            heading.textContent = row.section_title || 'Untitled section';
+            section.appendChild(heading);
+            if (row.published_description) {
+              const description = document.createElement('p');
+              description.className = 'rule-desc';
+              description.textContent = row.published_description;
+              section.appendChild(description);
+            }
+            if (row.published_content) {
+              const text = document.createElement('div');
+              text.className = 'rule-copy ql-editor';
+              const raw = String(row.published_content);
+              if (/^\s*</.test(raw)) {
+                text.innerHTML = safeRichText(raw);
+              } else {
+                raw.split(/\n\s*\n/).filter(Boolean).forEach(part => {
+                  const p = document.createElement('p');
+                  p.textContent = part;
+                  text.appendChild(p);
+                });
+              }
+              section.appendChild(text);
+            }
+            fragment.appendChild(section);
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#' + section.id;
+            link.textContent = row.section_title || 'Untitled section';
+            li.appendChild(link);
+            links.appendChild(li);
+          });
+          content.appendChild(fragment);
+          status.hidden = true;
+          toc.hidden = rows.length < 2;
+          end.hidden = false;
+        } catch (error) {
+          console.error('Unable to load public rules:', error);
+          setStatus('Unable to load published rules: ' + (error.message || 'Unknown error') + '. Please try again later.', true);
+        }
+      }
+      loadRules();
+    })();
+  </script>
+</body>
+</html>
