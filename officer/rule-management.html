@@ -58,6 +58,19 @@ body {background:#080807; font-size:1rem;}
 .btn{font-size:.96rem;min-height:2.6rem;}
 .btn.small{font-size:.9rem;}
 @media(max-width:580px){.officer-breadcrumb{padding:12px 16px;}.wrap{padding-inline:14px;}}
+
+.workspace-tabs{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:22px;padding-bottom:16px;border-bottom:1px solid var(--line)}
+.workspace-tabs .btn{min-width:180px;font-size:1.05rem}
+.management-title{font:500 1.5rem Cinzel,serif;color:var(--gold2);margin:0 0 7px}
+#addonsManager .field select{width:100%;background:#0c0b0e;border:1px solid #54442f;border-radius:8px;color:var(--text);padding:12px;font-size:1rem}
+#addonsManager .addon-description{min-height:130px}
+#addonsManager .addon-active-check{display:flex;align-items:center;gap:12px;font-size:1rem;color:var(--gold2);margin-top:16px}
+#addonsManager .addon-active-check input{width:20px;height:20px;accent-color:var(--gold)}
+#addonsManager .addon-save-row{margin-top:23px}
+#addonsManager .addon-login-form{max-width:580px}
+#addonsManager .addon-login-form .field input{width:100%;background:#0c0b0e;border:1px solid var(--line);border-radius:8px;padding:12px;color:var(--text)}
+#addonList .section-item{font-size:1rem}
+#addonsManager h2{color:var(--gold2)}
 </style>
 </head>
 <body>
@@ -67,7 +80,11 @@ body {background:#080807; font-size:1rem;}
 <main class="wrap">
 <div id="message" class="note" role="status" aria-live="polite" hidden></div>
 
-<div id="manager">
+<div class="workspace-tabs" role="tablist" aria-label="Management area">
+<button class="btn primary" id="rulesTab" role="tab" aria-controls="manager" aria-selected="true">Guild Rules</button>
+<button class="btn" id="addonsTab" role="tab" aria-controls="addonsManager" aria-selected="false">Add-on Management</button>
+</div>
+<div id="manager" role="tabpanel">
 <div class="bar"><div><strong>Officer workspace</strong><div class="meta">Save drafts and publish sections when ready.</div></div><div class="actions"><button id="refresh" class="btn">Refresh</button></div></div>
 <div class="layout">
 <aside class="panel sidebar"><div class="section-top"><h2>Categories</h2><span id="count" class="meta"></span></div><div id="sectionList" class="section-list"></div><hr class="divider"><button class="btn" id="addCategory">+ Add Category</button><p class="help">Select a category to edit. Publish only when the section is ready for guild members.</p></aside>
@@ -85,6 +102,49 @@ body {background:#080807; font-size:1rem;}
 <div id="publishedFields" hidden><article class="published-view"><h3 id="publishedTitle"></h3><p id="publishedDesc" class="description"></p><div id="publishedText" class="preview-content"></div></article><p class="help">Read-only snapshot of the last published rules. Switch back to Draft Version to continue editing.</p></div>
 <div id="previewRegion" hidden><hr class="divider"><div class="section-top"><h2>Draft Preview</h2><button class="btn small" id="closePreview">Close</button></div><article class="preview"><div class="preview-tag">Guild Rules</div><h2 id="previewTitle"></h2><p class="description" id="previewDesc"></p><div id="previewText" class="preview-content"></div></article></div>
 </div></section></div></div>
+
+<section id="addonsManager" role="tabpanel" hidden>
+  <div class="bar"><div><h2 class="management-title">Add-on Management</h2><div class="meta">Changes save to Supabase and appear on the public add-ons pages on their next load.</div></div><button class="btn" type="button" id="addonRefresh">Refresh Add-ons</button></div>
+  <div id="addonMessage" class="note" role="status" aria-live="polite" hidden></div>
+  <div class="panel" id="addonLoginBox">
+    <h2>Officer Sign-in Required</h2><p class="help">An approved Supabase Auth account is required to change add-ons. The Officer Hub link alone does not grant editing access.</p>
+    <form id="addonLoginForm" class="addon-login-form">
+      <div class="field"><label for="officerEmail">Email</label><input type="email" id="officerEmail" autocomplete="username" required></div>
+      <div class="field"><label for="officerPassword">Password</label><input type="password" id="officerPassword" autocomplete="current-password" required></div>
+      <div class="actions"><button class="btn primary" type="submit">Sign In</button></div>
+    </form>
+  </div>
+  <div id="addonEditorArea" hidden>
+    <div class="bar"><span id="addonSignedIn" class="meta"></span><div class="actions"><button type="button" class="btn primary" id="addonNew">+ Add Add-on</button><button type="button" class="btn" id="addonSignOut">Sign Out</button></div></div>
+    <div class="layout addons-layout">
+      <aside class="panel sidebar"><div class="section-top"><h2>All Add-ons</h2><span id="addonCount" class="meta"></span></div>
+       <div class="field"><label for="addonSearch">Find add-on</label><input id="addonSearch" type="search" placeholder="Search add-ons…"></div>
+       <div class="section-list" id="addonList"></div>
+      </aside>
+      <section class="panel editor"><div id="addonEmpty" class="meta">Select an add-on or choose + Add Add-on.</div>
+      <form id="addonForm" hidden>
+      <div class="section-top"><h2 id="addonFormTitle">Edit Add-on</h2><span id="addonCurrentState" class="pill"></span></div>
+      <div class="two">
+       <div class="field"><label for="addonName">Add-on name *</label><input id="addonName" maxlength="150" required></div>
+       <div class="field"><label for="addonOrder">Display order</label><input id="addonOrder" type="number" step="1" value="100"></div>
+      </div>
+      <div class="field"><label for="addonDescription">Description</label><textarea id="addonDescription" rows="4" class="addon-description"></textarea></div>
+      <div class="field"><label for="addonUrl">CurseForge / add-on URL (https://)</label><input id="addonUrl" type="url" placeholder="https://www.curseforge.com/wow/addons/..." pattern="https://.*"></div>
+      <div class="two">
+       <div class="field"><label for="addonCategory">Category</label><select id="addonCategory"><option value="raid">Raiding &amp; Combat</option><option value="guild">Guild &amp; Organization</option><option value="gear">Gear &amp; Character</option><option value="economy">Bags, Alts &amp; Economy</option><option value="profession">Professions &amp; Crafting</option><option value="world">World &amp; Exploration</option><option value="pvp">PvP</option><option value="other">Other</option></select></div>
+       <div class="field"><label for="addonDirectoryStatus">Directory label</label><select id="addonDirectoryStatus"><option value="recommended">Recommended</option><option value="required">Required</option><option value="guild-tool">Guild Tool</option><option value="pvp">PvP</option></select></div>
+      </div>
+      <div class="two">
+       <div class="field"><label for="addonRaidStatus">Raid status</label><select id="addonRaidStatus"><option value="none">Not on raid add-ons page</option><option value="recommended">Raid Recommended</option><option value="required">Raid Required</option></select><p class="help">Only Required and Recommended appear on the Raid Hub add-ons page.</p></div>
+       <div class="field"><label for="addonSearchTerms">Search keywords</label><input id="addonSearchTerms" placeholder="Optional words for searching"></div>
+      </div>
+      <label class="addon-active-check"><input type="checkbox" id="addonActive" checked> Show on public website (Active)</label>
+      <p class="help">Uncheck to hide the add-on on both public pages without deleting its record.</p>
+      <div class="actions addon-save-row"><button class="btn primary" type="submit" id="addonSave">Save Add-on</button><button class="btn" type="button" id="addonCancel">Cancel</button><button class="btn danger" type="button" id="addonDelete" hidden>Delete Permanently</button></div>
+      </form></section>
+    </div>
+  </div>
+</section>
 </main>
 <div id="syndicate-footer"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -168,6 +228,96 @@ $('unpublishBtn').onclick=async()=>{const r=selected();if(!r||!confirm('Unpublis
 function makeSlug(title){return title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
 $('addCategory').onclick=async()=>{if(!protectChange())return;const name=prompt('New guild rules category name:');if(name===null)return;const title=name.trim();if(!title)return;const slug=makeSlug(title);if(!slug)return msg('Enter a title containing letters or numbers.','error');const order=rows.reduce((m,r)=>Math.max(m,Number(r.sort_order)||0),0)+1;const {data,error}=await db.from(TABLE).insert({section_title:title,slug,sort_order:order}).select('id').single();if(error)return msg('Could not add category: '+error.message,'error');selectedId=data.id;await loadSections();msg('Category added as an unpublished draft.','success')};
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
+
+/* ========================= ADD-ON MANAGEMENT ========================= */
+const addonTable = 'guild_addons';
+const addonCategoryLabels = {raid:'Raiding & Combat',guild:'Guild & Organization',gear:'Gear & Character',economy:'Bags, Alts & Economy',profession:'Professions & Crafting',world:'World & Exploration',pvp:'PvP',other:'Other'};
+let addonRows = [], addonSelectedId = null, addonEditingNew = false, addonDirty = false;
+const addon$ = id => document.getElementById(id);
+function addonNotice(text,type=''){const n=addon$('addonMessage');n.textContent=text;n.className='note '+type;n.hidden=false}
+function addonClearNotice(){addon$('addonMessage').hidden=true}
+function addonConfirmDiscard(){return !addonDirty || confirm('Discard unsaved add-on changes?')}
+function addonAuth(){return db && typeof db.auth?.getUser === 'function'}
+async function addonCheckLogin(){
+ if(!addonAuth()){addonNotice('Supabase Auth is not available. Check settings/supabase-config.js.','error');return}
+ const {data,error}=await db.auth.getUser();const signedIn=!error && !!data?.user;
+ addon$('addonLoginBox').hidden=signedIn;addon$('addonEditorArea').hidden=!signedIn;
+ if(signedIn){addon$('addonSignedIn').textContent='Signed in as '+(data.user.email||'Officer');await addonLoad()}
+ else {addon$('addonList').replaceChildren();addon$('addonForm').hidden=true;addon$('addonEmpty').hidden=false}
+}
+addon$('addonLoginForm').addEventListener('submit',async event=>{
+ event.preventDefault();addonClearNotice();if(!addonAuth())return addonNotice('Supabase Auth is unavailable.','error');
+ const email=addon$('officerEmail').value.trim(),password=addon$('officerPassword').value;
+ const {error}=await db.auth.signInWithPassword({email,password});addon$('officerPassword').value='';
+ if(error)return addonNotice('Sign-in failed: '+error.message,'error');await addonCheckLogin();
+});
+addon$('addonSignOut').onclick=async()=>{if(!addonConfirmDiscard())return;await db.auth.signOut();addonRows=[];addonSelectedId=null;addonDirty=false;await addonCheckLogin();addonNotice('Signed out.');};
+addon$('rulesTab').onclick=()=>addonShowTab('rules');
+addon$('addonsTab').onclick=()=>addonShowTab('addons');
+async function addonShowTab(tab){
+ if(tab==='rules'&&!addonConfirmDiscard())return;
+ const addons=tab==='addons';addon$('manager').hidden=addons;addon$('addonsManager').hidden=!addons;
+ addon$('rulesTab').classList.toggle('primary',!addons);addon$('addonsTab').classList.toggle('primary',addons);
+ addon$('rulesTab').setAttribute('aria-selected',String(!addons));addon$('addonsTab').setAttribute('aria-selected',String(addons));
+ if(addons)await addonCheckLogin();
+}
+async function addonLoad(){
+ addonClearNotice();
+ if(!db)return addonNotice('Database connection not ready.','error');
+ const {data,error}=await db.from(addonTable).select('id,name,description,url,category,category_label,directory_status,raid_status,search_terms,sort_order,is_active').order('sort_order',{ascending:true}).order('name',{ascending:true}).limit(1000);
+ if(error)return addonNotice('Unable to load add-ons: '+error.message+' — check officer SELECT permissions.','error');
+ addonRows=data||[];addon$('addonCount').textContent=addonRows.length+' entries';addonDrawList();
+ if(addonEditingNew){addonShowForm(null);return}
+ const found=addonRows.find(r=>String(r.id)===String(addonSelectedId));
+ if(found)addonShowForm(found);else {addon$('addonForm').hidden=true;addon$('addonEmpty').hidden=false;addonSelectedId=null}
+}
+function addonDrawList(){
+ const list=addon$('addonList'),needle=addon$('addonSearch').value.trim().toLowerCase();list.replaceChildren();
+ for(const r of addonRows.filter(x=>[x.name,x.category_label,x.raid_status].join(' ').toLowerCase().includes(needle))){
+  const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(addonSelectedId)?' active':'');
+  const label=document.createElement('span');label.textContent=r.name;
+  const badge=document.createElement('span');badge.className='pill'+(r.is_active?' live':'');badge.textContent=r.is_active?(r.raid_status==='required'?'Raid Required':r.raid_status==='recommended'?'Raid Recommended':'Active'):'Hidden';
+  b.append(label,badge);b.onclick=()=>{if(!addonConfirmDiscard())return;addonSelectedId=r.id;addonEditingNew=false;addonShowForm(r);addonDrawList()};list.append(b);
+ }
+}
+function addonShowForm(r){
+ addon$('addonEmpty').hidden=true;addon$('addonForm').hidden=false;addonDirty=false;
+ addon$('addonFormTitle').textContent=r?'Edit Add-on':'New Add-on';addon$('addonCurrentState').textContent=r?(r.is_active?'Active':'Hidden'):'New';
+ addon$('addonDelete').hidden=!r;
+ const fields={addonName:r?.name||'',addonDescription:r?.description||'',addonUrl:r?.url||'',addonCategory:r?.category||'raid',addonDirectoryStatus:r?.directory_status||'recommended',addonRaidStatus:r?.raid_status||'none',addonSearchTerms:r?.search_terms||'',addonOrder:r?.sort_order??100};
+ for(const [id,value] of Object.entries(fields))addon$(id).value=value;
+ addon$('addonActive').checked=r?.is_active??true;
+}
+addon$('addonNew').onclick=()=>{if(!addonConfirmDiscard())return;addonEditingNew=true;addonSelectedId=null;addonShowForm(null);addonDrawList();addon$('addonName').focus()};
+addon$('addonSearch').addEventListener('input',addonDrawList);
+addon$('addonRefresh').onclick=async()=>{if(!addonConfirmDiscard())return;await addonCheckLogin()};
+addon$('addonCancel').onclick=()=>{if(!addonConfirmDiscard())return;addonDirty=false;addonEditingNew=false;addonSelectedId=null;addon$('addonForm').hidden=true;addon$('addonEmpty').hidden=false;addonDrawList()};
+for(const field of addon$('addonForm').querySelectorAll('input,select,textarea'))field.addEventListener('input',()=>{addonDirty=true});
+addon$('addonForm').addEventListener('submit',async e=>{
+ e.preventDefault();addonClearNotice();
+ if(!db)return addonNotice('Supabase is not connected.','error');
+ const name=addon$('addonName').value.trim(),url=addon$('addonUrl').value.trim(),category=addon$('addonCategory').value;
+ if(!name)return addonNotice('Enter an add-on name.','error');
+ if(url&&!/^https:\/\//i.test(url))return addonNotice('The URL must begin with https://.','error');
+ const payload={name,description:addon$('addonDescription').value.trim(),url,category,category_label:addonCategoryLabels[category]||'Other',directory_status:addon$('addonDirectoryStatus').value,raid_status:addon$('addonRaidStatus').value,search_terms:addon$('addonSearchTerms').value.trim(),sort_order:Number(addon$('addonOrder').value)||0,is_active:addon$('addonActive').checked};
+ const query=addonEditingNew?db.from(addonTable).insert(payload):db.from(addonTable).update(payload).eq('id',addonSelectedId);
+ addon$('addonSave').disabled=true;
+ try{
+  const {data,error}=await query.select('id').single();
+  if(error)throw error;
+  addonSelectedId=data.id;addonEditingNew=false;addonDirty=false;
+  await addonLoad();addonNotice('Add-on saved. Public pages will reflect the change when reloaded.','success');
+ }catch(err){addonNotice('Save failed: '+err.message+' — your account may not have officer write permission.','error')}
+ finally{addon$('addonSave').disabled=false}
+});
+addon$('addonDelete').onclick=async()=>{
+ const r=addonRows.find(x=>String(x.id)===String(addonSelectedId));if(!r)return;
+ if(!confirm('Permanently DELETE '+r.name+'? This cannot be undone. To simply remove it from the public pages, uncheck Active instead.'))return;
+ const {data,error}=await db.from(addonTable).delete().eq('id',r.id).select('id');
+ if(error||!data?.length)return addonNotice('Delete failed: '+(error?.message||'no row deleted; check permissions'),'error');
+ addonDirty=false;addonSelectedId=null;addonEditingNew=false;await addonLoad();addonNotice('Add-on permanently deleted.','success');
+};
+
 start();
 </script>
 </body></html>
