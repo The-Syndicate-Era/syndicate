@@ -28,12 +28,10 @@
 }
 
 html {
-  font-size: 18px;
+  font-size: calc(18px * var(--font-scale, 1));
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
 }
-html[data-syndicate-text-size="large"] { font-size: 21px; }
-html[data-syndicate-text-size="extra-large"] { font-size: 24px; }
 
 *, *::before, *::after { box-sizing: border-box; }
 body {
@@ -115,4 +113,30 @@ th, td { padding: 0.65rem 0.75rem; }
   .syndicate-font-controls { bottom: 0.5rem; right: 0.5rem; padding: 0.35rem; }
   .syndicate-font-controls__label { display: none; }
   th, td { padding: 0.45rem; }
+}
+/* =========================================
+   OFFICER RAID RULES - SCALABLE TEXT
+   ========================================= */
+
+.section-list .section-item {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.section-list .section-item .number {
+  font-size: 0.9rem;
+}
+
+.section-list .section-item .pill {
+  font-size: 0.8rem;
+}
+
+.sidebar .meta,
+.editor .meta {
+  font-size: 0.9rem;
+}
+
+.section-list .section-item,
+.section-list .section-item span {
+  overflow-wrap: anywhere;
 }
