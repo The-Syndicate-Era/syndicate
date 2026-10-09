@@ -1026,13 +1026,27 @@ main { padding-top: 1.7rem; }
   padding: clamp(1.4rem, 4vw, 3.2rem);
   border: 1px solid #80692c;
   background-color: #100d08;
-  background-image: linear-gradient(90deg, rgba(0,0,0,.70) 0%, rgba(0,0,0,.40) 48%, rgba(0,0,0,.05) 100%), url('../images/Professions.png');
-  background-position: center;
-  background-size: cover;
-  background-repeat: no-repeat;
+  background: #100d08;
 }
-/* Gradient is part of background-image; no dark pseudo-element obscures the artwork. */
-.profession-hero-content { position:relative; max-width: 870px; }
+/* Display the real image element instead of relying on a CSS background. */
+.profession-hero-image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  z-index: 0;
+}
+.profession-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(0,0,0,.72) 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,.04) 100%);
+  z-index: 1;
+  pointer-events: none;
+}
+.profession-hero-content { position:relative; z-index: 2; max-width: 870px; }
 .profession-hero h1 { color: #e6bf42; font-size: clamp(1.95rem, 4.1vw, 3.35rem); line-height:1.18; text-shadow:0 2px 8px #000; }
 .profession-hero .eyebrow { font-size:.85rem; }
 .profession-hero .page-description { color:#f0e8d7; font-size:1.03rem; max-width:750px; line-height:1.65; text-shadow:0 1px 4px #000; }
@@ -1116,6 +1130,7 @@ main { padding-top: 1.7rem; }
   <main>
 
     <section class="profession-hero" aria-labelledby="professions-title">
+      <img class="profession-hero-image" src="../images/Professions.png" alt="" aria-hidden="true" fetchpriority="high">
       <div class="profession-hero-content">
         <p class="eyebrow">Guild Resources</p>
         <h1 id="professions-title">Professions &amp; Crafting</h1>
