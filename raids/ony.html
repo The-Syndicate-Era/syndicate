@@ -1,576 +1,159 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>The Syndicate | Coming Soon</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  >
-
-
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Onyxia's Lair | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
   <style>
-
-    :root {
-      --background-dark: #090909;
-      --background-soft: #101010;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #a59b80;
-
-      --border: rgba(217, 180, 56, 0.35);
-
-      --font-heading: "Cinzel", serif;
-      --font-body: "Montserrat", sans-serif;
-    }
-
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-
-      min-height: 100vh;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .site-header {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      background: var(--background-dark);
-
-      border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
-    }
-
-
-    .logo-area {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-
-      padding-left: 14px;
-    }
-
-
-    .logo-area img {
-      height: 46px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-
-      gap: 34px;
-
-      padding-right: 32px;
-
-      font-family: var(--font-heading);
-
-      font-size: 15px;
-
-      color: var(--gold);
-    }
-
-
-    .desktop-nav a {
-      transition: color 0.2s ease;
-    }
-
-
-    .desktop-nav a:hover {
-      color: var(--gold-light);
-    }
-
-
-    .menu-button {
-      display: none;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 28px;
-
-      cursor: pointer;
-
-      padding: 12px 20px;
-    }
-
-
-    .mobile-nav {
-      display: none;
-
-      position: absolute;
-
-      top: 70px;
-      right: 0;
-
-      width: 230px;
-
-      background: #0b0b0b;
-
-      border-left: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-
-      z-index: 200;
-    }
-
-
-    .mobile-nav.open {
-      display: block;
-    }
-
-
-    .mobile-nav a {
-      display: block;
-
-      padding: 15px 20px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.15);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 14px;
-    }
-
-
-    /* =========================
-       MAIN CONTENT
-    ========================= */
-
-    main {
-      flex: 1;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 60px 30px;
-    }
-
-
-    .coming-soon {
-      width: 100%;
-      max-width: 850px;
-
-      text-align: center;
-
-      padding: 60px 30px;
-
-      border-top: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-    }
-
-
-    .coming-soon h1 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: clamp(38px, 7vw, 72px);
-
-      font-weight: 400;
-
-      letter-spacing: 4px;
-
-      margin-bottom: 18px;
-    }
-
-
-    .coming-soon p {
-      color: var(--text-muted);
-
-      font-size: 15px;
-
-      line-height: 1.8;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-    }
-
-
-    .coming-soon-mark {
-      color: var(--gold-dark);
-
-      font-size: 24px;
-
-      margin-bottom: 18px;
-
-      letter-spacing: 8px;
-    }
-
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .site-footer {
-      border-top:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      padding: 26px 30px 20px;
-
-      text-align: center;
-    }
-
-
-    .footer-motto {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 12px;
-
-      font-family: var(--font-heading);
-
-      font-size: 14px;
-
-      letter-spacing: 3px;
-
-      color: var(--gold-dark);
-    }
-
-
-    .footer-motto::before,
-    .footer-motto::after {
-      content: "";
-
-      width: 90px;
-      height: 1px;
-
-      background: var(--gold-dark);
-    }
-
-
-    .footer-divider {
-      height: 1px;
-
-      max-width: 1100px;
-
-      margin: 16px auto;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
-    }
-
-
-    .footer-logo img {
-      width: 155px;
-      max-width: 65%;
-
-      height: auto;
-    }
-
-
-    /* =========================
-       TABLET / MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-    }
-
-
-    @media (max-width: 650px) {
-
-      .site-header {
-        height: 60px;
-      }
-
-
-      .logo-area {
-        height: 60px;
-      }
-
-
-      .logo-area img {
-        height: 38px;
-      }
-
-
-      .mobile-nav {
-        top: 60px;
-      }
-
-
-      main {
-        padding: 40px 18px;
-      }
-
-
-      .coming-soon {
-        padding: 45px 16px;
-      }
-
-
-      .coming-soon h1 {
-        font-size: 38px;
-
-        letter-spacing: 2px;
-      }
-
-
-      .coming-soon p {
-        font-size: 13px;
-      }
-
-
-      .footer-motto {
-        font-size: 11px;
-        letter-spacing: 2px;
-      }
-
-
-      .footer-motto::before,
-      .footer-motto::after {
-        width: 45px;
-      }
-
-    }
-
+    :root{--ony-gold:#dfbb53;--ony-border:#574726;--ony-text:#e4dbca;--ony-muted:#c9bda7}
+    html{scroll-behavior:smooth}
+    body{margin:0;background:#080808!important;color:var(--ony-text)}
+    #syndicate-subheader{display:block;background:#10100e;border-bottom:1px solid var(--ony-border)}
+    .fallback-crumb{max-width:1250px;margin:auto;padding:.9rem 1.25rem;color:#d6be83;font-size:1rem}.fallback-crumb a{color:#e6c763;text-decoration:none}
+    .ony-hero{border-bottom:1px solid var(--ony-border);background:#0e0c09}
+    .ony-hero-inner{max-width:1250px;margin:auto;padding:2rem clamp(1rem,3vw,2rem);display:grid;grid-template-columns:1.5fr minmax(220px,.7fr);gap:2rem;align-items:center}
+    .eyebrow{font:600 .85rem var(--font-heading,Georgia,serif);text-transform:uppercase;letter-spacing:.15em;color:#bfa45c}
+    h1,h2,h3{font-family:var(--font-heading,Georgia,serif);font-weight:500}
+    .ony-hero h1{font-size:clamp(2.2rem,4.5vw,3.35rem);line-height:1.2;color:var(--ony-gold);margin:.45rem 0 .85rem}
+    .ony-hero p{font-size:1.13rem;line-height:1.75;max-width:740px;margin:0;color:#d9ceb7}
+    .ony-hero img{width:100%;height:190px;object-fit:cover;display:block;border:1px solid #6c5525}
+    .layout{max-width:1250px;margin:auto;padding:2rem clamp(1rem,3vw,2rem) 5rem;display:grid;grid-template-columns:245px minmax(0,1fr);gap:2.3rem;align-items:start}
+    .sidebar{position:sticky;top:1.15rem;background:#12110d;border:1px solid var(--ony-border);padding:1.2rem}
+    .sidebar h2{font-size:1.08rem;color:var(--ony-gold);margin:0 0 .7rem}
+    .sidebar nav{display:grid;gap:.12rem}
+    .sidebar a{color:#ddd2b9;font-size:1rem;text-decoration:none;padding:.47rem .35rem;border-radius:3px}
+    .sidebar a:hover,.sidebar a:focus-visible{color:#f5d473;background:#262012}
+    .sidebar hr{border:0;border-top:1px solid #514126;margin:1.2rem 0}
+    .sidebar .muted{color:#a99d85;font-size:.95rem}
+    .body-section{padding-bottom:1.65rem;margin-bottom:1.8rem;border-bottom:1px solid #443821;scroll-margin-top:1.5rem}
+    .body-section:last-child{border:0}
+    .body-section h2{color:var(--ony-gold);font-size:clamp(1.43rem,2.5vw,1.8rem);margin:0 0 .75rem}
+    .body-section p,.body-section li{font-size:1.075rem;line-height:1.8;color:var(--ony-text)}
+    .body-section p{margin:.45rem 0 .85rem}
+    .body-section ul{padding-left:1.5rem;margin:.45rem 0}
+    .body-section li{padding:.16rem 0}
+    .highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin:1.1rem 0}
+    .highlight{padding:1rem 1.1rem;background:#14120e;border:1px solid #4a3b22}
+    .highlight strong{display:block;color:#e9c665;font-size:1.07rem;margin-bottom:.25rem}
+    .highlight span{color:#d2c8b5;line-height:1.6;font-size:1rem}
+    .notes{border:1px solid #493b25;background:#12100c;padding:1rem 1.25rem}
+    .notes li{font-size:1.03rem}
+    .rules-live{padding:1.05rem 1.2rem;border:1px solid #554527;background:#14120e;line-height:1.8}
+    .rules-live p{margin:0 0 .7rem}
+    .rules-live h2,.rules-live h3{color:#e4c56b;font-size:1.18rem;margin:1rem 0 .5rem}
+    .rules-live ul,.rules-live ol{padding-left:1.4rem}
+    .rules-live.ql-editor{min-height:0;font-size:1.06rem;white-space:normal}
+    .rules-state{color:#c7bca8;font-size:1rem;margin:0 0 1rem}
+    .rules-state.error{color:#f2b2b2}
+    .resource-link{color:#e9c76d;text-decoration:underline;text-underline-offset:3px}
+    @media(max-width:840px){.layout{grid-template-columns:1fr;gap:1.5rem}.sidebar{position:static}.sidebar nav{grid-template-columns:repeat(2,minmax(0,1fr))}.ony-hero-inner{grid-template-columns:1fr}.ony-hero img{max-height:215px}}
+    @media(max-width:550px){.highlights{grid-template-columns:1fr}.sidebar nav{grid-template-columns:1fr}.body-section p,.body-section li{font-size:1.03rem}}
   </style>
 </head>
-
-
 <body>
-
-
-  <!-- =========================
-       HEADER
-  ========================== -->
-
-  <header class="site-header">
-
-    <a
-      href="index.html"
-      class="logo-area"
-    >
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-    </a>
-
-
-    <nav class="desktop-nav">
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-    >
-      ☰
-    </button>
-
-
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-  </header>
-
-
-  <!-- =========================
-       COMING SOON
-  ========================== -->
-
-  <main>
-
-    <section class="coming-soon">
-
-      <div class="coming-soon-mark">
-        ✦ ✦ ✦
-      </div>
-
-      <h1>
-        Coming Soon
-      </h1>
-
-      <p>
-        This section of The Syndicate is still being built.
-        Check back soon for more information, resources,
-        and questionable levels of organization.
-      </p>
-
-    </section>
-
-  </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-
-  <footer class="site-footer">
-
-    <div class="footer-motto">
-      ✦ THIS IS THE WAY. ✦
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-logo">
-
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-  </footer>
-
-
-  <!-- =========================
-       MOBILE MENU
-  ========================== -->
-
+  <!-- Uses the Raid Hub breadcrumb, without a hamburger menu. -->
+  <div id="syndicate-subheader" data-section="raid-hub" data-title="Onyxia's Lair">
+    <nav class="fallback-crumb" aria-label="Raid Hub navigation"><a href="../raid-hub.html">← Raid Hub</a> › Onyxia's Lair</nav>
+  </div>
+  <header class="ony-hero"><div class="ony-hero-inner">
+    <div><span class="eyebrow">The Syndicate · 40-player raid · One boss</span><h1>ONYXIA'S LAIR</h1><p>A short, single-boss raid in Dustwallow Marsh. Come attuned, bring your Drakefire Amulet, and take on the Broodmother of the Black Dragonflight.</p></div>
+    <img src="../images/Raiding.png" alt="The Syndicate raid artwork">
+  </div></header>
+  <div class="layout">
+    <aside class="sidebar" aria-label="Raid navigation">
+      <h2>On This Page</h2><nav><a href="#overview">Overview</a><a href="#attunement">Attunement & Entry</a><a href="#rewards">Notable Loot</a><a href="#ony-rules">Onyxia-Specific Rules</a></nav>
+      <hr>
+      <h2>Raid Resources</h2><nav>
+        <a href="../raid-hub/raid-rules.html">Raid Rules</a>
+        <a href="../raid-hub/required-addons.html">Required Add-ons</a>
+        <a href="../resources/attune-key.html">Attunements & Keys</a>
+        <span class="muted" aria-disabled="true">Raid Consumables · Coming Soon</span>
+      </nav>
+      <hr>
+      <h2>Other Raids</h2><nav>
+        <a href="zg.html">Zul'Gurub</a>
+        <a href="aq20.html">AQ20</a>
+        <a href="mc.html">Molten Core</a>
+        <a href="bwl.html">Blackwing Lair</a>
+        <a href="aq40.html">AQ40</a>
+        <a href="naxx.html">Naxxramas</a>
+      </nav>
+    </aside>
+    <main>
+      <section class="body-section" id="overview">
+        <h2>Welcome to Onyxia's Lair</h2>
+        <p>Located in southern <strong>Dustwallow Marsh</strong>, Onyxia's Lair is a short, 40-player raid with a single boss: Onyxia. Although the raid itself is brief, every raider must complete their own attunement before entering.</p>
+      </section>
+      <section class="body-section" id="attunement">
+        <h2>Attunement & Entry</h2>
+        <div class="notes">
+          <ul>
+            <li><strong>The key:</strong> Each character must possess a <strong>Drakefire Amulet</strong> to enter Onyxia's Lair.</li>
+            <li><strong>The bag rule:</strong> The amulet must be <strong>in your character's inventory bags—not in your bank</strong>. Without it in your bags, the portal will block entry.</li>
+          </ul>
+          <p><a class="resource-link" href="../resources/attune-key.html">View The Syndicate's Attunements & Keys guide →</a></p>
+          <p><a class="resource-link" href="https://www.wowhead.com/classic/guide/onyxia-onyxias-lair-attunement-drakefire-amulet-wow-classic" target="_blank" rel="noopener noreferrer">Full Horde attunement guide on Wowhead ↗</a></p>
+        </div>
+      </section>
+      <section class="body-section" id="rewards">
+        <h2>Notable Loot</h2>
+        <div class="highlights">
+          <div class="highlight"><strong>Tier 2 Helms</strong><span>Onyxia drops Tier 2 headpieces for all nine Classic classes.</span></div>
+          <div class="highlight"><strong>Shard of the Scale</strong><span>A trinket that restores <strong>16 mana per 5 seconds</strong>, especially appealing to healers.</span></div>
+          <div class="highlight"><strong>Onyxia Hide Backpack</strong><span>An <strong>18-slot bag</strong> and a welcome inventory upgrade.</span></div>
+          <div class="highlight"><strong>Head of Onyxia</strong><span>Starts the Horde quest <em>Victory for the Horde</em>, leading to a major city turn-in.</span></div>
+        </div>
+      </section>
+      <section class="body-section" id="ony-rules">
+        <h2>Onyxia-Specific Rules</h2>
+        <p class="rules-state" id="onyRuleStatus" role="status" aria-live="polite">Loading published Onyxia rules…</p>
+        <div id="onyRuleContent" class="rules-live ql-editor" hidden></div>
+      </section>
+    </main>
+  </div>
+  <div id="syndicate-footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../settings/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script>
-
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const mobileNav =
-      document.getElementById("mobileNav");
-
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          mobileNav.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen
-        );
-
+    (()=>{
+      'use strict';
+      const status=document.getElementById('onyRuleStatus');
+      const target=document.getElementById('onyRuleContent');
+      async function loadOnyxiaRules(){
+        const db=window.syndicateDB;
+        if(!db){status.textContent='Published rules are temporarily unavailable.';return;}
+        try{
+          const {data,error}=await db.from('raid_rules')
+            .select('slug,published_content')
+            .eq('is_published',true)
+            .eq('slug','ony-raid-rules');
+          if(error)throw error;
+          if(!data?.length){status.textContent='No Onyxia-specific rules have been published yet.';return;}
+          if(!window.DOMPurify){status.textContent='Published formatting is temporarily unavailable.';return;}
+          target.replaceChildren();
+          data.forEach(r=>{
+            const block=document.createElement('div');
+            block.innerHTML=DOMPurify.sanitize(String(r.published_content||''),{
+              ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],
+              ALLOWED_ATTR:['href','target','rel','class'],ALLOW_DATA_ATTR:false
+            });
+            block.querySelectorAll('a').forEach(a=>{a.rel='noopener noreferrer';});
+            target.append(block);
+          });
+          target.hidden=false;
+          status.hidden=true;
+        }catch(error){
+          console.error('Onyxia rules load failed:',error);
+          status.textContent='Unable to load published Onyxia rules right now.';
+        }
       }
-    );
-
+      loadOnyxiaRules();
+    })();
   </script>
-
-
 </body>
 </html>
