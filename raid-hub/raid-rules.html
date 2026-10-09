@@ -1,576 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>The Syndicate | Coming Soon</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  >
-
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Raid Rules | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
   <style>
-
-    :root {
-      --background-dark: #090909;
-      --background-soft: #101010;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #a59b80;
-
-      --border: rgba(217, 180, 56, 0.35);
-
-      --font-heading: "Cinzel", serif;
-      --font-body: "Montserrat", sans-serif;
-    }
-
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-
-      min-height: 100vh;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .site-header {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      background: var(--background-dark);
-
-      border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
-    }
-
-
-    .logo-area {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-
-      padding-left: 14px;
-    }
-
-
-    .logo-area img {
-      height: 46px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-
-      gap: 34px;
-
-      padding-right: 32px;
-
-      font-family: var(--font-heading);
-
-      font-size: 15px;
-
-      color: var(--gold);
-    }
-
-
-    .desktop-nav a {
-      transition: color 0.2s ease;
-    }
-
-
-    .desktop-nav a:hover {
-      color: var(--gold-light);
-    }
-
-
-    .menu-button {
-      display: none;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 28px;
-
-      cursor: pointer;
-
-      padding: 12px 20px;
-    }
-
-
-    .mobile-nav {
-      display: none;
-
-      position: absolute;
-
-      top: 70px;
-      right: 0;
-
-      width: 230px;
-
-      background: #0b0b0b;
-
-      border-left: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-
-      z-index: 200;
-    }
-
-
-    .mobile-nav.open {
-      display: block;
-    }
-
-
-    .mobile-nav a {
-      display: block;
-
-      padding: 15px 20px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.15);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 14px;
-    }
-
-
-    /* =========================
-       MAIN CONTENT
-    ========================= */
-
-    main {
-      flex: 1;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 60px 30px;
-    }
-
-
-    .coming-soon {
-      width: 100%;
-      max-width: 850px;
-
-      text-align: center;
-
-      padding: 60px 30px;
-
-      border-top: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-    }
-
-
-    .coming-soon h1 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: clamp(38px, 7vw, 72px);
-
-      font-weight: 400;
-
-      letter-spacing: 4px;
-
-      margin-bottom: 18px;
-    }
-
-
-    .coming-soon p {
-      color: var(--text-muted);
-
-      font-size: 15px;
-
-      line-height: 1.8;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-    }
-
-
-    .coming-soon-mark {
-      color: var(--gold-dark);
-
-      font-size: 24px;
-
-      margin-bottom: 18px;
-
-      letter-spacing: 8px;
-    }
-
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .site-footer {
-      border-top:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      padding: 26px 30px 20px;
-
-      text-align: center;
-    }
-
-
-    .footer-motto {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 12px;
-
-      font-family: var(--font-heading);
-
-      font-size: 14px;
-
-      letter-spacing: 3px;
-
-      color: var(--gold-dark);
-    }
-
-
-    .footer-motto::before,
-    .footer-motto::after {
-      content: "";
-
-      width: 90px;
-      height: 1px;
-
-      background: var(--gold-dark);
-    }
-
-
-    .footer-divider {
-      height: 1px;
-
-      max-width: 1100px;
-
-      margin: 16px auto;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
-    }
-
-
-    .footer-logo img {
-      width: 155px;
-      max-width: 65%;
-
-      height: auto;
-    }
-
-
-    /* =========================
-       TABLET / MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-    }
-
-
-    @media (max-width: 650px) {
-
-      .site-header {
-        height: 60px;
-      }
-
-
-      .logo-area {
-        height: 60px;
-      }
-
-
-      .logo-area img {
-        height: 38px;
-      }
-
-
-      .mobile-nav {
-        top: 60px;
-      }
-
-
-      main {
-        padding: 40px 18px;
-      }
-
-
-      .coming-soon {
-        padding: 45px 16px;
-      }
-
-
-      .coming-soon h1 {
-        font-size: 38px;
-
-        letter-spacing: 2px;
-      }
-
-
-      .coming-soon p {
-        font-size: 13px;
-      }
-
-
-      .footer-motto {
-        font-size: 11px;
-        letter-spacing: 2px;
-      }
-
-
-      .footer-motto::before,
-      .footer-motto::after {
-        width: 45px;
-      }
-
-    }
-
+    /* Public, read-only Raid Rules. Shared settings own the typography scale and footer. */
+    :root { --rules-gold:#d9b438; --rules-line:#554521; --rules-text:#e7dfd0; --rules-muted:#c2b8a2; }
+    html { scroll-behavior:smooth; }
+    body { margin:0; background:#080807 !important; color:var(--rules-text); }
+    #syndicate-subheader { display:block; background:#100f0c; border-bottom:1px solid var(--rules-line); }
+    .rules-breadcrumb { max-width:1160px; margin:0 auto; padding:.85rem clamp(1rem,4vw,2rem); display:flex; flex-wrap:wrap; gap:.6rem; align-items:center; font-size:.96rem; }
+    .rules-breadcrumb a { color:#e8c75e; text-decoration:none; }
+    .rules-breadcrumb a:hover { text-decoration:underline; }
+    .rules-breadcrumb span { color:#b4a585; }
+    .rules-hero { border-bottom:1px solid var(--rules-line); background:#0c0b09; }
+    .rules-hero-inner { max-width:1160px; margin:0 auto; display:grid; grid-template-columns: minmax(0,1.3fr) minmax(250px,.7fr); gap:clamp(1.4rem,4vw,3.5rem); align-items:center; padding:clamp(1.5rem,4vw,3rem) clamp(1rem,4vw,2rem); }
+    .rules-eyebrow { font:600 .87rem/1.4 var(--font-heading,Georgia,serif); color:#bf9e4d; letter-spacing:.1em; text-transform:uppercase; }
+    .rules-hero h1 { margin:.6rem 0 1.1rem; font:500 clamp(2rem,4vw,3.1rem)/1.16 var(--font-heading,Georgia,serif); color:#e2bd4b; }
+    .rules-hero p { max-width:40rem; margin:0; font-size:1.08rem; line-height:1.8; color:var(--rules-muted); }
+    .rules-hero-image { border:1px solid #655128; background:#100e0a; padding:.5rem; }
+    .rules-hero-image img { display:block; width:100%; max-height:230px; object-fit:contain; }
+    .rules-main { max-width:1100px; margin:auto; padding:clamp(1.7rem,4vw,3rem) clamp(1rem,4vw,2rem) 5rem; }
+    .rules-intro { margin:0 0 2rem; border-left:3px solid var(--rules-gold); padding:.55rem 1rem; line-height:1.65; color:#cfc3a8; font-size:1rem; }
+    .rules-status { margin:1rem 0 1.5rem; padding:1rem 1.2rem; background:#15130e; border:1px solid var(--rules-line); color:#dfcfab; border-radius:5px; font-size:1rem; }
+    .rules-status.error { border-color:#995858; color:#f1b3b3; }
+    .rules-toc { border:1px solid #4d4027; background:#11100c; padding:1.3rem 1.5rem; margin-bottom:2.6rem; }
+    .rules-toc h2 { margin:0 0 .9rem; color:#e3bf55; font:500 1.24rem/1.4 var(--font-heading,Georgia,serif); }
+    .rules-toc ol { margin:0; padding-left:1.5rem; columns:2; column-gap:2.5rem; }
+    .rules-toc li { break-inside:avoid; padding:.35rem 0; color:#c8a75b; }
+    .rules-toc a { color:#e5dcc6; text-decoration:none; font-size:1.02rem; }
+    .rules-toc a:hover, .rules-toc a:focus-visible { color:#f0d47a; text-decoration:underline; text-underline-offset:3px; }
+    .rule-section { padding:0 0 2.1rem; margin-bottom:2.5rem; border-bottom:1px solid #403821; scroll-margin-top:1rem; }
+    .rule-section:last-child { border-bottom:0; }
+    .rule-section h2 { margin:0 0 .7rem; font:500 clamp(1.45rem,2.8vw,1.85rem)/1.35 var(--font-heading,Georgia,serif); color:#e1bd52; }
+    .rule-desc { color:#cfc4af; font-size:1.03rem; line-height:1.75; margin:0 0 1rem; white-space:pre-wrap; }
+    .rule-copy.ql-editor { padding:0; min-height:0; color:var(--rules-text); font:inherit; font-size:1.04rem; line-height:1.85; overflow-wrap:anywhere; }
+    .rule-copy.ql-editor p { margin:0 0 .8rem; }
+    .rule-copy.ql-editor h2 { font-size:1.38rem; margin:1.5rem 0 .65rem; color:#e0bc52; }
+    .rule-copy.ql-editor h3 { font-size:1.15rem; margin:1.15rem 0 .45rem; color:#ddc37b; }
+    .rule-copy.ql-editor li { padding-bottom:.22rem; }
+    .rule-copy.ql-editor a { color:#ebc96f; text-decoration:underline; }
+    .rule-copy.ql-editor blockquote { color:#d1c6ae; border-left:3px solid #7f682f; margin:1.2rem 0; padding:.1rem 1rem; }
+    .rule-copy.ql-editor strong { color:#f3e8d1; }
+    .rules-end { text-align:center; color:#a99a7c; font-size:.93rem; padding-top:.65rem; }
+    @media(max-width:760px) { .rules-hero-inner { grid-template-columns:1fr; } .rules-hero-image { max-width:500px; width:100%; } .rules-toc ol { columns:1; } }
   </style>
 </head>
-
-
 <body>
-
-
-  <!-- =========================
-       HEADER
-  ========================== -->
-
-  <header class="site-header">
-
-    <a
-      href="index.html"
-      class="logo-area"
-    >
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-    </a>
-
-
-    <nav class="desktop-nav">
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
+  <!-- Intentionally no #syndicate-menu: this reading page has only Raid Hub breadcrumb navigation. -->
+  <div id="syndicate-subheader" data-section="raid-hub" data-title="Raid Rules">
+    <nav class="rules-breadcrumb" aria-label="Raid Hub navigation">
+      <a href="../raid-hub.html">← Raid Hub</a><span aria-hidden="true">›</span><span aria-current="page">Raid Rules</span>
     </nav>
-
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-    >
-      ☰
-    </button>
-
-
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-  </header>
-
-
-  <!-- =========================
-       COMING SOON
-  ========================== -->
-
-  <main>
-
-    <section class="coming-soon">
-
-      <div class="coming-soon-mark">
-        ✦ ✦ ✦
+  </div>
+  <header class="rules-hero">
+    <div class="rules-hero-inner">
+      <div>
+        <span class="rules-eyebrow">The Syndicate · Raid Resources</span>
+        <h1>RAID RULES</h1>
+        <p>Our shared expectations for a smooth raid: preparation, participation, loot, and looking out for one another. These are the current rules published by Syndicate leadership.</p>
       </div>
-
-      <h1>
-        Coming Soon
-      </h1>
-
-      <p>
-        This section of The Syndicate is still being built.
-        Check back soon for more information, resources,
-        and questionable levels of organization.
-      </p>
-
-    </section>
-
+      <div class="rules-hero-image"><img src="../images/Raiding.png" alt="The Syndicate — Raiding is for Everyone"></div>
+    </div>
+  </header>
+  <main class="rules-main">
+    <p class="rules-intro">Please review the guidelines before raiding. Changes published by officers appear here automatically.</p>
+    <div id="rulesStatus" class="rules-status" role="status" aria-live="polite">Loading published rules…</div>
+    <nav id="rulesToc" class="rules-toc" aria-label="On this page" hidden><h2>On this page</h2><ol id="rulesLinks"></ol></nav>
+    <div id="rulesContent" aria-label="Published raid rules"></div>
+    <p id="rulesEnd" class="rules-end" hidden>◆ This is the way. ◆</p>
   </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-
-  <footer class="site-footer">
-
-    <div class="footer-motto">
-      ✦ THIS IS THE WAY. ✦
-    </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-logo">
-
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-  </footer>
-
-
-  <!-- =========================
-       MOBILE MENU
-  ========================== -->
-
+  <div id="syndicate-footer"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="../settings/supabase-config.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script>
-
-    const menuButton =
-      document.getElementById("menuButton");
-
-    const mobileNav =
-      document.getElementById("mobileNav");
-
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          mobileNav.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen
-        );
-
+    (() => {
+      'use strict';
+      const status = document.getElementById('rulesStatus');
+      const toc = document.getElementById('rulesToc');
+      const links = document.getElementById('rulesLinks');
+      const content = document.getElementById('rulesContent');
+      const end = document.getElementById('rulesEnd');
+      const db = window.syndicateDB;
+      function setStatus(message, isError = false) {
+        status.textContent = message;
+        status.classList.toggle('error', isError);
+        status.hidden = false;
       }
-    );
-
+      // Sanitizes Quill rich text. Quill 2 uses data-list for ordered and bullet lists.
+      function safeRichText(html) {
+        return window.DOMPurify.sanitize(String(html || ''), {
+          ALLOWED_TAGS: ['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],
+          ALLOWED_ATTR: ['href','target','rel','class','data-list'],
+          ALLOW_DATA_ATTR: false
+        });
+      }
+      async function loadRules() {
+        if (!db || typeof db.from !== 'function') {
+          setStatus('Rules are temporarily unavailable: Supabase is not initialized. Check settings/supabase-config.js.', true);
+          return;
+        }
+        if (!window.DOMPurify) {
+          setStatus('Rules formatting could not load. Please refresh this page.', true);
+          return;
+        }
+        try {
+          const { data, error } = await db.from('raid_rules')
+            .select('id,section_title,slug,sort_order,published_description,published_content')
+            .eq('is_published', true)
+            .order('sort_order', { ascending: true })
+            .order('id', { ascending: true });
+          if (error) throw error;
+          const rows = data || [];
+          if (!rows.length) {
+            setStatus('No raid rules have been published yet. Please check back soon.');
+            return;
+          }
+          const fragment = document.createDocumentFragment();
+          rows.forEach((row, i) => {
+            const section = document.createElement('section');
+            section.className = 'rule-section';
+            section.id = 'rule-' + i;
+            const heading = document.createElement('h2');
+            heading.textContent = row.section_title || 'Untitled section';
+            section.appendChild(heading);
+            if (row.published_description) {
+              const description = document.createElement('p');
+              description.className = 'rule-desc';
+              description.textContent = row.published_description;
+              section.appendChild(description);
+            }
+            if (row.published_content) {
+              const text = document.createElement('div');
+              text.className = 'rule-copy ql-editor';
+              const raw = String(row.published_content);
+              if (/^\s*</.test(raw)) {
+                text.innerHTML = safeRichText(raw);
+              } else {
+                raw.split(/\n\s*\n/).filter(Boolean).forEach(part => {
+                  const p = document.createElement('p');
+                  p.textContent = part;
+                  text.appendChild(p);
+                });
+              }
+              section.appendChild(text);
+            }
+            fragment.appendChild(section);
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#' + section.id;
+            link.textContent = row.section_title || 'Untitled section';
+            li.appendChild(link);
+            links.appendChild(li);
+          });
+          content.appendChild(fragment);
+          status.hidden = true;
+          toc.hidden = rows.length < 2;
+          end.hidden = false;
+        } catch (error) {
+          console.error('Unable to load public rules:', error);
+          setStatus('Unable to load published rules: ' + (error.message || 'Unknown error') + '. Please try again later.', true);
+        }
+      }
+      loadRules();
+    })();
   </script>
-
-
 </body>
 </html>
