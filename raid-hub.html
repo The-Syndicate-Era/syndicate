@@ -24,6 +24,12 @@
     .resource-number { color:var(--gold); font-family:var(--font-heading); font-size:1rem; }
     .resource-title { color:var(--gold); font:500 1.28rem/1.3 var(--font-heading); text-decoration:underline !important; text-underline-offset:.15em; }
     .resource-title:hover, .resource-title:focus-visible { color:#efcc54; }
+    .resource-row.coming-soon { background:rgba(150,150,150,.035); }
+    .resource-row.coming-soon .resource-number,
+    .resource-row.coming-soon .resource-title { color:#817e78; }
+    .resource-row.coming-soon .resource-title { text-decoration:none !important; cursor:default; }
+    .resource-row.coming-soon .resource-description { color:#918e87; }
+    .coming-soon-label { display:inline-block; margin-top:.4rem; color:#aaa59a; border:1px solid #58554f; border-radius:3px; padding:.13rem .45rem; font:600 .72rem/1.4 var(--font-body,Arial,sans-serif); letter-spacing:.07em; white-space:nowrap; }
     .resource-description { margin:0; font-size:1.05rem; line-height:1.55; color:var(--text-light,#e6dfc9); }
     .raid-grid-section { padding:3.3rem clamp(1rem,4vw,2.25rem) 4rem; }
     .raid-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem clamp(1rem,4vw,3.5rem); justify-items:center; align-items:stretch; }
@@ -59,7 +65,7 @@
       <div class="raid-resources">
         <div class="resource-row"><span class="resource-number">1</span><a class="resource-title" href="raid-hub/raid-rules.html">RAID RULES</a><p class="resource-description">Know what to expect before you zone in — signups, loot, attendance, and raid expectations.</p></div>
         <div class="resource-row"><span class="resource-number">2</span><a class="resource-title" href="raid-hub/required-addons.html">REQUIRED ADD-ONS</a><p class="resource-description">Required and recommended add-ons to keep raids running smoothly and everyone on the same page.</p></div>
-        <div class="resource-row"><span class="resource-number">3</span><a class="resource-title" href="raid-hub/raid-consumables.html">RAID CONSUMABLES</a><p class="resource-description">Flasks, elixirs, food, potions, resistance consumables, and other items to bring to raid.</p></div>
+        <div class="resource-row coming-soon" aria-label="Raid Consumables — coming soon"><span class="resource-number">3</span><div><span class="resource-title">RAID CONSUMABLES</span><span class="coming-soon-label">COMING SOON</span></div><p class="resource-description">A future class- and raid-specific guide, developed with input from class specialists.</p></div>
       </div>
     </section>
     <section class="raid-grid-section" aria-label="Individual raid guides">
