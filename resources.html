@@ -1,14 +1,15 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>The Syndicate | Resources</title>
-  <link rel="stylesheet" href="settings/styles.css">
-  <script src="settings/font-setting.js" defer></script>
-  <script src="settings/menu.js" defer></script>
-  <script src="settings/site-layout.js" defer></script>
-  <style>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>The Syndicate | Resources</title>
+<link href="settings/styles.css" rel="stylesheet"/>
+<script defer="" src="settings/font-setting.js"></script>
+<script defer="" src="settings/menu.js"></script>
+<script defer="" src="settings/site-layout.js"></script>
+<style>
 /* Resources-specific layout. Text uses rem and scales through settings/styles.css. */
 .resources-page {background:#090909; color:#e6dfc9; min-height:65vh;}
 .resources-page a {text-decoration:none;}
@@ -27,18 +28,23 @@
 .card-link-text {display:block;margin-top:1.2rem;font-family:var(--font-heading,Cinzel,serif);font-size:.85rem;letter-spacing:.04em;text-transform:uppercase;color:#cfb36d;}
 @media(max-width:950px){.resource-grid{grid-template-columns:repeat(2,minmax(0,1fr));}}
 @media(max-width:600px){.resources-hero{min-height:12rem}.resources-hero h1{padding:1rem 1.2rem}.resources-section{padding:1.25rem 1rem 3rem}.resource-grid{grid-template-columns:1fr;gap:1rem}.resource-card{min-height:0;padding:1.35rem 1.1rem}}
+
+/* Unavailable resource card — intentionally not clickable */
+.resource-card--disabled{opacity:.44;filter:grayscale(1);cursor:default}
+.resource-card--disabled:hover{transform:none;box-shadow:none;background:#11100d;border-color:var(--gold-dark,#8f7320)}
+.resource-card--disabled h2{text-decoration:none}
 </style>
 </head>
 <body>
-  <div id="syndicate-menu"></div>
-  <main class="resources-page">
-    <section class="resources-hero" aria-labelledby="resources-title">
-      <img src="images/Map-desk.png" alt="" aria-hidden="true">
-      <h1 id="resources-title">RESOURCES</h1>
-    </section>
-    <section class="resources-section" aria-label="Guild resource directory">
-      <div class="resources-divider"></div>
-      <div class="resource-grid">
+<div id="syndicate-menu"></div>
+<main class="resources-page">
+<section aria-labelledby="resources-title" class="resources-hero">
+<img alt="" aria-hidden="true" src="images/Map-desk.png"/>
+<h1 id="resources-title">RESOURCES</h1>
+</section>
+<section aria-label="Guild resource directory" class="resources-section">
+<div class="resources-divider"></div>
+<div class="resource-grid">
 <a class="resource-card" href="resources/addons.html">
 <div>
 <h2>
@@ -83,21 +89,7 @@
           View Websites →
         </span>
 </a>
-<a class="resource-card" href="resources/class.html">
-<div>
-<h2>
-            CLASS CHANNELS
-          </h2>
-<p>
-            Find experienced Syndicate players
-            to ask for class-specific advice,
-            builds, gear help, and raid tips.
-          </p>
-</div>
-<span class="card-link-text">
-          Find Your Class →
-        </span>
-</a>
+
 <a class="resource-card" href="resources/attune-key.html">
 <div>
 <h2>
@@ -128,9 +120,21 @@
           View Reputations →
         </span>
 </a>
-      </div>
-    </section>
-  </main>
-  <div id="syndicate-footer"></div>
+<div aria-disabled="true" class="resource-card resource-card--disabled">
+<div>
+<h2>
+            CLASS CHANNELS
+          </h2>
+<p>
+            Find experienced Syndicate players
+            to ask for class-specific advice,
+            builds, gear help, and raid tips.
+          </p>
+</div>
+<span class="card-link-text">Coming Soon</span>
+</div></div>
+</section>
+</main>
+<div id="syndicate-footer"></div>
 </body>
 </html>
