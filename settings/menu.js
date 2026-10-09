@@ -1,82 +1,93 @@
-/* The Syndicate — shared navigation. Place this file at settings/menu.js. */
+/* The Syndicate — shared slide-out navigation. Save as settings/menu.js */
 (() => {
   'use strict';
   const script = document.currentScript;
-  const siteRoot = new URL('../', script?.src || document.baseURI);
-  const siteUrl = path => new URL(path, siteRoot).href;
-  const links = [
-    { label: 'Home', path: 'index.html' },
-    { label: 'Guild', path: 'guild.html' },
-    { label: 'Calendar', path: 'calendar.html' },
-    { label: 'Raid Hub', path: 'raids.html', children: [
-      { label: 'Raid Rules', path: 'raid-hub/raid-rules.html' },
-      { label: 'Roll Bonuses', path: 'raid-hub/roll-bonuses.html' },
-      { label: 'Consumables', path: 'raid-hub/raid-consumables.html' },
-      { label: 'Required Addons', path: 'raid-hub/required-addons.html' },
-      { label: 'Onyxia', path: 'raids/ony.html' },
-      { label: 'Zul’Gurub', path: 'raids/zg.html' },
-      { label: 'AQ20', path: 'raids/aq20.html' },
-      { label: 'Molten Core', path: 'raids/mc.html' },
-      { label: 'Blackwing Lair', path: 'raids/bwl.html' },
-      { label: 'AQ40', path: 'raids/aq40.html' }
-    ] },
-    { label: 'Resources', path: 'resources.html', children: [
-      { label: 'Addons', path: 'resources/addons.html' },
-      { label: 'Attunement Keys', path: 'resources/attune-key.html' },
-    /*  { label: 'Class Information', path: 'resources/class.html' }, */
-      { label: 'Professions & Crafting', path: 'resources/professions-crafting.html' },
-      { label: 'Reputations', path: 'resources/reputations.html' },
-      { label: 'Supportive Websites', path: 'resources/support-websites.html' }
-    ] }
+  const root = new URL('../', script ? script.src : document.baseURI);
+  const url = path => new URL(path, root).href;
+  const menuItems = [
+    ['HOME', 'index.html'],
+    ['The Syndicate', 'guild.html'],
+    ['CALENDAR', 'calendar.html'],
+    ['RAID HUB', 'raids.html'],
+    ['RESOURCES', 'resources.html']
   ];
 
-  const el = (tag, className, text) => {
-    const node = document.createElement(tag);
-    if (className) node.className = className;
-    if (text !== undefined) node.textContent = text;
-    return node;
-  };
-  const current = new URL(location.href);
-  const at = path => current.pathname === new URL(path, siteRoot).pathname;
   function render() {
     if (document.querySelector('.syn-menu')) return;
-    const header = el('header','syn-menu');
-    const inner = el('div','syn-menu__inner');
-    const brand = el('a','syn-menu__logo'); brand.href=siteUrl('index.html'); brand.setAttribute('aria-label','The Syndicate home');
-    const logo = el('img'); logo.src=siteUrl('images/HeaderLogo.png'); logo.alt='The Syndicate'; brand.appendChild(logo); inner.appendChild(brand);
-    const toggle = el('button','syn-menu__toggle','☰'); toggle.type='button'; toggle.setAttribute('aria-label','Open navigation menu'); toggle.setAttribute('aria-expanded','false'); toggle.setAttribute('aria-controls','syn-menu-links'); inner.appendChild(toggle);
-    const nav = el('nav','syn-menu__nav'); nav.id='syn-menu-links'; nav.setAttribute('aria-label','Main navigation');
-    for (const item of links) {
-      const group = el('div','syn-menu__group');
-      const link = el('a','syn-menu__link',item.label); link.href=siteUrl(item.path);
-      if (at(item.path)) link.setAttribute('aria-current','page');
-      group.appendChild(link);
-      if (item.children) {
-        const dropdownId='syn-sub-'+item.label.toLowerCase().replace(/\W+/g,'-');
-        const expand=el('button','syn-menu__expand','▾'); expand.type='button'; expand.setAttribute('aria-label',`Show ${item.label} submenu`); expand.setAttribute('aria-expanded','false'); expand.setAttribute('aria-controls',dropdownId);
-        const sub=el('div','syn-menu__sub'); sub.id=dropdownId;
-        for (const child of item.children) {
-          const a=el('a','',child.label); a.href=siteUrl(child.path); if(at(child.path)) a.setAttribute('aria-current','page'); sub.appendChild(a);
-        }
-        expand.addEventListener('click',()=>{
-          const open=group.dataset.open!=='true';
-          nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{
-            g.dataset.open='false'; g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false');
-          });
-          group.dataset.open=String(open); expand.setAttribute('aria-expanded',String(open));
-        });
-        group.append(expand,sub);
-      }
-      nav.appendChild(group);
+    const mount = document.getElementById('syndicate-menu');
+    const header = document.createElement('header');
+    header.className = 'syn-menu';
+    header.innerHTML = `
+      <div class="syn-menu__inner">
+        <a class="syn-menu__logo" href="${url('index.html')}" aria-label="The Syndicate home">
+          <img src="${url('images/HeaderLogo.png')}" alt="The Syndicate">
+        </a>
+        <button class="syn-menu__toggle" type="button" aria-label="Open menu"
+          aria-controls="syn-menu-drawer" aria-expanded="false">☰</button>
+      </div>`;
+    if (mount) mount.replaceWith(header); else document.body.prepend(header);
+
+    const overlay = document.createElement('div');
+    overlay.className = 'syn-menu__overlay';
+    overlay.hidden = true;
+    const drawer = document.createElement('aside');
+    drawer.id = 'syn-menu-drawer';
+    drawer.className = 'syn-menu__drawer';
+    drawer.setAttribute('aria-label', 'Site navigation');
+    drawer.setAttribute('aria-hidden', 'true');
+    drawer.inert = true;
+    const closeButton = document.createElement('button');
+    closeButton.className = 'syn-menu__close';
+    closeButton.type = 'button';
+    closeButton.setAttribute('aria-label', 'Close menu');
+    closeButton.textContent = '×';
+    const brand = document.createElement('a');
+    brand.className = 'syn-menu__drawer-logo';
+    brand.href = url('index.html');
+    brand.innerHTML = `<img src="${url('images/HeaderLogo.png')}" alt="The Syndicate">`;
+    const nav = document.createElement('nav');
+    nav.className = 'syn-menu__drawer-links';
+    nav.setAttribute('aria-label', 'Main navigation');
+    for (const [label, path] of menuItems) {
+      const a = document.createElement('a');
+      a.textContent = label;
+      a.href = url(path);
+      if (location.pathname === new URL(path, root).pathname) a.setAttribute('aria-current', 'page');
+      nav.appendChild(a);
     }
-    inner.appendChild(nav); header.appendChild(inner);
-    const target=document.getElementById('syndicate-menu');
-    if(target) target.replaceWith(header); else document.body.prepend(header);
-    toggle.addEventListener('click',()=>{
-      const open=header.dataset.mobileOpen!=='true'; header.dataset.mobileOpen=String(open); toggle.setAttribute('aria-expanded',String(open)); toggle.textContent=open?'✕':'☰'; toggle.setAttribute('aria-label',open?'Close navigation menu':'Open navigation menu');
+    const motto = document.createElement('div');
+    motto.className = 'syn-menu__drawer-motto';
+    motto.textContent = '◆ THIS IS THE WAY. ◆';
+    drawer.append(closeButton, brand, nav, motto);
+    document.body.append(overlay, drawer);
+    const openButton = header.querySelector('.syn-menu__toggle');
+    let previouslyFocused = null;
+    function setOpen(open) {
+      if (open) previouslyFocused = document.activeElement;
+      overlay.hidden = !open;
+      drawer.classList.toggle('is-open', open);
+      overlay.classList.toggle('is-open', open);
+      drawer.setAttribute('aria-hidden', String(!open));
+      drawer.inert = !open;
+      openButton.setAttribute('aria-expanded', String(open));
+      document.body.classList.toggle('syn-menu-drawer-open', open);
+      if (open) closeButton.focus();
+      else if (previouslyFocused?.isConnected) previouslyFocused.focus();
+    }
+    openButton.addEventListener('click', () => setOpen(true));
+    closeButton.addEventListener('click', () => setOpen(false));
+    overlay.addEventListener('click', () => setOpen(false));
+    document.addEventListener('keydown', e => {
+      if (!drawer.classList.contains('is-open')) return;
+      if (e.key === 'Escape') { e.preventDefault(); setOpen(false); }
+      if (e.key === 'Tab') {
+        const controls = Array.from(drawer.querySelectorAll('button, a'));
+        const first = controls[0], last = controls[controls.length-1];
+        if (e.shiftKey && document.activeElement === first) { e.preventDefault(); last.focus(); }
+        else if (!e.shiftKey && document.activeElement === last) { e.preventDefault(); first.focus(); }
+      }
     });
-    document.addEventListener('click',ev=>{if(!header.contains(ev.target)) {header.dataset.mobileOpen='false';toggle.setAttribute('aria-expanded','false'); toggle.textContent='☰'; nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{g.dataset.open='false';g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false')});}});
-    document.addEventListener('keydown',ev=>{if(ev.key==='Escape') {header.dataset.mobileOpen='false';toggle.setAttribute('aria-expanded','false');toggle.textContent='☰'; toggle.setAttribute('aria-label','Open navigation menu');nav.querySelectorAll('.syn-menu__group[data-open="true"]').forEach(g=>{g.dataset.open='false';g.querySelector('.syn-menu__expand')?.setAttribute('aria-expanded','false')});}});
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',render,{once:true}); else render();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', render, { once:true });
+  else render();
 })();
