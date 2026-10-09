@@ -1,123 +1,118 @@
 /* =========================================
-   THE SYNDICATE
-   BRAND STYLESHEET
+   THE SYNDICATE — SHARED BRAND STYLESHEET
+   Text size: Standard 18px / Large 21px / Extra Large 24px
    ========================================= */
-
-
-/* ---------- FONTS ---------- */
-
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap');
 
-
-/* ---------- BRAND VARIABLES ---------- */
-
 :root {
-
-  /* Fonts */
   --font-heading: "Cinzel", serif;
   --font-body: "Palatino Linotype", "Book Antiqua", Palatino, serif;
 
-
-  /* Heading Sizes */
-  --h1-size: 64px;
-  --h2-size: 52px;
-  --h3-size: 42px;
-  --h4-size: 34px;
-  --h5-size: 28px;
-  --h6-size: 22px;
-
-
-  /* Paragraph Sizes */
-  --paragraph-large: 18px;
-  --paragraph-standard: 16px;
-  --paragraph-small: 14px;
-
-
-  /* Colors */
   --background-main: #000000;
   --background-dark: #0b0b0b;
-
   --gold: #d4af37;
   --gold-dark: #8f7320;
-
   --text-main: #d4af37;
   --text-light: #d8c98f;
+
+  /* Shared size system — based on root font size */
+  --paragraph-large: 1.125rem;
+  --paragraph-standard: 1rem;
+  --paragraph-small: 0.9rem;
+  --h1-size: clamp(2.15rem, 4.5vw, 3.55rem);
+  --h2-size: clamp(1.9rem, 3.8vw, 2.9rem);
+  --h3-size: clamp(1.65rem, 3.2vw, 2.35rem);
+  --h4-size: clamp(1.4rem, 2.8vw, 1.9rem);
+  --h5-size: 1.55rem;
+  --h6-size: 1.25rem;
 }
 
+html {
+  font-size: 18px;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+html[data-syndicate-text-size="large"] { font-size: 21px; }
+html[data-syndicate-text-size="extra-large"] { font-size: 24px; }
 
-/* ---------- GLOBAL ---------- */
-
+*, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0;
-
-  background-color: var(--background-main);
-
+  background: var(--background-main);
+  color: var(--text-main);
   font-family: var(--font-body);
   font-size: var(--paragraph-standard);
-
-  color: var(--text-main);
+  line-height: 1.55;
 }
 
-
-/* ---------- HEADINGS ---------- */
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
+h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-heading);
-  font-weight: 400;
+  font-weight: 500;
+  line-height: 1.22;
   margin-top: 0;
+  overflow-wrap: anywhere;
 }
+h1 { font-size: var(--h1-size); }
+h2 { font-size: var(--h2-size); }
+h3 { font-size: var(--h3-size); }
+h4 { font-size: var(--h4-size); }
+h5 { font-size: var(--h5-size); }
+h6 { font-size: var(--h6-size); }
 
+p { font-size: var(--paragraph-standard); line-height: 1.65; }
+.paragraph-large { font-size: var(--paragraph-large); line-height: 1.6; }
+.paragraph-small { font-size: var(--paragraph-small); line-height: 1.55; }
 
-h1 {
-  font-size: var(--h1-size);
+/* Normal site controls and tabular data use readable type. */
+button, input, select, textarea { font: inherit; }
+button, select { cursor: pointer; }
+input, select, textarea { max-width: 100%; }
+button:focus-visible, a:focus-visible, input:focus-visible,
+select:focus-visible, textarea:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
 }
+table { font-size: 1rem; }
+th { text-align: left; }
+th, td { padding: 0.65rem 0.75rem; }
 
-
-h2 {
-  font-size: var(--h2-size);
+/* Shared accessibility control, injected by font-settings.js */
+.syndicate-font-controls {
+  position: fixed;
+  bottom: 1rem;
+  right: 1rem;
+  z-index: 9999;
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  flex-wrap: wrap;
+  padding: 0.5rem;
+  border: 1px solid var(--gold-dark);
+  border-radius: 0.65rem;
+  background: #15120ff0;
+  box-shadow: 0 4px 18px #0009;
+  color: #f3e9d2;
+  font: 600 0.85rem/1.35 var(--font-body);
 }
-
-
-h3 {
-  font-size: var(--h3-size);
+.syndicate-font-controls__label { margin-inline: 0.25rem; }
+.syndicate-font-controls button {
+  min-height: 2.5rem;
+  min-width: 2.7rem;
+  padding: 0.3rem 0.55rem;
+  border: 1px solid var(--gold-dark);
+  border-radius: 0.4rem;
+  background: #211a11;
+  color: #f5e8cc;
+  font: inherit;
 }
-
-
-h4 {
-  font-size: var(--h4-size);
+.syndicate-font-controls button[aria-pressed="true"] {
+  color: #111;
+  background: var(--gold);
+  font-weight: 700;
 }
-
-
-h5 {
-  font-size: var(--h5-size);
-}
-
-
-h6 {
-  font-size: var(--h6-size);
-}
-
-
-/* ---------- PARAGRAPHS ---------- */
-
-.paragraph-large {
-  font-size: var(--paragraph-large);
-  line-height: 1.6;
-}
-
-
-p {
-  font-size: var(--paragraph-standard);
-  line-height: 1.6;
-}
-
-
-.paragraph-small {
-  font-size: var(--paragraph-small);
-  line-height: 1.5;
+.syndicate-font-controls button:hover { border-color: var(--gold); }
+@media (max-width: 560px) {
+  .syndicate-font-controls { bottom: 0.5rem; right: 0.5rem; padding: 0.35rem; }
+  .syndicate-font-controls__label { display: none; }
+  th, td { padding: 0.45rem; }
 }
