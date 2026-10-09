@@ -109,13 +109,13 @@
   <div id="syndicate-footer"></div>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="settings/supabase-config.js"></script>
-  <script src="settings/guild-data.js"></script>
+  <script src="settings/guild-data.js?v=20261009-2" onerror="window.syndicateGuildScriptFailed=true; console.error('Could not load settings/guild-data.js from GitHub Pages')"></script>
   <script>
     (async function loadOverview(){
       const status = document.getElementById('rosterMessage');
       try {
         if (!window.SyndicateGuild || typeof window.SyndicateGuild.getRosterCounts !== 'function') {
-          throw new Error('Shared guild data helper is not available. Check settings/guild-data.js.');
+          throw new Error(window.syndicateGuildScriptFailed ? 'settings/guild-data.js failed to load. Verify the published JS URL and filename.' : 'Guild data helper did not initialize. Try a hard refresh and check the browser console for JavaScript errors.');
         }
         const { total, mains, alts, unclassified } = await window.SyndicateGuild.getRosterCounts();
         document.getElementById('totalCharacters').textContent = total.toLocaleString();
