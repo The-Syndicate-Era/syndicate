@@ -1,13 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Zul'Gurub | The Syndicate</title>
   <link rel="stylesheet" href="../settings/styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
-  <script src="../settings/font-setting.js" defer></script>
-  <script src="../settings/site-layout.js" defer></script>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Centralized Supabase connection -->
+<script src="../settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="../settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="../settings/page-guard.js" defer></script>
+
+<!-- Shared website scripts -->
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+
   <style>
     :root{--zg-gold:#dfbb53;--zg-border:#574726;--zg-text:#e4dbca;--zg-muted:#c9bda7}
     html{scroll-behavior:smooth}
@@ -58,7 +74,8 @@
   </style>
 </head>
 <body>
-  <!-- This raid page intentionally has no hamburger navigation. -->
+<body>
+  <div id="syndicate-menu"></div>
   <div id="syndicate-subheader" data-section="raid-hub" data-title="Zul'Gurub">
     <nav class="fallback-crumb" aria-label="Raid Hub navigation"><a href="../raid-hub.html">← Raid Hub</a> › Zul'Gurub</nav>
   </div>
@@ -114,9 +131,7 @@
     </main>
   </div>
   <div id="syndicate-footer"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../settings/supabase-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script>
     (()=>{
       'use strict';
@@ -148,7 +163,11 @@ const matches = (data || []).filter(r =>
           fallback.hidden=true;target.hidden=false;status.hidden=true;
         }catch(error){console.error('ZG rules load failed:',error);showFallback('Unable to load the published ZG rules right now.');}
       }
-      loadZGRules();
+
+document.addEventListener('DOMContentLoaded', () => {
+  loadZGRules();
+});
+
     })();
   </script>
 </body>
