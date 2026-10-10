@@ -111,11 +111,10 @@
     </section>
   </main>
   <div id="syndicate-footer"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     'use strict';
-    const db = window.syndicateDB;
+ let db = null;
     const grid = document.getElementById('calendarGrid');
     const title = document.getElementById('calendarTitle');
     const today = new Date();
@@ -176,7 +175,21 @@
     document.getElementById('prevMonth').addEventListener('click',()=>{displayedDate=new Date(displayedDate.getFullYear(),displayedDate.getMonth()-1,1);loadEvents();});
     document.getElementById('nextMonth').addEventListener('click',()=>{displayedDate=new Date(displayedDate.getFullYear(),displayedDate.getMonth()+1,1);loadEvents();});
     document.getElementById('todayButton').addEventListener('click',()=>{displayedDate=new Date(today.getFullYear(),today.getMonth(),1);loadEvents();});
-    loadEvents();
+    
+window.addEventListener('DOMContentLoaded', () => {
+  db = window.syndicateDB;
+
+  if (!db) {
+    showMessage(
+      'Supabase connection is unavailable. Please refresh the page.',
+      true
+    );
+    return;
+  }
+
+  loadEvents();
+});
+
   </script>
 </body>
 </html>
