@@ -8,22 +8,24 @@
   <title>Professions & Crafting | The Syndicate</title>
   <link rel="stylesheet" href="../settings/styles.css">
 
+
 <!-- Supabase library -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
 <!-- Shared Supabase connection -->
-<script src="settings/supabase-config.js" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
 
 <!-- Discord authentication -->
-<script src="settings/auth.js" defer></script>
+<script src="../settings/auth.js" defer></script>
 
 <!-- Syndicate membership protection -->
-<script src="settings/page-guard.js" defer></script>
+<script src="../settings/page-guard.js" defer></script>
 
-<!-- Existing website scripts -->
-<script src="settings/font-setting.js" defer></script>
-<script src="settings/menu.js" defer></script>
-<script src="settings/site-layout.js" defer></script>
+<!-- Shared website scripts -->
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+
 
   <style>
     :root {
@@ -1516,7 +1518,7 @@ main { padding-top: 1.7rem; }
        SUPABASE
     ============================================================ */
 
-    const db = window.syndicateDB;
+   let db = null;
 
 
     /* ============================================================
@@ -4019,8 +4021,23 @@ main { padding-top: 1.7rem; }
        START
     ============================================================ */
 
-    if (!db) { resultsGrid.innerHTML = '<div class="state-message">Supabase connection unavailable. Check settings/supabase-config.js.</div>'; }
-    else loadData();
+
+document.addEventListener('DOMContentLoaded', () => {
+  db = window.syndicateDB;
+
+  if (!db) {
+    resultsGrid.innerHTML = `
+      <div class="state-message">
+        Supabase connection unavailable.
+        Please refresh the page.
+      </div>
+    `;
+    return;
+  }
+
+  loadData();
+});
+
 
   </script>
 
