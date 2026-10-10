@@ -96,26 +96,14 @@
 document.addEventListener('DOMContentLoaded', () => {
   const RETURN_KEY = 'syndicate_return_to';
 
-  // Only show after a protected page redirects here.
-  const intendedPage = sessionStorage.getItem(RETURN_KEY);
-  if (!intendedPage) return;
+// Only show after a protected page redirects here.
+const intendedPage = sessionStorage.getItem(RETURN_KEY);
+if (!intendedPage) return;
 
-  // Ensure this visitor is actually logged out.
-  const auth = window.syndicateAuth;
-  if (!auth || typeof auth.getUser !== 'function') return;
+const auth = window.syndicateAuth;
 
-  (async () => {
-    let user;
-    try {
-      user = await auth.getUser();
-    } catch (error) {
-      console.warn('Unable to check login status:', error);
-      return;
-    }
-
-    if (user) return;
-
-    const overlay = document.createElement('div');
+(() => {
+  const overlay = document.createElement('div');
     overlay.id = 'syndicate-login-notice';
 
     Object.assign(overlay.style, {
