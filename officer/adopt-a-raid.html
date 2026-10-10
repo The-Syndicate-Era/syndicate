@@ -1,11 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Raid Responsibilities | The Syndicate</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-<style>
+
+<!-- Shared Syndicate styles -->
+<link rel="stylesheet" href="../settings/styles.css">
+
+<!-- Supabase and Discord -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
+<script src="../settings/auth.js" defer></script>
+
+<!-- Dark Council access verification -->
+<script src="../settings/officer-guard.js" defer></script>
+
+<!-- Shared site layout -->
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+
+ 
+ <style>
 :root{--bg:#09090c;--panel:#151318;--panel2:#211d23;--line:#493b2a;--gold:#cba458;--bright:#eed8aa;--text:#f0e9db;--muted:#b7ac9d;--red:#d05b60;--green:#61ad7c;--purple:#b68aeb;--blue:#80b2e7}
 *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.55 Inter,Arial,sans-serif}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:wait}a{color:inherit;text-decoration:none}h1,h2,h3{font-family:Cinzel,Georgia,serif}h2{font-size:1.2rem;color:var(--bright);margin:0}h3{font-size:1rem;color:var(--bright)}.muted{color:var(--muted)}.small{font-size:12px}
 .site-header{height:70px;background:#0b0a0d;border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 clamp(15px,4vw,42px)}.logo img{height:45px;width:auto;max-width:220px;object-fit:contain}.btn{background:#272128;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:9px 13px}.btn:hover{border-color:var(--gold)}.btn.primary{background:#b28a47;color:#11100e;font-weight:700;border-color:#cba45b}.btn.pressed{background:#44341f;border-color:var(--gold)}
@@ -17,9 +35,10 @@
 </style>
 </head>
 <body>
-<header class="site-header"><a href="index.html" class="logo"><img src="images/HeaderLogo.png" alt="The Syndicate"></a><button id="openMenu" class="btn" aria-label="Open menu">☰</button></header>
-<div id="shade" class="shade"></div><nav id="drawer" class="drawer" aria-label="Main navigation"><button id="closeMenu" class="btn" style="float:right">✕</button><h2>The Syndicate</h2><a href="index.html">Home</a><a href="guild.html">The Syndicate</a><a href="calendar.html">Calendar</a><a href="raids.html">Raid Hub</a><a href="resources.html">Resources</a></nav>
-<section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Operations</div><h1>Raid Responsibilities</h1><p>A simple place for officers to volunteer as Raid Lead or Master Looter, and let the crew know when they're available.</p></div></section>
+
+<div id="syndicate-menu"></div>
+
+ <section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Operations</div><h1>Raid Responsibilities</h1><p>A simple place for officers to volunteer as Raid Lead or Master Looter, and let the crew know when they're available.</p></div></section>
 <main class="wrap">
 <div class="tabs"><button class="tab active" data-tab="calendarView">Raid Calendar &amp; Sign-Ups</button><button class="tab" data-tab="availabilityView">Officer Availability</button><button class="tab" data-tab="summaryView">Monthly Overview</button></div>
 <div id="message" class="notice" role="status" aria-live="polite" hidden></div>
@@ -29,38 +48,14 @@
 <div class="footer">◆ THIS IS THE WAY. ◆</div></main>
 <div id="raidModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-top"><div><div class="eyebrow">Officer Sign-Up</div><h2 id="modalTitle">Raid</h2><p id="modalDate" class="small muted"></p></div><button class="btn" id="closeRaid">✕</button></div><div id="modalBody"></div></section></div>
 <div id="dayModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle"><div class="modal-top"><h2 id="dayModalTitle">Availability</h2><button class="btn" id="closeDay">✕</button></div><div id="dayModalBody"></div></section></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 'use strict';
-// Copy the same public/publishable key used in calendar.html. NEVER use a service-role key here.
  
-const SUPABASE_URL = 'https://vjxbulbnozopbuzyxxob.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZqeGJ1bGJub3pvcGJ1enl4eG9iIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTEzMTg0ODUsImV4cCI6MjEwNjg5NDQ4NX0.g91CnhZPOKdOsopg7gmv2ExXgen3g-ixXpJpITD9kq4';
-const client = window.supabase?.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-function ready() {
-  if (!window.supabase) {
-    notice(
-      'Supabase library failed to load. Check the script connection.',
-      'error'
-    );
-    return false;
-  }
-
-  if (!SUPABASE_KEY ||
-      SUPABASE_KEY.startsWith('PASTE_') ||
-      SUPABASE_KEY === 'REMOVED') {
-    notice(
-      'Supabase configuration is missing.',
-      'error'
-    );
-    return false;
-  }
-
-  return true;
+// Shared Syndicate Supabase connection.
+// Initialized after Officer access is granted.
+let client = null;
+ function ready() {
+  return !!client && typeof client.from === 'function';
 }
 const EVENT_TABLE='Events', SIGNUP_TABLE='raid_responsibility_signups', AVAIL_TABLE='raid_officer_unavailability';
 // The existing SQL requires BOTH preferences to be populated; 'no' is the default for the role not yet selected.
@@ -75,7 +70,7 @@ const title=e=>String(e.event||e.event_name||e.name||'Raid');
 const raidId=e=>String(e.id);
 const isRaid=e=>String(e.type||'').trim().toLowerCase()==='raid'||RAID_PATTERN.test(title(e));
 const today=new Date();let year=today.getFullYear(),month=today.getMonth(),raids=[],signups=[],availability=[],modalId=null,modalMode=null;
-function ready(){return !!client && !!SUPABASE_KEY && !SUPABASE_KEY.startsWith('PASTE_') && SUPABASE_KEY!=='REMOVED'}
+
 function notice(text,kind=''){const m=$('message');m.hidden=false;m.className='notice '+kind;m.textContent=text}
 function clearNotice(){$('message').hidden=true}
 function people(id){return signups.filter(s=>String(s.event_id)===String(id))}
@@ -138,8 +133,13 @@ const response=await client.from(AVAIL_TABLE).select('*').lt('start_date',end).g
 function setMonth(delta){const d=new Date(year,month+delta,1);year=d.getFullYear();month=d.getMonth();raids=[];signups=[];availability=[];load()}
 $('prev').onclick=()=>setMonth(-1);$('next').onclick=()=>setMonth(1);$('todayBtn').onclick=()=>{year=today.getFullYear();month=today.getMonth();raids=[];signups=[];availability=[];load()};
 for(const tab of document.querySelectorAll('[data-tab]'))tab.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(b=>{const active=b===tab;b.classList.toggle('active',active);$(b.dataset.tab).hidden=!active})};
-function menu(open){$('shade').classList.toggle('open',open);$('drawer').classList.toggle('open',open)}$('openMenu').onclick=()=>menu(true);$('closeMenu').onclick=()=>menu(false);$('shade').onclick=()=>menu(false);
-function raidDate(e){const date=new Date(dateOnly(e.date)+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});return date+(e.time?' · '+e.time:'')}
+document.onkeydown=e=>{
+  if(e.key==='Escape'){
+    closeRaid();
+    closeDay();
+  }
+};
+ function raidDate(e){const date=new Date(dateOnly(e.date)+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});return date+(e.time?' · '+e.time:'')}
 function modalError(t){const h=$('modalError');if(h){h.textContent=t;h.hidden=false}}
 function openRaid(id){const e=raids.find(r=>raidId(r)===String(id));if(!e)return;modalId=String(id);modalMode=null;$('modalTitle').textContent=title(e);$('modalDate').textContent=raidDate(e);$('raidModal').hidden=false;document.body.style.overflow='hidden';drawModal()}
 function closeRaid(){$('raidModal').hidden=true;document.body.style.overflow='';modalId=null;modalMode=null}
@@ -155,8 +155,25 @@ const peopleBox=node('section','people');peopleBox.append(node('h3','','Officer 
 const AFK=overlapping(dateOnly(e.date));const availBox=node('section','people');availBox.append(node('h3','','Officer Availability'));if(!AFK.length)availBox.append(node('p','muted small','No officer availability notes for this day.'));else for(const a of AFK){const line=node('div','people-row'),kind=availabilityKind(a),desc=(kind==='available'?'Available':'AFK')+(availabilityNote(a)?' · '+availabilityNote(a):'');line.append(node('strong','',a.toon_name),node('span','small',desc));availBox.append(line)}host.append(availBox)}
 $('closeRaid').onclick=closeRaid;$('raidModal').onclick=e=>{if(e.target===$('raidModal'))closeRaid()};
 function openDay(day){const dates=overlapping(day);$('dayModalTitle').textContent='Officer Availability · '+day;const body=$('dayModalBody');body.replaceChildren();for(const a of dates){const item=node('div','people-row');item.append(node('strong','',a.toon_name),node('span','small',(availabilityKind(a)==='available'?'Available':'AFK')+(availabilityNote(a)?' · '+availabilityNote(a):'')));body.append(item)}$('dayModal').hidden=false}
-function closeDay(){$('dayModal').hidden=true}$('closeDay').onclick=closeDay;$('dayModal').onclick=e=>{if(e.target===$('dayModal'))closeDay()};document.onkeydown=e=>{if(e.key==='Escape'){closeRaid();closeDay();menu(false)}};
-let editingAvailabilityId=null;
+
+function closeDay() {
+  $('dayModal').hidden = true;
+}
+
+$('closeDay').onclick = closeDay;
+
+$('dayModal').onclick = e => {
+  if (e.target === $('dayModal')) closeDay();
+};
+
+document.onkeydown = e => {
+  if (e.key === 'Escape') {
+    closeRaid();
+    closeDay();
+  }
+};
+
+ let editingAvailabilityId=null;
 function resetAvailabilityEdit(){
  editingAvailabilityId=null;$('availabilityForm').reset();$('availabilitySave').textContent='Save Availability';$('cancelAvailabilityEdit').hidden=true;
 }
@@ -209,7 +226,48 @@ $('availabilityForm').onsubmit=async ev=>{
  resetAvailabilityEdit();await load();notice('Availability saved.','success');
 };
 function renderSummary(){const host=$('summaryRows');host.replaceChildren();for(const r of raids){const line=node('tr'),rl=roleInfo(raidId(r),'rl').replace(/^RL: /,''),ml=roleInfo(raidId(r),'ml').replace(/^ML: /,'');for(const value of [title(r),dateOnly(r.date),rl,ml,coverageText(coverage(r))])line.append(node('td','',value));host.append(line)}if(!raids.length){const row=node('tr'),cell=node('td','muted','No raid events for this month.');cell.colSpan=5;row.append(cell);host.append(row)}}
-render();load();
+
+document.addEventListener('DOMContentLoaded', () => {
+
+  let started = false;
+
+  function startOfficerPage() {
+    if (started) return;
+
+    // Only initialize data after the Officer Guard grants access.
+    if (!document.documentElement.classList.contains(
+      'syn-access-granted'
+    )) {
+      return;
+    }
+
+    client = window.syndicateDB;
+
+    if (!ready()) {
+      notice(
+        'The Syndicate database connection is unavailable.',
+        'error'
+      );
+      return;
+    }
+
+    started = true;
+    observer.disconnect();
+
+    render();
+    load();
+  }
+
+  const observer = new MutationObserver(startOfficerPage);
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+
+  startOfficerPage();
+});
+
 </script>
 </body>
 </html>
