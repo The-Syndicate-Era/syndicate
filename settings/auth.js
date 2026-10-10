@@ -210,14 +210,17 @@
         };
       }
 
-      if (data?.verified === true &&
-          data?.status === 'member') {
-        return {
-          verified: true,
-          status: 'member',
-          checkedAt: data.checkedAt
-        };
-      }
+      
+if (data?.verified === true &&
+    data?.status === 'member') {
+  return {
+    verified: true,
+    status: 'member',
+    isOfficer: data.isOfficer === true,
+    checkedAt: data.checkedAt
+  };
+}
+
 
       return {
         verified: false,
