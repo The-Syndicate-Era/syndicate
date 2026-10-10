@@ -1,15 +1,31 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Required Raid Add-ons | The Syndicate</title>
   <link rel="stylesheet" href="../settings/styles.css">
-  <script src="../settings/font-setting.js" defer></script>
-  <script src="../settings/site-layout.js" defer></script>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../settings/supabase-config.js"></script>
-  <script src="../settings/addon-data.js"></script>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Shared Supabase connection -->
+<script src="../settings/supabase-config.js" defer></script>
+
+<!-- Shared Add-ons database module -->
+<script src="../settings/addon-data.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="../settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="../settings/page-guard.js" defer></script>
+
+<!-- Shared website scripts -->
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+
   <style>
     body { background:#080807 !important; color:#e5dcca; }
     #syndicate-subheader { background:#100e0b; border-bottom:1px solid #695329; }
@@ -45,7 +61,8 @@
   </style>
 </head>
 <body>
-  <!-- No hamburger header on this raid-resource reading page. -->
+<body>
+  <div id="syndicate-menu"></div>
   <div id="syndicate-subheader" data-section="raid-hub" data-title="Required Add-ons"><nav class="raid-addon-crumb" aria-label="Raid Hub navigation"><a href="../raid-hub.html">← Raid Hub</a><span aria-hidden="true">›</span><span aria-current="page">Required Add-ons</span></nav></div>
   <main class="raid-addon-main">
     <header class="raid-addon-intro">
@@ -64,7 +81,7 @@
   </main>
   <div id="syndicate-footer"></div>
   <script>
-  (async function(){
+ document.addEventListener('DOMContentLoaded', async function () {
     'use strict';
     const target={required:document.getElementById('requiredAddons'),recommended:document.getElementById('recommendedAddons')};
     function render(item,where){
@@ -91,7 +108,7 @@
         filtered.forEach(x=>render(x,el));
       }
     }catch(err){for(const el of Object.values(target))el.textContent='Unable to load add-ons: '+err.message;}
-  })();
+  });
   </script>
 </body>
 </html>
