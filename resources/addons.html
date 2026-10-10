@@ -1,10 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Add-ons | The Syndicate</title>
 <link rel="stylesheet" href="../settings/styles.css">
+  <!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Shared Supabase connection -->
+<script src="settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="settings/page-guard.js" defer></script>
+
+<!-- Existing website scripts -->
+<script src="settings/font-setting.js" defer></script>
+<script src="settings/menu.js" defer></script>
+<script src="settings/site-layout.js" defer></script>
 <style>
 /* Page-only layout. Shared branding, header, footer and root font-size live in settings/. */
 .addons-page { --addon-outline: #6c5520; --addon-gold: var(--gold, #d4af37); --addon-copy: #d8d0bb; max-width: 1510px; margin: 0 auto; padding: 2rem clamp(1rem,3.2vw,3rem) 5rem; color: var(--addon-copy); }
@@ -47,13 +63,7 @@
 @media(max-width:1080px){.addons-layout{grid-template-columns:minmax(210px, 1fr) minmax(0, 1.65fr)} .filters{grid-template-columns:1fr 1fr}.filters input{grid-column:1/-1}}
 @media(max-width:768px){.addons-page{padding:1.3rem 1rem 3rem}.addons-layout{grid-template-columns:1fr}.addons-image{grid-column:1;grid-row:1;position:static;display:flex;justify-content:center}.addons-image picture{display:block;width:min(100%,280px)}.addons-image img{max-height:280px;aspect-ratio:1/1;object-fit:contain}.addons-directory{grid-column:1;grid-row:2}.filters{grid-template-columns:1fr 1fr}}
 @media(max-width:480px){.filters{grid-template-columns:1fr}.filters input{grid-column:auto}.addon-toggle{padding:0.72rem 0.75rem}.addon-panel{padding-left:0.75rem;padding-right:0.75rem}}
-</style>
-<script src="../settings/font-setting.js" defer></script>
-<script src="../settings/menu.js" defer></script>
-<script src="../settings/site-layout.js" defer></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../settings/supabase-config.js"></script>
-<script src="../settings/addon-data.js"></script>
+
 </head>
 <body>
 <div id="syndicate-menu"></div>
