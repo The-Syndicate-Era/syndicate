@@ -1,13 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Syndicate | Raid Hub</title>
   <link rel="stylesheet" href="settings/styles.css">
-  <script src="settings/font-setting.js" defer></script>
-  <script src="settings/menu.js" defer></script>
-  <script src="settings/site-layout.js" defer></script>
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Shared Supabase connection -->
+<script src="settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="settings/page-guard.js" defer></script>
+
+<!-- Existing website scripts -->
+<script src="settings/font-setting.js" defer></script>
+<script src="settings/menu.js" defer></script>
+<script src="settings/site-layout.js" defer></script>
   <style>
     /* Only raid-hub layout lives here. Branding, menu, footer and base text
        sizes are maintained in /settings/. All sizes follow the shared rem scale. */
