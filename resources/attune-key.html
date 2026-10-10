@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 
 <head>
   <meta charset="UTF-8">
@@ -8,6 +8,23 @@
   <title>Attunements & Keys | The Syndicate</title>
 
   <link rel="stylesheet" href="../settings/styles.css">
+  
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Shared Supabase connection -->
+<script src="settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="settings/page-guard.js" defer></script>
+
+<!-- Existing website scripts -->
+<script src="settings/font-setting.js" defer></script>
+<script src="settings/menu.js" defer></script>
+<script src="settings/site-layout.js" defer></script>
   <style>
 /* Page-specific visual design; shared typography & brand variables from styles.css */
 :root { --attune-panel:#11100d; --attune-muted:#c8bdab; }
@@ -877,11 +894,6 @@ main { min-width:0; }
 
     }
 
-
-  </script>
-  <script src="../settings/font-setting.js" defer></script>
-  <script src="../settings/menu.js" defer></script>
-  <script src="../settings/site-layout.js" defer></script>
 </body>
 
 </html>
