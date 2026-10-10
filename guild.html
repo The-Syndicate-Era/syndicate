@@ -1,10 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
+  
+<!-- Hide protected content until membership is verified -->
+<style>
+  html.syn-access-pending body > main,
+  html.syn-access-pending #main-content,
+  html.syn-access-pending #syndicate-footer {
+    visibility: hidden;
+  }
+</style>
+
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Syndicate | Behind the Chaos</title>
   <link rel="stylesheet" href="settings/styles.css">
+    
+  <!-- Supabase library -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+    <!-- Centralized Supabase connection -->
+  <script src="settings/supabase-config.js" defer></script>
+    <!-- Shared Discord authentication -->
+  <script src="settings/auth.js" defer></script>
+    <!-- Member-only page protection -->
+  <script src="settings/page-guard.js" defer></script>
   <script src="settings/font-setting.js" defer></script>
   <script src="settings/menu.js" defer></script>
   <script src="settings/site-layout.js" defer></script>
