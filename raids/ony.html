@@ -1,13 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Onyxia's Lair | The Syndicate</title>
   <link rel="stylesheet" href="../settings/styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
-  <script src="../settings/font-setting.js" defer></script>
-  <script src="../settings/site-layout.js" defer></script>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Centralized Supabase connection -->
+<script src="../settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="../settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="../settings/page-guard.js" defer></script>
+
+<!-- Shared website scripts -->
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+
   <style>
     :root{--ony-gold:#dfbb53;--ony-border:#574726;--ony-text:#e4dbca;--ony-muted:#c9bda7}
     html{scroll-behavior:smooth}
@@ -55,7 +71,7 @@
   </style>
 </head>
 <body>
-  <!-- Uses the Raid Hub breadcrumb, without a hamburger menu. -->
+  <div id="syndicate-menu"></div>
   <div id="syndicate-subheader" data-section="raid-hub" data-title="Onyxia's Lair">
     <nav class="fallback-crumb" aria-label="Raid Hub navigation"><a href="../raid-hub.html">← Raid Hub</a> › Onyxia's Lair</nav>
   </div>
@@ -116,9 +132,7 @@
     </main>
   </div>
   <div id="syndicate-footer"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../settings/supabase-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script>
     (()=>{
       'use strict';
@@ -152,7 +166,9 @@
           status.textContent='Unable to load published Onyxia rules right now.';
         }
       }
-      loadOnyxiaRules();
+    document.addEventListener('DOMContentLoaded', () => {
+  loadOnyxiaRules();
+});
     })();
   </script>
 </body>
