@@ -84,8 +84,18 @@
         button.textContent = 'VERIFYING...';
         await checkOfficerAccess();
       });
-      panel.append(heading, description, motto, button);
-      document.body.append(panel);
+
+panel.append(heading, description, motto, button);
+
+// Keep protected Officer Hub content hidden.
+document.documentElement.classList.add('syn-access-pending');
+document.documentElement.classList.remove('syn-access-granted');
+
+// Mark this panel as the visible access message.
+panel.classList.add('syn-officer-access-panel');
+
+document.body.append(panel);
+
     });
   }
 
