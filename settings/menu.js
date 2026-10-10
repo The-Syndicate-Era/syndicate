@@ -285,18 +285,23 @@
 
         showMembershipStatus(membership);
 
-      } catch (error) {
-        if (version !== refreshVersion) return;
 
-        console.error('Account verification error:', error);
+} catch (error) {
+  if (version !== refreshVersion) return;
 
-        accountStatus.textContent =
-          'Unable to check account status.';
+  console.error('Account verification error:', error);
 
-        accountStatus.dataset.status = 'pending';
+  accountName.textContent = 'LOGIN';
+  accountUsername.textContent = 'Not connected';
 
-        accountButton.textContent = 'RETRY';
-        currentAction = 'retry';
+  accountStatus.textContent =
+    'Unable to check your account. Try connecting with Discord.';
+
+  accountStatus.dataset.status = 'pending';
+
+  accountButton.textContent = 'CONNECT WITH DISCORD';
+  currentAction = 'login';
+
 
       } finally {
         if (version === refreshVersion) {
