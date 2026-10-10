@@ -102,9 +102,37 @@ if (!intendedPage) return;
 
 const auth = window.syndicateAuth;
 
-(() => {
-  const overlay = document.createElement('div');
+const db = window.syndicateDB;
+
+if (db) {
+  try {
+    const { data, error } = await db.auth.getSession();
+
+    if (!error && data?.session) {
+      // Already logged in. Do not show the login notice.
+
+  (async () => {
+    const db = window.syndicateDB;
+
+    if (db) {
+      try {
+        const { data, error } = await db.auth.getSession();
+
+        if (!error && data?.session) {
+          // Already logged in. No popup needed.
+          return;
+        }
+      } catch (error) {
+        console.warn('Unable to check existing session:', error);
+      }
+    }
+
+    const overlay = document.createElement('div');
     overlay.id = 'syndicate-login-notice';
+const intendedPage = sessionStorage.getItem(RETURN_KEY);
+if (!intendedPage) return;
+
+const auth = window.syndicateAuth;
 
     Object.assign(overlay.style, {
       position: 'fixed',
