@@ -7,17 +7,7 @@
   <title>The Syndicate | Classic Era</title>
 
   <!-- All global design and header/footer styling lives in settings/styles.css. -->
-  
-  <link rel="stylesheet" href="settings/styles.css">
-  <!-- Supabase library -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
-<!-- Shared Supabase connection -->
-<script src="settings/supabase-config.js" defer></script>
-
-<!-- Shared Discord authentication -->
-<script src="settings/auth.js" defer></script>
-  
   <script src="settings/font-setting.js" defer></script>
   <script src="settings/menu.js" defer></script>
   <script src="settings/site-layout.js" defer></script>
@@ -44,42 +34,6 @@
     @media(max-width:768px) { .home-hero { grid-template-columns:1fr; } .home-hero__image img { height:15rem; min-height:0; } .home-hero__content { padding:2rem 1.2rem; } .home-directory { padding:2.5rem 1rem; } }
     @media(max-width:520px) { .home-directory__grid { grid-template-columns:1fr; } .home-directory__card { min-height:0; } .home-directory__card h3 { min-height:0; } }
   
-/* Discord authentication */
-.home-discord {
-  margin-top: 1.8rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.7rem;
-}
-
-.home-discord p {
-  color: var(--text-light);
-  font-size: 0.85rem;
-  margin: 0;
-  text-align: center;
-}
-
-.home-discord__button {
-  padding: 0.8rem 1.5rem;
-  background: #17130e;
-  border: 1px solid var(--gold-dark);
-  border-radius: 5px;
-  color: var(--gold);
-  font-family: var(--font-heading);
-  cursor: pointer;
-}
-
-.home-discord__button:hover:not(:disabled) {
-  border-color: var(--gold);
-  background: #2a2113;
-}
-
-.home-discord__button:disabled {
-  opacity: 0.55;
-  cursor: wait;
-}
-
   </style>
 </head>
 <body>
@@ -96,20 +50,6 @@
         <p class="home-hero__tagline">◆ CLASSIC ERA • FOR THE HORDE ◆</p>
         <p class="home-hero__description">The Syndicate is a Horde guild built around good people, organized chaos, and getting things done together. From leveling and dungeons to 20- and 40-man raiding, we're here to build a strong community, help each other out, and have a good time along the way.</p>
      
-<div class="home-discord" id="home-discord">
-  <p id="discord-status" aria-live="polite">
-    Checking Discord connection...
-  </p>
-
-  <button
-    type="button"
-    id="discord-auth-button"
-    class="home-discord__button"
-    disabled>
-    CONNECT WITH DISCORD
-  </button>
-</div>
-
       </div>
     </section>
 
@@ -143,81 +83,6 @@
   <!-- site-layout.js replaces this with the shared motto and logo footer. -->
   <div id="syndicate-footer"></div>
 
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const status = document.getElementById('discord-status');
-  const button = document.getElementById('discord-auth-button');
-  const db = window.syndicateDB;
-  const auth = window.syndicateAuth;
-
-  if (!db || !auth) {
-    status.textContent = 'Discord login unavailable.';
-    button.textContent = 'LOGIN UNAVAILABLE';
-    return;
-  }
-
-  let currentUser = null;
-
-  async function refreshLogin() {
-    button.disabled = true;
-
-    try {
-      currentUser = await auth.getUser();
-
-      if (currentUser) {
-        const metadata = currentUser.user_metadata || {};
-        const name =
-          metadata.full_name ||
-          metadata.name ||
-          metadata.user_name ||
-          'Discord Member';
-
-        status.textContent =
-          `Connected as ${name} — membership not yet verified`;
-
-        button.textContent = 'LOG OUT';
-      } else {
-        status.textContent =
-          'Syndicate members: connect your Discord account.';
-        button.textContent = 'CONNECT WITH DISCORD';
-      }
-    } catch (error) {
-      console.error('Login status failed:', error);
-      status.textContent = 'Unable to check Discord login.';
-      button.textContent = 'RETRY';
-    } finally {
-      button.disabled = false;
-    }
-  }
-
-  button.addEventListener('click', async () => {
-    if (button.textContent === 'RETRY') {
-      await refreshLogin();
-      return;
-    }
-
-    button.disabled = true;
-
-    try {
-      if (currentUser) {
-        await auth.logout();
-      } else {
-        await auth.login();
-      }
-    } catch (error) {
-      console.error('Discord authentication error:', error);
-      status.textContent = 'Authentication failed. Try again.';
-    } finally {
-      await refreshLogin();
-    }
-  });
-
-  db.auth.onAuthStateChange(() => {
-    setTimeout(refreshLogin, 0);
-  });
-
-  refreshLogin();
-});
 </script>
 
 </body>
