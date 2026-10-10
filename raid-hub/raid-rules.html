@@ -6,8 +6,24 @@
   <title>Raid Rules | The Syndicate</title>
   <link rel="stylesheet" href="../settings/styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
-  <script src="../settings/font-setting.js" defer></script>
-  <script src="../settings/site-layout.js" defer></script>
+
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Centralized Supabase connection -->
+<script src="../settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="../settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="../settings/page-guard.js" defer></script>
+
+<!-- Shared website scripts -->
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+
   <style>
     /* Public, read-only Raid Rules. Shared settings own the typography scale and footer. */
     :root { --rules-gold:#d9b438; --rules-line:#554521; --rules-text:#e7dfd0; --rules-muted:#c2b8a2; }
