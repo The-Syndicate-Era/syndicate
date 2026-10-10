@@ -338,3 +338,28 @@ html.syn-access-pending #syndicate-footer,
 html.syn-access-pending .syn-footer {
   visibility: hidden;
 }
+
+/* =========================================
+   DARK COUNCIL ACCESS MESSAGES
+   ========================================= */
+
+/* Keep protected page content hidden until authorized. */
+html.syn-access-pending .officer-hub {
+  display: none !important;
+}
+
+/* Always allow the Officer Guard message to display. */
+html.syn-access-pending
+#syndicate-officer-access-message {
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Mobile-friendly access message. */
+#syndicate-officer-access-message {
+  box-sizing: border-box;
+  width: calc(100% - 2rem);
+  max-width: 35rem;
+  margin: 3rem auto;
+}
