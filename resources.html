@@ -1,14 +1,27 @@
 <!DOCTYPE html>
 
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
 <meta charset="utf-8"/>
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>The Syndicate | Resources</title>
 <link href="settings/styles.css" rel="stylesheet"/>
-<script defer="" src="settings/font-setting.js"></script>
-<script defer="" src="settings/menu.js"></script>
-<script defer="" src="settings/site-layout.js"></script>
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
+<!-- Shared Supabase connection -->
+<script src="settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="settings/page-guard.js" defer></script>
+
+<!-- Existing website scripts -->
+<script src="settings/font-setting.js" defer></script>
+<script src="settings/menu.js" defer></script>
+<script src="settings/site-layout.js" defer></script>
 <style>
 /* Resources-specific layout. Text uses rem and scales through settings/styles.css. */
 .resources-page {background:#090909; color:#e6dfc9; min-height:65vh;}
