@@ -1,223 +1,212 @@
 
 /* =========================================
    THE SYNDICATE
-   DISCORD AUTHENTICATION & MEMBERSHIP
+   SHARED DISCORD AUTHENTICATION
    ========================================= */
 
 (() => {
   'use strict';
 
-  // Use the existing shared Supabase connection.
   const db = window.syndicateDB;
 
   if (!db) {
-    console.error('Syndicate Supabase connection missing.');
+    console.error('Syndicate database connection missing.');
     return;
   }
 
-  const HOME_URL = new URL(
-    'index.html',
-    new URL('../', document.currentScript.src)
-  ).href;
+  const script = document.currentScript;
+  const siteRoot = new URL('../', script.src);
+  const homeURL = new URL('index.html', siteRoot).href;
 
-  const FUNCTION_NAME = 'verify-syndicate-member';
-
-  // Temporary storage for Discord's OAuth token.
-  // This is NOT the Supabase session token.
   const TOKEN_KEY = 'syndicate_discord_oauth';
-  const TOKEN_LIFETIME = 30 * 60 * 1000;
+  const TOKEN_MAX_AGE = 30 * 60 * 1000;
+  const CACHE_MS = 15000;
 
-  let discordToken = null;
-  let tokenSavedAt = 0;
+  let verificationPromise = null;
+  let cachedResult = null;
+  let cachedAt = 0;
 
-  function clearDiscordToken() {
-    discordToken = null;
-    tokenSavedAt = 0;
+  function clearVerificationCache() {
+    cachedResult = null;
+    cachedAt = 0;
+    verificationPromise = null;
+  }
+
+  function saveDiscordToken(session) {
+    if (!session?.provider_token || !session.user?.id) {
+      return;
+    }
 
     try {
-      sessionStorage.removeItem(TOKEN_KEY);
+      sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
+        token: session.provider_token,
+        userId: session.user.id,
+        savedAt: Date.now()
+      }));
     } catch (error) {
-      console.warn('Token storage unavailable:', error);
+      console.warn('Discord token storage unavailable:', error);
     }
   }
 
-  function rememberDiscordToken(session) {
-    if (!session?.provider_token) return;
-
-    discordToken = session.provider_token;
-    tokenSavedAt = Date.now();
+  function getDiscordToken(session) {
+    if (session?.provider_token) {
+      saveDiscordToken(session);
+      return session.provider_token;
+    }
 
     try {
-      sessionStorage.setItem(
-        TOKEN_KEY,
-        JSON.stringify({
-          token: discordToken,
-          savedAt: tokenSavedAt,
-          userId: session.user?.id
-        })
+      const saved = JSON.parse(
+        sessionStorage.getItem(TOKEN_KEY) || 'null'
       );
-    } catch (error) {
-      console.warn('Unable to store Discord token:', error);
-    }
-  }
 
-  function getStoredDiscordToken(userId) {
-    if (
-      discordToken &&
-      Date.now() - tokenSavedAt < TOKEN_LIFETIME
-    ) {
-      return discordToken;
-    }
-
-    try {
-      const raw = sessionStorage.getItem(TOKEN_KEY);
-      if (!raw) return null;
-
-      const saved = JSON.parse(raw);
+      if (!saved) return null;
 
       if (
-        saved.userId !== userId ||
-        typeof saved.token !== 'string' ||
-        Date.now() - saved.savedAt >= TOKEN_LIFETIME
+        saved.userId !== session?.user?.id ||
+        !saved.token ||
+        !Number.isFinite(saved.savedAt) ||
+        Date.now() - saved.savedAt >= TOKEN_MAX_AGE
       ) {
-        clearDiscordToken();
+        sessionStorage.removeItem(TOKEN_KEY);
         return null;
       }
 
-      discordToken = saved.token;
-      tokenSavedAt = saved.savedAt;
-
-      return discordToken;
+      return saved.token;
     } catch {
-      clearDiscordToken();
       return null;
     }
   }
 
-  // Capture the Discord token after OAuth completes.
-  // Do not make additional Supabase API calls
-  // synchronously inside this callback.
   db.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_OUT') {
-      clearDiscordToken();
+      try {
+        sessionStorage.removeItem(TOKEN_KEY);
+      } catch {}
+
+      clearVerificationCache();
       return;
     }
 
     if (session?.provider_token) {
-      rememberDiscordToken(session);
+      saveDiscordToken(session);
+    }
+
+    if (event === 'SIGNED_IN' || event === 'USER_UPDATED') {
+      cachedResult = null;
+      cachedAt = 0;
     }
   });
 
   // =====================================
-  // LOGIN
+  // LOGIN / LOGOUT
   // =====================================
 
   async function loginWithDiscord() {
-    const { data, error } =
-      await db.auth.signInWithOAuth({
-        provider: 'discord',
-        options: {
-          redirectTo: HOME_URL,
-          scopes: 'identify email guilds.members.read'
-        }
-      });
+    const { data, error } = await db.auth.signInWithOAuth({
+      provider: 'discord',
+      options: {
+        redirectTo: homeURL,
+        scopes: 'identify email guilds.members.read'
+      }
+    });
 
-    if (error) {
-      console.error('Discord login failed:', error);
-      throw error;
-    }
-
+    if (error) throw error;
     return { data, error: null };
   }
 
-  // =====================================
-  // LOGOUT
-  // =====================================
-
   async function logoutFromSyndicate() {
     const { error } = await db.auth.signOut();
+    if (error) throw error;
 
-    if (error) {
-      console.error('Discord logout failed:', error);
-      throw error;
-    }
+    try {
+      sessionStorage.removeItem(TOKEN_KEY);
+    } catch {}
 
-    clearDiscordToken();
-    window.location.href = HOME_URL;
+    clearVerificationCache();
+    window.location.replace(homeURL);
   }
-
-  // =====================================
-  // GET CURRENT USER
-  // =====================================
 
   async function getSyndicateUser() {
     const { data, error } = await db.auth.getUser();
 
-    if (error || !data.user) {
-      return null;
-    }
-
-    return data.user;
+    if (error) throw error;
+    return data.user || null;
   }
 
   // =====================================
-  // VERIFY SERVER MEMBERSHIP
+  // SERVER MEMBERSHIP VERIFICATION
   // =====================================
 
-  async function verifyMembership() {
+  async function performVerification() {
+    let session;
 
-    // First confirm Supabase authentication.
-    const { data: sessionData, error: sessionError } =
-      await db.auth.getSession();
+    try {
+      const response = await db.auth.getSession();
 
-    if (sessionError || !sessionData.session) {
+      if (response.error) throw response.error;
+
+      session = response.data.session;
+    } catch (error) {
+      console.error('Session check failed:', error);
+
+      return {
+        verified: false,
+        status: 'verification_failed'
+      };
+    }
+
+    if (!session) {
       return {
         verified: false,
         status: 'logged_out'
       };
     }
 
-    const session = sessionData.session;
+    let user;
 
-    // Get an independently validated user.
-    const user = await getSyndicateUser();
+    try {
+      user = await getSyndicateUser();
+    } catch (error) {
+      console.error('User check failed:', error);
+
+      return {
+        verified: false,
+        status: 'verification_failed'
+      };
+    }
 
     if (!user) {
       return {
         verified: false,
-        status: 'logged_out'
+        status: 'verification_failed'
       };
     }
 
-    // Capture a newly supplied OAuth token.
-    rememberDiscordToken(session);
-
-    const token = getStoredDiscordToken(user.id);
+    const token = getDiscordToken(session);
 
     if (!token) {
       return {
         verified: false,
-        status: 'reconnect_required',
-        message: 'Reconnect Discord to verify membership.'
+        status: 'reconnect_required'
       };
     }
 
-    // Ask the secure Edge Function to check Discord.
     try {
-      const { data, error } =
-        await db.functions.invoke(FUNCTION_NAME, {
+      const { data, error } = await db.functions.invoke(
+        'verify-syndicate-member',
+        {
           body: {
             discordAccessToken: token
           }
-        });
+        }
+      );
 
       if (error) {
-        console.error('Membership function error:', error);
+        console.error('Membership request failed:', error);
 
         return {
           verified: false,
-          status: 'verification_failed',
-          message: 'Unable to verify membership right now.'
+          status: data?.status || 'verification_failed'
         };
       }
 
@@ -230,37 +219,64 @@
         };
       }
 
-      if (data?.status === 'not_member') {
-        return {
-          verified: false,
-          status: 'not_member',
-          message: 'This Discord account is not in The Syndicate server.'
-        };
-      }
-
       return {
         verified: false,
-        status: 'verification_failed',
-        message: data?.error || 'Membership could not be verified.'
+        status: data?.status || 'verification_failed'
       };
 
     } catch (error) {
-      console.error('Membership verification failed:', error);
+      console.error('Membership verification error:', error);
 
       return {
         verified: false,
-        status: 'verification_failed',
-        message: 'Membership verification is unavailable.'
+        status: 'verification_failed'
       };
     }
   }
 
-  // Shared interface for every Syndicate page.
+  async function verifyMembership(options = {}) {
+    const force = options.force === true;
+
+    if (!force &&
+        cachedResult?.verified === true &&
+        Date.now() - cachedAt < CACHE_MS) {
+      return cachedResult;
+    }
+
+    // Reuse an ongoing verification request.
+    if (verificationPromise) {
+      return verificationPromise;
+    }
+
+    verificationPromise = performVerification();
+
+    try {
+      const result = await verificationPromise;
+
+      if (result.verified === true) {
+        cachedResult = result;
+        cachedAt = Date.now();
+      } else {
+        cachedResult = null;
+        cachedAt = 0;
+      }
+
+      return result;
+    } finally {
+      verificationPromise = null;
+    }
+  }
+
+  // =====================================
+  // SHARED WEBSITE API
+  // =====================================
+
   window.syndicateAuth = {
     login: loginWithDiscord,
     logout: logoutFromSyndicate,
     getUser: getSyndicateUser,
-    verifyMembership: verifyMembership
+    verifyMembership,
+    clearVerificationCache
   };
 
 })();
