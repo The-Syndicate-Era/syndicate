@@ -1,202 +1,28 @@
-/* =========================================
-   THE SYNDICATE — SHARED BRAND STYLESHEET
-   Text size: Standard 18px / Large 21px / Extra Large 24px
-   ========================================= */
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&display=swap');
+/* THE SYNDICATE — Shared footer. Save as settings/site-layout.js */
+(() => {
+  'use strict';
+  const script = document.currentScript;
+  const root = new URL('../', script?.src || document.baseURI);
+  const url = path => new URL(path, root).href;
 
-:root {
-  --font-heading: "Cinzel", serif;
-  --font-body: "Palatino Linotype", "Book Antiqua", Palatino, serif;
-
-  --background-main: #000000;
-  --background-dark: #0b0b0b;
-  --gold: #d4af37;
-  --gold-dark: #8f7320;
-  --text-main: #d4af37;
-  --text-light: #d8c98f;
-
-  /* Shared size system — based on root font size */
-  --paragraph-large: 1.125rem;
-  --paragraph-standard: 1rem;
-  --paragraph-small: 0.9rem;
-  --h1-size: clamp(2.15rem, 4.5vw, 3.55rem);
-  --h2-size: clamp(1.9rem, 3.8vw, 2.9rem);
-  --h3-size: clamp(1.65rem, 3.2vw, 2.35rem);
-  --h4-size: clamp(1.4rem, 2.8vw, 1.9rem);
-  --h5-size: 1.55rem;
-  --h6-size: 1.25rem;
-}
-
-html {
-  font-size: 18px;
-  -webkit-text-size-adjust: 100%;
-  text-size-adjust: 100%;
-}
-html[data-syndicate-text-size="large"] { font-size: 21px; }
-html[data-syndicate-text-size="extra-large"] { font-size: 24px; }
-
-*, *::before, *::after { box-sizing: border-box; }
-body {
-  margin: 0;
-  background: var(--background-main);
-  color: var(--text-main);
-  font-family: var(--font-body);
-  font-size: var(--paragraph-standard);
-  line-height: 1.55;
-}
-
-h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  font-weight: 500;
-  line-height: 1.22;
-  margin-top: 0;
-  overflow-wrap: anywhere;
-}
-h1 { font-size: var(--h1-size); }
-h2 { font-size: var(--h2-size); }
-h3 { font-size: var(--h3-size); }
-h4 { font-size: var(--h4-size); }
-h5 { font-size: var(--h5-size); }
-h6 { font-size: var(--h6-size); }
-
-p { font-size: var(--paragraph-standard); line-height: 1.65; }
-.paragraph-large { font-size: var(--paragraph-large); line-height: 1.6; }
-.paragraph-small { font-size: var(--paragraph-small); line-height: 1.55; }
-
-/* Normal site controls and tabular data use readable type. */
-button, input, select, textarea { font: inherit; }
-button, select { cursor: pointer; }
-input, select, textarea { max-width: 100%; }
-button:focus-visible, a:focus-visible, input:focus-visible,
-select:focus-visible, textarea:focus-visible {
-  outline: 3px solid var(--gold);
-  outline-offset: 3px;
-}
-table { font-size: 1rem; }
-th { text-align: left; }
-th, td { padding: 0.65rem 0.75rem; }
-
-/* Shared accessibility control, injected by font-settings.js */
-.syndicate-font-controls {
-  position: fixed;
-  bottom: 1rem;
-  right: 1rem;
-  z-index: 9999;
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
-  flex-wrap: wrap;
-  padding: 0.5rem;
-  border: 1px solid var(--gold-dark);
-  border-radius: 0.65rem;
-  background: #15120ff0;
-  box-shadow: 0 4px 18px #0009;
-  color: #f3e9d2;
-  font: 600 0.85rem/1.35 var(--font-body);
-}
-.syndicate-font-controls__label { margin-inline: 0.25rem; }
-.syndicate-font-controls button {
-  min-height: 2.5rem;
-  min-width: 2.7rem;
-  padding: 0.3rem 0.55rem;
-  border: 1px solid var(--gold-dark);
-  border-radius: 0.4rem;
-  background: #211a11;
-  color: #f5e8cc;
-  font: inherit;
-}
-.syndicate-font-controls button[aria-pressed="true"] {
-  color: #111;
-  background: var(--gold);
-  font-weight: 700;
-}
-.syndicate-font-controls button:hover { border-color: var(--gold); }
-@media (max-width: 560px) {
-  .syndicate-font-controls { bottom: 0.5rem; right: 0.5rem; padding: 0.35rem; }
-  .syndicate-font-controls__label { display: none; }
-  th, td { padding: 0.45rem; }
-}
-
-
-/* =========================================
-   SHARED SLIDE-OUT HEADER / NAVIGATION
-   Managed by settings/menu.js
-   ========================================= */
-.syn-menu, .syn-menu * { box-sizing: border-box; }
-.syn-menu { position: relative; z-index: 1100; background: #080808; border-bottom: 1px solid var(--gold-dark); }
-.syn-menu__inner { width:100%; min-height:4.6rem; padding:.55rem clamp(1rem,1.6vw,2rem); display:flex; justify-content:space-between; align-items:center; gap:1rem; }
-.syn-menu__logo img { height:3rem; max-width:12rem; width:auto; display:block; object-fit:contain; }
-.syn-menu__toggle { margin-left:auto; border:0; background:none; color:var(--gold); font:inherit; font-size:2rem; cursor:pointer; min-width:3rem; min-height:3rem; display:flex; align-items:center; justify-content:center; }
-.syn-menu__overlay { position:fixed; inset:0; background:rgba(0,0,0,.65); z-index:2900; opacity:0; visibility:hidden; transition:opacity .25s ease,visibility .25s ease; }
-.syn-menu__overlay[hidden] { display:none; }
-.syn-menu__overlay.is-open { opacity:1; visibility:visible; }
-.syn-menu__drawer { position:fixed; z-index:3000; top:0; right:0; height:100dvh; width:min(420px,90vw); padding:4.6rem 2.5rem 2rem; display:flex; flex-direction:column; background:#090909; border-left:1px solid var(--gold-dark); color:var(--gold); transform:translateX(101%); transition:transform .3s ease; overflow-y:auto; overscroll-behavior:contain; }
-.syn-menu__drawer.is-open { transform:translateX(0); }
-.syn-menu__close { position:absolute; top:1rem; right:1.15rem; padding:.1rem .35rem; color:var(--gold); border:0; background:transparent; font-size:2.1rem; line-height:1; cursor:pointer; }
-.syn-menu__drawer-logo { align-self:center; display:block; margin:0 auto 2.6rem; }
-.syn-menu__drawer-logo img { display:block; width:min(11.5rem,70vw); height:auto; }
-.syn-menu__drawer-links { display:flex; flex-direction:column; }
-.syn-menu__drawer-links a { display:block; padding:1rem .65rem; border-bottom:1px solid rgba(217,180,56,.25); color:var(--gold); text-decoration:none; font-family:var(--font-heading); font-size:1.1rem; line-height:1.3; }
-.syn-menu__drawer-links a:hover,.syn-menu__drawer-links a[aria-current="page"] { color:#efd27c; padding-left:1rem; }
-.syn-menu__drawer-motto { margin-top:auto; padding-top:1.7rem; border-top:1px solid var(--gold-dark); text-align:center; color:var(--gold-dark); letter-spacing:.12em; font-family:var(--font-heading); font-size:.78rem; }
-.syn-menu-drawer-open { overflow:hidden; }
-.syn-menu__drawer :focus-visible, .syn-menu__toggle:focus-visible { outline:3px solid var(--gold); outline-offset:3px; }
-@media(max-width:600px) { .syn-menu__inner { min-height:4rem; } .syn-menu__logo img { height:2.7rem; } .syn-menu__drawer { padding:4.2rem 1.4rem 1.4rem; } .syn-menu__drawer-logo { margin-bottom:2rem; } }
-@media(prefers-reduced-motion:reduce) { .syn-menu__drawer,.syn-menu__overlay { transition:none; } }
-
-/* =========================================
-   SHARED SITE FOOTER
-   Controlled by settings/site-layout.js
-   ========================================= */
-.syn-footer { background: #080808; color: var(--gold-dark); width: 100%; text-align: center; }
-.syn-footer__motto {
-  display: flex; align-items: center; justify-content: center;
-  gap: 1.3rem; padding: 2.6rem clamp(1rem,4vw,3rem) 1.2rem;
-  color: var(--gold-dark); font-family: var(--font-heading);
-  font-size: .9rem; letter-spacing: .13em;
-}
-.syn-footer__motto::before, .syn-footer__motto::after {
-  content: ""; height: 1px; background: var(--gold-dark);
-  width: min(27vw, 29rem); flex: 1 1 auto; max-width: 29rem;
-}
-.syn-footer__motto-text { white-space: nowrap; }
-.syn-footer__bottom { border-top: 1px solid var(--gold-dark); padding: 1rem 1rem 1.7rem; }
-.syn-footer__logo { display: inline-block; }
-.syn-footer__logo img { display: block; height: 3.5rem; max-width: min(70vw, 15rem); width: auto; margin: auto; object-fit: contain; }
-@media (max-width: 600px) {
-  .syn-footer__motto { gap: .55rem; font-size: .75rem; letter-spacing: .07em; }
-}
-
-/* =========================================
-   SECTION SUBHEADER / BREADCRUMB
-   Controlled by settings/site-layout.js
-   ========================================= */
-.syn-subheader {
-  width: 100%;
-  background: #17130c;
-  border-bottom: 1px solid var(--gold-dark);
-  color: var(--text-light);
-}
-.syn-subheader__inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: .7rem clamp(1rem, 3vw, 2rem);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: .6rem;
-  font-size: .95rem;
-  line-height: 1.5;
-}
-.syn-subheader__back {
-  color: var(--gold);
-  font-weight: 600;
-  text-decoration: none;
-}
-.syn-subheader__back:hover { color: #f4d77e; text-decoration: underline; }
-.syn-subheader__separator { color: var(--gold-dark); }
-.syn-subheader__current { color: #f0e4c7; overflow-wrap: anywhere; }
-.syn-subheader__back:focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
-@media(max-width: 600px) {
-  .syn-subheader__inner { font-size: .9rem; padding: .6rem 1rem; gap: .45rem; }
-}
+  function renderFooter() {
+    if (document.querySelector('.syn-footer')) return;
+    const footer = document.createElement('footer');
+    footer.className = 'syn-footer';
+    footer.innerHTML = `
+      <div class="syn-footer__motto">
+        <span class="syn-footer__motto-text">◆ THIS IS THE WAY ◆</span>
+      </div>
+      <div class="syn-footer__bottom">
+        <a class="syn-footer__logo" href="${url('index.html')}" aria-label="The Syndicate home">
+          <img src="${url('images/HeaderLogo.png')}" alt="The Syndicate">
+        </a>
+      </div>`;
+    const target = document.getElementById('syndicate-footer');
+    if (target) target.replaceWith(footer);
+    else document.body.appendChild(footer);
+  }
+  if (document.readyState === 'loading')
+    document.addEventListener('DOMContentLoaded', renderFooter, {once:true});
+  else renderFooter();
+})();
