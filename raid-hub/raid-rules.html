@@ -65,6 +65,66 @@
     .rule-copy.ql-editor strong { color:#f3e8d1; }
     .rules-end { text-align:center; color:#a99a7c; font-size:.93rem; padding-top:.65rem; }
     @media(max-width:760px) { .rules-hero-inner { grid-template-columns:1fr; } .rules-hero-image { max-width:500px; width:100%; } .rules-toc ol { columns:1; } }
+ 
+/* Expandable raid rule sections */
+
+.rule-section {
+  padding: 0;
+  margin-bottom: 0.8rem;
+  border: 1px solid #554521;
+  background: #11100c;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.rule-section[open] {
+  border-color: #b99a42;
+}
+
+.rule-section summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.15rem 1.4rem;
+  cursor: pointer;
+  list-style: none;
+  color: #e1bd52;
+  font: 500 1.25rem/1.4 var(--font-heading, Georgia, serif);
+}
+
+.rule-section summary::-webkit-details-marker {
+  display: none;
+}
+
+.rule-section summary::after {
+  content: "+";
+  color: #e1bd52;
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.rule-section[open] summary::after {
+  content: "−";
+}
+
+.rule-section summary:hover {
+  background: #201a10;
+}
+
+.rule-section summary:focus-visible {
+  outline: 2px solid #e1bd52;
+  outline-offset: -3px;
+}
+
+.rule-section[open] summary {
+  border-bottom: 1px solid #554521;
+}
+
+.rule-section .rule-body {
+  padding: 1.3rem 1.5rem 1.6rem;
+}
+
   </style>
 </head>
 <body>
@@ -138,17 +198,27 @@
           }
           const fragment = document.createDocumentFragment();
           rows.forEach((row, i) => {
-            const section = document.createElement('section');
-            section.className = 'rule-section';
-            section.id = 'rule-' + i;
-            const heading = document.createElement('h2');
-            heading.textContent = row.section_title || 'Untitled section';
-            section.appendChild(heading);
+
+const section = document.createElement('details');
+section.className = 'rule-section';
+section.id = 'rule-' + i;
+
+// Start with all sections collapsed.
+section.open = false;
+
+const heading = document.createElement('summary');
+heading.textContent = row.section_title || 'Untitled section';
+section.appendChild(heading);
+
+const ruleBody = document.createElement('div');
+ruleBody.className = 'rule-body';
+section.appendChild(ruleBody);
+
             if (row.published_description) {
               const description = document.createElement('p');
               description.className = 'rule-desc';
               description.textContent = row.published_description;
-              section.appendChild(description);
+              ruleBody.appendChild(description);
             }
             if (row.published_content) {
               const text = document.createElement('div');
@@ -163,14 +233,21 @@
                   text.appendChild(p);
                 });
               }
-              section.appendChild(text);
+              ruleBody.appendChild(text);
             }
             fragment.appendChild(section);
             const li = document.createElement('li');
             const link = document.createElement('a');
-            link.href = '#' + section.id;
-            link.textContent = row.section_title || 'Untitled section';
-            li.appendChild(link);
+
+link.href = '#' + section.id;
+link.textContent = row.section_title || 'Untitled section';
+
+link.addEventListener('click', () => {
+  section.open = true;
+});
+
+li.appendChild(link);
+
             links.appendChild(li);
           });
           content.appendChild(fragment);
