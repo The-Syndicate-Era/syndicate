@@ -33,7 +33,6 @@
 
     header.innerHTML = `
       <div class="syn-menu__inner">
-
         <a class="syn-menu__logo"
            href="${url('index.html')}"
            aria-label="The Syndicate home">
@@ -42,7 +41,6 @@
         </a>
 
         <div class="syn-menu__actions">
-
           <div class="syn-account">
 
             <button
@@ -56,13 +54,10 @@
               <span class="syn-account__icon"
                     aria-hidden="true">♟</span>
 
-              <span class="syn-account__name">
-                LOGIN
-              </span>
+              <span class="syn-account__name">LOGIN</span>
 
               <span class="syn-account__arrow"
                     aria-hidden="true">▾</span>
-
             </button>
 
             <div id="syn-account-dropdown"
@@ -81,7 +76,7 @@
 
                 <span class="syn-account__status"
                       aria-live="polite">
-                  Sign in to continue
+                  Checking login...
                 </span>
 
               </div>
@@ -94,7 +89,6 @@
               </button>
 
             </div>
-
           </div>
 
           <button
@@ -112,7 +106,7 @@
     else document.body.prepend(header);
 
     // =====================================
-    // ACCOUNT DROPDOWN
+    // DISCORD ACCOUNT ELEMENTS
     // =====================================
 
     const account = header.querySelector('.syn-account');
@@ -132,15 +126,18 @@
     let currentUser = null;
     let currentAction = 'login';
     let accountOpen = false;
+    let refreshVersion = 0;
 
     function setAccountOpen(open) {
       accountOpen = open;
       accountDropdown.hidden = !open;
+
       accountTrigger.setAttribute(
-        'aria-expanded', String(open)
+        'aria-expanded',
+        String(open)
       );
 
-      if (open) {
+      if (open && !accountButton.disabled) {
         accountButton.focus();
       }
     }
@@ -155,74 +152,166 @@
       }
     });
 
+    // =====================================
+    // DISPLAY MEMBERSHIP STATUS
+    // =====================================
+
+    function showMembershipStatus(result) {
+      accountStatus.removeAttribute('data-status');
+
+      if (result?.verified === true &&
+          result?.status === 'member') {
+
+        accountStatus.textContent =
+          '✓ Verified Syndicate Member';
+
+        accountStatus.dataset.status = 'verified';
+        return;
+      }
+
+      switch (result?.status) {
+
+        case 'not_member':
+          accountStatus.textContent =
+            'Not a member of The Syndicate Discord server';
+          accountStatus.dataset.status = 'denied';
+          break;
+
+        case 'reconnect_required':
+          accountStatus.textContent =
+            'Discord reconnection required';
+          accountStatus.dataset.status = 'pending';
+          accountButton.textContent = 'RECONNECT DISCORD';
+          currentAction = 'reconnect';
+          break;
+
+        case 'logged_out':
+          accountStatus.textContent =
+            'Connect Discord to access guild features.';
+          accountStatus.dataset.status = 'pending';
+          break;
+
+        default:
+          accountStatus.textContent =
+            'Membership verification unavailable';
+          accountStatus.dataset.status = 'pending';
+          break;
+      }
+    }
+
+    // =====================================
+    // REFRESH LOGIN + MEMBERSHIP
+    // =====================================
+
     async function refreshAccount() {
+      const version = ++refreshVersion;
       const auth = window.syndicateAuth;
 
       if (!auth) {
         accountName.textContent = 'LOGIN';
         accountUsername.textContent = 'Unavailable';
         accountStatus.textContent =
-          'Discord authentication is unavailable.';
+          'Discord authentication unavailable.';
         accountButton.textContent = 'LOGIN UNAVAILABLE';
         accountButton.disabled = true;
         return;
       }
 
       accountButton.disabled = true;
+      accountStatus.textContent = 'Checking Discord login...';
 
       try {
         const user = await auth.getUser();
+
+        // Ignore outdated requests.
+        if (version !== refreshVersion) return;
+
         currentUser = user;
 
-        if (user) {
-          const metadata = user.user_metadata || {};
-
-          const username =
-            metadata.custom_claims?.global_name ||
-            metadata.full_name ||
-            metadata.name ||
-            metadata.user_name ||
-            metadata.preferred_username ||
-            'Discord User';
-
-          accountName.textContent = username;
-          accountUsername.textContent = username;
-
-          // Discord authentication only.
-          // Guild membership verification comes next.
-          accountStatus.textContent =
-            'Discord connected • Membership not verified';
-
-          accountButton.textContent = 'LOG OUT';
-          currentAction = 'logout';
-
-        } else {
+        if (!user) {
           accountName.textContent = 'LOGIN';
           accountUsername.textContent = 'Not connected';
+
           accountStatus.textContent =
             'Connect Discord to access guild features.';
 
+          accountStatus.dataset.status = 'pending';
+
           accountButton.textContent =
             'CONNECT WITH DISCORD';
+
           currentAction = 'login';
+          return;
         }
 
-        accountButton.disabled = false;
+        // =================================
+        // DISPLAY DISCORD USERNAME
+        // =================================
 
-      } catch (error) {
-        console.error('Account check failed:', error);
+        const metadata = user.user_metadata || {};
+
+        const username =
+          metadata.custom_claims?.global_name ||
+          metadata.full_name ||
+          metadata.name ||
+          metadata.user_name ||
+          metadata.preferred_username ||
+          'Discord User';
+
+        accountName.textContent = username;
+        accountUsername.textContent = username;
+
+        currentAction = 'logout';
+        accountButton.textContent = 'LOG OUT';
+
+        // =================================
+        // VERIFY SYNDICATE MEMBERSHIP
+        // =================================
 
         accountStatus.textContent =
-          'Unable to check Discord login.';
+          'Verifying Syndicate membership...';
+
+        accountStatus.dataset.status = 'pending';
+
+        if (typeof auth.verifyMembership !== 'function') {
+          accountStatus.textContent =
+            'Membership verification unavailable';
+          return;
+        }
+
+        const membership = await auth.verifyMembership();
+
+        if (version !== refreshVersion) return;
+
+        showMembershipStatus(membership);
+
+      } catch (error) {
+        if (version !== refreshVersion) return;
+
+        console.error('Account verification error:', error);
+
+        accountStatus.textContent =
+          'Unable to check account status.';
+
+        accountStatus.dataset.status = 'pending';
 
         accountButton.textContent = 'RETRY';
         currentAction = 'retry';
-        accountButton.disabled = false;
+
+      } finally {
+        if (version === refreshVersion) {
+          accountButton.disabled = false;
+        }
       }
     }
 
+    // =====================================
+    // LOGIN / LOGOUT BUTTON
+    // =====================================
+
     accountButton.addEventListener('click', async () => {
       const auth = window.syndicateAuth;
+
       if (!auth || accountButton.disabled) return;
 
       if (currentAction === 'retry') {
@@ -230,34 +319,57 @@
         return;
       }
 
+      const action = currentAction;
       accountButton.disabled = true;
 
       try {
-        if (currentAction === 'logout') {
+        if (action === 'logout') {
           await auth.logout();
-        } else {
+
+        } else if (
+          action === 'login' ||
+          action === 'reconnect'
+        ) {
           await auth.login();
         }
+
       } catch (error) {
-        console.error('Discord auth error:', error);
+        console.error('Discord authentication error:', error);
+
         accountStatus.textContent =
           'Authentication failed. Please try again.';
+
       } finally {
-        await refreshAccount();
+        // OAuth login normally redirects away.
+        // Refresh if we remain on the page.
+        if (document.visibilityState === 'visible') {
+          await refreshAccount();
+        }
       }
     });
 
+    // Update account when Supabase login changes.
     if (window.syndicateDB) {
-      window.syndicateDB.auth.onAuthStateChange(() => {
-        // Run outside the auth callback.
-        setTimeout(refreshAccount, 0);
-      });
+      window.syndicateDB.auth.onAuthStateChange(
+        (event) => {
+          if (
+            event === 'SIGNED_IN' ||
+            event === 'SIGNED_OUT' ||
+            event === 'INITIAL_SESSION' ||
+            event === 'USER_UPDATED'
+          ) {
+            setTimeout(() => {
+              refreshAccount();
+            }, 0);
+          }
+        }
+      );
     }
 
     refreshAccount();
 
     // =====================================
-    // EXISTING SLIDE-OUT MENU
+    // EXISTING SLIDE-OUT NAVIGATION
     // =====================================
 
     const overlay = document.createElement('div');
@@ -329,17 +441,20 @@
       overlay.classList.toggle('is-open', open);
 
       drawer.setAttribute(
-        'aria-hidden', String(!open)
+        'aria-hidden',
+        String(!open)
       );
 
       drawer.inert = !open;
 
       openButton.setAttribute(
-        'aria-expanded', String(open)
+        'aria-expanded',
+        String(open)
       );
 
       document.body.classList.toggle(
-        'syn-menu-drawer-open', open
+        'syn-menu-drawer-open',
+        open
       );
 
       if (open) {
@@ -370,11 +485,15 @@
 
       if (event.key === 'Tab') {
         const controls = Array.from(
-          drawer.querySelectorAll('button, a')
+          drawer.querySelectorAll(
+            'button:not(:disabled), a'
+          )
         );
 
         const first = controls[0];
         const last = controls[controls.length - 1];
+
+        if (!first || !last) return;
 
         if (
           event.shiftKey &&
@@ -382,6 +501,7 @@
         ) {
           event.preventDefault();
           last.focus();
+
         } else if (
           !event.shiftKey &&
           document.activeElement === last
