@@ -150,9 +150,9 @@
         return;
       }
 
-      const result = await auth.verifyMembership({
-        force: true
-      });
+const result = await auth.verifyMembership();
+
+console.log('Page guard verification result:', result);
 
       if (result?.verified === true &&
           result?.status === 'member') {
