@@ -305,3 +305,24 @@ th, td { padding: 0.65rem 0.75rem; }
   }
 }
 
+
+/* =========================================
+   SYNDICATE MEMBERSHIP STATUS
+   ========================================= */
+
+.syn-account__status[data-status="verified"] {
+  color: #8ed4a0;
+  opacity: 1;
+  font-weight: 600;
+}
+
+.syn-account__status[data-status="denied"] {
+  color: #e89b8f;
+  opacity: 1;
+}
+
+.syn-account__status[data-status="pending"] {
+  color: var(--text-light);
+  opacity: 0.8;
+}
+
