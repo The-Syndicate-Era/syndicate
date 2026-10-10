@@ -326,3 +326,15 @@ th, td { padding: 0.65rem 0.75rem; }
   opacity: 0.8;
 }
 
+
+/* =========================================
+   THE SYNDICATE
+   PROTECTED PAGE VISIBILITY
+   ========================================= */
+
+html.syn-access-pending body > main,
+html.syn-access-pending #main-content,
+html.syn-access-pending #syndicate-footer,
+html.syn-access-pending .syn-footer {
+  visibility: hidden;
+}
