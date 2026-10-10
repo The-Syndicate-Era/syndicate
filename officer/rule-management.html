@@ -1,7 +1,12 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
  <link rel="stylesheet" href="../settings/styles.css">
+<!-- Central Supabase connection and Discord Officer verification -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
+<script src="../settings/auth.js" defer></script>
+<script src="../settings/officer-guard.js" defer></script>
 <script src="../settings/font-setting.js" defer></script>
 <script src="../settings/menu.js" defer></script>
 <script src="../settings/site-layout.js" defer></script>
@@ -71,11 +76,26 @@ body {background:#080807; font-size:1rem;}
 
 #addonList .section-item{font-size:1rem}
 #addonsManager h2{color:var(--gold2)}
+
+/* Officer pages remain hidden until the Dark Council role check completes. */
+html.syn-access-pending .officer-breadcrumb,
+html.syn-access-pending .hero,
+html.syn-access-pending .wrap { display: none !important; }
+
+/* Show the shared guard's denial / retry panel without unlocking the editor. */
+#syndicate-officer-access-message {
+  display: block !important;
+  visibility: visible !important;
+  box-sizing: border-box;
+  width: calc(100% - 2rem);
+  max-width: 35rem;
+  margin: 3rem auto;
+}
 </style>
 </head>
 <body>
 <div id="syndicate-menu"></div>
-<nav class="officer-breadcrumb" aria-label="Officer navigation"><a href="../officer-hub.html">← Officer Hub</a><span aria-hidden="true">›</span><span>Rule Management</span></nav>
+<nav class="officer-breadcrumb" aria-label="Officer navigation"><a href="officer-hub.html">← Officer Hub</a><span aria-hidden="true">›</span><span>Rule Management</span></nav>
 <section class="hero"><div><div class="eyebrow">The Syndicate · Officer Tools</div><h1>Rule Management</h1><p>Manage guild policies, raiding guidelines, member expectations, and other Syndicate rules. Save drafts, preview changes, and publish when ready.</p></div></section>
 <main class="wrap">
 <div id="message" class="note" role="status" aria-live="polite" hidden></div>
@@ -139,8 +159,6 @@ body {background:#080807; font-size:1rem;}
 </section>
 </main>
 <div id="syndicate-footer"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="../settings/supabase-config.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
 <script>
@@ -151,7 +169,7 @@ body {background:#080807; font-size:1rem;}
 // Guild-wide categories can be added here; public pages must explicitly query them.
 const TABLE='raid_rules';
 const $=id=>document.getElementById(id);
-const db=window.syndicateDB || null;
+let db = null;
 let rows=[],selectedId=null,dirty=false,version='draft';
 const quill=window.Quill?new Quill('#content',{
  theme:'snow',placeholder:'Write guild rules and guidelines here...',
@@ -295,6 +313,28 @@ addon$('addonDelete').onclick=async()=>{
  addonDirty=false;addonSelectedId=null;addonEditingNew=false;await addonLoad();addonNotice('Add-on permanently deleted.','success');
 };
 
-start();
+// Start data operations only when the Officer Guard has verified Discord roles.
+document.addEventListener('DOMContentLoaded', () => {
+  let started = false;
+  const observer = new MutationObserver(startWhenAuthorized);
+
+  function startWhenAuthorized() {
+    if (started || !document.documentElement.classList.contains('syn-access-granted')) return;
+    db = window.syndicateDB;
+    if (!db || typeof db.from !== 'function') {
+      msg('The Syndicate database connection is unavailable. Please refresh.', 'error');
+      return;
+    }
+    started = true;
+    observer.disconnect();
+    start().catch(error => {
+      console.error('Rule Management startup failed:', error);
+      msg('Unable to start Rule Management: ' + (error.message || 'Unknown error'), 'error');
+    });
+  }
+
+  observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+  startWhenAuthorized();
+});
 </script>
 </body></html>
