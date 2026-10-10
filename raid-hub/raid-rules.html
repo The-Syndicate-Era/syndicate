@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -68,7 +68,7 @@
   </style>
 </head>
 <body>
-  <!-- Intentionally no #syndicate-menu: this reading page has only Raid Hub breadcrumb navigation. -->
+  <div id="syndicate-menu"></div>
   <div id="syndicate-subheader" data-section="raid-hub" data-title="Raid Rules">
     <nav class="rules-breadcrumb" aria-label="Raid Hub navigation">
       <a href="../raid-hub.html">← Raid Hub</a><span aria-hidden="true">›</span><span aria-current="page">Raid Rules</span>
@@ -92,9 +92,7 @@
     <p id="rulesEnd" class="rules-end" hidden>◆ This is the way. ◆</p>
   </main>
   <div id="syndicate-footer"></div>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="../settings/supabase-config.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script>
     (() => {
       'use strict';
@@ -103,7 +101,7 @@
       const links = document.getElementById('rulesLinks');
       const content = document.getElementById('rulesContent');
       const end = document.getElementById('rulesEnd');
-      const db = window.syndicateDB;
+      let db = null;
       function setStatus(message, isError = false) {
         status.textContent = message;
         status.classList.toggle('error', isError);
@@ -184,7 +182,12 @@
           setStatus('Unable to load published rules: ' + (error.message || 'Unknown error') + '. Please try again later.', true);
         }
       }
-      loadRules();
+      
+document.addEventListener('DOMContentLoaded', () => {
+  db = window.syndicateDB;
+  loadRules();
+});
+
     })();
   </script>
 </body>
