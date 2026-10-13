@@ -1,3 +1,4 @@
+
 /* =========================================
    THE SYNDICATE
    SHARED NAVIGATION + DISCORD ACCOUNT
@@ -114,6 +115,10 @@
           color: #ef6464 !important;
           font-weight: 700;
         }
+        .syn-account__trigger .syn-account__name[data-rank="reconnect"] {
+          color: #ef6464 !important;
+          font-weight: 700;
+        }
         .syn-account__trigger .syn-account__name[data-rank="member"] {
           color: #e5c978 !important;
           font-weight: 700;
@@ -207,6 +212,7 @@
           break;
 
         case 'reconnect_required':
+          displayAccount('RECONNECT', 'reconnect');
           accountStatus.textContent =
             'Discord reconnection required';
           accountStatus.dataset.status = 'pending';
