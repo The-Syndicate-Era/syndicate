@@ -1,4 +1,3 @@
-
 /* =========================================
    THE SYNDICATE
    SHARED NAVIGATION + DISCORD ACCOUNT
@@ -54,7 +53,7 @@
               <span class="syn-account__icon"
                     aria-hidden="true">♟</span>
 
-              <span class="syn-account__name">LOGIN</span>
+              <span class="syn-account__name">CHECKING...</span>
 
               <span class="syn-account__arrow"
                     aria-hidden="true">▾</span>
@@ -105,6 +104,31 @@
     if (mount) mount.replaceWith(header);
     else document.body.prepend(header);
 
+    // Account label colors are shared across desktop and mobile.
+    // Names are only purple after verified officer membership.
+    if (!document.getElementById('syn-account-rank-colors')) {
+      const colors = document.createElement('style');
+      colors.id = 'syn-account-rank-colors';
+      colors.textContent = `
+        .syn-account__trigger .syn-account__name[data-rank="logged-out"] {
+          color: #ef6464 !important;
+          font-weight: 700;
+        }
+        .syn-account__trigger .syn-account__name[data-rank="member"] {
+          color: #e5c978 !important;
+          font-weight: 700;
+        }
+        .syn-account__trigger .syn-account__name[data-rank="officer"] {
+          color: #b78aff !important;
+          font-weight: 700;
+        }
+        .syn-account__trigger .syn-account__name[data-rank="checking"] {
+          color: #b5a88f !important;
+        }
+      `;
+      document.head.appendChild(colors);
+    }
+
     // =====================================
     // DISCORD ACCOUNT ELEMENTS
     // =====================================
@@ -127,6 +151,11 @@
     let currentAction = 'login';
     let accountOpen = false;
     let refreshVersion = 0;
+
+    function displayAccount(name, rank) {
+      accountName.textContent = name;
+      accountName.dataset.rank = rank;
+    }
 
     function setAccountOpen(open) {
       accountOpen = open;
@@ -208,7 +237,7 @@
       const auth = window.syndicateAuth;
 
       if (!auth) {
-        accountName.textContent = 'LOGIN';
+        displayAccount('LOG IN', 'logged-out');
         accountUsername.textContent = 'Unavailable';
         accountStatus.textContent =
           'Discord authentication unavailable.';
@@ -218,6 +247,7 @@
       }
 
       accountButton.disabled = true;
+      displayAccount('CHECKING...', 'checking');
       accountStatus.textContent = 'Checking Discord login...';
 
       try {
@@ -229,7 +259,7 @@
         currentUser = user;
 
         if (!user) {
-          accountName.textContent = 'LOGIN';
+          displayAccount('LOG IN', 'logged-out');
           accountUsername.textContent = 'Not connected';
 
           accountStatus.textContent =
@@ -258,7 +288,7 @@
           metadata.preferred_username ||
           'Discord User';
 
-        accountName.textContent = username;
+        displayAccount(username, 'member');
         accountUsername.textContent = username;
 
         currentAction = 'logout';
@@ -284,6 +314,11 @@
         if (version !== refreshVersion) return;
 
         showMembershipStatus(membership);
+        // Officer / Guild Master role is verified by the Discord Edge Function.
+        if (membership?.verified === true && membership?.status === 'member') {
+          displayAccount(username, membership.isOfficer === true ? 'officer' : 'member');
+        }
+
 
 
 } catch (error) {
@@ -291,7 +326,7 @@
 
   console.error('Account verification error:', error);
 
-  accountName.textContent = 'LOGIN';
+  displayAccount('LOG IN', 'logged-out');
   accountUsername.textContent = 'Not connected';
 
   accountStatus.textContent =
