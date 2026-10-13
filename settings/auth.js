@@ -105,7 +105,7 @@
     const { data, error } = await db.auth.signInWithOAuth({
       provider: 'discord',
       options: {
-        redirectTo: homeURL,
+      redirectTo: window.location.href,
         scopes: 'identify email guilds.members.read'
       }
     });
