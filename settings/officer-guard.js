@@ -110,8 +110,9 @@ document.body.append(panel);
         showAccessMessage('Verification Unavailable', 'Unable to initialize Discord verification.', 'retry');
         return;
       }
-      // Request a fresh role check; do not reuse the short-lived verification cache.
-      const result = await auth.verifyMembership({ force: true });
+      // Share the same verification request/cache with the account menu.
+      // auth.js retries temporary network failures automatically.
+      const result = await auth.verifyMembership();
       if (result?.verified === true && result?.status === 'member') {
         if (result.isOfficer === true) {
           grantAccess();
@@ -137,7 +138,7 @@ document.body.append(panel);
         return;
       }
       showAccessMessage('Verification Unavailable',
-        'We could not confirm your Officer or Guild Master role. Please try again.', 'retry');
+        'Discord verification could not be completed. Your login is still intact; please try again.', 'retry');
     } catch (error) {
       console.error('Officer access check failed:', error);
       showAccessMessage('Verification Unavailable',
@@ -150,4 +151,3 @@ document.body.append(panel);
   // Do not leave access-pending if the document has already loaded.
   checkOfficerAccess();
 })();
-
