@@ -1,576 +1,190 @@
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
-
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-
-  <title>The Syndicate | Coming Soon</title>
-
-  <!-- Google Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-
-  <link
-    rel="preconnect"
-    href="https://fonts.gstatic.com"
-    crossorigin
-  >
-
-  <link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Montserrat:wght@300;400;500&display=swap"
-    rel="stylesheet"
-  >
-
-
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Blackwing Lair | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="../settings/supabase-config.js" defer></script>
+  <script src="../settings/auth.js" defer></script>
+  <script src="../settings/page-guard.js" defer></script>
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/menu.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" defer></script>
   <style>
-
-    :root {
-      --background-dark: #090909;
-      --background-soft: #101010;
-
-      --gold: #d9b438;
-      --gold-light: #efcc54;
-      --gold-dark: #7d651c;
-
-      --text-light: #e6dfc9;
-      --text-muted: #a59b80;
-
-      --border: rgba(217, 180, 56, 0.35);
-
-      --font-heading: "Cinzel", serif;
-      --font-body: "Montserrat", sans-serif;
-    }
-
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-
-    body {
-      background: var(--background-dark);
-      color: var(--text-light);
-
-      font-family: var(--font-body);
-
-      min-height: 100vh;
-
-      display: flex;
-      flex-direction: column;
-    }
-
-
-    a {
-      color: inherit;
-      text-decoration: none;
-    }
-
-
-    /* =========================
-       HEADER
-    ========================= */
-
-    .site-header {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-
-      background: var(--background-dark);
-
-      border-bottom: 1px solid var(--gold-dark);
-
-      position: relative;
-      z-index: 100;
-    }
-
-
-    .logo-area {
-      height: 70px;
-
-      display: flex;
-      align-items: center;
-
-      padding-left: 14px;
-    }
-
-
-    .logo-area img {
-      height: 46px;
-      width: auto;
-
-      display: block;
-    }
-
-
-    .desktop-nav {
-      display: flex;
-      align-items: center;
-
-      gap: 34px;
-
-      padding-right: 32px;
-
-      font-family: var(--font-heading);
-
-      font-size: 15px;
-
-      color: var(--gold);
-    }
-
-
-    .desktop-nav a {
-      transition: color 0.2s ease;
-    }
-
-
-    .desktop-nav a:hover {
-      color: var(--gold-light);
-    }
-
-
-    .menu-button {
-      display: none;
-
-      background: none;
-      border: none;
-
-      color: var(--gold);
-
-      font-size: 28px;
-
-      cursor: pointer;
-
-      padding: 12px 20px;
-    }
-
-
-    .mobile-nav {
-      display: none;
-
-      position: absolute;
-
-      top: 70px;
-      right: 0;
-
-      width: 230px;
-
-      background: #0b0b0b;
-
-      border-left: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-
-      z-index: 200;
-    }
-
-
-    .mobile-nav.open {
-      display: block;
-    }
-
-
-    .mobile-nav a {
-      display: block;
-
-      padding: 15px 20px;
-
-      border-bottom:
-        1px solid rgba(217, 180, 56, 0.15);
-
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: 14px;
-    }
-
-
-    /* =========================
-       MAIN CONTENT
-    ========================= */
-
-    main {
-      flex: 1;
-
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      padding: 60px 30px;
-    }
-
-
-    .coming-soon {
-      width: 100%;
-      max-width: 850px;
-
-      text-align: center;
-
-      padding: 60px 30px;
-
-      border-top: 1px solid var(--gold-dark);
-      border-bottom: 1px solid var(--gold-dark);
-    }
-
-
-    .coming-soon h1 {
-      font-family: var(--font-heading);
-
-      color: var(--gold);
-
-      font-size: clamp(38px, 7vw, 72px);
-
-      font-weight: 400;
-
-      letter-spacing: 4px;
-
-      margin-bottom: 18px;
-    }
-
-
-    .coming-soon p {
-      color: var(--text-muted);
-
-      font-size: 15px;
-
-      line-height: 1.8;
-
-      max-width: 600px;
-
-      margin: 0 auto;
-    }
-
-
-    .coming-soon-mark {
-      color: var(--gold-dark);
-
-      font-size: 24px;
-
-      margin-bottom: 18px;
-
-      letter-spacing: 8px;
-    }
-
-
-    /* =========================
-       FOOTER
-    ========================= */
-
-    .site-footer {
-      border-top:
-        1px solid rgba(217, 180, 56, 0.25);
-
-      padding: 26px 30px 20px;
-
-      text-align: center;
-    }
-
-
-    .footer-motto {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-
-      gap: 12px;
-
-      font-family: var(--font-heading);
-
-      font-size: 14px;
-
-      letter-spacing: 3px;
-
-      color: var(--gold-dark);
-    }
-
-
-    .footer-motto::before,
-    .footer-motto::after {
-      content: "";
-
-      width: 90px;
-      height: 1px;
-
-      background: var(--gold-dark);
-    }
-
-
-    .footer-divider {
-      height: 1px;
-
-      max-width: 1100px;
-
-      margin: 16px auto;
-
-      background:
-        linear-gradient(
-          90deg,
-          transparent,
-          var(--gold-dark),
-          transparent
-        );
-    }
-
-
-    .footer-logo img {
-      width: 155px;
-      max-width: 65%;
-
-      height: auto;
-    }
-
-
-    /* =========================
-       TABLET / MOBILE
-    ========================= */
-
-    @media (max-width: 900px) {
-
-      .desktop-nav {
-        display: none;
-      }
-
-      .menu-button {
-        display: block;
-      }
-
-    }
-
-
-    @media (max-width: 650px) {
-
-      .site-header {
-        height: 60px;
-      }
-
-
-      .logo-area {
-        height: 60px;
-      }
-
-
-      .logo-area img {
-        height: 38px;
-      }
-
-
-      .mobile-nav {
-        top: 60px;
-      }
-
-
-      main {
-        padding: 40px 18px;
-      }
-
-
-      .coming-soon {
-        padding: 45px 16px;
-      }
-
-
-      .coming-soon h1 {
-        font-size: 38px;
-
-        letter-spacing: 2px;
-      }
-
-
-      .coming-soon p {
-        font-size: 13px;
-      }
-
-
-      .footer-motto {
-        font-size: 11px;
-        letter-spacing: 2px;
-      }
-
-
-      .footer-motto::before,
-      .footer-motto::after {
-        width: 45px;
-      }
-
-    }
-
+    :root{--bwl-accent:#ce5e62;--bwl-accent-light:#edb3b7;--bwl-accent-dark:#662f36;--bwl-gold:#d4af37;--bwl-text:#e8dfd1;--bwl-muted:#beb2a3}
+    [hidden]{display:none!important}html{scroll-behavior:smooth}body{margin:0;background:#09090b!important;color:var(--bwl-text)}
+    .raid-subnav{background:#16120f;border-block:1px solid #493921}
+    .raid-subnav-inner{max-width:1250px;margin:auto;display:flex;flex-wrap:wrap;gap:.5rem 1.35rem;align-items:center;padding:.7rem clamp(1rem,3vw,2rem)}
+    .raid-subnav a{color:#e4d0a5;text-decoration:none;font-size:.96rem;line-height:1.6}.raid-subnav a:hover,.raid-subnav a:focus-visible{color:#f9dd82;text-decoration:underline}
+    .raid-subnav .back-link{color:#f0c95a;font-weight:700}.raid-subnav .separator{height:1rem;width:1px;background:#65502c}
+    .raid-container{max-width:1250px;margin:auto;padding:1.2rem clamp(1rem,3vw,2rem) 4.5rem}
+    .raid-banner{position:relative;overflow:hidden;border:1px solid var(--bwl-accent-dark);background:linear-gradient(100deg,#210f15,#361a20 52%,#150b0d);aspect-ratio:5 / 1;min-height:125px;max-height:280px;display:flex;align-items:center;justify-content:center}
+    .raid-banner img{height:100%;width:100%;object-fit:cover;position:absolute;inset:0;display:block}
+    .raid-banner-fallback{text-align:center;padding:1rem;position:relative;z-index:1}.raid-banner-fallback h1{font:500 clamp(1.6rem,4vw,3.2rem)/1.1 var(--font-heading,Cinzel,serif);color:#ebd49e;letter-spacing:.07em;margin:.2rem 0}.raid-banner-fallback p{color:var(--bwl-accent-light);margin:0;font-size:.9rem}
+    .raid-info{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;border-bottom:1px solid #662f36;padding:1rem .2rem}
+    .raid-info .facts{color:#d7cbbb;font-size:1.02rem}.raid-info .facts span+span::before{content:' · ';color:var(--bwl-accent)}
+    .raid-status{padding:.3rem .85rem;border-radius:99px;border:1px solid #ce5e62;background:#361a20;color:#edb3b7;font-size:.87rem;font-weight:700;letter-spacing:.05em}
+    .raid-status[data-status="progression"]{border-color:#c99958;color:#efd5a4;background:#302218}.raid-status[data-status="coming-soon"]{border-color:#708195;color:#c8d5df;background:#1b252e}
+    .coming-soon{margin-top:1.5rem;background:#210f15;border:1px solid #ce5e62;padding:1.3rem 1.5rem}.coming-soon h2{color:var(--bwl-accent-light);margin:0 0 .4rem;font:500 1.35rem var(--font-heading,Cinzel,serif)}.coming-soon p{margin:0;line-height:1.6}
+    .raid-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:2.6rem;align-items:start;margin-top:2rem}
+    .raid-sidebar{position:sticky;top:1rem;background:#150b0d;border:1px solid #662f36;padding:1.1rem 1rem}.raid-sidebar h2{color:#e1bf68;font:500 1.1rem var(--font-heading,Cinzel,serif);margin:0 0 .8rem}.raid-sidebar nav{display:grid;gap:.2rem}.raid-sidebar a{display:block;padding:.48rem .65rem;border-left:3px solid transparent;text-decoration:none;color:#ddcfbe;font-size:1rem}.raid-sidebar a:hover,.raid-sidebar a:focus-visible{border-color:var(--bwl-accent);color:#edb3b7;background:#361a20}.raid-sidebar p{color:var(--bwl-muted);font-size:.95rem}
+    .raid-content{min-width:0}.raid-section{scroll-margin-top:1.4rem;padding:.3rem 0 1.7rem;margin-bottom:1.55rem;border-bottom:1px solid #662f36}.raid-section:last-child{border-bottom:0}
+    .raid-section>h2{font:500 clamp(1.5rem,2.3vw,1.95rem)/1.4 var(--font-heading,Cinzel,serif);color:#e6c575;margin:0 0 .65rem}
+    .raid-rich.ql-editor{padding:0!important;min-height:0!important;overflow:visible!important;font:inherit;color:var(--bwl-text);line-height:1.8;white-space:normal;overflow-wrap:anywhere}
+    .raid-rich p,.raid-rich li{font-size:1.075rem;line-height:1.8}.raid-rich p{margin:.35rem 0 .85rem}.raid-rich h2,.raid-rich h3{font-family:var(--font-heading,Cinzel,serif);color:#e8c879;margin:1.1rem 0 .45rem}.raid-rich h2{font-size:1.4rem}.raid-rich h3{font-size:1.18rem}
+    .raid-rich strong{font-weight:700}.raid-rich a{color:#edb3b7;text-underline-offset:3px}.raid-rich a:hover{color:#edb3b7}
+    .raid-rich ul,.raid-rich ol{padding-left:1.5rem}.raid-rich li::before{color:var(--bwl-accent)}
+    .raid-rich blockquote{border-left:3px solid var(--bwl-accent);background:#210f15;padding:.6rem 1rem;margin:1rem 0;color:#edb3b7}
+    /* Preserve Quill heading/list/indent formatting; apply consistent Blackwing Lair colors. */
+    .raid-rich .ql-indent-1{padding-left:2em}.raid-rich .ql-indent-2{padding-left:4em}.raid-rich .ql-indent-3{padding-left:6em}
+    .raid-rich [style*="color"],.raid-rich [style*="background-color"]{color:inherit!important;background-color:transparent!important}
+    .raid-placeholder{padding:1rem 1.2rem;border-left:3px solid var(--bwl-accent);background:#210f15;color:#edb3b7}
+    .class-note{margin:.6rem 0;border-left:2px solid var(--bwl-accent-dark);padding:.3rem .9rem}.class-note strong{color:#e9c675}
+    .load-state{color:var(--bwl-muted);font-size:1rem}.load-state.error{color:#e9b0b0}
+    html.syn-access-pending .raid-subnav,html.syn-access-pending .raid-container{display:none!important}
+    @media(max-width:800px){.raid-layout{grid-template-columns:1fr;gap:1.5rem}.raid-sidebar{position:static}.raid-sidebar nav{display:flex;flex-wrap:wrap;gap:.15rem .5rem}.raid-sidebar a{padding:.35rem .5rem}.raid-banner{aspect-ratio:4/1}}
+    @media(max-width:540px){.raid-subnav-inner{gap:.25rem .9rem}.raid-subnav .separator{display:none}.raid-banner{aspect-ratio:3.5/1;min-height:105px}.raid-info{padding:.8rem .15rem}.raid-rich p,.raid-rich li{font-size:1.01rem}}
   </style>
 </head>
-
-
 <body>
-
-
-  <!-- =========================
-       HEADER
-  ========================== -->
-
-  <header class="site-header">
-
-    <a
-      href="index.html"
-      class="logo-area"
-    >
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-    </a>
-
-
-    <nav class="desktop-nav">
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-
-    <button
-      class="menu-button"
-      id="menuButton"
-      type="button"
-      aria-label="Open navigation menu"
-      aria-expanded="false"
-    >
-      ☰
-    </button>
-
-
-    <nav
-      class="mobile-nav"
-      id="mobileNav"
-    >
-
-      <a href="index.html">
-        Home
-      </a>
-
-      <a href="officers.html">
-        Our Guild
-      </a>
-
-      <a href="calendar.html">
-        Calendar
-      </a>
-
-      <a href="raids.html">
-        Raid Hub
-      </a>
-
-      <a href="resources.html">
-        Resources
-      </a>
-
-    </nav>
-
-  </header>
-
-
-  <!-- =========================
-       COMING SOON
-  ========================== -->
-
-  <main>
-
-    <section class="coming-soon">
-
-      <div class="coming-soon-mark">
-        ✦ ✦ ✦
-      </div>
-
-      <h1>
-        Coming Soon
-      </h1>
-
-      <p>
-        This section of The Syndicate is still being built.
-        Check back soon for more information, resources,
-        and questionable levels of organization.
-      </p>
-
+  <div id="syndicate-menu"></div>
+  <nav class="raid-subnav" aria-label="Shared raid resources"><div class="raid-subnav-inner">
+    <a class="back-link" href="../raid-hub.html">← Raid Hub</a>
+    <span class="separator" aria-hidden="true"></span>
+    <a href="../raid-hub/raid-rules.html">Raid Rules</a>
+    <a href="../raid-hub/required-addons.html">Required Add-ons</a>
+    <a href="../resources/attune-key.html">Attunements &amp; Keys</a>
+  </div></nav>
+  <div class="raid-container">
+    <header class="raid-banner" aria-label="Blackwing Lair">
+      <div class="raid-banner-fallback" id="bwlBannerFallback"><h1>ONYXIA'S LAIR</h1><p>Enter the Blackwing</p></div>
+      <img id="bwlBannerImage" src="../images/bwl.png" alt="Blackwing Lair raid banner" hidden>
+    </header>
+    <div class="raid-info">
+      <div class="facts"><span>40-Player Raid</span><span>Blackrock Mountain</span><span>Attunement Required</span></div>
+      <span class="raid-status" id="bwlRaidStatus" hidden></span>
+    </div>
+    <section class="coming-soon" id="bwlComingSoon" hidden>
+      <h2>Coming Soon</h2>
+      <p>Blackwing Lair is not yet on The Syndicate's active raid schedule. Published preparation information is available below.</p>
     </section>
-
-  </main>
-
-
-  <!-- =========================
-       FOOTER
-  ========================== -->
-
-  <footer class="site-footer">
-
-    <div class="footer-motto">
-      ✦ THIS IS THE WAY. ✦
+    <div class="raid-layout">
+      <aside class="raid-sidebar"><h2>On This Page</h2><nav id="bwlSectionNav" aria-label="Blackwing Lair page sections"></nav><p id="bwlNavEmpty" hidden>No raid sections published yet.</p></aside>
+      <main class="raid-content" id="bwlSections" aria-live="polite"><p class="load-state" id="bwlLoading">Loading published raid information…</p></main>
     </div>
-
-    <div class="footer-divider"></div>
-
-    <div class="footer-logo">
-
-      <img
-        src="HeaderLogo.png"
-        alt="The Syndicate"
-      >
-
-    </div>
-
-  </footer>
-
-
-  <!-- =========================
-       MOBILE MENU
-  ========================== -->
-
+  </div>
+  <div id="syndicate-footer"></div>
   <script>
+  (() => {
+    'use strict';
+    const RAID_KEY = 'bwl';
+    const SECTIONS = [
+      ['overview','Overview'],['preparation','Preparation'],['rewards','Rewards'],
+      ['encounter-tips','Encounter Tips'],['hard-reserves','Hard Reserves'],
+      ['raid-rules','Raid Rules'],['class-notes','Class Notes']
+    ];
+    const CLASS_LABELS = [
+      ['tanks','Tanks'],['healers','Healers'],['druid','Druid'],['hunter','Hunter'],
+      ['mage','Mage'],['priest','Priest'],['rogue','Rogue'],['shaman','Shaman'],
+      ['warlock','Warlock'],['warrior','Warrior']
+    ];
+    const byId = id => document.getElementById(id);
+    let started = false;
 
-    const menuButton =
-      document.getElementById("menuButton");
+    function sanitized(content) {
+      if (!window.DOMPurify) throw new Error('Content sanitizer unavailable');
+      return window.DOMPurify.sanitize(String(content || ''), {
+        ALLOWED_TAGS: ['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],
+        ALLOWED_ATTR: ['href','target','rel','class','data-list','style'],
+        ALLOW_DATA_ATTR: false
+      });
+    }
 
-    const mobileNav =
-      document.getElementById("mobileNav");
+    function cleanColorFormatting(html) {
+      const holder=document.createElement('div');holder.innerHTML=sanitized(html);
+      holder.querySelectorAll('[style]').forEach(el=>{
+        el.style.removeProperty('color');
+        el.style.removeProperty('background-color');
+        if(!el.getAttribute('style')?.trim()) el.removeAttribute('style');
+      });
+      holder.querySelectorAll('a').forEach(a=>{a.rel='noopener noreferrer';if(a.protocol && !['https:','http:','mailto:'].includes(a.protocol))a.removeAttribute('href');});
+      return holder;
+    }
 
-
-    menuButton.addEventListener(
-      "click",
-      function () {
-
-        const isOpen =
-          mobileNav.classList.toggle("open");
-
-        menuButton.setAttribute(
-          "aria-expanded",
-          isOpen
-        );
-
+    function classNotes(raw) {
+      let notes;
+      try { notes=JSON.parse(raw || '{}'); } catch { return null; }
+      if(!notes || typeof notes!=='object' || Array.isArray(notes))return null;
+      const host=document.createElement('div');
+      for(const [key,label] of CLASS_LABELS){
+        const value=String(notes[key] || '').trim();if(!value)continue;
+        const line=document.createElement('div');line.className='class-note';
+        const strong=document.createElement('strong');strong.textContent=label+': ';
+        line.append(strong,document.createTextNode(value));host.append(line);
       }
-    );
+      return host.childElementCount?host:null;
+    }
 
+    function sectionContent(row,key){
+      if(key==='class-notes')return classNotes(row.published_content);
+      const content=cleanColorFormatting(row.published_content);
+      return content.textContent.trim() || content.querySelector('img') ? content : null;
+    }
+
+    async function load(){
+      const db=window.syndicateDB;
+      if(!db){showError('Raid database connection unavailable.');return;}
+      const status=byId('bwlRaidStatus');
+      const statusResult=await db.from('raids').select('raid_status').eq('raid_key',RAID_KEY).maybeSingle();
+      if(!statusResult.error && statusResult.data){
+        const value=String(statusResult.data.raid_status || '').trim().toLowerCase().replace(/[_ ]+/g,'-');
+        const labels={'farm':'Farm','progression':'Progression','coming-soon':'Coming Soon'};
+        if(labels[value]){status.textContent=labels[value].toUpperCase();status.dataset.status=value;status.hidden=false;byId('bwlComingSoon').hidden=value!=='coming-soon';}
+      }else if(statusResult.error){console.warn('Could not read raid status:',statusResult.error.message);}
+
+      const result=await db.from('raid_rules')
+        .select('slug,published_content,is_published')
+        .eq('raid_key',RAID_KEY).eq('is_published',true);
+      if(result.error){showError('Unable to load published raid information. Please try again later.');console.error('Raid sections:',result.error);return;}
+      if(!window.DOMPurify){showError('Raid formatting is temporarily unavailable.');return;}
+      const entries=new Map((result.data||[]).map(r=>[r.slug,r]));
+      const nav=byId('bwlSectionNav'),main=byId('bwlSections');
+      nav.replaceChildren();main.replaceChildren();
+      let count=0;
+      for(const [key,label] of SECTIONS){
+        const row=entries.get(RAID_KEY+'-'+key);
+        if(!row)continue;
+        const content=sectionContent(row,key);
+        if(!content)continue;
+        const id='section-'+key;
+        const link=document.createElement('a');link.href='#'+id;link.textContent=label;nav.append(link);
+        const section=document.createElement('section');section.className='raid-section';section.id=id;
+        const heading=document.createElement('h2');heading.textContent=label;
+        const inner=document.createElement('div');inner.className='raid-rich ql-editor';inner.append(...content.childNodes);
+        section.append(heading,inner);main.append(section);count++;
+      }
+      if(!count){byId('bwlNavEmpty').hidden=false;const p=document.createElement('p');p.className='raid-placeholder';p.textContent='No raid information has been published yet.';main.append(p);}
+    }
+
+    function showError(message){const host=byId('bwlSections');host.replaceChildren();const p=document.createElement('p');p.className='load-state error';p.textContent=message;host.append(p);}
+    function initialize(){
+      if(started || !document.documentElement.classList.contains('syn-access-granted'))return;
+      started=true;observer.disconnect();load().catch(e=>{console.error('Raid page:',e);showError('Unable to display raid information right now.');});
+    }
+    const observer=new MutationObserver(initialize);
+    observer.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();
+
+    const image=byId('bwlBannerImage'),fallback=byId('bwlBannerFallback');
+    image.addEventListener('load',()=>{image.hidden=false;fallback.hidden=true;});
+    image.addEventListener('error',()=>{image.hidden=true;fallback.hidden=false;});
+    // Defer the request until handlers are installed, including when image is cached.
+    if(image.complete && image.naturalWidth>0){image.hidden=false;fallback.hidden=true;}
+  })();
   </script>
-
-
 </body>
 </html>
