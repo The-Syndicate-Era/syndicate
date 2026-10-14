@@ -38,7 +38,7 @@ html.syn-access-pending .rm-crumb,html.syn-access-pending .rm-hero,html.syn-acce
 <div id="rmMessage" class="rm-notice" hidden role="status" aria-live="polite"></div>
 <div class="rm-panel">
 <div class="rm-top"><div><label for="rmRaid">Select Raid</label><select id="rmRaid" class="rm-select"><option value="ony">Onyxia's Lair</option><option value="zg">Zul'Gurub</option><option value="aq20">Ruins of Ahn'Qiraj (AQ20)</option><option value="mc">Molten Core</option><option value="bwl">Blackwing Lair</option><option value="aq40">Temple of Ahn'Qiraj (AQ40)</option><option value="naxx">Naxxramas</option></select></div><div class="rm-actions"><button id="rmRefresh" class="rm-btn" type="button">Refresh</button></div></div>
-<div class="rm-raid-status-row"><div><label for="rmRaidStatus">Raid Status</label><select id="rmRaidStatus" class="rm-select"><option value="">Select status</option><option value="farm">Farm</option><option value="progression">Progression</option><option value="coming-soon">Coming Soon</option></select><p class="rm-help">Status is stored for this raid, separately from its individual content sections.</p></div><button id="rmSaveStatus" type="button" class="rm-btn">Save Raid Status</button></div>
+<div class="rm-raid-status-row"><div><label for="rmRaidStatus">Raid Status</label><select id="rmRaidStatus" class="rm-select"><option value="">Select status</option><option value="farm">Farm</option><option value="progression">Progression</option><option value="coming-soon">Coming Soon</option></select><p class="rm-help">One status per raid, stored in the raids table. Changes apply to the whole raid.</p></div><button id="rmSaveStatus" type="button" class="rm-btn">Save Raid Status</button></div>
 <div id="rmTabs" class="rm-tabs" role="tablist" aria-label="Raid content sections"></div>
 <div class="rm-toolbar"><div><h2 id="rmHeading" style="margin:0">Overview</h2><p class="rm-muted" id="rmUpdated" style="margin:3px 0 0"></p></div><span id="rmStatus" class="rm-status">Draft</span></div>
 <div class="rm-version"><button type="button" class="rm-btn active" id="rmDraftTab">Draft Version</button><button type="button" class="rm-btn" id="rmPublishedTab">Published Version</button></div>
@@ -67,14 +67,31 @@ html.syn-access-pending .rm-crumb,html.syn-access-pending .rm-hero,html.syn-acce
  ];
  const CLASS_NAMES = ['Tanks','Healers','Druid','Hunter','Mage','Priest','Rogue','Shaman','Warlock','Warrior'];
  const CLASS_KEYS = ['tanks','healers','druid','hunter','mage','priest','rogue','shaman','warlock','warrior'];
- let db=null, records=[], section='overview', view='draft', dirty=false, started=false, busy=false;
+ let db=null, records=[], raidStatusRow=null, section='overview', view='draft', dirty=false, started=false, busy=false;
  const quill = window.Quill ? new Quill('#rmQuill', {theme:'snow',placeholder:'Enter raid information...',modules:{toolbar:[[{header:[2,3,false]}],['bold','italic','underline','strike'],[{list:'ordered'},{list:'bullet'}],[{indent:'-1'},{indent:'+1'}],[{color:[]},{background:[]}],['link','blockquote'],['clean']]}}) : null;
  const sanitize = html => window.DOMPurify ? DOMPurify.sanitize(String(html||''),{ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],ALLOWED_ATTR:['href','target','rel','class','data-list','style']}) : '';
  function message(text,type=''){const el=$('rmMessage');el.textContent=text;el.className='rm-notice '+type;el.hidden=false;}
  function clearMessage(){$('rmMessage').hidden=true;}
  function current(){return records.find(r=>r.slug===$('rmRaid').value+'-'+section)||null;}
- function overviewRecord(){return records.find(r=>r.slug===$('rmRaid').value+'-overview')||null;}
- function drawRaidStatus(){const record=overviewRecord();$('rmRaidStatus').value=record?.raid_status||'';$('rmSaveStatus').disabled=!record;}
+ // Raid status is stored once per raid in public.raids (never in raid_rules).
+ const STATUS_TO_UI = {'Farm':'farm','Progression':'progression','Coming Soon':'coming-soon'};
+ const STATUS_TO_DB = {'farm':'Farm','progression':'Progression','coming-soon':'Coming Soon'};
+ function drawRaidStatus(){
+  $('rmRaidStatus').value=raidStatusRow ? (STATUS_TO_UI[raidStatusRow.raid_status]||'') : '';
+  $('rmRaidStatus').disabled=!raidStatusRow;
+  $('rmSaveStatus').disabled=!raidStatusRow;
+ }
+ async function loadRaidStatus(){
+  raidStatusRow=null;
+  drawRaidStatus();
+  const raidKey=$('rmRaid').value;
+  const {data,error}=await db.from('raids').select('raid_key,raid_name,raid_status').eq('raid_key',raidKey).maybeSingle();
+  if(raidKey!==$('rmRaid').value)return;
+  if(error){message('Raid information loaded, but raid status could not be read from the raids table: '+error.message,'error');return;}
+  if(!data){message('Raid information loaded, but the raids table has no record for '+raidKey+'. Add that raid before changing its status.','error');return;}
+  raidStatusRow=data;
+  drawRaidStatus();
+ }
  function changed(){dirty=true;$('rmDirty').hidden=false;}
  function clean(){dirty=false;$('rmDirty').hidden=true;}
  function mayDiscard(){return !dirty||window.confirm('Discard unsaved draft edits?');}
@@ -86,22 +103,24 @@ html.syn-access-pending .rm-crumb,html.syn-access-pending .rm-hero,html.syn-acce
  function draw(){const record=current(),isClass=section==='class-notes';$('rmHeading').textContent=SECTIONS.find(s=>s[0]===section)[1];$('rmStatus').textContent=record?.is_published?'Published':'Not Published';$('rmStatus').classList.toggle('live',!!record?.is_published);$('rmUpdated').textContent=record?.updated_at?'Last updated: '+new Date(record.updated_at).toLocaleString():record?'Never updated':'Section not created yet — run the setup SQL';$('rmDescription').value=record?.draft_description||'';$('rmTextEditor').hidden=isClass;$('rmClassEditor').hidden=!isClass;if(isClass){const notes=parseNotes(record?.draft_content);CLASS_KEYS.forEach(key=>$('rmNote-'+key).value=String(notes[key]||''));}else if(quill){quill.setText('','silent');const raw=String(record?.draft_content||'');if(/^\s*</.test(raw))quill.clipboard.dangerouslyPasteHTML(sanitize(raw),'silent');else quill.setText(raw,'silent');} $('rmPublish').disabled=!record;$('rmUnpublish').disabled=!record?.is_published;$('rmSave').disabled=!record;
  $('rmPublishedHeading').textContent=SECTIONS.find(s=>s[0]===section)[1];$('rmPublishedDescription').textContent=record?.published_description||'';$('rmPublishedContent').innerHTML=isClass?htmlNotes(record?.published_content):sanitize(record?.published_content||'')||'<p>No published content yet.</p>';showVersion(view);clean();}
  function makeTabs(){const host=$('rmTabs');host.replaceChildren();for(const [key,name] of SECTIONS){const b=document.createElement('button');b.className='rm-btn'+(key===section?' active':'');b.type='button';b.textContent=name;b.setAttribute('role','tab');b.setAttribute('aria-selected',String(key===section));b.addEventListener('click',()=>{if(section===key)return;if(!mayDiscard())return;section=key;makeTabs();draw();clearMessage();});host.append(b);}}
- async function load(){if(!db)return message('Database connection unavailable.','error');clearMessage();const {data,error}=await db.from('raid_rules').select('id,raid_key,slug,section_title,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at,raid_status').eq('raid_key',$('rmRaid').value).order('sort_order',{ascending:true});if(error)return message('Unable to load raid information: '+error.message,'error');records=data||[];makeTabs();drawRaidStatus();draw();}
+ async function load(){if(!db)return message('Database connection unavailable.','error');clearMessage();const {data,error}=await db.from('raid_rules').select('id,raid_key,slug,section_title,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').eq('raid_key',$('rmRaid').value).order('sort_order',{ascending:true});if(error)return message('Unable to load raid information: '+error.message,'error');records=data||[];makeTabs();draw();await loadRaidStatus();}
  async function saveRaidStatus(){
   if(busy)return;
-  const record=overviewRecord(),value=$('rmRaidStatus').value;
-  if(!record)return message('Overview record missing. Run the setup SQL first.','error');
-  if(!['farm','progression','coming-soon'].includes(value))return message('Choose Farm, Progression, or Coming Soon.','error');
+  const value=$('rmRaidStatus').value;
+  if(!raidStatusRow)return message('Raid status record is unavailable in the raids table.','error');
+  if(!Object.hasOwn(STATUS_TO_DB,value))return message('Choose Farm, Progression, or Coming Soon.','error');
+  const raidKey=$('rmRaid').value;
+  const dbValue=STATUS_TO_DB[value];
   busy=true;$('rmSaveStatus').disabled=true;
   try{
-   const {data,error}=await db.from('raid_rules').update({raid_status:value}).eq('id',record.id).eq('raid_key',$('rmRaid').value).select('id,raid_status');
+   const {data,error}=await db.from('raids').update({raid_status:dbValue}).eq('raid_key',raidKey).select('raid_key,raid_status');
    if(error)throw error;
-   if(!data?.length||data[0].raid_status!==value)throw new Error('Raid status was not saved. Check database permissions.');
-   // Preserve in-progress section text by not reloading the editor.
-   record.raid_status=value;
-   message('Raid status saved. Existing drafts and published sections are unchanged.','success');
+   if(data?.length!==1||data[0].raid_status!==dbValue)throw new Error('Raid status was not saved. Check UPDATE and SELECT permissions on the raids table.');
+   // Do not reload the content editor, which might contain unsaved draft edits.
+   raidStatusRow=data[0];
+   message('Raid status saved for '+$('rmRaid').selectedOptions[0].text+'. All content sections share this status.','success');
   }catch(e){message('Could not save raid status: '+e.message,'error');}
-  finally{busy=false;$('rmSaveStatus').disabled=!overviewRecord();}
+  finally{busy=false;$('rmSaveStatus').disabled=!raidStatusRow;}
  }
  async function saveDraft(){if(busy)return false;const record=current();if(!record){message('This section does not exist in Supabase. Run the setup SQL first.','error');return false;}if(!quill){message('The text editor did not load.','error');return false;}const draft=readDraft();busy=true;$('rmSave').disabled=true;try{const {data,error}=await db.from('raid_rules').update(draft).eq('id',record.id).eq('raid_key',$('rmRaid').value).select('id,draft_description,draft_content');if(error)throw error;if(!data?.length)throw new Error('No row was updated. Check database permissions.');if(data[0].draft_content!==draft.draft_content||data[0].draft_description!==draft.draft_description)throw new Error('Save could not be verified.');await load();message('Draft saved. Published content has not changed.','success');return true;}catch(e){message('Could not save draft: '+e.message,'error');return false;}finally{busy=false;$('rmSave').disabled=!current();}}
  async function publish(){if(busy||!current())return;const record=current();const draft=readDraft();if(!confirm('Publish '+$('rmHeading').textContent+' for '+$('rmRaid').selectedOptions[0].text+'?'))return;busy=true;$('rmPublish').disabled=true;try{const values={...draft,published_description:draft.draft_description,published_content:draft.draft_content,is_published:true};const {data,error}=await db.from('raid_rules').update(values).eq('id',record.id).eq('raid_key',$('rmRaid').value).select('id');if(error)throw error;if(!data?.length)throw new Error('No row updated.');await load();showVersion('published');message('Section published successfully.','success');}catch(e){message('Publish failed: '+e.message,'error');}finally{busy=false;$('rmPublish').disabled=!current();}}
