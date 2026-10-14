@@ -2,174 +2,189 @@
 <html lang="en" class="syn-access-pending">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Onyxia's Lair | The Syndicate</title>
   <link rel="stylesheet" href="../settings/styles.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css">
-
-<!-- Supabase library -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-
-<!-- Centralized Supabase connection -->
-<script src="../settings/supabase-config.js" defer></script>
-
-<!-- Discord authentication -->
-<script src="../settings/auth.js" defer></script>
-
-<!-- Syndicate membership protection -->
-<script src="../settings/page-guard.js" defer></script>
-
-<!-- Shared website scripts -->
-<script src="../settings/font-setting.js" defer></script>
-<script src="../settings/menu.js" defer></script>
-<script src="../settings/site-layout.js" defer></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="../settings/supabase-config.js" defer></script>
+  <script src="../settings/auth.js" defer></script>
+  <script src="../settings/page-guard.js" defer></script>
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/menu.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js" defer></script>
   <style>
-    :root{--ony-gold:#dfbb53;--ony-border:#574726;--ony-text:#e4dbca;--ony-muted:#c9bda7}
-    html{scroll-behavior:smooth}
-    body{margin:0;background:#080808!important;color:var(--ony-text)}
-    #syndicate-subheader{display:block;background:#10100e;border-bottom:1px solid var(--ony-border)}
-    .fallback-crumb{max-width:1250px;margin:auto;padding:.9rem 1.25rem;color:#d6be83;font-size:1rem}.fallback-crumb a{color:#e6c763;text-decoration:none}
-    .ony-hero{border-bottom:1px solid var(--ony-border);background:#0e0c09}
-    .ony-hero-inner{max-width:1250px;margin:auto;padding:2rem clamp(1rem,3vw,2rem);display:grid;grid-template-columns:1.5fr minmax(220px,.7fr);gap:2rem;align-items:center}
-    .eyebrow{font:600 .85rem var(--font-heading,Georgia,serif);text-transform:uppercase;letter-spacing:.15em;color:#bfa45c}
-    h1,h2,h3{font-family:var(--font-heading,Georgia,serif);font-weight:500}
-    .ony-hero h1{font-size:clamp(2.2rem,4.5vw,3.35rem);line-height:1.2;color:var(--ony-gold);margin:.45rem 0 .85rem}
-    .ony-hero p{font-size:1.13rem;line-height:1.75;max-width:740px;margin:0;color:#d9ceb7}
-    .ony-hero img{width:100%;height:190px;object-fit:cover;display:block;border:1px solid #6c5525}
-    .layout{max-width:1250px;margin:auto;padding:2rem clamp(1rem,3vw,2rem) 5rem;display:grid;grid-template-columns:245px minmax(0,1fr);gap:2.3rem;align-items:start}
-    .sidebar{position:sticky;top:1.15rem;background:#12110d;border:1px solid var(--ony-border);padding:1.2rem}
-    .sidebar h2{font-size:1.08rem;color:var(--ony-gold);margin:0 0 .7rem}
-    .sidebar nav{display:grid;gap:.12rem}
-    .sidebar a{color:#ddd2b9;font-size:1rem;text-decoration:none;padding:.47rem .35rem;border-radius:3px}
-    .sidebar a:hover,.sidebar a:focus-visible{color:#f5d473;background:#262012}
-    .sidebar hr{border:0;border-top:1px solid #514126;margin:1.2rem 0}
-    .sidebar .muted{color:#a99d85;font-size:.95rem}
-    .body-section{padding-bottom:1.65rem;margin-bottom:1.8rem;border-bottom:1px solid #443821;scroll-margin-top:1.5rem}
-    .body-section:last-child{border:0}
-    .body-section h2{color:var(--ony-gold);font-size:clamp(1.43rem,2.5vw,1.8rem);margin:0 0 .75rem}
-    .body-section p,.body-section li{font-size:1.075rem;line-height:1.8;color:var(--ony-text)}
-    .body-section p{margin:.45rem 0 .85rem}
-    .body-section ul{padding-left:1.5rem;margin:.45rem 0}
-    .body-section li{padding:.16rem 0}
-    .highlights{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.8rem;margin:1.1rem 0}
-    .highlight{padding:1rem 1.1rem;background:#14120e;border:1px solid #4a3b22}
-    .highlight strong{display:block;color:#e9c665;font-size:1.07rem;margin-bottom:.25rem}
-    .highlight span{color:#d2c8b5;line-height:1.6;font-size:1rem}
-    .notes{border:1px solid #493b25;background:#12100c;padding:1rem 1.25rem}
-    .notes li{font-size:1.03rem}
-    .rules-live{padding:1.05rem 1.2rem;border:1px solid #554527;background:#14120e;line-height:1.8}
-    .rules-live p{margin:0 0 .7rem}
-    .rules-live h2,.rules-live h3{color:#e4c56b;font-size:1.18rem;margin:1rem 0 .5rem}
-    .rules-live ul,.rules-live ol{padding-left:1.4rem}
-    .rules-live.ql-editor{min-height:0;font-size:1.06rem;white-space:normal}
-    .rules-state{color:#c7bca8;font-size:1rem;margin:0 0 1rem}
-    .rules-state.error{color:#f2b2b2}
-    .resource-link{color:#e9c76d;text-decoration:underline;text-underline-offset:3px}
-    @media(max-width:840px){.layout{grid-template-columns:1fr;gap:1.5rem}.sidebar{position:static}.sidebar nav{grid-template-columns:repeat(2,minmax(0,1fr))}.ony-hero-inner{grid-template-columns:1fr}.ony-hero img{max-height:215px}}
-    @media(max-width:550px){.highlights{grid-template-columns:1fr}.sidebar nav{grid-template-columns:1fr}.body-section p,.body-section li{font-size:1.03rem}}
+    :root{--ony-accent:#a77ada;--ony-accent-light:#d5b6f1;--ony-accent-dark:#493457;--ony-gold:#d4af37;--ony-text:#e8dfd1;--ony-muted:#beb2a3}
+    [hidden]{display:none!important}html{scroll-behavior:smooth}body{margin:0;background:#09090b!important;color:var(--ony-text)}
+    .raid-subnav{background:#16120f;border-block:1px solid #493921}
+    .raid-subnav-inner{max-width:1250px;margin:auto;display:flex;flex-wrap:wrap;gap:.5rem 1.35rem;align-items:center;padding:.7rem clamp(1rem,3vw,2rem)}
+    .raid-subnav a{color:#e4d0a5;text-decoration:none;font-size:.96rem;line-height:1.6}.raid-subnav a:hover,.raid-subnav a:focus-visible{color:#f9dd82;text-decoration:underline}
+    .raid-subnav .back-link{color:#f0c95a;font-weight:700}.raid-subnav .separator{height:1rem;width:1px;background:#65502c}
+    .raid-container{max-width:1250px;margin:auto;padding:1.2rem clamp(1rem,3vw,2rem) 4.5rem}
+    .raid-banner{position:relative;overflow:hidden;border:1px solid var(--ony-accent-dark);background:linear-gradient(100deg,#18111f,#2e1d3a 52%,#140f19);aspect-ratio:5 / 1;min-height:125px;max-height:280px;display:flex;align-items:center;justify-content:center}
+    .raid-banner img{height:100%;width:100%;object-fit:cover;position:absolute;inset:0;display:block}
+    .raid-banner-fallback{text-align:center;padding:1rem;position:relative;z-index:1}.raid-banner-fallback h1{font:500 clamp(1.6rem,4vw,3.2rem)/1.1 var(--font-heading,Cinzel,serif);color:#ebd49e;letter-spacing:.07em;margin:.2rem 0}.raid-banner-fallback p{color:var(--ony-accent-light);margin:0;font-size:.9rem}
+    .raid-info{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap;border-bottom:1px solid #56416b;padding:1rem .2rem}
+    .raid-info .facts{color:#d7cbbb;font-size:1.02rem}.raid-info .facts span+span::before{content:' · ';color:var(--ony-accent)}
+    .raid-status{padding:.3rem .85rem;border-radius:99px;border:1px solid #75548c;background:#2a2033;color:#e1c5f7;font-size:.87rem;font-weight:700;letter-spacing:.05em}
+    .raid-status[data-status="progression"]{border-color:#c99958;color:#efd5a4;background:#302218}.raid-status[data-status="coming-soon"]{border-color:#708195;color:#c8d5df;background:#1b252e}
+    .coming-soon{margin-top:1.5rem;background:#171420;border:1px solid #7a6295;padding:1.3rem 1.5rem}.coming-soon h2{color:var(--ony-accent-light);margin:0 0 .4rem;font:500 1.35rem var(--font-heading,Cinzel,serif)}.coming-soon p{margin:0;line-height:1.6}
+    .raid-layout{display:grid;grid-template-columns:230px minmax(0,1fr);gap:2.6rem;align-items:start;margin-top:2rem}
+    .raid-sidebar{position:sticky;top:1rem;background:#121015;border:1px solid #574565;padding:1.1rem 1rem}.raid-sidebar h2{color:#e1bf68;font:500 1.1rem var(--font-heading,Cinzel,serif);margin:0 0 .8rem}.raid-sidebar nav{display:grid;gap:.2rem}.raid-sidebar a{display:block;padding:.48rem .65rem;border-left:3px solid transparent;text-decoration:none;color:#ddcfbe;font-size:1rem}.raid-sidebar a:hover,.raid-sidebar a:focus-visible{border-color:var(--ony-accent);color:#f0ddff;background:#251a2d}.raid-sidebar p{color:var(--ony-muted);font-size:.95rem}
+    .raid-content{min-width:0}.raid-section{scroll-margin-top:1.4rem;padding:.3rem 0 1.7rem;margin-bottom:1.55rem;border-bottom:1px solid #5b406f}.raid-section:last-child{border-bottom:0}
+    .raid-section>h2{font:500 clamp(1.5rem,2.3vw,1.95rem)/1.4 var(--font-heading,Cinzel,serif);color:#e6c575;margin:0 0 .65rem}
+    .raid-rich.ql-editor{padding:0!important;min-height:0!important;overflow:visible!important;font:inherit;color:var(--ony-text);line-height:1.8;white-space:normal;overflow-wrap:anywhere}
+    .raid-rich p,.raid-rich li{font-size:1.075rem;line-height:1.8}.raid-rich p{margin:.35rem 0 .85rem}.raid-rich h2,.raid-rich h3{font-family:var(--font-heading,Cinzel,serif);color:#e8c879;margin:1.1rem 0 .45rem}.raid-rich h2{font-size:1.4rem}.raid-rich h3{font-size:1.18rem}
+    .raid-rich strong{font-weight:700}.raid-rich a{color:#dab3ff;text-underline-offset:3px}.raid-rich a:hover{color:#f0d9ff}
+    .raid-rich ul,.raid-rich ol{padding-left:1.5rem}.raid-rich li::before{color:var(--ony-accent)}
+    .raid-rich blockquote{border-left:3px solid var(--ony-accent);background:#17121b;padding:.6rem 1rem;margin:1rem 0;color:#e5d8ec}
+    /* Preserve Quill heading/list/indent formatting; apply consistent Onyxia colors. */
+    .raid-rich .ql-indent-1{padding-left:2em}.raid-rich .ql-indent-2{padding-left:4em}.raid-rich .ql-indent-3{padding-left:6em}
+    .raid-rich [style*="color"],.raid-rich [style*="background-color"]{color:inherit!important;background-color:transparent!important}
+    .raid-placeholder{padding:1rem 1.2rem;border-left:3px solid var(--ony-accent);background:#17121b;color:#ddcce8}
+    .class-note{margin:.6rem 0;border-left:2px solid var(--ony-accent-dark);padding:.3rem .9rem}.class-note strong{color:#e9c675}
+    .load-state{color:var(--ony-muted);font-size:1rem}.load-state.error{color:#e9b0b0}
+    html.syn-access-pending .raid-subnav,html.syn-access-pending .raid-container{display:none!important}
+    @media(max-width:800px){.raid-layout{grid-template-columns:1fr;gap:1.5rem}.raid-sidebar{position:static}.raid-sidebar nav{display:flex;flex-wrap:wrap;gap:.15rem .5rem}.raid-sidebar a{padding:.35rem .5rem}.raid-banner{aspect-ratio:4/1}}
+    @media(max-width:540px){.raid-subnav-inner{gap:.25rem .9rem}.raid-subnav .separator{display:none}.raid-banner{aspect-ratio:3.5/1;min-height:105px}.raid-info{padding:.8rem .15rem}.raid-rich p,.raid-rich li{font-size:1.01rem}}
   </style>
 </head>
 <body>
   <div id="syndicate-menu"></div>
-  <div id="syndicate-subheader" data-section="raid-hub" data-title="Onyxia's Lair">
-    <nav class="fallback-crumb" aria-label="Raid Hub navigation"><a href="../raid-hub.html">← Raid Hub</a> › Onyxia's Lair</nav>
-  </div>
-  <header class="ony-hero"><div class="ony-hero-inner">
-    <div><span class="eyebrow">The Syndicate · 40-player raid · One boss</span><h1>ONYXIA'S LAIR</h1><p>A short, single-boss raid in Dustwallow Marsh. Come attuned, bring your Drakefire Amulet, and take on the Broodmother of the Black Dragonflight.</p></div>
-    <img src="../images/Raiding.png" alt="The Syndicate raid artwork">
-  </div></header>
-  <div class="layout">
-    <aside class="sidebar" aria-label="Raid navigation">
-      <h2>On This Page</h2><nav><a href="#overview">Overview</a><a href="#attunement">Attunement & Entry</a><a href="#rewards">Notable Loot</a><a href="#ony-rules">Onyxia-Specific Rules</a></nav>
-      <hr>
-      <h2>Raid Resources</h2><nav>
-        <a href="../raid-hub/raid-rules.html">Raid Rules</a>
-        <a href="../raid-hub/required-addons.html">Required Add-ons</a>
-        <a href="../resources/attune-key.html">Attunements & Keys</a>
-        <span class="muted" aria-disabled="true">Raid Consumables · Coming Soon</span>
-      </nav>
-      <hr>
-      <h2>Other Raids</h2><nav>
-        <a href="zg.html">Zul'Gurub</a>
-        <a href="aq20.html">AQ20</a>
-        <a href="mc.html">Molten Core</a>
-        <a href="bwl.html">Blackwing Lair</a>
-        <a href="aq40.html">AQ40</a>
-        <a href="naxx.html">Naxxramas</a>
-      </nav>
-    </aside>
-    <main>
-      <section class="body-section" id="overview">
-        <h2>Welcome to Onyxia's Lair</h2>
-        <p>Located in southern <strong>Dustwallow Marsh</strong>, Onyxia's Lair is a short, 40-player raid with a single boss: Onyxia. Although the raid itself is brief, every raider must complete their own attunement before entering.</p>
-      </section>
-      <section class="body-section" id="attunement">
-        <h2>Attunement & Entry</h2>
-        <div class="notes">
-          <ul>
-            <li><strong>The key:</strong> Each character must possess a <strong>Drakefire Amulet</strong> to enter Onyxia's Lair.</li>
-            <li><strong>The bag rule:</strong> The amulet must be <strong>in your character's inventory bags—not in your bank</strong>. Without it in your bags, the portal will block entry.</li>
-          </ul>
-          <p><a class="resource-link" href="../resources/attune-key.html">View The Syndicate's Attunements & Keys guide →</a></p>
-          <p><a class="resource-link" href="https://www.wowhead.com/classic/guide/onyxia-onyxias-lair-attunement-drakefire-amulet-wow-classic" target="_blank" rel="noopener noreferrer">Full Horde attunement guide on Wowhead ↗</a></p>
-        </div>
-      </section>
-      <section class="body-section" id="rewards">
-        <h2>Notable Loot</h2>
-        <div class="highlights">
-          <div class="highlight"><strong>Tier 2 Helms</strong><span>Onyxia drops Tier 2 headpieces for all nine Classic classes.</span></div>
-          <div class="highlight"><strong>Shard of the Scale</strong><span>A trinket that restores <strong>16 mana per 5 seconds</strong>, especially appealing to healers.</span></div>
-          <div class="highlight"><strong>Onyxia Hide Backpack</strong><span>An <strong>18-slot bag</strong> and a welcome inventory upgrade.</span></div>
-          <div class="highlight"><strong>Head of Onyxia</strong><span>Starts the Horde quest <em>Victory for the Horde</em>, leading to a major city turn-in.</span></div>
-        </div>
-      </section>
-      <section class="body-section" id="ony-rules">
-        <h2>Onyxia-Specific Rules</h2>
-        <p class="rules-state" id="onyRuleStatus" role="status" aria-live="polite">Loading published Onyxia rules…</p>
-        <div id="onyRuleContent" class="rules-live ql-editor" hidden></div>
-      </section>
-    </main>
+  <nav class="raid-subnav" aria-label="Shared raid resources"><div class="raid-subnav-inner">
+    <a class="back-link" href="../raid-hub.html">← Raid Hub</a>
+    <span class="separator" aria-hidden="true"></span>
+    <a href="../raid-hub/raid-rules.html">Raid Rules</a>
+    <a href="../raid-hub/required-addons.html">Required Add-ons</a>
+    <a href="../resources/attune-key.html">Attunements &amp; Keys</a>
+  </div></nav>
+  <div class="raid-container">
+    <header class="raid-banner" aria-label="Onyxia's Lair">
+      <div class="raid-banner-fallback" id="onyBannerFallback"><h1>ONYXIA'S LAIR</h1><p>The Broodmother Awaits</p></div>
+      <img id="onyBannerImage" src="../images/Ony.png" alt="Onyxia's Lair raid banner" hidden>
+    </header>
+    <div class="raid-info">
+      <div class="facts"><span>40-Player Raid</span><span>Dustwallow Marsh</span><span>Attunement Required</span></div>
+      <span class="raid-status" id="onyRaidStatus" hidden></span>
+    </div>
+    <section class="coming-soon" id="onyComingSoon" hidden>
+      <h2>Coming Soon</h2>
+      <p>Onyxia's Lair is not yet on The Syndicate's active raid schedule. Published preparation information is available below.</p>
+    </section>
+    <div class="raid-layout">
+      <aside class="raid-sidebar"><h2>On This Page</h2><nav id="onySectionNav" aria-label="Onyxia page sections"></nav><p id="onyNavEmpty" hidden>No raid sections published yet.</p></aside>
+      <main class="raid-content" id="onySections" aria-live="polite"><p class="load-state" id="onyLoading">Loading published raid information…</p></main>
+    </div>
   </div>
   <div id="syndicate-footer"></div>
-<script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.6/dist/purify.min.js"></script>
   <script>
-    (()=>{
-      'use strict';
-      const status=document.getElementById('onyRuleStatus');
-      const target=document.getElementById('onyRuleContent');
-      async function loadOnyxiaRules(){
-        const db=window.syndicateDB;
-        if(!db){status.textContent='Published rules are temporarily unavailable.';return;}
-        try{
-          const {data,error}=await db.from('raid_rules')
-            .select('slug,published_content')
-            .eq('is_published',true)
-            .eq('slug','ony-raid-rules');
-          if(error)throw error;
-          if(!data?.length){status.textContent='No Onyxia-specific rules have been published yet.';return;}
-          if(!window.DOMPurify){status.textContent='Published formatting is temporarily unavailable.';return;}
-          target.replaceChildren();
-          data.forEach(r=>{
-            const block=document.createElement('div');
-            block.innerHTML=DOMPurify.sanitize(String(r.published_content||''),{
-              ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],
-              ALLOWED_ATTR:['href','target','rel','class'],ALLOW_DATA_ATTR:false
-            });
-            block.querySelectorAll('a').forEach(a=>{a.rel='noopener noreferrer';});
-            target.append(block);
-          });
-          target.hidden=false;
-          status.hidden=true;
-        }catch(error){
-          console.error('Onyxia rules load failed:',error);
-          status.textContent='Unable to load published Onyxia rules right now.';
-        }
+  (() => {
+    'use strict';
+    const RAID_KEY = 'ony';
+    const SECTIONS = [
+      ['overview','Overview'],['preparation','Preparation'],['rewards','Rewards'],
+      ['encounter-tips','Encounter Tips'],['hard-reserves','Hard Reserves'],
+      ['raid-rules','Raid Rules'],['class-notes','Class Notes']
+    ];
+    const CLASS_LABELS = [
+      ['tanks','Tanks'],['healers','Healers'],['druid','Druid'],['hunter','Hunter'],
+      ['mage','Mage'],['priest','Priest'],['rogue','Rogue'],['shaman','Shaman'],
+      ['warlock','Warlock'],['warrior','Warrior']
+    ];
+    const byId = id => document.getElementById(id);
+    let started = false;
+
+    function sanitized(content) {
+      if (!window.DOMPurify) throw new Error('Content sanitizer unavailable');
+      return window.DOMPurify.sanitize(String(content || ''), {
+        ALLOWED_TAGS: ['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],
+        ALLOWED_ATTR: ['href','target','rel','class','data-list','style'],
+        ALLOW_DATA_ATTR: false
+      });
+    }
+
+    function cleanColorFormatting(html) {
+      const holder=document.createElement('div');holder.innerHTML=sanitized(html);
+      holder.querySelectorAll('[style]').forEach(el=>{
+        el.style.removeProperty('color');
+        el.style.removeProperty('background-color');
+        if(!el.getAttribute('style')?.trim()) el.removeAttribute('style');
+      });
+      holder.querySelectorAll('a').forEach(a=>{a.rel='noopener noreferrer';if(a.protocol && !['https:','http:','mailto:'].includes(a.protocol))a.removeAttribute('href');});
+      return holder;
+    }
+
+    function classNotes(raw) {
+      let notes;
+      try { notes=JSON.parse(raw || '{}'); } catch { return null; }
+      if(!notes || typeof notes!=='object' || Array.isArray(notes))return null;
+      const host=document.createElement('div');
+      for(const [key,label] of CLASS_LABELS){
+        const value=String(notes[key] || '').trim();if(!value)continue;
+        const line=document.createElement('div');line.className='class-note';
+        const strong=document.createElement('strong');strong.textContent=label+': ';
+        line.append(strong,document.createTextNode(value));host.append(line);
       }
-    document.addEventListener('DOMContentLoaded', () => {
-  loadOnyxiaRules();
-});
-    })();
+      return host.childElementCount?host:null;
+    }
+
+    function sectionContent(row,key){
+      if(key==='class-notes')return classNotes(row.published_content);
+      const content=cleanColorFormatting(row.published_content);
+      return content.textContent.trim() || content.querySelector('img') ? content : null;
+    }
+
+    async function load(){
+      const db=window.syndicateDB;
+      if(!db){showError('Raid database connection unavailable.');return;}
+      const status=byId('onyRaidStatus');
+      const statusResult=await db.from('raids').select('raid_status').eq('raid_key',RAID_KEY).maybeSingle();
+      if(!statusResult.error && statusResult.data){
+        const value=String(statusResult.data.raid_status || '').trim().toLowerCase().replace(/[_ ]+/g,'-');
+        const labels={'farm':'Farm','progression':'Progression','coming-soon':'Coming Soon'};
+        if(labels[value]){status.textContent=labels[value].toUpperCase();status.dataset.status=value;status.hidden=false;byId('onyComingSoon').hidden=value!=='coming-soon';}
+      }else if(statusResult.error){console.warn('Could not read Onyxia raid status:',statusResult.error.message);}
+
+      const result=await db.from('raid_rules')
+        .select('slug,published_content,is_published')
+        .eq('raid_key',RAID_KEY).eq('is_published',true);
+      if(result.error){showError('Unable to load published Onyxia information. Please try again later.');console.error('Onyxia sections:',result.error);return;}
+      if(!window.DOMPurify){showError('Raid formatting is temporarily unavailable.');return;}
+      const entries=new Map((result.data||[]).map(r=>[r.slug,r]));
+      const nav=byId('onySectionNav'),main=byId('onySections');
+      nav.replaceChildren();main.replaceChildren();
+      let count=0;
+      for(const [key,label] of SECTIONS){
+        const row=entries.get(RAID_KEY+'-'+key);
+        if(!row)continue;
+        const content=sectionContent(row,key);
+        if(!content)continue;
+        const id='section-'+key;
+        const link=document.createElement('a');link.href='#'+id;link.textContent=label;nav.append(link);
+        const section=document.createElement('section');section.className='raid-section';section.id=id;
+        const heading=document.createElement('h2');heading.textContent=label;
+        const inner=document.createElement('div');inner.className='raid-rich ql-editor';inner.append(...content.childNodes);
+        section.append(heading,inner);main.append(section);count++;
+      }
+      if(!count){byId('onyNavEmpty').hidden=false;const p=document.createElement('p');p.className='raid-placeholder';p.textContent='No Onyxia information has been published yet.';main.append(p);}
+    }
+
+    function showError(message){const host=byId('onySections');host.replaceChildren();const p=document.createElement('p');p.className='load-state error';p.textContent=message;host.append(p);}
+    function initialize(){
+      if(started || !document.documentElement.classList.contains('syn-access-granted'))return;
+      started=true;observer.disconnect();load().catch(e=>{console.error('Onyxia page:',e);showError('Unable to display raid information right now.');});
+    }
+    const observer=new MutationObserver(initialize);
+    observer.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+    if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',initialize,{once:true});else initialize();
+
+    const image=byId('onyBannerImage'),fallback=byId('onyBannerFallback');
+    image.addEventListener('load',()=>{image.hidden=false;fallback.hidden=true;});
+    image.addEventListener('error',()=>{image.hidden=true;fallback.hidden=false;});
+    // Defer the request until handlers are installed, including when image is cached.
+    if(image.complete && image.naturalWidth>0){image.hidden=false;fallback.hidden=true;}
+  })();
   </script>
 </body>
 </html>
