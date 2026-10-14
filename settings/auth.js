@@ -20,7 +20,11 @@
 
   const TOKEN_KEY = 'syndicate_discord_oauth';
   const TOKEN_MAX_AGE = 30 * 60 * 1000;
-  const CACHE_MS = 15000;
+  const CACHE_MS = 30000;
+  const RETRY_DELAYS_MS = [0, 650, 1600];
+  const channel = typeof BroadcastChannel !== 'undefined'
+    ? new BroadcastChannel('syndicate-discord-tab-verification') : null;
+  const pendingTokenRequests = new Map();
 
   let verificationPromise = null;
   let cachedResult = null;
@@ -75,6 +79,64 @@
     } catch {
       return null;
     }
+  }
+
+  // Share an existing Discord provider token only on demand, only with another
+  // open tab on this same origin. Never persist that token in localStorage.
+  if (channel) {
+    channel.onmessage = event => {
+      const msg = event.data;
+      if (!msg || typeof msg !== 'object') return;
+      if (msg.type === 'token-request' && msg.userId && msg.requestId) {
+        try {
+          const stored = JSON.parse(sessionStorage.getItem(TOKEN_KEY) || 'null');
+          if (stored?.userId === msg.userId && stored.token &&
+              Number.isFinite(stored.savedAt) &&
+              Date.now() - stored.savedAt < TOKEN_MAX_AGE) {
+            channel.postMessage({
+              type: 'token-response', requestId: msg.requestId,
+              userId: msg.userId, token: stored.token,
+              savedAt: stored.savedAt
+            });
+          }
+        } catch (error) { console.warn('Unable to share Discord session:', error); }
+      } else if (msg.type === 'token-response') {
+        const pending = pendingTokenRequests.get(msg.requestId);
+        if (pending && pending.userId === msg.userId &&
+            typeof msg.token === 'string' &&
+            Number.isFinite(msg.savedAt) &&
+            Date.now() - msg.savedAt < TOKEN_MAX_AGE) {
+          pendingTokenRequests.delete(msg.requestId);
+          pending.resolve({ token: msg.token, savedAt: msg.savedAt });
+        }
+      }
+    };
+  }
+
+  async function requestTokenFromAnotherTab(session) {
+    if (!channel || !session?.user?.id) return null;
+    const userId = session.user.id;
+    const requestId = `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const received = new Promise(resolve => {
+      pendingTokenRequests.set(requestId, { userId, resolve });
+      setTimeout(() => {
+        if (pendingTokenRequests.has(requestId)) {
+          pendingTokenRequests.delete(requestId);
+          resolve(null);
+        }
+      }, 1200);
+    });
+    channel.postMessage({ type: 'token-request', requestId, userId });
+    const result = await received;
+    if (result) {
+      try {
+        sessionStorage.setItem(TOKEN_KEY, JSON.stringify({
+          token: result.token, userId, savedAt: result.savedAt
+        }));
+      } catch {}
+      return result.token;
+    }
+    return null;
   }
 
   db.auth.onAuthStateChange((event, session) => {
@@ -137,125 +199,65 @@
   // SERVER MEMBERSHIP VERIFICATION
   // =====================================
 
-  async function performVerification() {
+  async function performVerificationOnce() {
     let session;
-
     try {
       const response = await db.auth.getSession();
-
       if (response.error) throw response.error;
-
       session = response.data.session;
     } catch (error) {
-      console.error('Session check failed:', error);
-
-      return {
-        verified: false,
-        status: 'verification_failed'
-      };
+      console.warn('Syndicate session check temporarily failed:', error);
+      return { verified: false, status: 'verification_failed' };
     }
 
-    if (!session) {
-      return {
-        verified: false,
-        status: 'logged_out'
-      };
-    }
+    if (!session) return { verified: false, status: 'logged_out' };
 
-    let user;
+    // Supabase sessions are shared across tabs; sessionStorage is not.
+    // Recover the Discord provider token from another already-open tab.
+    let token = getDiscordToken(session);
+    if (!token) token = await requestTokenFromAnotherTab(session);
+    if (!token) return { verified: false, status: 'reconnect_required' };
 
     try {
-      user = await getSyndicateUser();
-    } catch (error) {
-      console.error('User check failed:', error);
-
-      return {
-        verified: false,
-        status: 'verification_failed'
-      };
-    }
-
-    if (!user) {
-      return {
-        verified: false,
-        status: 'verification_failed'
-      };
-    }
-
-    const token = getDiscordToken(session);
-
-    if (!token) {
-      return {
-        verified: false,
-        status: 'reconnect_required'
-      };
-    }
-
-    try {
-      const { data, error } = await db.functions.invoke(
-        'verify-syndicate-member',
-        {
-          body: {
-            discordAccessToken: token
-          }
-        }
-      );
-
+      const { data, error } = await db.functions.invoke('verify-syndicate-member', {
+        body: { discordAccessToken: token }
+      });
       if (error) {
-        console.error('Membership request failed:', error);
-
-        return {
-          verified: false,
-          status: data?.status || 'verification_failed'
-        };
+        console.warn('Discord verification request failed:', error);
+        return { verified: false, status: data?.status || 'verification_failed' };
       }
-
-      
-if (data?.verified === true &&
-    data?.status === 'member') {
-  return {
-    verified: true,
-    status: 'member',
-    isOfficer: data.isOfficer === true,
-    checkedAt: data.checkedAt
-  };
-}
-
-
-      return {
-        verified: false,
-        status: data?.status || 'verification_failed'
-      };
-
+      if (data?.verified === true && data?.status === 'member') {
+        return { verified: true, status: 'member',
+          isOfficer: data.isOfficer === true, checkedAt: data.checkedAt };
+      }
+      return { verified: false, status: data?.status || 'verification_failed' };
     } catch (error) {
-      console.error('Membership verification error:', error);
-
-      return {
-        verified: false,
-        status: 'verification_failed'
-      };
+      console.warn('Discord verification temporarily failed:', error);
+      return { verified: false, status: 'verification_failed' };
     }
+  }
+
+  async function performVerification() {
+    let result;
+    for (const delay of RETRY_DELAYS_MS) {
+      if (delay) await new Promise(resolve => setTimeout(resolve, delay));
+      result = await performVerificationOnce();
+      // Only retry temporary failures, never definitive member/role decisions.
+      if (result.status !== 'verification_failed') return result;
+    }
+    return result;
   }
 
   async function verifyMembership(options = {}) {
     const force = options.force === true;
+    if (!force && cachedResult?.verified === true &&
+        Date.now() - cachedAt < CACHE_MS) return cachedResult;
+    if (verificationPromise) return verificationPromise;
 
-    if (!force &&
-        cachedResult?.verified === true &&
-        Date.now() - cachedAt < CACHE_MS) {
-      return cachedResult;
-    }
-
-    // Reuse an ongoing verification request.
-    if (verificationPromise) {
-      return verificationPromise;
-    }
-
-    verificationPromise = performVerification();
-
+    const request = performVerification();
+    verificationPromise = request;
     try {
-      const result = await verificationPromise;
-
+      const result = await request;
       if (result.verified === true) {
         cachedResult = result;
         cachedAt = Date.now();
@@ -263,10 +265,9 @@ if (data?.verified === true &&
         cachedResult = null;
         cachedAt = 0;
       }
-
       return result;
     } finally {
-      verificationPromise = null;
+      if (verificationPromise === request) verificationPromise = null;
     }
   }
 
