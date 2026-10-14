@@ -48,6 +48,56 @@
     html.syn-access-pending .raid-subnav,html.syn-access-pending .raid-container{display:none!important}
     @media(max-width:800px){.raid-layout{grid-template-columns:1fr;gap:1.5rem}.raid-sidebar{position:static}.raid-sidebar nav{display:flex;flex-wrap:wrap;gap:.15rem .5rem}.raid-sidebar a{padding:.35rem .5rem}.raid-banner{aspect-ratio:4/1}}
     @media(max-width:540px){.raid-subnav-inner{gap:.25rem .9rem}.raid-subnav .separator{display:none}.raid-banner{aspect-ratio:3.5/1;min-height:105px}.raid-info{padding:.8rem .15rem}.raid-rich p,.raid-rich li{font-size:1.01rem}}
+  
+/* BWL - Neutral surfaces with subtle ember accents */
+
+.raid-sidebar {
+  background: #11100e;
+  border-color: #51402d;
+}
+
+.raid-sidebar a:hover,
+.raid-sidebar a:focus-visible {
+  background: #231913;
+  color: #e8c58a;
+  border-left-color: #a65a3d;
+}
+
+.raid-sidebar p {
+  color: #d6c4ae;
+}
+
+.raid-info,
+.raid-section {
+  border-bottom-color: #75402c;
+}
+
+.raid-placeholder {
+  background: #17120f;
+  border-left-color: #a65a3d;
+  color: #e9d2b6;
+}
+
+.raid-rich blockquote {
+  background: #17120f;
+  border-left-color: #a65a3d;
+  color: #e9d2b6;
+}
+
+.raid-rich a,
+.raid-rich a:hover {
+  color: #e8b879;
+}
+
+.coming-soon {
+  background: #17120f;
+  border-color: #75402c;
+}
+
+.coming-soon h2 {
+  color: #e5c16c;
+}
+
   </style>
 </head>
 <body>
@@ -61,7 +111,7 @@
   </div></nav>
   <div class="raid-container">
     <header class="raid-banner" aria-label="Blackwing Lair">
-      <div class="raid-banner-fallback" id="bwlBannerFallback"><h1>ONYXIA'S LAIR</h1><p>Enter the Blackwing</p></div>
+      <div class="raid-banner-fallback" id="bwlBannerFallback"><h1>BWL</h1><p>Enter the Blackwing</p></div>
       <img id="bwlBannerImage" src="../images/bwl.png" alt="Blackwing Lair raid banner" hidden>
     </header>
     <div class="raid-info">
