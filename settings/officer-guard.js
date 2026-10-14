@@ -110,8 +110,8 @@ document.body.append(panel);
         showAccessMessage('Verification Unavailable', 'Unable to initialize Discord verification.', 'retry');
         return;
       }
-      // Request a fresh role check; do not reuse the short-lived verification cache.
-      const result = await auth.verifyMembership({ force: true });
+      // Reuse a recent verified Officer role to avoid excessive Discord requests.
+      const result = await auth.verifyMembership();
       if (result?.verified === true && result?.status === 'member') {
         if (result.isOfficer === true) {
           grantAccess();
@@ -124,6 +124,11 @@ document.body.append(panel);
       if (result?.status === 'logged_out') {
         rememberDestination();
         window.location.replace(homeURL);
+        return;
+      }
+      if (result?.status === 'rate_limited') {
+        showAccessMessage('Verification Temporarily Limited',
+          'Discord is receiving too many verification requests. Please wait about a minute and try again.', 'retry');
         return;
       }
       if (result?.status === 'reconnect_required') {
