@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calendar Management | The Syndicate</title>
+<link rel="stylesheet" href="../settings/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
+<script src="../settings/auth.js" defer></script>
+<script src="../settings/officer-guard.js" defer></script>
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+<style>
+:root{--cm-gold:#d4af37;--cm-brd:#67522d;--cm-bg:#100f0e;--cm-txt:#e8decf}
+*{box-sizing:border-box}body{background:#090909!important;color:var(--cm-txt);margin:0;font:1rem/1.55 var(--font-body,Palatino,serif)}[hidden]{display:none!important}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+.cm-wrap{max-width:1240px;margin:auto;padding:24px 18px 65px}.cm-crumb{max-width:1240px;margin:auto;padding:14px 18px;color:#bdaa83}.cm-crumb a{color:var(--cm-gold)}.cm-head{border-block:1px solid #5c4528;background:linear-gradient(100deg,#16120d,#110d12)}.cm-head>div{max-width:1240px;margin:auto;padding:24px 18px}.cm-head h1{font:500 clamp(2rem,4vw,3rem) var(--font-heading,Cinzel,serif);color:var(--cm-gold);margin:0 0 6px}.cm-head p{margin:0;color:#c5b7a1}.cm-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.cm-panel{background:var(--cm-bg);border:1px solid var(--cm-brd);border-radius:8px;padding:20px;min-width:0}.cm-panel h2{font:500 1.35rem var(--font-heading,Georgia,serif);color:var(--cm-gold);margin:0 0 15px}.cm-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.cm-field{display:flex;flex-direction:column;gap:5px;min-width:0}.cm-field.full{grid-column:1/-1}.cm-field label{color:#e3c88c;font-size:.91rem}.cm-field input,.cm-field select,.cm-field textarea{width:100%;min-width:0;background:#1a1715;border:1px solid #655033;color:#f3e8d6;border-radius:5px;padding:10px}.cm-field textarea{min-height:76px;resize:vertical}.cm-btn{padding:9px 15px;background:#231b13;border:1px solid #a07e3d;border-radius:5px;color:#e9ca7f}.cm-btn:hover{background:#372719}.cm-btn.primary{background:#9e7830;color:#0a0806;font-weight:700}.cm-btn.danger{border-color:#9e5151;color:#ffbab5}.cm-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px}.cm-note{color:#b7aa97;font-size:.88rem}.cm-message{margin-bottom:16px;padding:12px 15px;background:#171410;border:1px solid #7c6035;border-radius:6px}.cm-message.error{border-color:#aa5757;color:#ffc8c8}.cm-message.success{border-color:#4e8e65;color:#bceac9}.cm-list{display:grid;gap:10px;margin-top:14px}.cm-item{padding:12px;background:#191613;border-left:3px solid #8c6b39;display:flex;justify-content:space-between;align-items:center;gap:12px}.cm-item strong{color:#eed49a}.cm-item small{display:block;color:#beaF99;margin-top:4px}.cm-item .cm-actions{margin:0}.cm-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cm-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.cm-status{border:1px solid #87682e;border-radius:18px;padding:2px 8px;font-size:.76rem;color:#d2be89}.cm-section{margin-top:20px}.cm-empty{color:#a99d8c;font-style:italic}
+html.syn-access-pending .cm-crumb,html.syn-access-pending .cm-head,html.syn-access-pending .cm-wrap{display:none!important}#syndicate-officer-access-message{display:block!important;visibility:visible!important}
+@media(max-width:790px){.cm-grid{grid-template-columns:1fr}}@media(max-width:520px){.cm-form{grid-template-columns:1fr}.cm-field.full{grid-column:auto}.cm-item{align-items:start;flex-direction:column}}
+</style>
+</head>
+<body>
+<div id="syndicate-menu"></div>
+<nav class="cm-crumb"><a href="officer-hub.html">← Officer Hub</a> › Calendar Management</nav>
+<header class="cm-head"><div><h1>CALENDAR MANAGEMENT</h1><p>Manage weekly raids and one-time events without editing Supabase manually.</p></div></header>
+<main class="cm-wrap">
+<div id="cmMessage" class="cm-message" role="status" hidden></div>
+<div class="cm-grid">
+<section class="cm-panel"><h2 id="scheduleHeading">Weekly Schedule</h2>
+<form id="scheduleForm" class="cm-form">
+<div class="cm-field full"><label for="sTitle">Raid or schedule name</label><input id="sTitle" required maxlength="120" placeholder="Blackwing Lair"></div>
+<div class="cm-field"><label for="sRaid">Raid</label><select id="sRaid"><option value="">Other / Custom</option><option value="ony">Onyxia's Lair</option><option value="zg">Zul'Gurub</option><option value="aq20">AQ20</option><option value="mc">Molten Core</option><option value="bwl">Blackwing Lair</option><option value="aq40">AQ40</option><option value="naxx">Naxxramas</option></select></div>
+<div class="cm-field"><label for="sDay">Day of week</label><select id="sDay"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></div>
+<div class="cm-field"><label for="sTime">Start time (server time)</label><input id="sTime" type="time" value="20:00" required></div>
+<div class="cm-field"><label for="sRepeat">Repeat</label><select id="sRepeat"><option value="1">Every week</option><option value="2">Every other week</option><option value="3">Every 3 weeks</option><option value="4">Every 4 weeks</option></select></div>
+<div class="cm-field"><label for="sStart">Start date</label><input id="sStart" type="date" required></div>
+<div class="cm-field"><label for="sEnd">End date (optional)</label><input id="sEnd" type="date"></div>
+<div class="cm-field"><label for="sStatus">Raid status</label><select id="sStatus"><option value="">No status</option><option value="Farm">Farm</option><option value="Progression">Progression</option><option value="Coming Soon">Coming Soon</option></select></div>
+<div class="cm-field"><label for="sActive">Schedule</label><select id="sActive"><option value="true">Active</option><option value="false">Paused</option></select></div>
+<div class="cm-field full"><label for="sNotes">Notes (optional)</label><textarea id="sNotes" maxlength="500"></textarea></div>
+<div class="cm-field full"><div class="cm-actions"><button class="cm-btn primary" type="submit" id="sSave">Save & Generate 8 Weeks</button><button class="cm-btn" type="button" id="sClear">New Schedule</button></div><span class="cm-note">Changing a schedule updates upcoming linked events. Individually edited events and past dates stay untouched. Dates with existing signups retain their event IDs.</span></div>
+</form></section>
+<section class="cm-panel"><h2 id="eventHeading">One-Time Event</h2>
+<form id="eventForm" class="cm-form">
+<div class="cm-field full"><label for="eTitle">Event title</label><input id="eTitle" required maxlength="120" placeholder="Guild meeting or bonus raid"></div>
+<div class="cm-field"><label for="eDate">Date</label><input id="eDate" type="date" required></div>
+<div class="cm-field"><label for="eTime">Time (server time)</label><input id="eTime" type="time" value="20:00" required></div>
+<div class="cm-field"><label for="eType">Type</label><select id="eType"><option value="Event">Guild Event</option><option value="Raid">Raid</option></select></div>
+<div class="cm-field"><label for="eStatus">Raid status</label><select id="eStatus"><option value="">None</option><option value="Farm">Farm</option><option value="Progression">Progression</option><option value="Coming Soon">Coming Soon</option></select></div>
+<div class="cm-field full"><label for="eNotes">Notes (optional)</label><textarea id="eNotes" maxlength="500"></textarea></div>
+<div class="cm-field full"><div class="cm-actions"><button class="cm-btn primary" type="submit" id="eSave">Add Event</button><button class="cm-btn" type="button" id="eClear">Clear</button></div></div>
+</form>
+<p class="cm-note">One-time raids and guild events are inserted directly into Events and appear in the public calendar. Raids also appear in the RL/ML signup calendar.</p>
+</section>
+</div>
+<section class="cm-panel cm-section"><div class="cm-toolbar"><h2>Weekly Schedules</h2><button class="cm-btn" id="refresh" type="button">Refresh</button></div><div id="scheduleList" class="cm-list"><p class="cm-empty">Loading schedules…</p></div></section>
+<section class="cm-panel cm-section"><div class="cm-toolbar"><h2>Upcoming Events</h2><div class="cm-row"><label for="range">Show</label><select id="range" class="cm-btn"><option value="30">30 days</option><option value="56" selected>8 weeks</option><option value="90">90 days</option></select></div></div><p class="cm-note">Edit one occurrence to preserve its existing signups and exempt it from automatic schedule updates. Canceling an event with signups is blocked.</p><div id="eventList" class="cm-list"><p class="cm-empty">Loading events…</p></div></section>
+</main><div id="syndicate-footer"></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),db=()=>window.syndicateDB;
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const RAIDNAMES={ony:"Onyxia's Lair",zg:"Zul'Gurub",aq20:"AQ20",mc:"Molten Core",bwl:"Blackwing Lair",aq40:"AQ40",naxx:"Naxxramas"};
+let schedules=[],events=[],editingSchedule=null,editingEvent=null;
+const localDay=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const later=n=>{const d=new Date(localDay()+'T12:00:00');d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const title=e=>e.event||e.event_name||e.name||e.title||'Untitled event';
+const text=(el,str)=>{el.textContent=String(str??'');return el};
+const el=(tag,cls,content)=>{const a=document.createElement(tag);if(cls)a.className=cls;if(content!==undefined)text(a,content);return a};
+const field=id=>$(id).value;
+const info=(msg,error=false)=>{const a=$('cmMessage');a.hidden=false;a.textContent=msg;a.className='cm-message '+(error?'error':'success');a.scrollIntoView({block:'nearest',behavior:'smooth'})};
+const fail=e=>{console.error('Calendar Management:',e);info(e?.message||String(e),true)};
+async function call(action,scheduleId=null,eventId=null,payload={}){const client=db();if(!client)throw Error('Supabase is not available.');const {data,error}=await client.rpc('syndicate_calendar_manage',{p_action:action,p_schedule_id:scheduleId,p_event_id:eventId==null?null:String(eventId),p_payload:payload});if(error)throw error;return data}
+function resetSchedule(){editingSchedule=null;$('scheduleHeading').textContent='Weekly Schedule';$('scheduleForm').reset();$('sStart').value=localDay();$('sTime').value='20:00';$('sRepeat').value='1';$('sActive').value='true';$('sSave').textContent='Save & Generate 8 Weeks'}
+function resetEvent(){editingEvent=null;$('eventHeading').textContent='One-Time Event';$('eventForm').reset();$('eDate').value=localDay();$('eTime').value='20:00';$('eSave').textContent='Add Event'}
+function b(label,action,cls=''){const x=el('button','cm-btn '+cls,label);x.type='button';x.onclick=action;return x}
+function addEntry(host,item,border){const x=el('div','cm-item');if(border)x.style.borderLeftColor=border;const a=el('div');const name=el('strong','',item.name);const desc=el('small','',item.description);a.append(name,desc);const actions=el('div','cm-actions');x.append(a,actions);host.append(x);return actions}
+function renderSchedules(){const host=$('scheduleList');host.replaceChildren();if(!schedules.length){host.append(el('p','cm-empty','No weekly schedules yet. Add one above.'));return}
+for(const s of schedules){const desc=`${DAYS[s.day_of_week]} · ${String(s.start_time).slice(0,5)} · ${s.interval_weeks===1?'Weekly':'Every '+s.interval_weeks+' weeks'} · Starting ${s.start_date} · ${s.is_active?'Active':'Paused'}`;const actions=addEntry(host,{name:s.title,description:desc},'#bd994e');actions.append(b('Edit',()=>{editingSchedule=s.id;$('scheduleHeading').textContent='Edit Weekly Schedule';$('sTitle').value=s.title;$('sRaid').value=s.raid_key||'';$('sDay').value=s.day_of_week;$('sTime').value=String(s.start_time).slice(0,5);$('sRepeat').value=String(s.interval_weeks);$('sStart').value=s.start_date;$('sEnd').value=s.end_date||'';$('sStatus').value=s.raid_status||'';$('sNotes').value=s.notes||'';$('sActive').value=String(s.is_active);$('sSave').textContent='Save Future Schedule';$('scheduleForm').scrollIntoView({behavior:'smooth'});}));actions.append(b('Extend 8 Weeks',async()=>{try{const r=await call('sync_schedule',s.id);info(`Generated ${r.created||0}, updated ${r.updated||0}, preserved ${r.preserved_overrides||0} exceptions.`);await load()}catch(e){fail(e)}}));actions.append(b(s.is_active?'Pause':'Resume',async()=>{if(!confirm(`${s.is_active?'Pause':'Resume'} ${s.title}? Pausing prevents additional generation but does not remove existing entries.`))return;try{await call('toggle_schedule',s.id,null,{is_active:!s.is_active});info('Schedule updated.');await load()}catch(e){fail(e)}}));}
+}
+function renderEvents(){const host=$('eventList');host.replaceChildren();if(!events.length){host.append(el('p','cm-empty','No events in this range.'));return}
+for(const e of events){const desc=`${e.date} · ${String(e.time||'').slice(0,5)} · ${e.type||'Event'}${e.schedule_id?' · Recurring':''}${e.schedule_override?' · Individually adjusted':''}`;const actions=addEntry(host,{name:title(e),description:desc},e.type==='Raid'?'#b95d5d':'#598bab');actions.append(b('Edit',()=>{editingEvent=e.id;$('eventHeading').textContent='Edit One Occurrence';$('eTitle').value=title(e);$('eDate').value=e.date;$('eTime').value=String(e.time||'20:00').slice(0,5);$('eType').value=e.type==='Raid'?'Raid':'Event';$('eStatus').value=e.raid_status||'';$('eNotes').value=e.notes||'';$('eSave').textContent='Save This Occurrence';$('eventForm').scrollIntoView({behavior:'smooth'});}));actions.append(b('Cancel',async()=>{if(!confirm(`Cancel ${title(e)} on ${e.date}? This removes the Events row if no RL/ML signups are attached.`))return;try{await call('cancel_event',null,e.id);info('Event canceled.');await load()}catch(err){fail(err)}},'danger'));}
+}
+async function load(){if(!db()){info('Database connection missing.',true);return}const until=later(Number(field('range'))-1);try{const [s,e]=await Promise.all([db().from('CalendarSchedules').select('*').order('day_of_week').order('start_time'),db().from('Events').select('*').gte('date',localDay()).lte('date',until).order('date').order('time').limit(500)]);if(s.error)throw s.error;if(e.error)throw e.error;schedules=s.data||[];events=e.data||[];renderSchedules();renderEvents()}catch(err){fail(err)}}
+$('scheduleForm').onsubmit=async ev=>{ev.preventDefault();const p={title:field('sTitle').trim(),raid_key:field('sRaid')||null,day_of_week:Number(field('sDay')),start_time:field('sTime'),interval_weeks:Number(field('sRepeat')),start_date:field('sStart'),end_date:field('sEnd')||null,event_type:'Raid',raid_status:field('sStatus')||null,notes:field('sNotes'),is_active:field('sActive')==='true'};if(!p.title)return info('Enter the raid name.',true);if(p.end_date&&p.end_date<p.start_date)return info('End date cannot come before start date.',true);const btn=$('sSave');btn.disabled=true;try{const r=await call('save_schedule',editingSchedule,null,p);info(`Schedule saved. Created ${r.created||0} new events and updated ${r.updated||0} upcoming events.`);resetSchedule();await load()}catch(e){fail(e)}finally{btn.disabled=false}};
+$('eventForm').onsubmit=async ev=>{ev.preventDefault();const p={title:field('eTitle').trim(),date:field('eDate'),time:field('eTime'),type:field('eType'),raid_status:field('eStatus')||null,notes:field('eNotes')};if(!p.title)return info('Enter an event title.',true);const btn=$('eSave');btn.disabled=true;try{await call(editingEvent?'edit_event':'one_time',null,editingEvent,p);info(editingEvent?'Event updated; existing signups preserved.':'Event added to calendar.');resetEvent();await load()}catch(e){fail(e)}finally{btn.disabled=false}};
+$('sRaid').onchange=()=>{const name=RAIDNAMES[field('sRaid')];if(name&&!field('sTitle'))$('sTitle').value=name};
+$('sClear').onclick=resetSchedule;$('eClear').onclick=resetEvent;$('refresh').onclick=load;$('range').onchange=load;
+resetSchedule();resetEvent();
+// Same Officer Guard as Raid Management. Wait for access before loading data.
+const observer=new MutationObserver(()=>{if(document.documentElement.classList.contains('syn-access-granted')){observer.disconnect();load()}});
+if(document.documentElement.classList.contains('syn-access-granted'))load();else observer.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+})();
+</script>
+</body></html>
