@@ -267,7 +267,7 @@
       }
       return result;
     } finally {
-      if (verificationPromise === request) verificationPromise = null;
+      if (verificationPromise === request) verificationPromise = null; 
     }
   }
 
