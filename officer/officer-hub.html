@@ -4,7 +4,6 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Officer Hub | The Syndicate</title>
-  <link rel="stylesheet" href="settings/styles.css">
 
 <!-- Syndicate shared stylesheet -->
 <link rel="stylesheet" href="../settings/styles.css">
@@ -95,6 +94,14 @@
           <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">▦</span><span aria-hidden="true">↗</span></div>
           <h3>Adopt a Raid</h3><p>Coordinate Raid Leads, Master Looters, and raid coverage.</p><span class="hub-state">Available</span>
         </a>
+        <a class="hub-tool" href="raid-management.html">
+          <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">⚔</span><span aria-hidden="true">↗</span></div>
+          <h3>Raid Management</h3><p>Manage raid status and draft or publish information for individual raid pages.</p><span class="hub-state">Available</span>
+        </a>
+        <a class="hub-tool" href="calendar-management.html">
+          <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">▣</span><span aria-hidden="true">↗</span></div>
+          <h3>Calendar Management</h3><p>Manage weekly raid schedules, one-time events, changes, and cancellations.</p><span class="hub-state">Available</span>
+        </a>
         <a class="hub-tool" href="rule-management.html">
           <div class="hub-tool-head"><span class="hub-symbol" aria-hidden="true">✎</span><span aria-hidden="true">↗</span></div>
           <h3>Rule Management</h3><p>Edit, review, and publish guild raid rules.</p><span class="hub-state">Available</span>
@@ -115,7 +122,7 @@
         <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Raids This Month</span></div>
         <div class="hub-stat"><strong class="hub-stat-value">—</strong><span class="hub-stat-label">Attendance Rate</span></div>
       </div>
-      <p class="hub-data-note" id="rosterMessage" role="status">Checking roster data (Hub build 6)…</p>
+      <p class="hub-data-note" id="rosterMessage" role="status">Checking roster data (Hub build 7)…</p>
       <p class="hub-data-note">Total Characters includes every toon on the roster. Main/Alt counts include only Active and Casual toons. Raid metrics will be added after Warcraft Logs attendance imports; calendar signups are not counted as attendance.</p>
     </section>
     <section class="hub-section" aria-labelledby="attentionHeading">
@@ -145,10 +152,10 @@
         document.getElementById('totalCharacters').textContent = total.toLocaleString();
         document.getElementById('mainCharacters').textContent = mains.toLocaleString();
         document.getElementById('altCharacters').textContent = alts.toLocaleString();
-        status.textContent = 'Hub build 6 · Live guild roster counts.' + (unclassified ? ` ${unclassified} Active/Casual characters are not classified as Main or Alt.` : '');
+        status.textContent = 'Hub build 7 · Live guild roster counts.' + (unclassified ? ` ${unclassified} Active/Casual characters are not classified as Main or Alt.` : '');
       } catch (error) {
         console.error('Officer Hub roster error', error);
-        status.textContent = 'Hub build 6 · Roster counts unavailable: ' + (error.message || 'check database read permissions.');
+        status.textContent = 'Hub build 7 · Roster counts unavailable: ' + (error.message || 'check database read permissions.');
       }
    });
   </script>
