@@ -5,67 +5,70 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>The Syndicate | Raid Hub</title>
   <link rel="stylesheet" href="settings/styles.css">
-<!-- Supabase library -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-
-<!-- Shared Supabase connection -->
-<script src="settings/supabase-config.js" defer></script>
-
-<!-- Discord authentication -->
-<script src="settings/auth.js" defer></script>
-
-<!-- Syndicate membership protection -->
-<script src="settings/page-guard.js" defer></script>
-
-<!-- Existing website scripts -->
-<script src="settings/font-setting.js" defer></script>
-<script src="settings/menu.js" defer></script>
-<script src="settings/site-layout.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="settings/supabase-config.js" defer></script>
+  <script src="settings/auth.js" defer></script>
+  <script src="settings/page-guard.js" defer></script>
+  <script src="settings/font-setting.js" defer></script>
+  <script src="settings/menu.js" defer></script>
+  <script src="settings/site-layout.js" defer></script>
   <style>
-    /* Only raid-hub layout lives here. Branding, menu, footer and base text
-       sizes are maintained in /settings/. All sizes follow the shared rem scale. */
-    .raid-hub-main { color: var(--text-light, #e6dfc9); }
-    .raid-hub-main a { text-decoration: none; }
-    .raid-hub-title { padding: 1.45rem clamp(1rem, 3vw, 2rem); border-bottom: 1px solid var(--gold-dark); }
-    .raid-hub-title h1 { margin:0; font-size: var(--h1-size); color:var(--gold); letter-spacing:.035em; }
-    .raid-top { width:min(100%, 1200px); margin-inline:auto; display:grid; grid-template-columns:minmax(0,35fr) minmax(0,65fr); border-bottom:1px solid var(--gold-dark); }
-    .raid-image { min-height:21rem; display:flex; align-items:center; justify-content:center; background:#090909; border-right:1px solid var(--gold-dark); padding:.8rem; overflow:hidden; }
-    .raid-image img { width:100%; max-height:21rem; height:auto; object-fit:contain; display:block; }
-    .raid-resources { display:grid; grid-template-rows:repeat(3,minmax(0,1fr)); }
-    .resource-row { display:grid; grid-template-columns:2rem minmax(10rem, .85fr) minmax(0,1.4fr); gap:clamp(.6rem,2vw,1.3rem); align-items:center; padding:1.35rem 1.5rem; border-bottom:1px solid var(--gold-dark); }
+    /* Raid Hub only. Shared Syndicate styling, auth, menu and footer remain unchanged. */
+    .raid-hub-main { color:var(--text-light,#e6dfc9); }
+    .raid-hub-main a { text-decoration:none; }
+    .raid-hub-title { padding:1.45rem clamp(1rem,3vw,2rem); border-bottom:1px solid var(--gold-dark); }
+    .raid-hub-title h1 { margin:0; font-size:var(--h1-size); color:var(--gold); letter-spacing:.035em; }
+    .raid-top { width:min(100%,1200px); margin-inline:auto; display:grid; grid-template-columns:minmax(0,35fr) minmax(0,65fr); border-bottom:1px solid var(--gold-dark); }
+    .raid-image { min-height:15rem; display:flex; align-items:center; justify-content:center; background:#090909; border-right:1px solid var(--gold-dark); padding:1rem; overflow:hidden; }
+    .raid-image img { width:100%; max-height:17rem; height:auto; object-fit:contain; display:block; }
+    .raid-resources { display:grid; grid-template-rows:repeat(2,minmax(0,1fr)); }
+    .resource-row { display:grid; grid-template-columns:minmax(10rem,.9fr) minmax(0,1.3fr); gap:clamp(.8rem,2vw,1.4rem); align-items:center; padding:1.5rem; border-bottom:1px solid #594525; }
     .resource-row:last-child { border-bottom:0; }
-    .resource-number { color:var(--gold); font-family:var(--font-heading); font-size:1rem; }
-    .resource-title { color:var(--gold); font:500 1.28rem/1.3 var(--font-heading); text-decoration:underline !important; text-underline-offset:.15em; }
-    .resource-title:hover, .resource-title:focus-visible { color:#efcc54; }
-    .resource-row.coming-soon { background:rgba(150,150,150,.035); }
-    .resource-row.coming-soon .resource-number,
-    .resource-row.coming-soon .resource-title { color:#817e78; }
-    .resource-row.coming-soon .resource-title { text-decoration:none !important; cursor:default; }
-    .resource-row.coming-soon .resource-description { color:#918e87; }
-    .coming-soon-label { display:inline-block; margin-top:.4rem; color:#aaa59a; border:1px solid #58554f; border-radius:3px; padding:.13rem .45rem; font:600 .72rem/1.4 var(--font-body,Arial,sans-serif); letter-spacing:.07em; white-space:nowrap; }
-    .resource-description { margin:0; font-size:1.05rem; line-height:1.55; color:var(--text-light,#e6dfc9); }
-    .raid-grid-section { padding:3.3rem clamp(1rem,4vw,2.25rem) 4rem; }
-    .raid-grid { max-width:1100px; margin:0 auto; display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:2rem clamp(1rem,4vw,3.5rem); justify-items:center; align-items:stretch; }
-    .raid-button { display:flex; align-items:center; justify-content:center; width:100%; max-width:17rem; min-height:4.6rem; padding:.85rem 1.15rem; text-align:center; color:#ffd633; font:500 1.08rem/1.4 var(--font-heading); text-shadow:1px 1px 2px #000; border:2px solid #2a1a10; border-radius:5px; background:linear-gradient(to bottom,#b51414 0%,#8f0909 45%,#650505 100%); box-shadow:0 0 0 2px #6a4a25,0 0 0 4px #120d09,inset 0 2px 0 #ffffff2e,inset 0 -2px 0 #0009,0 3px 5px #000b; transition:filter .15s,transform .15s; }
-    a.raid-button:hover { filter:brightness(1.2); }
-    a.raid-button:active { transform:translateY(2px); }
-    .raid-button.disabled { opacity:.4; cursor:default; }
-    /* Preserve the original desktop arrangement. */
-    .zg{grid-area:1/1}.ony{grid-area:1/2}.aq40{grid-area:1/3}
-    .aq20{grid-area:2/1}.mc{grid-area:2/2}.naxx{grid-area:2/3}.bwl{grid-area:3/2}
+    .resource-title { color:var(--gold); font:500 1.18rem/1.3 var(--font-heading); text-decoration:underline !important; text-underline-offset:.16em; }
+    .resource-title:hover,.resource-title:focus-visible { color:#f0ce61; }
+    .resource-description { margin:0; font-size:1.03rem; line-height:1.5; color:var(--text-light,#e6dfc9); }
+    .raid-grid-section { padding:2.8rem clamp(1rem,3vw,2rem) 4rem; }
+    .raid-grid-section h2 { text-align:center; color:var(--gold); font:500 clamp(1.5rem,2.5vw,2rem)/1.3 var(--font-heading); margin:0 0 2rem; }
+    .raid-grid { max-width:1260px; margin:auto; display:flex; justify-content:center; flex-wrap:wrap; gap:1.8rem 1.65rem; }
+    .raid-button {
+      --raid-accent:#d4af37; --raid-top:#332318; --raid-bottom:#15100e;
+      box-sizing:border-box; width:calc((100% - 4.95rem)/4); min-width:0; min-height:7.2rem;
+      display:flex; flex-direction:column; align-items:center; justify-content:center; gap:.65rem;
+      position:relative; padding:.85rem .6rem; text-align:center;
+      border:2px solid #261b13; border-radius:5px;
+      background:linear-gradient(180deg,var(--raid-top),var(--raid-bottom));
+      box-shadow:0 0 0 2px #71522b,0 0 0 4px #110c09,inset 0 2px 0 #ffffff18,inset 0 -3px 0 #0009,0 4px 10px #000a;
+      color:#f1d58e; transition:transform .18s,filter .18s,box-shadow .18s;
+    }
+    .raid-button::before { content:""; position:absolute; inset:4px; border:1px solid var(--raid-accent); border-radius:2px; opacity:.85; pointer-events:none; }
+    .raid-button:hover,.raid-button:focus-visible { filter:brightness(1.22); transform:translateY(-2px); box-shadow:0 0 0 2px #947041,0 0 0 4px #110c09,0 0 17px var(--raid-accent),inset 0 2px 0 #ffffff23; }
+    .raid-button:active { transform:translateY(1px); }
+    .raid-button-name { font:500 clamp(.88rem,1.25vw,1.05rem)/1.28 var(--font-heading); text-shadow:1px 2px 3px #000; color:#f1d58e; overflow-wrap:anywhere; }
+    .raid-button-bottom { display:flex; align-items:center; justify-content:center; flex-wrap:wrap; gap:.4rem .65rem; }
+    .raid-button-players { font:500 .72rem/1.25 var(--font-body,Georgia,serif); letter-spacing:.05em; color:#d3c2a8; }
+    .raid-button-status { font:600 .64rem/1.2 var(--font-body,Georgia,serif); letter-spacing:.065em; color:var(--raid-accent); border:1px solid var(--raid-accent); border-radius:12px; background:#070707a6; padding:.22rem .5rem; white-space:nowrap; }
+    .raid-button[data-raid="zg"] { --raid-accent:#78b77a; --raid-top:#294a2c; --raid-bottom:#101d12; }
+    .raid-button[data-raid="ony"] { --raid-accent:#b58add; --raid-top:#432a5d; --raid-bottom:#1a1028; }
+    .raid-button[data-raid="aq20"] { --raid-accent:#82c9e4; --raid-top:#28546a; --raid-bottom:#11212e; }
+    .raid-button[data-raid="mc"] { --raid-accent:#e39a57; --raid-top:#723719; --raid-bottom:#291309; }
+    .raid-button[data-raid="bwl"] { --raid-accent:#dc7771; --raid-top:#612322; --raid-bottom:#270e11; }
+    .raid-button[data-raid="aq40"] { --raid-accent:#b19aea; --raid-top:#473575; --raid-bottom:#1e1838; }
+    .raid-button[data-raid="naxx"] { --raid-accent:#acd5e3; --raid-top:#37596a; --raid-bottom:#13232d; }
+    @media (max-width:1100px) { .raid-button { width:calc((100% - 3.3rem)/3); } }
     @media (max-width:900px) {
       .raid-top { grid-template-columns:1fr; }
-      .raid-image { min-height:13rem; border-right:0; border-bottom:1px solid var(--gold-dark); }
-      .raid-image img { max-height:17rem; }
-      .resource-row { grid-template-columns:2rem minmax(0,1fr); gap:.4rem .7rem; }
-      .resource-description { grid-column:2; }
+      .raid-image { min-height:0; border-right:0; border-bottom:1px solid var(--gold-dark); padding:1rem; }
+      .raid-image img { max-height:15rem; }
     }
     @media (max-width:700px) {
-      .raid-grid { grid-template-columns:1fr; gap:1.35rem; }
-      .raid-grid > * { grid-column:auto !important; grid-row:auto !important; }
-      .raid-button { max-width:21rem; }
+      .raid-button { width:calc((100% - 1.65rem)/2); }
+      .resource-row { grid-template-columns:1fr; gap:.4rem; padding:1.15rem; }
+      .raid-grid { gap:1.3rem 1.65rem; }
       .raid-hub-title { padding:1rem; }
-      .resource-row { padding:1rem; }
+    }
+    @media (max-width:450px) {
+      .raid-button { width:min(100%,22rem); min-height:6.4rem; }
+      .raid-grid { gap:1.4rem; }
     }
   </style>
 </head>
@@ -76,23 +79,92 @@
     <section class="raid-top" aria-label="Raid resources">
       <div class="raid-image"><img src="images/Raiding.png" alt="Raiding is for Everyone"></div>
       <div class="raid-resources">
-        <div class="resource-row"><span class="resource-number">1</span><a class="resource-title" href="raid-hub/raid-rules.html">RAID RULES</a><p class="resource-description">Know what to expect before you zone in — signups, loot, attendance, and raid expectations.</p></div>
-        <div class="resource-row"><span class="resource-number">2</span><a class="resource-title" href="raid-hub/required-addons.html">REQUIRED ADD-ONS</a><p class="resource-description">Required and recommended add-ons to keep raids running smoothly and everyone on the same page.</p></div>
-        <div class="resource-row coming-soon" aria-label="Raid Consumables — coming soon"><span class="resource-number">3</span><div><span class="resource-title">RAID CONSUMABLES</span><span class="coming-soon-label">COMING SOON</span></div><p class="resource-description">A future class- and raid-specific guide, developed with input from class specialists.</p></div>
+        <div class="resource-row"><a class="resource-title" href="raid-hub/raid-rules.html">RAID RULES</a><p class="resource-description">Know what to expect before you zone in — signups, loot, attendance, and raid expectations.</p></div>
+        <div class="resource-row"><a class="resource-title" href="raid-hub/required-addons.html">REQUIRED ADD-ONS</a><p class="resource-description">Required and recommended add-ons to keep raids running smoothly and everyone on the same page.</p></div>
       </div>
     </section>
     <section class="raid-grid-section" aria-label="Individual raid guides">
-      <div class="raid-grid">
-        <a class="raid-button zg" href="raids/zg.html">ZUL'GURUB</a>
-        <a class="raid-button aq20" href="raids/aq20.html">RUINS OF AHN'QIRAJ (AQ20)</a>
-        <a class="raid-button ony" href="raids/ony.html">ONYXIA'S LAIR</a>
-        <a class="raid-button mc" href="raids/mc.html">MOLTEN CORE</a>
-        <a class="raid-button bwl" href="raids/bwl.html">BLACKWING LAIR</a>
-        <a class="raid-button aq40" href="raids/aq40.html">TEMPLE OF AHN'QIRAJ (AQ40)</a>
-        <span class="raid-button disabled naxx" aria-label="Naxxramas guide coming soon">NAXXRAMAS</span>
+      <h2>EXPLORE THE RAIDS</h2>
+      <div class="raid-grid" id="raid-grid">
+        <!-- Links render immediately; live raid status and table-id order load below. -->
+        <a class="raid-button" data-raid="zg" href="raids/zg.html"><span class="raid-button-name">ZUL'GURUB</span><span class="raid-button-bottom"><span class="raid-button-players">20 PLAYERS</span><span class="raid-button-status">FARM</span></span></a>
+        <a class="raid-button" data-raid="ony" href="raids/ony.html"><span class="raid-button-name">ONYXIA'S LAIR</span><span class="raid-button-bottom"><span class="raid-button-players">40 PLAYERS</span><span class="raid-button-status">FARM</span></span></a>
+        <a class="raid-button" data-raid="aq20" href="raids/aq20.html"><span class="raid-button-name">RUINS OF AHN'QIRAJ (AQ20)</span><span class="raid-button-bottom"><span class="raid-button-players">20 PLAYERS</span><span class="raid-button-status">FARM</span></span></a>
+        <a class="raid-button" data-raid="mc" href="raids/mc.html"><span class="raid-button-name">MOLTEN CORE</span><span class="raid-button-bottom"><span class="raid-button-players">40 PLAYERS</span><span class="raid-button-status">FARM</span></span></a>
+        <a class="raid-button" data-raid="bwl" href="raids/bwl.html"><span class="raid-button-name">BLACKWING LAIR</span><span class="raid-button-bottom"><span class="raid-button-players">40 PLAYERS</span><span class="raid-button-status">PROGRESSION</span></span></a>
+        <a class="raid-button" data-raid="aq40" href="raids/aq40.html"><span class="raid-button-name">TEMPLE OF AHN'QIRAJ (AQ40)</span><span class="raid-button-bottom"><span class="raid-button-players">40 PLAYERS</span><span class="raid-button-status">PROGRESSION</span></span></a>
+        <a class="raid-button" data-raid="naxx" href="raids/naxx.html"><span class="raid-button-name">NAXXRAMAS</span><span class="raid-button-bottom"><span class="raid-button-players">40 PLAYERS</span><span class="raid-button-status">COMING SOON</span></span></a>
       </div>
     </section>
   </main>
   <div id="syndicate-footer"></div>
+  <script>
+    (() => {
+      'use strict';
+      // Only presentation comes from this page. Database connection stays centralized.
+      const order = ['zg','ony','aq20','mc','bwl','aq40','naxx'];
+      const aliases = {
+        zg:['zg','zulgurub'], ony:['ony','onyxia','onyxiaslair'],
+        aq20:['aq20','ruinsofahnqiraj','ruinsofahnqirajaq20'],
+        mc:['mc','moltencore'], bwl:['bwl','blackwinglair'],
+        aq40:['aq40','templeofahnqiraj','templeofahnqirajaq40'],
+        naxx:['naxx','naxxramas']
+      };
+      const clean = value => String(value ?? '').toLowerCase().replace(/[^a-z0-9]/g,'');
+      function keyFor(row) {
+        // Do not use numeric id to identify a raid; id controls display order.
+        for (const field of ['raid_key','slug','raid','name','title','raid_name','key']) {
+          const value = clean(row[field]);
+          if (!value) continue;
+          for (const [key, names] of Object.entries(aliases)) {
+            if (names.includes(value)) return key;
+          }
+        }
+        return null;
+      }
+      function statusFor(row) {
+        const raw = String(row.raid_status ?? row.status ?? '').trim();
+        if (!raw) return null;
+        const norm = clean(raw);
+        if (norm === 'farm') return 'FARM';
+        if (norm === 'progression') return 'PROGRESSION';
+        if (norm === 'comingsoon') return 'COMING SOON';
+        return raw.toUpperCase();
+      }
+      async function loadRaids() {
+        const db = window.syndicateDB;
+        const grid = document.getElementById('raid-grid');
+        if (!db || !grid) return;
+        try {
+          const { data, error } = await db.from('raids').select('*').order('id',{ascending:true});
+          if (error) throw error;
+          if (!Array.isArray(data)) return;
+          const matched = new Set();
+          const inDatabaseOrder = [];
+          for (const row of data) {
+            const key = keyFor(row);
+            if (!key || matched.has(key)) continue;
+            const button = grid.querySelector(`[data-raid="${key}"]`);
+            if (!button) continue;
+            matched.add(key);
+            const status = statusFor(row);
+            if (status) button.querySelector('.raid-button-status').textContent = status;
+            inDatabaseOrder.push(button);
+          }
+          // A not-yet-configured raid still stays visible/clickable at the end.
+          for (const key of order) {
+            if (matched.has(key)) continue;
+            const button = grid.querySelector(`[data-raid="${key}"]`);
+            if (button) inDatabaseOrder.push(button);
+          }
+          grid.replaceChildren(...inDatabaseOrder);
+        } catch (error) {
+          console.warn('Raid Hub: could not load live raid order/status; showing fallback buttons.',error);
+        }
+      }
+      if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded',loadRaids,{once:true});
+      else loadRaids();
+    })();
+  </script>
 </body>
 </html>
