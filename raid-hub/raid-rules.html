@@ -187,6 +187,7 @@
         try {
           const { data, error } = await db.from('raid_rules')
             .select('id,section_title,slug,sort_order,published_description,published_content')
+            .is('raid_key', null) // Guild-wide rules only.
             .eq('is_published', true)
             .order('sort_order', { ascending: true })
             .order('id', { ascending: true });
