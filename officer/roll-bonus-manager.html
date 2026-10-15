@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="syn-access-pending"> 
+<html lang="en" class="syn-access-pending">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Roll Bonus Manager | The Syndicate</title>
@@ -41,8 +41,8 @@
 <section class="rb-section" id="expirationSection" hidden>
 <div class="rb-panel">
  <div class="rb-toolbar"><div><h2>Player-Level Expiration Check</h2><p class="rb-help">A person's most recent raid on any confirmed main or alt determines inactivity. Bonuses themselves remain with the character and item.</p></div><button class="rb-button primary" id="runExpiration" type="button">Run Expiration Check</button></div>
- <p class="rb-note">No bonuses expire automatically. Missing attendance or unconfirmed player links are never treated as inactivity. Officers can extend a whole player's review date.</p>
- <div class="rb-totals"><div class="rb-stat"><strong id="readyCount">—</strong><span>Ready for review</span></div><div class="rb-stat"><strong id="extendedCount">—</strong><span>Extended</span></div><div class="rb-stat"><strong id="unknownCount">—</strong><span>Attendance unknown</span></div></div>
+ <p class="rb-note">Only players with potential expiration issues appear here. Anyone with confirmed raid attendance in the last two months is hidden. <strong>Questionable</strong> means attendance is unknown—not proof of inactivity. No bonus expires without officer approval.</p>
+ <div class="rb-totals"><div class="rb-stat"><strong id="readyCount">—</strong><span>Over 2 months (confirmed)</span></div><div class="rb-stat"><strong id="extendedCount">—</strong><span>Hidden (recent / extended)</span></div><div class="rb-stat"><strong id="unknownCount">—</strong><span>Questionable (history incomplete)</span></div></div>
  <div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Player (main)</th><th>Bonuses</th><th>Last Raid</th><th>Status / Extension</th><th>Officer Action</th></tr></thead><tbody id="expirationRows"><tr><td colspan="5" class="rb-empty">Run the check to view eligible players.</td></tr></tbody></table></div>
  <p class="rb-muted" id="expirationFootnote"></p>
 </div>
@@ -111,7 +111,45 @@ async function loadPending(){try{const [pending,reviewed]=await Promise.all([db.
  const done=$('reviewedRows');done.replaceChildren();for(const s of reviewed.data||[]){const tr=document.createElement('tr');textCell(tr,cmap.get(String(s.character_id))?.toon_name||'#'+s.character_id);textCell(tr,imap.get(String(s.item_id))?.item_name||'#'+s.item_id);textCell(tr,s.result);textCell(tr,s.status);textCell(tr,niceDate(s.reviewed_at));done.append(tr);}if(!(reviewed.data||[]).length)empty(done,'No previously reviewed submissions.',5);
  status('Submission review loaded.','ok');}catch(e){status('Could not load submissions: '+e.message,'error');empty($('pendingRows'),'Submission list unavailable.');}}
 async function review(s,decision){if(state.reviewing)return;const c=names().get(String(s.character_id));const label=c?.toon_name||'this character';if(!confirmAction(`${decision==='approved'?'Approve':'Reject'} ${s.result} submission for ${label}?`))return;const notes=window.prompt('Optional review note:','');if(notes===null)return;state.reviewing=true;try{await runRpc('syndicate_rb_review_submission',{p_submission_id:s.id,p_decision:decision,p_notes:notes});await loadPending();status(`Submission #${s.id} ${decision}.`,'ok');}catch(e){status('Review failed: '+e.message,'error');}finally{state.reviewing=false;}}
-async function expiration(){status('Checking confirmed player identities and raid attendance…');try{const {data,error}=await db.from('syndicate_rb_expiration_review').select('*').order('player_name',{ascending:true});if(error)throw error;const rows=data||[];$('readyCount').textContent=rows.filter(x=>x.review_status==='READY_FOR_REVIEW').length;$('extendedCount').textContent=rows.filter(x=>x.review_status==='EXTENDED').length;$('unknownCount').textContent=rows.filter(x=>x.review_status==='ATTENDANCE_UNKNOWN').length;const host=$('expirationRows');host.replaceChildren();for(const x of rows){const tr=document.createElement('tr');textCell(tr,x.player_name);textCell(tr,`${x.outstanding_items} items · ${x.character_count} characters · +${x.total_points}`);textCell(tr,niceDate(x.last_raid_date));const td=textCell(tr,x.review_status.replaceAll('_',' ')+(x.extended_until?' · until '+x.extended_until:''));td.className='rb-muted';const actions=textCell(tr,'');const box=document.createElement('div');box.className='rb-actions';if(x.review_status==='READY_FOR_REVIEW')box.append(button('Approve Expiration','danger',()=>expirePlayer(x)));if(x.review_status!=='ATTENDANCE_UNKNOWN')box.append(button('Extend','',()=>extendPlayer(x)));actions.append(box);host.append(tr);}if(!rows.length)empty(host,'No confirmed bonus/player links are available yet. Expiration is safely blocked until identity links are established.',5);$('expirationFootnote').textContent=rows.length?`${rows.length} players with confirmed bonus identity links. Unknown activity is excluded from expiration.`:'Outstanding bonuses exist, but they must be linked to permanent player identities before player-level expiration can be reviewed.';status('Expiration check completed; no points were changed.','ok');}catch(e){status('Expiration check unavailable: '+e.message,'error');empty($('expirationRows'),'Unable to check expiration.',5);}}
+async function expiration(){
+ status('Checking confirmed player identities and raid attendance…');
+ try {
+  const {data,error}=await db.from('syndicate_rb_expiration_review').select('*').order('player_name',{ascending:true});
+  if(error)throw error;
+  const all=data||[];
+  // The database groups bonus-holding characters under their confirmed player.
+  // Only potentially expired players belong on this list. ACTIVE and EXTENDED are hidden.
+  const definitive=all.filter(x=>x.review_status==='READY_FOR_REVIEW');
+  const questionable=all.filter(x=>x.review_status==='ATTENDANCE_UNKNOWN');
+  const rows=[...definitive,...questionable];
+  $('readyCount').textContent=definitive.length;
+  $('extendedCount').textContent=all.filter(x=>x.review_status==='ACTIVE'||x.review_status==='EXTENDED').length;
+  $('unknownCount').textContent=questionable.length;
+  const host=$('expirationRows');host.replaceChildren();
+  for(const x of rows){
+   const confirmed=x.review_status==='READY_FOR_REVIEW';
+   const tr=document.createElement('tr');
+   textCell(tr,x.player_name);
+   textCell(tr,`${x.outstanding_items} items · ${x.character_count} characters · +${x.total_points}`);
+   textCell(tr,confirmed?niceDate(x.last_raid_date):'Not documented');
+   const td=textCell(tr,confirmed?'Over 2 months — eligible for review':'Questionable — attendance unknown');
+   td.className='rb-muted';
+   const actions=textCell(tr,'');const box=document.createElement('div');box.className='rb-actions';
+   if(confirmed){
+    box.append(button('Approve Expiration','danger',()=>expirePlayer(x)));
+    box.append(button('Extend','',()=>extendPlayer(x)));
+   } else {
+    const info=document.createElement('span');info.className='rb-muted';
+    info.textContent='Confirm historical attendance before expiration';
+    box.append(info);
+   }
+   actions.append(box);host.append(tr);
+  }
+  if(!rows.length)empty(host,'No players currently need expiration review. Recent raiders and extended players are hidden.',5);
+  $('expirationFootnote').textContent=`${definitive.length} confirmed over two months · ${questionable.length} questionable due to missing attendance · ${all.length-rows.length} recent or extended, hidden. Historical raid imports are incomplete; absence of a record is not evidence of inactivity.`;
+  status('Expiration check completed; no points were changed.','ok');
+ }catch(e){status('Expiration check unavailable: '+e.message,'error');empty($('expirationRows'),'Unable to check expiration.',5);}
+}
 async function extendPlayer(x){const until=window.prompt('Extend '+x.player_name+' until (YYYY-MM-DD):','');if(!until)return;const reason=window.prompt('Reason for this extension (required):','');if(!reason)return;if(!confirmAction('Extend expiration review for '+x.player_name+' until '+until+'?'))return;try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:reason});await expiration();status(x.player_name+' extended through '+until+'.','ok');}catch(e){status('Extension failed: '+e.message,'error');}}
 async function expirePlayer(x){if(!confirmAction(`Expire ALL ${x.outstanding_items} outstanding character/item bonuses for ${x.player_name}? This writes permanent expiration history records.`))return;const reason=window.prompt('Optional reason for expiration:','');if(reason===null)return;try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:reason});await expiration();status(`Expired ${result?.expired_items??'?'} item bonuses for ${x.player_name}.`,'ok');}catch(e){status('Expiration failed: '+e.message,'error');}}
 $('runExpiration').addEventListener('click',expiration);$('refreshPending').addEventListener('click',loadPending);
