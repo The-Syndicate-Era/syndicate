@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Guild Roster Management | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="../settings/supabase-config.js" defer></script>
+  <script src="../settings/auth.js" defer></script>
+  <script src="../settings/officer-guard.js" defer></script>
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/menu.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
+  <style>
+    html,body{background:#080807!important;color:#e4dac6;min-height:100%}body{background-image:none!important}
+    .roster-shell{max-width:1200px;margin:0 auto;padding:2.6rem 1.25rem 5rem}
+    .roster-shell h1,.roster-shell h2{color:#d4af37;font-family:var(--font-heading,Cinzel,serif)}
+    .roster-shell h1{font-size:clamp(2.2rem,5vw,3.9rem);margin:.5rem 0}
+    .roster-shell h2{font-size:1.5rem;margin:0 0 .8rem}
+    .eyebrow{color:#c7aa61;letter-spacing:.12em;text-transform:uppercase;font-size:.83rem}
+    .muted{color:#bcb19e;line-height:1.6}.notice{padding:1rem 1.2rem;border:1px solid #765c26;background:#17130c;border-radius:.45rem;margin:1.4rem 0}
+    .panel{border:1px solid #5c4824;background:#16120c;border-radius:.65rem;padding:1.4rem;margin:1.2rem 0}
+    .actions{display:flex;gap:.75rem;align-items:center;flex-wrap:wrap}
+    .syn-btn{background:#241b10;color:#e9c35a;border:1px solid #d4af37;border-radius:.3rem;padding:.75rem 1.05rem;cursor:pointer;font:inherit}
+    .syn-btn:disabled{opacity:.45;cursor:default}.syn-btn:hover:not(:disabled){background:#352614}
+    input[type=file]{font:inherit;color:#e4dac6;max-width:100%;padding:.7rem;border:1px dashed #826527;border-radius:.3rem;background:#100e0a}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.7rem;margin:1rem 0}
+    .stat{border:1px solid #554321;padding:1rem;background:#110e09;border-radius:.45rem;min-height:92px}
+    .stat strong{display:block;font-family:var(--font-heading,Cinzel,serif);font-size:1.65rem;color:#e6c05b;font-variant-numeric:tabular-nums}
+    .stat span{color:#c1b6a2;font-size:.86rem}
+    .status{color:#e7c66c;white-space:pre-wrap;margin:.75rem 0}.status.error{color:#ef9c86}
+    .table-wrap{max-width:100%;overflow:auto;border:1px solid #493a22;border-radius:.45rem;margin-top:1rem}
+    table{width:100%;border-collapse:collapse;min-width:670px;color:#e4dac6;font-size:.94rem}
+    th{text-align:left;color:#ead08a;background:#262015}td,th{padding:.7rem .75rem;border-bottom:1px solid #392f21}td{overflow-wrap:anywhere}
+    .tag{display:inline-block;border:1px solid #756037;color:#e7ca83;border-radius:2rem;padding:.15rem .55rem;font-size:.78rem}
+    .warnings{margin:.7rem 0;color:#e5b884}.warnings li{padding:.2rem 0}
+    .hidden{display:none!important}.back-link{color:#e1b94d}.section-head{display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap}
+    label{display:block;margin-bottom:.55rem;color:#f1d47f;font-weight:bold}
+    @media(max-width:680px){.roster-shell{padding:2rem .95rem 3rem}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:1rem}}
+  </style>
+</head>
+<body>
+  <div id="syndicate-menu"></div>
+  <main class="roster-shell">
+    <a class="back-link" href="index.html">← Officer Hub</a>
+    <header>
+      <p class="eyebrow">The Syndicate · Dark Council</p>
+      <h1>GUILD ROSTER MANAGEMENT</h1>
+      <p class="muted">Upload a Guild Roster Manager export and review its impact before updating the database.</p>
+    </header>
+    <div class="notice"><strong>Preview-only build.</strong> This page does not add, remove, or update roster characters. No membership, Warcraft Logs, attendance, or officer records can be changed here.</div>
+    <section class="panel" aria-labelledby="uploadHeading">
+      <h2 id="uploadHeading">1. Select GRM Export</h2>
+      <p class="muted">Supports the 18-column Guild Roster Manager pipe-delimited CSV format, including the outer quotation marks GRM uses. Files are parsed in your browser; no file is uploaded to a server.</p>
+      <label for="fileInput">GRM roster CSV file</label>
+      <div class="actions">
+        <input id="fileInput" type="file" accept=".csv,.txt,text/csv,text/plain">
+        <button class="syn-btn" type="button" id="previewButton">Validate &amp; Compare</button>
+        <button class="syn-btn" type="button" id="clearButton">Clear</button>
+      </div>
+      <p id="status" class="status" role="status">Select your export to begin.</p>
+    </section>
+    <section class="panel hidden" id="results" aria-labelledby="resultsHeading">
+      <h2 id="resultsHeading">2. Import Preview</h2>
+      <p id="fileInfo" class="muted"></p>
+      <div class="stats" id="stats"></div>
+      <h2>Validation</h2>
+      <ul id="warnings" class="warnings"></ul>
+      <p class="muted" id="comparisonNote"></p>
+      <div id="differenceSection" class="hidden">
+        <div class="section-head"><h2>Comparison details</h2><span class="muted" id="detailCount"></span></div>
+        <div class="actions">
+          <label for="viewFilter" style="margin:0">Show</label>
+          <select id="viewFilter" class="syn-btn" aria-label="Filter comparison rows">
+            <option value="all">All changes</option>
+            <option value="new">New GUIDs</option>
+            <option value="missing">Missing from CSV</option>
+            <option value="changed">Changed details</option>
+          </select>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Change</th><th>Character</th><th>GUID</th><th>Details</th></tr></thead><tbody id="detailsBody"></tbody></table></div>
+        <div class="actions" style="margin-top:1rem"><button class="syn-btn" id="showMore" type="button">Show more</button></div>
+      </div>
+      <div class="notice"><strong>Not yet implemented:</strong> approving imports, snapshot history, automatic former-member processing, main/alt reconciliation and Warcraft Logs suggestions. Those will be added after validating this read-only comparison.</div>
+    </section>
+  </main>
+  <div id="syndicate-footer"></div>
+<script>
+(() => {
+  'use strict';
+  const REQUIRED = ['Name','Rank','Level','Class','Race','Sex','Last Online (Days)','Main/Alt','Player Alts','Join Date','Promo Date','Rank History','Birthday','Public Note','Officer Note','Custom Note','Faction','Player GUID'];
+  const $ = id => document.getElementById(id);
+  let differences = [], shown = 0;
+  const setStatus = (message, error = false) => { $('status').textContent = message; $('status').classList.toggle('error',error); };
+  function decodeFile(buffer) {
+    try { return new TextDecoder('utf-8', {fatal:true}).decode(buffer); }
+    catch { return new TextDecoder('windows-1252').decode(buffer); }
+  }
+  // GRM encloses whole pipe-separated rows in double-quotes. Quoted pipes inside
+  // cells are also supported; doubled quotes represent a literal quote.
+  function splitPipe(line) {
+    let s = line.trim();
+    if (s.startsWith('"') && s.endsWith('"') && s.includes('|')) {
+      const inner = s.slice(1,-1);
+      if (!/(^|[^\"])\"\|/.test(inner)) s = inner.replace(/""/g,'"');
+    }
+    const result=[]; let cell='', quoted=false;
+    for(let i=0;i<s.length;i++) {
+      const ch=s[i];
+      if(ch==='"' && s[i+1]==='"' && quoted) {cell+='"';i++;}
+      else if(ch==='"') quoted=!quoted;
+      else if(ch==='|' && !quoted){result.push(cell);cell='';}
+      else cell+=ch;
+    }
+    result.push(cell);return result;
+  }
+  function parseGRM(contents) {
+    const lines=contents.replace(/^\uFEFF/,'').split(/\r?\n/).filter(x=>x.trim());
+    if(lines.length<2) throw new Error('No roster characters found in the file.');
+    const headers=splitPipe(lines[0]);
+    if(headers.length!==REQUIRED.length || REQUIRED.some((h,i)=>headers[i].trim()!==h))
+      throw new Error('This file does not match the 18-column GRM roster export. Please export the full roster.');
+    const records=[], problems=[], seen=new Set();
+    for(let i=1;i<lines.length;i++){
+      const columns=splitPipe(lines[i]);
+      if(columns.length!==headers.length) {problems.push(`Line ${i+1}: expected ${headers.length} fields, found ${columns.length}`);continue;}
+      const row=Object.fromEntries(headers.map((h,j)=>[h,columns[j].trim()]));
+      const guid=row['Player GUID'];
+      if(!guid || !row.Name) {problems.push(`Line ${i+1}: character name or GUID missing`);continue;}
+      if(seen.has(guid)) {problems.push(`Line ${i+1}: duplicate GUID ${guid}`);continue;}
+      seen.add(guid); records.push(row);
+    }
+    if(problems.length) throw new Error(`CSV cannot be trusted for roster comparison:\n${problems.slice(0,8).join('\n')}${problems.length>8?`\n…and ${problems.length-8} more issues`:''}`);
+    return records;
+  }
+  function normalized(s){return String(s||'').trim().toLocaleLowerCase();}
+  function nameOnly(s){return String(s||'').replace(/\(main\)/ig,'').split('-')[0].trim();}
+  async function fetchRoster(){
+    const db=window.syndicateDB;
+    if(!db?.from) throw new Error('Central Supabase connection is unavailable.');
+    const all=[];let start=0;
+    while(true){
+      const {data,error}=await db.from('guild_roster')
+        .select('id,Name,Rank,Level,Class,"Player GUID","Main/Alt",main_character_name,roster_present')
+        .order('id',{ascending:true}).range(start,start+499);
+      if(error) throw new Error(error.message);
+      const batch=data||[];all.push(...batch);
+      if(batch.length<500) break;
+      start+=500;
+      if(start>20000) throw new Error('Roster is larger than the preview safety limit.');
+    }
+    return all;
+  }
+  function stat(number,label){const node=document.createElement('div');node.className='stat';const count=document.createElement('strong');count.textContent=number.toLocaleString();const text=document.createElement('span');text.textContent=label;node.append(count,text);$('stats').append(node);}
+  function compare(rows,current){
+    const old=new Map(),incoming=new Map();
+    for(const r of current){const guid=String(r['Player GUID']||'').trim();if(guid)old.set(guid,r);}
+    for(const r of rows)incoming.set(r['Player GUID'],r);
+    const result=[];
+    for(const r of rows){
+      const guid=r['Player GUID'], previous=old.get(guid);
+      if(!previous){result.push({type:'new',name:nameOnly(r.Name),guid,detail:'New character GUID'});continue;}
+      const changes=[];
+      for(const [c,prev] of [['Name','Name'],['Rank','Rank'],['Class','Class'],['Level','Level'],['Main/Alt','Main/Alt']]){
+        if(normalized(r[c])!==normalized(previous[prev])) changes.push(c);
+      }
+      if(previous.roster_present===false)changes.push('Previously absent');
+      if(changes.length)result.push({type:'changed',name:nameOnly(r.Name),guid,detail:changes.join(', ')});
+    }
+    for(const r of current){const guid=String(r['Player GUID']||'').trim();if(guid && r.roster_present!==false && !incoming.has(guid))result.push({type:'missing',name:nameOnly(r.Name),guid,detail:'Not in uploaded export; no status changed'});}
+    return result;
+  }
+  function renderDetails(reset=true){
+    if(reset){shown=0;$('detailsBody').replaceChildren();}
+    const selected=$('viewFilter').value;
+    const records=selected==='all'?differences:differences.filter(x=>x.type===selected);
+    const next=records.slice(shown,shown+75);
+    for(const r of next){
+      const tr=document.createElement('tr');
+      for(const value of [r.type==='new'?'New GUID':r.type==='missing'?'Missing from CSV':'Changed',r.name,r.guid,r.detail]){
+        const td=document.createElement('td');td.textContent=value;tr.append(td);
+      }
+      $('detailsBody').append(tr);
+    }
+    shown+=next.length;$('detailCount').textContent=`Showing ${shown} of ${records.length}`;
+    $('showMore').classList.toggle('hidden',shown>=records.length);
+  }
+  async function runPreview(){
+    const file=$('fileInput').files?.[0];
+    if(!file){setStatus('Choose a CSV file first.',true);return;}
+    if(file.size>5*1024*1024){setStatus('This file exceeds the 5 MB preview limit.',true);return;}
+    $('previewButton').disabled=true;$('results').classList.add('hidden');setStatus('Reading and validating GRM export…');
+    try{
+      const content=decodeFile(await file.arrayBuffer());
+      const rows=parseGRM(content);
+      const incomingGUIDs=new Set(rows.map(r=>r['Player GUID']));
+      if(incomingGUIDs.size!==rows.length)throw new Error('Duplicate GUIDs were detected.');
+      $('results').classList.remove('hidden');$('fileInfo').textContent=`${file.name} · ${rows.length.toLocaleString()} valid character rows`;
+      $('stats').replaceChildren();$('warnings').replaceChildren();
+      stat(rows.length,'CSV characters');stat(rows.filter(r=>normalized(r['Main/Alt'])==='main').length,'Marked Main');
+      stat(rows.filter(r=>normalized(r['Main/Alt'])==='alt').length,'Marked Alt');
+      stat(rows.filter(r=>!['main','alt'].includes(normalized(r['Main/Alt']))).length,'Unclassified');
+      const addWarning=s=>{const li=document.createElement('li');li.textContent=s;$('warnings').append(li);};
+      addWarning('Roster completeness cannot be guaranteed from the CSV format alone. Never treat a partial export as a complete roster.');
+      $('differenceSection').classList.add('hidden');
+      $('comparisonNote').textContent='Attempting a read-only comparison against the current guild_roster table…';
+      setStatus('CSV validated. Loading existing roster for comparison…');
+      try{
+        const current=await fetchRoster();
+        differences=compare(rows,current);
+        const counts={new:0,missing:0,changed:0};differences.forEach(d=>counts[d.type]++);
+        $('stats').replaceChildren();
+        stat(current.filter(r=>r.roster_present!==false).length,'Currently present');stat(rows.length,'CSV characters');
+        stat(counts.new,'New GUIDs');stat(counts.missing,'Missing current GUIDs');
+        stat(counts.changed,'Changed details');
+        $('comparisonNote').textContent=`Compared ${rows.length} incoming character GUIDs against ${current.length} historical guild_roster records. Missing GUIDs are NOT automatically former members: player groups and export completeness must be reviewed in the future import workflow.`;
+        if(counts.missing>Math.max(20,Math.floor(current.filter(r=>r.roster_present!==false).length*.1)))addWarning('Large number of missing characters: possible incomplete export. Automatic removals would be blocked.');
+        $('differenceSection').classList.remove('hidden');$('viewFilter').value='all';renderDetails();
+        setStatus('Preview complete. No records have been changed.');
+      }catch(err){
+        addWarning('Current roster comparison unavailable: '+(err?.message||String(err)));
+        $('comparisonNote').textContent='The CSV validation succeeded, but guild_roster could not be read from this browser. This may require a secure, officer-authorized preview Edge Function in the next stage.';
+        setStatus('File validated; live comparison unavailable. No records have been changed.');
+      }
+    }catch(err){setStatus(err?.message||String(err),true);}
+    finally{$('previewButton').disabled=false;}
+  }
+  $('previewButton').addEventListener('click',runPreview);
+  $('viewFilter').addEventListener('change',()=>renderDetails());
+  $('showMore').addEventListener('click',()=>renderDetails(false));
+  $('clearButton').addEventListener('click',()=>{$('fileInput').value='';$('results').classList.add('hidden');differences=[];setStatus('Select your export to begin.');});
+})();
+</script>
+</body>
+</html>
