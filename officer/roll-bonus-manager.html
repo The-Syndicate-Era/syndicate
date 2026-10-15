@@ -50,8 +50,9 @@
 <section class="rb-section" id="manualSection" hidden>
 <div class="rb-panel"><h2>Manually Award an Approved Bonus</h2><p class="rb-help">Use this to correct a missed roll or award an officer-approved adjustment. This writes directly to bonus history and takes effect immediately—there is no pending approval.</p>
  <form id="manualForm" class="rb-form">
-  <div class="rb-field"><label for="manualCharacter">Character</label><select id="manualCharacter" required><option value="">Loading characters…</option></select></div>
-  <div class="rb-field"><label for="manualItem">Item</label><select id="manualItem" required><option value="">Loading items…</option></select></div>
+  <div class="rb-field"><label for="manualCharacter">Character</label><input id="manualCharacter" list="manualCharacterOptions" placeholder="Type a character name…" autocomplete="off" required><datalist id="manualCharacterOptions"></datalist></div>
+  <div class="rb-field"><label for="manualRaid">Raid filter</label><select id="manualRaid"><option value="">All raids</option></select></div>
+  <div class="rb-field"><label for="manualItem">Item</label><input id="manualItem" list="manualItemOptions" placeholder="Type an item name…" autocomplete="off" required><datalist id="manualItemOptions"></datalist></div>
   <div class="rb-field"><label for="manualPoints">Bonus points to add</label><input id="manualPoints" type="number" min="1" max="200" step="1" value="10" required></div>
   <div class="rb-field rb-full"><label for="manualReason">Reason / officer note (required)</label><textarea id="manualReason" rows="3" required minlength="3" placeholder="Example: Missed SR loss from Wednesday MC"></textarea></div>
   <div class="rb-full"><button class="rb-button primary" type="submit" id="manualSubmit">Add Approved Bonus</button></div>
@@ -64,7 +65,7 @@
 document.addEventListener('DOMContentLoaded',()=>{
 'use strict';
 const $=id=>document.getElementById(id);const db=window.syndicateDB;
-const state={characters:[],items:[],events:[],reviewing:false};
+const state={characters:[],items:[],events:[],bosses:[],lootLinks:[],reviewing:false};
 function status(msg,type=''){const n=$('rbStatus');n.textContent=msg;n.className='rb-status '+type;}
 function textCell(tr,s){const td=document.createElement('td');td.textContent=String(s??'—');tr.append(td);return td;}
 function button(label,kind,fn){const b=document.createElement('button');b.type='button';b.className='rb-button '+(kind||'');b.textContent=label;b.addEventListener('click',fn);return b;}
@@ -79,9 +80,21 @@ async function query(table,fields,sort='id',ascending=true,limit=1000){const {da
 async function runRpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message);return data;}
 function showTab(tab){for(const b of document.querySelectorAll('.rb-tab')){const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}for(const id of ['approval','expiration','manual'])$(id+'Section').hidden=id!==tab;}
 for(const b of document.querySelectorAll('.rb-tab'))b.addEventListener('click',()=>showTab(b.dataset.tab));
-async function loadReference(){const [chars,itemsList,ev]=await Promise.all([query('roll_bonus_characters','id,toon_name,guild_name,realm','toon_name',true,2000),query('raid_items','id,item_name','item_name',true,2000),query('Events','id,date,name','date',false,500)]);state.characters=chars;state.items=itemsList;state.events=ev;
- selectFill($('manualCharacter'),chars.map(c=>[c.id,`${c.toon_name} · ${c.guild_name||'Unknown Guild'}`]),'Select character');
- selectFill($('manualItem'),itemsList.map(i=>[i.id,i.item_name]),'Select item');}
+async function loadEvery(table,fields,sort='id'){
+ const all=[];for(let offset=0;offset<10000;offset+=1000){const {data,error}=await db.from(table).select(fields).order(sort,{ascending:true}).range(offset,offset+999);if(error)throw Error(table+': '+error.message);all.push(...(data||[]));if(!data||data.length<1000)return all;}throw Error(table+': row limit exceeded');
+}
+function characterLabel(c){return `${c.toon_name} · ${c.guild_name||'Unknown Guild'}`;}
+function availableItems(){const raid=$('manualRaid').value;if(!raid)return state.items;const bossIds=new Set(state.bosses.filter(b=>b.raid_code===raid).map(b=>String(b.id)));const itemIds=new Set(state.lootLinks.filter(l=>bossIds.has(String(l.boss_id))).map(l=>String(l.item_id)));return state.items.filter(i=>itemIds.has(String(i.id)));}
+function setSuggestions(listId,labels){const list=$(listId);list.replaceChildren();for(const label of labels){const option=document.createElement('option');option.value=label;list.append(option);}}
+function updateManualItems(){setSuggestions('manualItemOptions',availableItems().map(i=>i.item_name));$('manualItem').value='';}
+async function loadReference(){const [chars,itemsList,ev,bosses,links]=await Promise.all([loadEvery('roll_bonus_characters','id,toon_name,guild_name,realm','id'),loadEvery('raid_items','id,item_name','id'),query('Events','id,date,name','date',false,500),loadEvery('raid_bosses','id,raid_code','id'),loadEvery('raid_boss_loot','id,boss_id,item_id','id')]);state.characters=chars;state.items=itemsList;state.events=ev;state.bosses=bosses;state.lootLinks=links;
+ setSuggestions('manualCharacterOptions',chars.map(characterLabel));
+ const raids=[...new Set(bosses.map(b=>b.raid_code))].sort((a,b)=>['Ony','ZG','AQ20','MC','BWL','AQ40','Naxx'].indexOf(a)-['Ony','ZG','AQ20','MC','BWL','AQ40','Naxx'].indexOf(b));
+ selectFill($('manualRaid'),[['','All raids'],...raids.map(r=>[r,r])],'All raids');
+ updateManualItems();
+}
+$('manualRaid').addEventListener('change',updateManualItems);
+
 async function loadPending(){try{const [pending,reviewed]=await Promise.all([db.from('roll_bonus_submissions').select('*').eq('status','pending').order('submitted_at',{ascending:true}).limit(500),db.from('roll_bonus_submissions').select('*').in('status',['approved','rejected']).order('reviewed_at',{ascending:false}).limit(40)]);if(pending.error)throw pending.error;if(reviewed.error)throw reviewed.error;
  // Fetch any item references omitted by the initial item-list request (Supabase's default row limit can be 1,000).
  const missingIds=[...new Set([...(pending.data||[]),...(reviewed.data||[])].map(s=>s.item_id).filter(id=>!items().has(String(id))))];
@@ -102,7 +115,7 @@ async function expiration(){status('Checking confirmed player identities and rai
 async function extendPlayer(x){const until=window.prompt('Extend '+x.player_name+' until (YYYY-MM-DD):','');if(!until)return;const reason=window.prompt('Reason for this extension (required):','');if(!reason)return;if(!confirmAction('Extend expiration review for '+x.player_name+' until '+until+'?'))return;try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:reason});await expiration();status(x.player_name+' extended through '+until+'.','ok');}catch(e){status('Extension failed: '+e.message,'error');}}
 async function expirePlayer(x){if(!confirmAction(`Expire ALL ${x.outstanding_items} outstanding character/item bonuses for ${x.player_name}? This writes permanent expiration history records.`))return;const reason=window.prompt('Optional reason for expiration:','');if(reason===null)return;try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:reason});await expiration();status(`Expired ${result?.expired_items??'?'} item bonuses for ${x.player_name}.`,'ok');}catch(e){status('Expiration failed: '+e.message,'error');}}
 $('runExpiration').addEventListener('click',expiration);$('refreshPending').addEventListener('click',loadPending);
-$('manualForm').addEventListener('submit',async e=>{e.preventDefault();const characterId=Number($('manualCharacter').value),itemId=Number($('manualItem').value),points=Number($('manualPoints').value),reason=$('manualReason').value.trim();if(!characterId||!itemId||!Number.isInteger(points)||points<1||!reason){status('Complete all manual award fields.','error');return}const c=names().get(String(characterId)),i=items().get(String(itemId));if(!confirmAction(`Immediately add +${points} to ${c?.toon_name} for ${i?.item_name}?`))return;const btn=$('manualSubmit');btn.disabled=true;try{await runRpc('syndicate_rb_manual_award',{p_character_id:characterId,p_item_id:itemId,p_points:points,p_reason:reason});$('manualForm').reset();status(`Approved manual award: +${points} for ${c?.toon_name}.`,'ok');}catch(err){status('Manual award failed: '+err.message,'error');}finally{btn.disabled=false;}});
+$('manualForm').addEventListener('submit',async e=>{e.preventDefault();const characterMatches=state.characters.filter(c=>characterLabel(c).toLowerCase()===$('manualCharacter').value.trim().toLowerCase()),itemMatches=availableItems().filter(i=>i.item_name.toLowerCase()===$('manualItem').value.trim().toLowerCase());const characterId=characterMatches.length===1?Number(characterMatches[0].id):0,itemId=itemMatches.length===1?Number(itemMatches[0].id):0,points=Number($('manualPoints').value),reason=$('manualReason').value.trim();if(!characterId||!itemId||!Number.isInteger(points)||points<1||!reason){status('Select a valid character and item from the suggestions, enter points, and provide a reason.','error');return}const c=names().get(String(characterId)),i=items().get(String(itemId));if(!confirmAction(`Immediately add +${points} to ${c?.toon_name} for ${i?.item_name}?`))return;const btn=$('manualSubmit');btn.disabled=true;try{await runRpc('syndicate_rb_manual_award',{p_character_id:characterId,p_item_id:itemId,p_points:points,p_reason:reason});$('manualForm').reset();updateManualItems();status(`Approved manual award: +${points} for ${c?.toon_name}.`,'ok');}catch(err){status('Manual award failed: '+err.message,'error');}finally{btn.disabled=false;}});
 async function boot(){if(!db||typeof db.from!=='function'){status('Central Supabase configuration is unavailable.','error');return}try{await loadReference();await loadPending();}catch(e){status('Could not initialize manager: '+e.message,'error');}}
 boot();
 });
