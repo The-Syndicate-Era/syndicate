@@ -47,9 +47,9 @@
     <header>
       <p class="eyebrow">The Syndicate · Dark Council</p>
       <h1>GUILD ROSTER MANAGEMENT</h1>
-      <p class="muted">Upload a Guild Roster Manager export and review its impact before updating the database.</p>
+      <p class="muted">Upload a Guild Roster Manager export, preview membership changes, and update the roster while keeping main/alt information in sync with GRM.</p>
     </header>
-    <div class="notice"><strong>Officer-controlled import.</strong> Preview is read-only. The roster is updated only after server validation, a complete-file confirmation, and clicking Confirm &amp; Import. Existing character IDs and Warcraft Logs history are preserved.</div>
+    <div class="notice"><strong>Officer-controlled import.</strong> Preview is read-only. The roster changes only after server validation and explicit confirmation. Every completed import also reprocesses GRM main/alt relationships; existing character IDs and Warcraft Logs history are preserved.</div>
     <section class="panel" aria-labelledby="uploadHeading">
       <h2 id="uploadHeading">1. Select GRM Export</h2>
       <p class="muted">Supports the 18-column Guild Roster Manager pipe-delimited CSV format, including the outer quotation marks GRM uses. The CSV is validated in the browser and sent securely to the officer-only Supabase function for authoritative comparison. No database writes occur during preview.</p>
@@ -65,6 +65,9 @@
       <h2 id="resultsHeading">2. Import Preview</h2>
       <p id="fileInfo" class="muted"></p>
       <div class="stats" id="stats"></div>
+      <div class="notice" aria-label="Main and alt relationship rules">
+        <strong>Main/Alt matching:</strong> On import, the server reads the GRM <em>Player Alts</em> field, removes the realm suffix and <code>(main)</code> marker, and normalizes special characters before matching a uniquely identified current main. A main that cannot be confirmed remains unresolved for officer follow-up. <strong>Main assignments must be corrected in-game through GRM, not on this website.</strong> Ordinary alt removals do not require officer action.
+      </div>
       <h2>Validation</h2>
       <ul id="warnings" class="warnings"></ul>
       <p class="muted" id="comparisonNote"></p>
@@ -85,7 +88,7 @@
       </div>
       <section class="panel" id="commitPanel" aria-label="Confirm roster import">
         <h2>3. Confirm Import</h2>
-        <p class="muted">Review the additions and removals above. This import updates the current roster, retains removed character records, and records a snapshot. Player-level Former Syndicate classification and Warcraft Logs identity suggestions are not included yet.</p>
+        <p class="muted">Review the additions and removals above. This import updates the roster, retains removed character records, refreshes unambiguous main/alt relationships from the GRM export, and records a snapshot. Unresolved mains remain for later review; this page does not change their main assignment. Player-level Former Syndicate classification and Warcraft Logs identity suggestions are not included yet.</p>
         <label style="font-weight:normal"><input type="checkbox" id="completeCheck"> I confirm this file is a <strong>complete</strong> Guild Roster Manager export for The Syndicate, not a partial roster.</label>
         <div class="actions"><button class="syn-btn" type="button" id="commitButton" disabled>Confirm &amp; Update Guild Roster</button></div>
         <p class="status" id="commitStatus" role="status">Complete a server-validated preview to enable import.</p>
@@ -308,14 +311,14 @@
     if(file.name!==preview.filename||file.size!==preview.fileSize){
       $('commitStatus').textContent='The selected file changed. Please preview it again.';resetConfirmation();return;
     }
-    if(!window.confirm(`Apply this COMPLETE roster export to The Syndicate?\n\nThis updates current characters and marks missing characters absent. Existing roster IDs, officer mappings, and raid history remain intact.`))return;
+    if(!window.confirm(`Apply this COMPLETE roster export to The Syndicate?\n\nThis updates current characters, refreshes clear GRM main/alt relationships, and marks missing characters absent. Unresolved mains stay unresolved. Existing roster IDs, officer mappings, and raid history remain intact.`))return;
     importBusy=true;$('commitButton').disabled=true;$('previewButton').disabled=true;
     $('completeCheck').disabled=true;$('commitStatus').textContent='Applying validated roster transaction…';
     try{
       const result=await serverRequest('commit',file,preview.sha256);
       const value=result.result||{};
-      $('commitStatus').textContent=`Import completed. New: ${value.new_characters??'—'}; updated: ${value.existing_characters??'—'}; removed from current roster: ${value.removed_characters??'—'}; main-review tasks: ${value.main_missing_review??'—'}. Import ID: ${value.import_id||'available in database'}.`;
-      setStatus('Roster import completed successfully. Upload a new export to run another comparison.');
+      $('commitStatus').textContent=`Import completed. New: ${value.new_characters??'—'}; updated: ${value.existing_characters??'—'}; removed from current roster: ${value.removed_characters??'—'}; unresolved main-review tasks created: ${value.main_missing_review??'—'}. Import ID: ${value.import_id||'available in database'}.`;
+      setStatus('Roster import completed. Confirmed GRM main/alt relationships were refreshed; unresolved mains can be corrected in-game before a future export.');
       confirmedPreview=null;selectedFileBytes=null;$('completeCheck').checked=false;
       $('fileInput').value='';
     }catch(err){
