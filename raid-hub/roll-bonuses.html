@@ -47,7 +47,7 @@
 <div class="footer">◆ THIS IS THE WAY. ◆</div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="settings/supabase-config.js"></script>
+<!-- Connection path resolved relative to this page at startup. -->
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
@@ -95,7 +95,26 @@ $('guestGuild').addEventListener('change',()=>{$('otherGuildField').hidden=$('gu
 $('outcomeSelect').addEventListener('change',()=>{$('countField').hidden=$('outcomeSelect').value==='win';$('countInput').value='1'});
 $('toonInput').addEventListener('input',()=>{if(state.guestRequired)setGuestVisible(false)});
 $('rollForm').addEventListener('submit',async e=>{e.preventDefault();if(!state.client)return;const name=$('toonInput').value.trim();if(!name||!$('eventSelect').value||!$('itemSelect').value){submissionMessage('Select a character, recent raid, and item.','error');return}const btn=$('reportButton');btn.disabled=true;try{if(!state.guestRequired){const {data,error}=await state.client.rpc('roll_bonus_check_roster',{p_toon_name:name});if(error)throw Error(error.message);if(!data){setGuestVisible(true);submissionMessage('Character not on The Syndicate roster. Please select your guild to finish your report.');return}setGuestVisible(false)}const guild=state.guestRequired?($('guestGuild').value==='Other'?$('otherGuild').value.trim():$('guestGuild').value):null;if(state.guestRequired&&(!guild||guild==='Other')){submissionMessage('Please select or enter your guild.','error');return}const {data,error}=await state.client.rpc('roll_bonus_submit',{p_toon_name:name,p_event_id:Number($('eventSelect').value),p_item_id:Number($('itemSelect').value),p_result:$('outcomeSelect').value,p_roll_count:Number($('countInput').value),p_guild_name:guild});if(error)throw Error(error.message);submissionMessage('Report #'+data+' saved! An officer will review it before your bonus changes.','ok');await refreshBonusTotals();$('rollForm').reset();setGuestVisible(false);$('countField').hidden=false;updateReportItems()}catch(err){submissionMessage('Unable to submit: '+err.message,'error')}finally{btn.disabled=false}});
-$('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});$('lootView').hidden=state.view!=='loot';$('balancesView').hidden=state.view!=='balances';$('submitView').hidden=state.view!=='submit';if(state.view==='balances')renderBalances();if(state.view==='submit')loadRecentRaids()}));$('openMenu').onclick=()=>{$('drawer').classList.add('open');$('shade').classList.add('open')};$('closeMenu').onclick=$('shade').onclick=()=>{$('drawer').classList.remove('open');$('shade').classList.remove('open')};load();
+$('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});$('lootView').hidden=state.view!=='loot';$('balancesView').hidden=state.view!=='balances';$('submitView').hidden=state.view!=='submit';if(state.view==='balances')renderBalances();if(state.view==='submit')loadRecentRaids()}));$('openMenu').onclick=()=>{$('drawer').classList.add('open');$('shade').classList.add('open')};$('closeMenu').onclick=$('shade').onclick=()=>{$('drawer').classList.remove('open');$('shade').classList.remove('open')};
+async function startPublicRollBonuses(){
+  if(!window.syndicateDB){
+    const paths=['settings/supabase-config.js','../settings/supabase-config.js','../../settings/supabase-config.js'];
+    for(const path of paths){
+      try{
+        await new Promise((resolve,reject)=>{
+          const script=document.createElement('script');
+          script.src=path;
+          script.onload=resolve;
+          script.onerror=()=>reject(new Error('Cannot load '+path));
+          document.head.appendChild(script);
+        });
+        if(window.syndicateDB)break;
+      }catch(e){console.debug('Supabase config path not found:',path)}
+    }
+  }
+  load();
+}
+startPublicRollBonuses();
 </script>
 </body>
 </html>
