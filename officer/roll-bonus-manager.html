@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en" class="syn-access-pending">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
@@ -83,6 +83,16 @@ async function loadReference(){const [chars,itemsList,ev]=await Promise.all([que
  selectFill($('manualCharacter'),chars.map(c=>[c.id,`${c.toon_name} · ${c.guild_name||'Unknown Guild'}`]),'Select character');
  selectFill($('manualItem'),itemsList.map(i=>[i.id,i.item_name]),'Select item');}
 async function loadPending(){try{const [pending,reviewed]=await Promise.all([db.from('roll_bonus_submissions').select('*').eq('status','pending').order('submitted_at',{ascending:true}).limit(500),db.from('roll_bonus_submissions').select('*').in('status',['approved','rejected']).order('reviewed_at',{ascending:false}).limit(40)]);if(pending.error)throw pending.error;if(reviewed.error)throw reviewed.error;
+ // Fetch any item references omitted by the initial item-list request (Supabase's default row limit can be 1,000).
+ const missingIds=[...new Set([...(pending.data||[]),...(reviewed.data||[])].map(s=>s.item_id).filter(id=>!items().has(String(id))))];
+ if(missingIds.length){
+   for(let offset=0;offset<missingIds.length;offset+=100){
+     const ids=missingIds.slice(offset,offset+100);
+     const {data:extra,error:itemError}=await db.from('raid_items').select('id,item_name').in('id',ids);
+     if(itemError)throw Error('Unable to resolve item names: '+itemError.message);
+     state.items.push(...(extra||[]).filter(i=>!items().has(String(i.id))));
+   }
+ }
  const cmap=names(),emap=events(),imap=items();$('pendingCount').textContent='('+(pending.data||[]).length+')';const host=$('pendingRows');host.replaceChildren();
  for(const s of pending.data||[]){const c=cmap.get(String(s.character_id)),i=imap.get(String(s.item_id)),e=emap.get(String(s.event_id));const tr=document.createElement('tr');textCell(tr,(c?.toon_name||'#'+s.character_id)+' · '+(c?.guild_name||'Unknown'));textCell(tr,e?`${e.name} · ${e.date}`:'#'+s.event_id);textCell(tr,i?.item_name||'#'+s.item_id);textCell(tr,niceDate(s.submitted_at));textCell(tr,s.result==='loss'?`Lost ${s.roll_count} · +${s.roll_count*10}`:'Won · Reset');const td=textCell(tr,'');const actions=document.createElement('div');actions.className='rb-actions';actions.append(button('Approve','primary',()=>review(s,'approved')),button('Reject','danger',()=>review(s,'rejected')));td.append(actions);host.append(tr);}if(!(pending.data||[]).length)empty(host,'No submissions are awaiting approval.');
  const done=$('reviewedRows');done.replaceChildren();for(const s of reviewed.data||[]){const tr=document.createElement('tr');textCell(tr,cmap.get(String(s.character_id))?.toon_name||'#'+s.character_id);textCell(tr,imap.get(String(s.item_id))?.item_name||'#'+s.item_id);textCell(tr,s.result);textCell(tr,s.status);textCell(tr,niceDate(s.reviewed_at));done.append(tr);}if(!(reviewed.data||[]).length)empty(done,'No previously reviewed submissions.',5);
