@@ -49,10 +49,10 @@
       <h1>GUILD ROSTER MANAGEMENT</h1>
       <p class="muted">Upload a Guild Roster Manager export and review its impact before updating the database.</p>
     </header>
-    <div class="notice"><strong>Preview-only build.</strong> This page does not add, remove, or update roster characters. No membership, Warcraft Logs, attendance, or officer records can be changed here.</div>
+    <div class="notice"><strong>Officer-controlled import.</strong> Preview is read-only. The roster is updated only after server validation, a complete-file confirmation, and clicking Confirm &amp; Import. Existing character IDs and Warcraft Logs history are preserved.</div>
     <section class="panel" aria-labelledby="uploadHeading">
       <h2 id="uploadHeading">1. Select GRM Export</h2>
-      <p class="muted">Supports the 18-column Guild Roster Manager pipe-delimited CSV format, including the outer quotation marks GRM uses. Files are parsed in your browser; no file is uploaded to a server.</p>
+      <p class="muted">Supports the 18-column Guild Roster Manager pipe-delimited CSV format, including the outer quotation marks GRM uses. The CSV is validated in the browser and sent securely to the officer-only Supabase function for authoritative comparison. No database writes occur during preview.</p>
       <label for="fileInput">GRM roster CSV file</label>
       <div class="actions">
         <input id="fileInput" type="file" accept=".csv,.txt,text/csv,text/plain">
@@ -73,17 +73,23 @@
         <div class="actions">
           <label for="viewFilter" style="margin:0">Show</label>
           <select id="viewFilter" class="syn-btn" aria-label="Filter comparison rows">
-            <option value="all">All changes (excluding levels)</option>
+            <option value="all">All changes (excluding level and rank)</option>
             <option value="new">New GUIDs</option>
             <option value="missing">Missing from CSV</option>
             <option value="main">Main / Alt changes</option>
-            <option value="changed">Other changes (no levels)</option>
+            <option value="changed">Other changes (server preview does not list these)</option>
           </select>
         </div>
         <div class="table-wrap"><table><thead><tr><th>Change</th><th>Character</th><th>GUID</th><th>Details</th></tr></thead><tbody id="detailsBody"></tbody></table></div>
         <div class="actions" style="margin-top:1rem"><button class="syn-btn" id="showMore" type="button">Show more</button></div>
       </div>
-      <div class="notice"><strong>Not yet implemented:</strong> approving imports, snapshot history, automatic former-member processing, main/alt reconciliation and Warcraft Logs suggestions. Those will be added after validating this read-only comparison.</div>
+      <section class="panel" id="commitPanel" aria-label="Confirm roster import">
+        <h2>3. Confirm Import</h2>
+        <p class="muted">Review the additions and removals above. This import updates the current roster, retains removed character records, and records a snapshot. Player-level Former Syndicate classification and Warcraft Logs identity suggestions are not included yet.</p>
+        <label style="font-weight:normal"><input type="checkbox" id="completeCheck"> I confirm this file is a <strong>complete</strong> Guild Roster Manager export for The Syndicate, not a partial roster.</label>
+        <div class="actions"><button class="syn-btn" type="button" id="commitButton" disabled>Confirm &amp; Update Guild Roster</button></div>
+        <p class="status" id="commitStatus" role="status">Complete a server-validated preview to enable import.</p>
+      </section>
     </section>
   </main>
   <div id="syndicate-footer"></div>
@@ -92,7 +98,7 @@
   'use strict';
   const REQUIRED = ['Name','Rank','Level','Class','Race','Sex','Last Online (Days)','Main/Alt','Player Alts','Join Date','Promo Date','Rank History','Birthday','Public Note','Officer Note','Custom Note','Faction','Player GUID'];
   const $ = id => document.getElementById(id);
-  let differences = [], shown = 0;
+  let differences = [], shown = 0, confirmedPreview = null, selectedFileBytes = null, importBusy = false;
   const setStatus = (message, error = false) => { $('status').textContent = message; $('status').classList.toggle('error',error); };
   function decodeFile(buffer) {
     try { return new TextDecoder('utf-8', {fatal:true}).decode(buffer); }
@@ -143,7 +149,7 @@
     const all=[];let start=0;
     while(true){
       const {data,error}=await db.from('guild_roster')
-        .select('id,Name,Rank,Class,"Player GUID","Main/Alt",normalized_main_alt,main_character_name,roster_present')
+        .select('id,Name,Class,"Player GUID","Main/Alt",normalized_main_alt,main_character_name,roster_present')
         .order('id',{ascending:true}).range(start,start+499);
       if(error) throw new Error(error.message);
       const batch=data||[];all.push(...batch);
@@ -171,8 +177,8 @@
       if(mainChange)result.push({type:'main',name:nameOnly(r.Name),guid,
         detail:`Main/Alt: ${previous['Main/Alt']||'Unclassified'} → ${r['Main/Alt']||'Unclassified'}`});
       const changes=[];
-      // Level increases are deliberately excluded. They do not affect roster membership.
-      for(const c of ['Name','Rank','Class']){
+      // Level and rank changes are excluded from comparison; imports still update those fields.
+      for(const c of ['Name','Class']){
         if(normalized(r[c])!==normalized(previous[c])) changes.push(c);
       }
       if(previous.roster_present===false)changes.push('Returned to roster');
@@ -207,50 +213,123 @@
     shown+=next.length;$('detailCount').textContent=`Showing ${shown} of ${records.length}`;
     $('showMore').classList.toggle('hidden',shown>=records.length);
   }
+  function extractToken(session){
+    if(session?.provider_token)return session.provider_token;
+    try{
+      const item=JSON.parse(sessionStorage.getItem('syndicate_discord_oauth')||'null');
+      if(item?.userId===session?.user?.id && typeof item.token==='string' &&
+         Number.isFinite(item.savedAt) && Date.now()-item.savedAt<30*60*1000)return item.token;
+    }catch{}return null;
+  }
+  function toBase64(bytes){
+    let output='';const size=8192;
+    for(let i=0;i<bytes.length;i+=size)output+=String.fromCharCode(...bytes.subarray(i,i+size));
+    return btoa(output);
+  }
+  async function serverRequest(action, file, expectedHash){
+    const db=window.syndicateDB;
+    if(!db?.functions)throw new Error('Central Supabase connection is unavailable.');
+    const {data:auth,error:authError}=await db.auth.getSession();
+    if(authError || !auth?.session)throw new Error('Sign in with Discord before importing.');
+    const discordAccessToken=extractToken(auth.session);
+    if(!discordAccessToken)throw new Error('Discord authorization expired. Reconnect Discord and try again.');
+    const {data,error}=await db.functions.invoke('syndicate-roster-import',{
+      body:{action,filename:file.name,file_base64:toBase64(selectedFileBytes),discordAccessToken,
+        ...(action==='commit'?{confirm_complete:true,confirm_sha256:expectedHash}:{})}
+    });
+    if(error){
+      let detail=data?.error;
+      if(!detail && error.context && typeof error.context.json==='function'){
+        try{detail=(await error.context.json())?.error;}catch{}
+      }
+      throw new Error(detail||error.message||'Roster import request failed');
+    }
+    if(!data?.success)throw new Error(data?.error||'Roster request failed');
+    return data;
+  }
+  function resetConfirmation(){
+    confirmedPreview=null;selectedFileBytes=null;
+    $('completeCheck').checked=false;$('completeCheck').disabled=true;
+    $('commitButton').disabled=true;
+    $('commitStatus').textContent='Complete a server-validated preview to enable import.';
+  }
+  function renderServerSummary(data){
+    const warnings=$('warnings');
+    $('stats').replaceChildren();
+    stat(data.currently_present,'Currently present');stat(data.csv_characters,'CSV characters');
+    stat(data.new_characters,'New GUIDs');stat(data.removed_characters,'Removed characters');
+    stat(data.main_alt_changes,'Main / Alt changes');stat(data.rejoining_characters,'Returning characters');
+    differences=[
+      ...(data.additions||[]).map(r=>({type:'new',name:r.name,guid:r.guid,detail:'New character GUID'})),
+      ...(data.removals||[]).map(r=>({type:'missing',name:r.name,guid:r.guid,detail:'Absent from confirmed complete snapshot'})),
+      ...(data.main_changes||[]).map(r=>({type:'main',name:r.name,guid:r.guid,detail:`Main/Alt: ${r.was||'Unclassified'} → ${r.now||'Unclassified'}`}))
+    ];
+    $('differenceSection').classList.remove('hidden');
+    $('viewFilter').value='all';renderDetails();
+    $('comparisonNote').textContent=`Server verified ${data.csv_characters} incoming GUIDs against ${data.currently_present} active roster records. Level and rank changes are excluded. Other details may update during import even when not shown here.`;
+    if(!data.allowed_to_commit){
+      const li=document.createElement('li');li.textContent='Server blocked import: '+data.warning;warnings.append(li);
+    }
+  }
   async function runPreview(){
     const file=$('fileInput').files?.[0];
     if(!file){setStatus('Choose a CSV file first.',true);return;}
-    if(file.size>5*1024*1024){setStatus('This file exceeds the 5 MB preview limit.',true);return;}
-    $('previewButton').disabled=true;$('results').classList.add('hidden');setStatus('Reading and validating GRM export…');
+    if(file.size>5*1024*1024){setStatus('This file exceeds the 5 MB limit.',true);return;}
+    resetConfirmation();importBusy=true;$('previewButton').disabled=true;
+    $('results').classList.add('hidden');setStatus('Validating GRM export…');
     try{
-      const content=decodeFile(await file.arrayBuffer());
-      const rows=parseGRM(content);
-      const incomingGUIDs=new Set(rows.map(r=>r['Player GUID']));
-      if(incomingGUIDs.size!==rows.length)throw new Error('Duplicate GUIDs were detected.');
-      $('results').classList.remove('hidden');$('fileInfo').textContent=`${file.name} · ${rows.length.toLocaleString()} valid character rows`;
+      const bytes=new Uint8Array(await file.arrayBuffer());
+      const rows=parseGRM(decodeFile(bytes));
+      selectedFileBytes=bytes;
+      $('results').classList.remove('hidden');
+      $('fileInfo').textContent=`${file.name} · ${rows.length.toLocaleString()} valid character rows`;
       $('stats').replaceChildren();$('warnings').replaceChildren();
-      stat(rows.length,'CSV characters');stat(rows.filter(r=>normalized(r['Main/Alt'])==='main').length,'Marked Main');
+      stat(rows.length,'CSV characters');
+      stat(rows.filter(r=>normalized(r['Main/Alt'])==='main').length,'Marked Main');
       stat(rows.filter(r=>normalized(r['Main/Alt'])==='alt').length,'Marked Alt');
       stat(rows.filter(r=>!['main','alt'].includes(normalized(r['Main/Alt']))).length,'Unclassified');
-      const addWarning=s=>{const li=document.createElement('li');li.textContent=s;$('warnings').append(li);};
-      addWarning('Roster completeness cannot be guaranteed from the CSV format alone. Never treat a partial export as a complete roster.');
+      const li=document.createElement('li');li.textContent='Only confirm a complete export. Removed characters will be marked absent but not deleted.';$('warnings').append(li);
       $('differenceSection').classList.add('hidden');
-      $('comparisonNote').textContent='Attempting a read-only comparison against the current guild_roster table…';
-      setStatus('CSV validated. Loading existing roster for comparison…');
-      try{
-        const current=await fetchRoster();
-        differences=compare(rows,current);
-        const counts={new:0,missing:0,main:0,changed:0};differences.forEach(d=>counts[d.type]++);
-        $('stats').replaceChildren();
-        stat(current.filter(r=>r.roster_present!==false).length,'Currently present');stat(rows.length,'CSV characters');
-        stat(counts.new,'New GUIDs');stat(counts.missing,'Missing current GUIDs');
-        stat(counts.main,'Main / Alt review');stat(counts.changed,'Other changes');
-        $('comparisonNote').textContent=`Compared ${rows.length} incoming character GUIDs against ${current.length} historical guild_roster records. Missing GUIDs are NOT automatically former members: player groups and export completeness must be reviewed in the future import workflow. Level changes are excluded.`;
-        if(counts.missing>Math.max(20,Math.floor(current.filter(r=>r.roster_present!==false).length*.1)))addWarning('Large number of missing characters: possible incomplete export. Automatic removals would be blocked.');
-        $('differenceSection').classList.remove('hidden');$('viewFilter').value='all';renderDetails();
-        setStatus('Preview complete. No records have been changed.');
-      }catch(err){
-        addWarning('Current roster comparison unavailable: '+(err?.message||String(err)));
-        $('comparisonNote').textContent='The CSV validation succeeded, but guild_roster could not be read from this browser. This may require a secure, officer-authorized preview Edge Function in the next stage.';
-        setStatus('File validated; live comparison unavailable. No records have been changed.');
-      }
-    }catch(err){setStatus(err?.message||String(err),true);}
-    finally{$('previewButton').disabled=false;}
+      setStatus('CSV parsed. Requesting officer-authorized server preview…');
+      const data=await serverRequest('preview',file);
+      confirmedPreview={sha256:data.sha256,filename:file.name,fileSize:file.size,allowed:data.allowed_to_commit};
+      renderServerSummary(data);
+      $('completeCheck').disabled=!data.allowed_to_commit;
+      $('commitStatus').textContent=data.allowed_to_commit?'Review the comparison, then confirm that the roster export is complete.': 'Import blocked by server safety check.';
+      setStatus('Server preview complete. No database records have been changed.');
+    }catch(err){
+      resetConfirmation();setStatus(err?.message||String(err),true);
+      $('commitStatus').textContent='Preview failed; import disabled.';
+    }finally{importBusy=false;$('previewButton').disabled=false;}
+  }
+  async function commitImport(){
+    const file=$('fileInput').files?.[0],preview=confirmedPreview;
+    if(importBusy||!file||!preview?.allowed||!$('completeCheck').checked)return;
+    if(file.name!==preview.filename||file.size!==preview.fileSize){
+      $('commitStatus').textContent='The selected file changed. Please preview it again.';resetConfirmation();return;
+    }
+    if(!window.confirm(`Apply this COMPLETE roster export to The Syndicate?\n\nThis updates current characters and marks missing characters absent. Existing roster IDs, officer mappings, and raid history remain intact.`))return;
+    importBusy=true;$('commitButton').disabled=true;$('previewButton').disabled=true;
+    $('completeCheck').disabled=true;$('commitStatus').textContent='Applying validated roster transaction…';
+    try{
+      const result=await serverRequest('commit',file,preview.sha256);
+      const value=result.result||{};
+      $('commitStatus').textContent=`Import completed. New: ${value.new_characters??'—'}; updated: ${value.existing_characters??'—'}; removed from current roster: ${value.removed_characters??'—'}; main-review tasks: ${value.main_missing_review??'—'}. Import ID: ${value.import_id||'available in database'}.`;
+      setStatus('Roster import completed successfully. Upload a new export to run another comparison.');
+      confirmedPreview=null;selectedFileBytes=null;$('completeCheck').checked=false;
+      $('fileInput').value='';
+    }catch(err){
+      $('commitStatus').textContent=`Import was not confirmed: ${err?.message||String(err)}. Review the error before retrying.`;
+      $('completeCheck').disabled=false;
+    }finally{importBusy=false;$('previewButton').disabled=false;}
   }
   $('previewButton').addEventListener('click',runPreview);
+  $('commitButton').addEventListener('click',commitImport);
+  $('completeCheck').addEventListener('change',()=>{ $('commitButton').disabled=importBusy||!confirmedPreview?.allowed||!$('completeCheck').checked; });
+  $('fileInput').addEventListener('change',()=>{ resetConfirmation();$('results').classList.add('hidden');setStatus('File changed. Validate & Compare to continue.'); });
   $('viewFilter').addEventListener('change',()=>renderDetails());
   $('showMore').addEventListener('click',()=>renderDetails(false));
-  $('clearButton').addEventListener('click',()=>{$('fileInput').value='';$('results').classList.add('hidden');differences=[];setStatus('Select your export to begin.');});
+  $('clearButton').addEventListener('click',()=>{$('fileInput').value='';$('results').classList.add('hidden');differences=[];resetConfirmation();setStatus('Select your export to begin.');});
 })();
 </script>
 </body>
