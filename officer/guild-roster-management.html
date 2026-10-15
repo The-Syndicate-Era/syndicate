@@ -73,10 +73,11 @@
         <div class="actions">
           <label for="viewFilter" style="margin:0">Show</label>
           <select id="viewFilter" class="syn-btn" aria-label="Filter comparison rows">
-            <option value="all">All changes</option>
+            <option value="all">All changes (excluding levels)</option>
             <option value="new">New GUIDs</option>
             <option value="missing">Missing from CSV</option>
-            <option value="changed">Changed details</option>
+            <option value="main">Main / Alt changes</option>
+            <option value="changed">Other changes (no levels)</option>
           </select>
         </div>
         <div class="table-wrap"><table><thead><tr><th>Change</th><th>Character</th><th>GUID</th><th>Details</th></tr></thead><tbody id="detailsBody"></tbody></table></div>
@@ -142,7 +143,7 @@
     const all=[];let start=0;
     while(true){
       const {data,error}=await db.from('guild_roster')
-        .select('id,Name,Rank,Level,Class,"Player GUID","Main/Alt",main_character_name,roster_present')
+        .select('id,Name,Rank,Class,"Player GUID","Main/Alt",normalized_main_alt,main_character_name,roster_present')
         .order('id',{ascending:true}).range(start,start+499);
       if(error) throw new Error(error.message);
       const batch=data||[];all.push(...batch);
@@ -158,17 +159,37 @@
     for(const r of current){const guid=String(r['Player GUID']||'').trim();if(guid)old.set(guid,r);}
     for(const r of rows)incoming.set(r['Player GUID'],r);
     const result=[];
+    const hasRemainingAlt=mainName=>current.some(r=>
+      r.roster_present!==false && incoming.has(String(r['Player GUID']||'').trim()) &&
+      normalized(r.main_character_name)===normalized(mainName) &&
+      normalized(r.normalized_main_alt||r['Main/Alt'])==='alt'
+    );
     for(const r of rows){
-      const guid=r['Player GUID'], previous=old.get(guid);
+      const guid=r['Player GUID'],previous=old.get(guid);
       if(!previous){result.push({type:'new',name:nameOnly(r.Name),guid,detail:'New character GUID'});continue;}
+      const mainChange=normalized(r['Main/Alt'])!==normalized(previous['Main/Alt']);
+      if(mainChange)result.push({type:'main',name:nameOnly(r.Name),guid,
+        detail:`Main/Alt: ${previous['Main/Alt']||'Unclassified'} → ${r['Main/Alt']||'Unclassified'}`});
       const changes=[];
-      for(const [c,prev] of [['Name','Name'],['Rank','Rank'],['Class','Class'],['Level','Level'],['Main/Alt','Main/Alt']]){
-        if(normalized(r[c])!==normalized(previous[prev])) changes.push(c);
+      // Level increases are deliberately excluded. They do not affect roster membership.
+      for(const c of ['Name','Rank','Class']){
+        if(normalized(r[c])!==normalized(previous[c])) changes.push(c);
       }
-      if(previous.roster_present===false)changes.push('Previously absent');
+      if(previous.roster_present===false)changes.push('Returned to roster');
       if(changes.length)result.push({type:'changed',name:nameOnly(r.Name),guid,detail:changes.join(', ')});
     }
-    for(const r of current){const guid=String(r['Player GUID']||'').trim();if(guid && r.roster_present!==false && !incoming.has(guid))result.push({type:'missing',name:nameOnly(r.Name),guid,detail:'Not in uploaded export; no status changed'});}
+    for(const r of current){
+      const guid=String(r['Player GUID']||'').trim();
+      if(!guid || r.roster_present===false || incoming.has(guid))continue;
+      const wasMain=normalized(r.normalized_main_alt||r['Main/Alt'])==='main';
+      const mainName=r.main_character_name||nameOnly(r.Name);
+      if(wasMain && hasRemainingAlt(mainName)){
+        result.push({type:'main',name:nameOnly(r.Name),guid,detail:'Main missing, alt remains — officer review'});
+      }else{
+        result.push({type:'missing',name:nameOnly(r.Name),guid,
+          detail:wasMain?'Main absent from CSV; membership not changed':'Absent from CSV; membership not changed'});
+      }
+    }
     return result;
   }
   function renderDetails(reset=true){
@@ -178,7 +199,7 @@
     const next=records.slice(shown,shown+75);
     for(const r of next){
       const tr=document.createElement('tr');
-      for(const value of [r.type==='new'?'New GUID':r.type==='missing'?'Missing from CSV':'Changed',r.name,r.guid,r.detail]){
+      for(const value of [r.type==='new'?'New GUID':r.type==='missing'?'Missing from CSV':r.type==='main'?'Main / Alt':'Changed',r.name,r.guid,r.detail]){
         const td=document.createElement('td');td.textContent=value;tr.append(td);
       }
       $('detailsBody').append(tr);
@@ -209,12 +230,12 @@
       try{
         const current=await fetchRoster();
         differences=compare(rows,current);
-        const counts={new:0,missing:0,changed:0};differences.forEach(d=>counts[d.type]++);
+        const counts={new:0,missing:0,main:0,changed:0};differences.forEach(d=>counts[d.type]++);
         $('stats').replaceChildren();
         stat(current.filter(r=>r.roster_present!==false).length,'Currently present');stat(rows.length,'CSV characters');
         stat(counts.new,'New GUIDs');stat(counts.missing,'Missing current GUIDs');
-        stat(counts.changed,'Changed details');
-        $('comparisonNote').textContent=`Compared ${rows.length} incoming character GUIDs against ${current.length} historical guild_roster records. Missing GUIDs are NOT automatically former members: player groups and export completeness must be reviewed in the future import workflow.`;
+        stat(counts.main,'Main / Alt review');stat(counts.changed,'Other changes');
+        $('comparisonNote').textContent=`Compared ${rows.length} incoming character GUIDs against ${current.length} historical guild_roster records. Missing GUIDs are NOT automatically former members: player groups and export completeness must be reviewed in the future import workflow. Level changes are excluded.`;
         if(counts.missing>Math.max(20,Math.floor(current.filter(r=>r.roster_present!==false).length*.1)))addWarning('Large number of missing characters: possible incomplete export. Automatic removals would be blocked.');
         $('differenceSection').classList.remove('hidden');$('viewFilter').value='all';renderDetails();
         setStatus('Preview complete. No records have been changed.');
