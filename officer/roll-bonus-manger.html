@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roll Bonus Manager | The Syndicate</title>
+<link rel="stylesheet" href="../settings/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
+<script src="../settings/auth.js" defer></script>
+<script src="../settings/officer-guard.js" defer></script>
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+<style>
+:root{color-scheme:dark}html,body{background:#080807!important;color:#e4dac6;min-height:100%}body{background-image:none!important}
+.rb-wrap{max-width:1200px;margin:auto;padding:2.8rem 1.25rem 5rem}.rb-top{font-family:var(--font-heading,'Cinzel',serif);color:#c7aa61;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase}.rb-title{font-family:var(--font-heading,'Cinzel',serif);font-size:clamp(2.1rem,4.6vw,3.6rem);color:#d4af37;margin:.6rem 0}.rb-intro{color:#d8c98f;line-height:1.6;font-size:1.08rem}.rb-back{color:#cfb677}.rb-rule{height:1px;background:linear-gradient(90deg,transparent,#9a792d,transparent);margin:1.5rem 0 1.8rem}.rb-tabs{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.3rem}.rb-tab,.rb-button{font:inherit;background:#241e14;color:#e9d7ab;border:1px solid #776036;padding:.65rem 1rem;border-radius:.5rem;cursor:pointer}.rb-tab.active,.rb-button.primary{background:#765824;border-color:#cca84f;color:#fff0c6}.rb-button.danger{border-color:#95634c;color:#ffc8b3}.rb-button:disabled{opacity:.5;cursor:wait}.rb-section[hidden]{display:none!important}.rb-panel{border:1px solid #6b552f;border-radius:.65rem;background:#17140e;padding:1.25rem;margin:1rem 0}.rb-panel h2{font-size:1.4rem;color:#e3be60;font-family:var(--font-heading,'Cinzel',serif);margin:0 0 .5rem}.rb-help{color:#bbae93;line-height:1.55}.rb-status{padding:.9rem 1rem;background:#231c11;border:1px solid #775c29;border-radius:.5rem;margin-bottom:1rem;min-height:2.7rem}.rb-status.error{border-color:#9d5858;color:#ffc9c9}.rb-status.ok{border-color:#62895c;color:#c5edbe}.rb-toolbar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}.rb-table-scroll{overflow-x:auto}.rb-table{width:100%;border-collapse:collapse;text-align:left;min-width:680px}.rb-table th,.rb-table td{padding:.85rem .65rem;border-bottom:1px solid #403623;vertical-align:middle}.rb-table th{color:#d2ae5e;font-size:.88rem}.rb-actions{display:flex;gap:.5rem;flex-wrap:wrap}.rb-muted{color:#a69a83;font-size:.88rem}.rb-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.2rem 0}.rb-field{display:flex;flex-direction:column;gap:.45rem}.rb-field label{font-size:.9rem;color:#e0c378}.rb-field input,.rb-field select,.rb-field textarea{width:100%;background:#0d0c0a;border:1px solid #77603d;border-radius:.45rem;color:#ede3d0;padding:.75rem;font:inherit}.rb-full{grid-column:1/-1}.rb-empty{padding:1.8rem;text-align:center;color:#b8a98d}.rb-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1rem 0}.rb-stat{border:1px solid #524326;border-radius:.5rem;padding:1rem;background:#1a170f}.rb-stat strong{display:block;color:#e2be64;font-size:1.7rem}.rb-stat span{font-size:.86rem;color:#b4a68e}.rb-tag{font-size:.75rem;border:1px solid #73603c;padding:.2rem .4rem;border-radius:.3rem;white-space:nowrap}.rb-tag.ready{color:#f1c58b}.rb-tag.extended{color:#bde8ba}.rb-tag.unknown{color:#ddc9a6}.rb-note{border-left:3px solid #b99858;padding:.65rem 1rem;color:#d5c5a5;margin:.85rem 0}.rb-inline{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
+@media(max-width:650px){.rb-wrap{padding:2rem .9rem}.rb-form{grid-template-columns:1fr}.rb-totals{grid-template-columns:1fr}.rb-table{min-width:580px}}
+</style>
+</head>
+<body>
+<div id="syndicate-menu"></div>
+<main class="rb-wrap">
+<a class="rb-back" href="officer-hub.html">← Officer Hub</a>
+<p class="rb-top">◆ The Syndicate · Leadership</p>
+<h1 class="rb-title">ROLL BONUS MANAGER</h1>
+<p class="rb-intro">Review submitted rolls, manage player-level expiration reviews, and issue approved manual bonuses.</p>
+<div class="rb-rule"></div>
+<div id="rbStatus" class="rb-status" role="status" aria-live="polite">Connecting to the roll bonus database…</div>
+<nav class="rb-tabs" aria-label="Roll bonus management sections">
+<button class="rb-tab active" type="button" data-tab="approval" aria-pressed="true">Pending Approvals <span id="pendingCount"></span></button>
+<button class="rb-tab" type="button" data-tab="expiration" aria-pressed="false">Expiration Review</button>
+<button class="rb-tab" type="button" data-tab="manual" aria-pressed="false">Manual Bonus</button>
+</nav>
+<section class="rb-section" id="approvalSection">
+<div class="rb-panel">
+ <div class="rb-toolbar"><div><h2>Submissions Awaiting Approval</h2><p class="rb-help">Lost rolls award +10 per loss. Winning rolls reset that character's bonus for the item. Neither takes effect before approval.</p></div><button class="rb-button" id="refreshPending" type="button">Refresh</button></div>
+ <div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Character / Guild</th><th>Raid</th><th>Item</th><th>Submitted</th><th>Result</th><th>Decision</th></tr></thead><tbody id="pendingRows"><tr><td colspan="6">Loading…</td></tr></tbody></table></div>
+</div>
+<div class="rb-panel"><h2>Recently Reviewed</h2><div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Character</th><th>Item</th><th>Result</th><th>Decision</th><th>Reviewed</th></tr></thead><tbody id="reviewedRows"></tbody></table></div></div>
+</section>
+<section class="rb-section" id="expirationSection" hidden>
+<div class="rb-panel">
+ <div class="rb-toolbar"><div><h2>Player-Level Expiration Check</h2><p class="rb-help">A person's most recent raid on any confirmed main or alt determines inactivity. Bonuses themselves remain with the character and item.</p></div><button class="rb-button primary" id="runExpiration" type="button">Run Expiration Check</button></div>
+ <p class="rb-note">No bonuses expire automatically. Missing attendance or unconfirmed player links are never treated as inactivity. Officers can extend a whole player's review date.</p>
+ <div class="rb-totals"><div class="rb-stat"><strong id="readyCount">—</strong><span>Ready for review</span></div><div class="rb-stat"><strong id="extendedCount">—</strong><span>Extended</span></div><div class="rb-stat"><strong id="unknownCount">—</strong><span>Attendance unknown</span></div></div>
+ <div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Player (main)</th><th>Bonuses</th><th>Last Raid</th><th>Status / Extension</th><th>Officer Action</th></tr></thead><tbody id="expirationRows"><tr><td colspan="5" class="rb-empty">Run the check to view eligible players.</td></tr></tbody></table></div>
+ <p class="rb-muted" id="expirationFootnote"></p>
+</div>
+</section>
+<section class="rb-section" id="manualSection" hidden>
+<div class="rb-panel"><h2>Manually Award an Approved Bonus</h2><p class="rb-help">Use this to correct a missed roll or award an officer-approved adjustment. This writes directly to bonus history and takes effect immediately—there is no pending approval.</p>
+ <form id="manualForm" class="rb-form">
+  <div class="rb-field"><label for="manualCharacter">Character</label><select id="manualCharacter" required><option value="">Loading characters…</option></select></div>
+  <div class="rb-field"><label for="manualItem">Item</label><select id="manualItem" required><option value="">Loading items…</option></select></div>
+  <div class="rb-field"><label for="manualPoints">Bonus points to add</label><input id="manualPoints" type="number" min="1" max="200" step="1" value="10" required></div>
+  <div class="rb-field rb-full"><label for="manualReason">Reason / officer note (required)</label><textarea id="manualReason" rows="3" required minlength="3" placeholder="Example: Missed SR loss from Wednesday MC"></textarea></div>
+  <div class="rb-full"><button class="rb-button primary" type="submit" id="manualSubmit">Add Approved Bonus</button></div>
+ </form>
+ <p class="rb-muted">Only existing roll-bonus characters are listed. If a character is missing, they must first be registered through the existing roll submission process. No character/main relationships are edited here.</p>
+</div>
+</section>
+</main><div id="syndicate-footer"></div>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+'use strict';
+const $=id=>document.getElementById(id);const db=window.syndicateDB;
+const state={characters:[],items:[],events:[],reviewing:false};
+function status(msg,type=''){const n=$('rbStatus');n.textContent=msg;n.className='rb-status '+type;}
+function textCell(tr,s){const td=document.createElement('td');td.textContent=String(s??'—');tr.append(td);return td;}
+function button(label,kind,fn){const b=document.createElement('button');b.type='button';b.className='rb-button '+(kind||'');b.textContent=label;b.addEventListener('click',fn);return b;}
+function empty(tbody,text,col=6){tbody.replaceChildren();const tr=document.createElement('tr'),td=textCell(tr,text);td.colSpan=col;td.className='rb-empty';tbody.append(tr);}
+function selectFill(node,values,placeholder){node.replaceChildren();const opt=new Option(placeholder,'');node.add(opt);for(const [v,label] of values)node.add(new Option(label,String(v)));}
+function confirmAction(msg){return window.confirm(msg);}
+function niceDate(s){return s?String(s).slice(0,10):'Unknown';}
+function names(){return new Map(state.characters.map(c=>[String(c.id),c]));}
+function events(){return new Map(state.events.map(e=>[String(e.id),e]));}
+function items(){return new Map(state.items.map(i=>[String(i.id),i]));}
+async function query(table,fields,sort='id',ascending=true,limit=1000){const {data,error}=await db.from(table).select(fields).order(sort,{ascending}).limit(limit);if(error)throw Error(table+': '+error.message);return data||[];}
+async function runRpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message);return data;}
+function showTab(tab){for(const b of document.querySelectorAll('.rb-tab')){const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}for(const id of ['approval','expiration','manual'])$(id+'Section').hidden=id!==tab;}
+for(const b of document.querySelectorAll('.rb-tab'))b.addEventListener('click',()=>showTab(b.dataset.tab));
+async function loadReference(){const [chars,itemsList,ev]=await Promise.all([query('roll_bonus_characters','id,toon_name,guild_name,realm','toon_name',true,2000),query('raid_items','id,item_name','item_name',true,2000),query('Events','id,date,name','date',false,500)]);state.characters=chars;state.items=itemsList;state.events=ev;
+ selectFill($('manualCharacter'),chars.map(c=>[c.id,`${c.toon_name} · ${c.guild_name||'Unknown Guild'}`]),'Select character');
+ selectFill($('manualItem'),itemsList.map(i=>[i.id,i.item_name]),'Select item');}
+async function loadPending(){try{const [pending,reviewed]=await Promise.all([db.from('roll_bonus_submissions').select('*').eq('status','pending').order('submitted_at',{ascending:true}).limit(500),db.from('roll_bonus_submissions').select('*').in('status',['approved','rejected']).order('reviewed_at',{ascending:false}).limit(40)]);if(pending.error)throw pending.error;if(reviewed.error)throw reviewed.error;
+ const cmap=names(),emap=events(),imap=items();$('pendingCount').textContent='('+(pending.data||[]).length+')';const host=$('pendingRows');host.replaceChildren();
+ for(const s of pending.data||[]){const c=cmap.get(String(s.character_id)),i=imap.get(String(s.item_id)),e=emap.get(String(s.event_id));const tr=document.createElement('tr');textCell(tr,(c?.toon_name||'#'+s.character_id)+' · '+(c?.guild_name||'Unknown'));textCell(tr,e?`${e.name} · ${e.date}`:'#'+s.event_id);textCell(tr,i?.item_name||'#'+s.item_id);textCell(tr,niceDate(s.submitted_at));textCell(tr,s.result==='loss'?`Lost ${s.roll_count} · +${s.roll_count*10}`:'Won · Reset');const td=textCell(tr,'');const actions=document.createElement('div');actions.className='rb-actions';actions.append(button('Approve','primary',()=>review(s,'approved')),button('Reject','danger',()=>review(s,'rejected')));td.append(actions);host.append(tr);}if(!(pending.data||[]).length)empty(host,'No submissions are awaiting approval.');
+ const done=$('reviewedRows');done.replaceChildren();for(const s of reviewed.data||[]){const tr=document.createElement('tr');textCell(tr,cmap.get(String(s.character_id))?.toon_name||'#'+s.character_id);textCell(tr,imap.get(String(s.item_id))?.item_name||'#'+s.item_id);textCell(tr,s.result);textCell(tr,s.status);textCell(tr,niceDate(s.reviewed_at));done.append(tr);}if(!(reviewed.data||[]).length)empty(done,'No previously reviewed submissions.',5);
+ status('Submission review loaded.','ok');}catch(e){status('Could not load submissions: '+e.message,'error');empty($('pendingRows'),'Submission list unavailable.');}}
+async function review(s,decision){if(state.reviewing)return;const c=names().get(String(s.character_id));const label=c?.toon_name||'this character';if(!confirmAction(`${decision==='approved'?'Approve':'Reject'} ${s.result} submission for ${label}?`))return;const notes=window.prompt('Optional review note:','');if(notes===null)return;state.reviewing=true;try{await runRpc('syndicate_rb_review_submission',{p_submission_id:s.id,p_decision:decision,p_notes:notes});await loadPending();status(`Submission #${s.id} ${decision}.`,'ok');}catch(e){status('Review failed: '+e.message,'error');}finally{state.reviewing=false;}}
+async function expiration(){status('Checking confirmed player identities and raid attendance…');try{const {data,error}=await db.from('syndicate_rb_expiration_review').select('*').order('player_name',{ascending:true});if(error)throw error;const rows=data||[];$('readyCount').textContent=rows.filter(x=>x.review_status==='READY_FOR_REVIEW').length;$('extendedCount').textContent=rows.filter(x=>x.review_status==='EXTENDED').length;$('unknownCount').textContent=rows.filter(x=>x.review_status==='ATTENDANCE_UNKNOWN').length;const host=$('expirationRows');host.replaceChildren();for(const x of rows){const tr=document.createElement('tr');textCell(tr,x.player_name);textCell(tr,`${x.outstanding_items} items · ${x.character_count} characters · +${x.total_points}`);textCell(tr,niceDate(x.last_raid_date));const td=textCell(tr,x.review_status.replaceAll('_',' ')+(x.extended_until?' · until '+x.extended_until:''));td.className='rb-muted';const actions=textCell(tr,'');const box=document.createElement('div');box.className='rb-actions';if(x.review_status==='READY_FOR_REVIEW')box.append(button('Approve Expiration','danger',()=>expirePlayer(x)));if(x.review_status!=='ATTENDANCE_UNKNOWN')box.append(button('Extend','',()=>extendPlayer(x)));actions.append(box);host.append(tr);}if(!rows.length)empty(host,'No confirmed bonus/player links are available yet. Expiration is safely blocked until identity links are established.',5);$('expirationFootnote').textContent=rows.length?`${rows.length} players with confirmed bonus identity links. Unknown activity is excluded from expiration.`:'Outstanding bonuses exist, but they must be linked to permanent player identities before player-level expiration can be reviewed.';status('Expiration check completed; no points were changed.','ok');}catch(e){status('Expiration check unavailable: '+e.message,'error');empty($('expirationRows'),'Unable to check expiration.',5);}}
+async function extendPlayer(x){const until=window.prompt('Extend '+x.player_name+' until (YYYY-MM-DD):','');if(!until)return;const reason=window.prompt('Reason for this extension (required):','');if(!reason)return;if(!confirmAction('Extend expiration review for '+x.player_name+' until '+until+'?'))return;try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:reason});await expiration();status(x.player_name+' extended through '+until+'.','ok');}catch(e){status('Extension failed: '+e.message,'error');}}
+async function expirePlayer(x){if(!confirmAction(`Expire ALL ${x.outstanding_items} outstanding character/item bonuses for ${x.player_name}? This writes permanent expiration history records.`))return;const reason=window.prompt('Optional reason for expiration:','');if(reason===null)return;try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:reason});await expiration();status(`Expired ${result?.expired_items??'?'} item bonuses for ${x.player_name}.`,'ok');}catch(e){status('Expiration failed: '+e.message,'error');}}
+$('runExpiration').addEventListener('click',expiration);$('refreshPending').addEventListener('click',loadPending);
+$('manualForm').addEventListener('submit',async e=>{e.preventDefault();const characterId=Number($('manualCharacter').value),itemId=Number($('manualItem').value),points=Number($('manualPoints').value),reason=$('manualReason').value.trim();if(!characterId||!itemId||!Number.isInteger(points)||points<1||!reason){status('Complete all manual award fields.','error');return}const c=names().get(String(characterId)),i=items().get(String(itemId));if(!confirmAction(`Immediately add +${points} to ${c?.toon_name} for ${i?.item_name}?`))return;const btn=$('manualSubmit');btn.disabled=true;try{await runRpc('syndicate_rb_manual_award',{p_character_id:characterId,p_item_id:itemId,p_points:points,p_reason:reason});$('manualForm').reset();status(`Approved manual award: +${points} for ${c?.toon_name}.`,'ok');}catch(err){status('Manual award failed: '+err.message,'error');}finally{btn.disabled=false;}});
+async function boot(){if(!db||typeof db.from!=='function'){status('Central Supabase configuration is unavailable.','error');return}try{await loadReference();await loadPending();}catch(e){status('Could not initialize manager: '+e.message,'error');}}
+boot();
+});
+</script>
+</body></html>
