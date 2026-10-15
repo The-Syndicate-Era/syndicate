@@ -1,161 +1,120 @@
 <!DOCTYPE html>
-<html lang="en" class="syn-access-pending">
+<html lang="en">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Roll Bonus Manager | The Syndicate</title>
-<link rel="stylesheet" href="../settings/styles.css">
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
-<script src="../settings/supabase-config.js" defer></script>
-<script src="../settings/auth.js" defer></script>
-<script src="../settings/officer-guard.js" defer></script>
-<script src="../settings/font-setting.js" defer></script>
-<script src="../settings/menu.js" defer></script>
-<script src="../settings/site-layout.js" defer></script>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Roll Bonuses | The Syndicate</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-:root{color-scheme:dark}html,body{background:#080807!important;color:#e4dac6;min-height:100%}body{background-image:none!important}
-.rb-wrap{max-width:1200px;margin:auto;padding:2.8rem 1.25rem 5rem}.rb-top{font-family:var(--font-heading,'Cinzel',serif);color:#c7aa61;font-size:.9rem;letter-spacing:.12em;text-transform:uppercase}.rb-title{font-family:var(--font-heading,'Cinzel',serif);font-size:clamp(2.1rem,4.6vw,3.6rem);color:#d4af37;margin:.6rem 0}.rb-intro{color:#d8c98f;line-height:1.6;font-size:1.08rem}.rb-back{color:#cfb677}.rb-rule{height:1px;background:linear-gradient(90deg,transparent,#9a792d,transparent);margin:1.5rem 0 1.8rem}.rb-tabs{display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.3rem}.rb-tab,.rb-button{font:inherit;background:#241e14;color:#e9d7ab;border:1px solid #776036;padding:.65rem 1rem;border-radius:.5rem;cursor:pointer}.rb-tab.active,.rb-button.primary{background:#765824;border-color:#cca84f;color:#fff0c6}.rb-button.danger{border-color:#95634c;color:#ffc8b3}.rb-button:disabled{opacity:.5;cursor:wait}.rb-section[hidden]{display:none!important}.rb-panel{border:1px solid #6b552f;border-radius:.65rem;background:#17140e;padding:1.25rem;margin:1rem 0}.rb-panel h2{font-size:1.4rem;color:#e3be60;font-family:var(--font-heading,'Cinzel',serif);margin:0 0 .5rem}.rb-help{color:#bbae93;line-height:1.55}.rb-status{padding:.9rem 1rem;background:#231c11;border:1px solid #775c29;border-radius:.5rem;margin-bottom:1rem;min-height:2.7rem}.rb-status.error{border-color:#9d5858;color:#ffc9c9}.rb-status.ok{border-color:#62895c;color:#c5edbe}.rb-toolbar{display:flex;align-items:center;justify-content:space-between;gap:.6rem;flex-wrap:wrap}.rb-table-scroll{overflow-x:auto}.rb-table{width:100%;border-collapse:collapse;text-align:left;min-width:680px}.rb-table th,.rb-table td{padding:.85rem .65rem;border-bottom:1px solid #403623;vertical-align:middle}.rb-table th{color:#d2ae5e;font-size:.88rem}.rb-actions{display:flex;gap:.5rem;flex-wrap:wrap}.rb-muted{color:#a69a83;font-size:.88rem}.rb-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1rem;margin:1.2rem 0}.rb-field{display:flex;flex-direction:column;gap:.45rem}.rb-field label{font-size:.9rem;color:#e0c378}.rb-field input,.rb-field select,.rb-field textarea{width:100%;background:#0d0c0a;border:1px solid #77603d;border-radius:.45rem;color:#ede3d0;padding:.75rem;font:inherit}.rb-full{grid-column:1/-1}.rb-empty{padding:1.8rem;text-align:center;color:#b8a98d}.rb-totals{display:grid;grid-template-columns:repeat(3,1fr);gap:.7rem;margin:1rem 0}.rb-stat{border:1px solid #524326;border-radius:.5rem;padding:1rem;background:#1a170f}.rb-stat strong{display:block;color:#e2be64;font-size:1.7rem}.rb-stat span{font-size:.86rem;color:#b4a68e}.rb-tag{font-size:.75rem;border:1px solid #73603c;padding:.2rem .4rem;border-radius:.3rem;white-space:nowrap}.rb-tag.ready{color:#f1c58b}.rb-tag.extended{color:#bde8ba}.rb-tag.unknown{color:#ddc9a6}.rb-note{border-left:3px solid #b99858;padding:.65rem 1rem;color:#d5c5a5;margin:.85rem 0}.rb-inline{display:flex;gap:.6rem;align-items:center;flex-wrap:wrap}
-@media(max-width:650px){.rb-wrap{padding:2rem .9rem}.rb-form{grid-template-columns:1fr}.rb-totals{grid-template-columns:1fr}.rb-table{min-width:580px}}
+:root{color-scheme:dark;--bg:#09090c;--panel:#161318;--panel2:#211b20;--line:#4d3e2a;--gold:#d7ac61;--bright:#f2d9a2;--text:#f1ebe0;--muted:#b6aa9b;--green:#8fdaad;--red:#ee9393}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,Arial,sans-serif}button,select,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.42}a{color:inherit;text-decoration:none}h1,h2,h3{font-family:Cinzel,Georgia,serif}h1{font-size:clamp(30px,4.5vw,48px);margin:9px 0}h2{font-size:20px;margin:0;color:var(--bright)}.site-header{height:70px;background:#0b0a0d;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 clamp(15px,4vw,42px)}.logo img{height:45px;max-width:220px;object-fit:contain}.btn{background:#29232a;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-weight:600}.btn:hover:not(:disabled){border-color:var(--gold)}.btn.primary{background:#b79351;border-color:#cbaa68;color:#14100a}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(345px,90vw);background:#151117;border-left:1px solid var(--line);transform:translateX(105%);transition:.2s;z-index:22;padding:25px;box-shadow:0 0 60px #000b}.drawer.open{transform:none}.drawer a{display:block;padding:13px 0;border-bottom:1px solid var(--line)}.shade{display:none;position:fixed;inset:0;z-index:21;background:#000b}.shade.open{display:block}.hero{min-height:218px;background:linear-gradient(90deg,rgba(8,7,10,.97),rgba(8,7,10,.60)),url('image/raiding.png') center 47%/cover no-repeat;border-bottom:1px solid var(--line);display:flex;align-items:center}.hero-inner{width:min(1450px,100%);margin:auto;padding:32px 24px}.eyebrow{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:var(--gold);font-weight:700}.hero p{max-width:710px;color:#e8dcc8;margin:0}.wrap{max-width:1450px;margin:auto;padding:23px 19px 58px}.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}.tab{background:#19151b;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:11px 17px;font-weight:700}.tab.active{background:#44331f;border-color:var(--gold);color:var(--bright)}[hidden]{display:none!important}.toolbar{display:grid;grid-template-columns:1fr auto;align-items:end;gap:15px;margin-bottom:15px}.field{display:flex;flex-direction:column;gap:6px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:800}.filters{display:flex;gap:10px;flex-wrap:wrap}.filters .field{min-width:160px}.field select,.field input{background:#19151b;border:1px solid #5a4732;color:var(--text);border-radius:8px;padding:10px 12px;min-height:42px;max-width:100%}.field input{width:min(350px,100%)}.status{padding:11px 14px;border:1px solid #5a4732;background:#1d1717;color:var(--muted);border-radius:9px;margin-bottom:16px}.status.error{border-color:#9d4b4b;color:#ffbaba}.status.ok{border-color:#417452;color:#bde9c5}.boss-banner{background:linear-gradient(100deg,#2a211d,#161419);border:1px solid var(--line);border-radius:12px;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:15px}.boss-banner h2{font-size:clamp(18px,2.6vw,27px);margin:4px 0 0}.small{font-size:12px;color:var(--muted)}.counter{font-size:12px;color:var(--muted);white-space:nowrap}.loot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}.loot-card{background:var(--panel);border:1px solid #4d4133;border-radius:9px;padding:11px 12px;min-width:0;box-shadow:0 2px 10px #0003}.item-title{font-size:13px;font-weight:800;color:var(--bright);line-height:1.3;overflow-wrap:anywhere}.item-meta{font-size:10px;color:#a99b88;margin-top:4px}.pill{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#deb581;border:1px solid #755f42;border-radius:4px;padding:1px 4px;display:inline-block;margin-left:4px}.roller-list{border-top:1px solid #45382a;margin-top:9px;padding-top:6px}.roller{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:3px 0}.roller .name{font-size:15px;font-weight:700;overflow-wrap:anywhere;min-width:0}.roller .bonus{font-size:15px;font-weight:800;color:var(--green);white-space:nowrap;font-variant-numeric:tabular-nums}.no-bonus{color:#8f877f;font-size:12px;font-style:italic;padding:4px 0}.nav-bottom{display:flex;justify-content:space-between;gap:12px;margin:22px 0 6px}.empty{padding:35px 15px;border:1px dashed #5a4934;border-radius:10px;color:var(--muted);text-align:center}.helper{padding:16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);margin:20px 0}.balances{width:100%;border-collapse:collapse}.balances th,.balances td{border-bottom:1px solid #41382e;text-align:left;padding:11px 12px}.balances th{color:var(--bright);font-size:12px}.balances td:last-child{text-align:right;font-weight:800;color:var(--green)}.balances th:last-child{text-align:right}.table-scroll{overflow:auto}.footer{text-align:center;color:#9c824d;letter-spacing:2px;font:13px Cinzel;margin:45px 0 0}.subtle-link{text-decoration:underline;text-underline-offset:3px;color:var(--bright)}
+@media(max-width:1150px){.loot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:800px){.loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar{grid-template-columns:1fr}.filters{width:100%}.filters .field{flex:1;min-width:135px}.hero{min-height:180px}}@media(max-width:490px){.wrap{padding:16px 10px 42px}.loot-grid{grid-template-columns:1fr;gap:8px}.hero-inner{padding:26px 15px}.boss-banner{padding:14px}.boss-banner h2{font-size:19px}.filters{flex-direction:column}.filters .field{width:100%}.field select,.field input{width:100%}.roller .name,.roller .bonus{font-size:16px}}
+.submit-shell{max-width:820px;border:1px solid var(--line);background:var(--panel);padding:24px;border-radius:13px}.submit-shell h2{margin-bottom:8px}.submit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:22px 0}.submit-fields .field input,.submit-fields .field select,.guest-step .field input,.guest-step .field select{width:100%;max-width:none}.guest-step{padding:18px;border:1px solid #886638;border-radius:10px;background:#262018;margin:15px 0}.guest-step h3{color:var(--bright);margin:0 0 7px;font-size:17px}.guest-step .field{margin-top:12px}@media(max-width:600px){.submit-fields{grid-template-columns:1fr}.submit-shell{padding:16px}}
 </style>
 </head>
 <body>
-<div id="syndicate-menu"></div>
-<main class="rb-wrap">
-<a class="rb-back" href="officer-hub.html">← Officer Hub</a>
-<p class="rb-top">◆ The Syndicate · Leadership</p>
-<h1 class="rb-title">ROLL BONUS MANAGER</h1>
-<p class="rb-intro">Review submitted rolls, manage player-level expiration reviews, and issue approved manual bonuses.</p>
-<div class="rb-rule"></div>
-<div id="rbStatus" class="rb-status" role="status" aria-live="polite">Connecting to the roll bonus database…</div>
-<nav class="rb-tabs" aria-label="Roll bonus management sections">
-<button class="rb-tab active" type="button" data-tab="approval" aria-pressed="true">Pending Approvals <span id="pendingCount"></span></button>
-<button class="rb-tab" type="button" data-tab="expiration" aria-pressed="false">Expiration Review</button>
-<button class="rb-tab" type="button" data-tab="manual" aria-pressed="false">Manual Bonus</button>
-</nav>
-<section class="rb-section" id="approvalSection">
-<div class="rb-panel">
- <div class="rb-toolbar"><div><h2>Submissions Awaiting Approval</h2><p class="rb-help">Lost rolls award +10 per loss. Winning rolls reset that character's bonus for the item. Neither takes effect before approval.</p></div><button class="rb-button" id="refreshPending" type="button">Refresh</button></div>
- <div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Character / Guild</th><th>Raid</th><th>Item</th><th>Submitted</th><th>Result</th><th>Decision</th></tr></thead><tbody id="pendingRows"><tr><td colspan="6">Loading…</td></tr></tbody></table></div>
-</div>
-<div class="rb-panel"><h2>Recently Reviewed</h2><div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Character</th><th>Item</th><th>Result</th><th>Decision</th><th>Reviewed</th></tr></thead><tbody id="reviewedRows"></tbody></table></div></div>
+<header class="site-header"><a href="index.html" class="logo"><img src="images/HeaderLogo.png" alt="The Syndicate" onerror="this.style.display='none';this.parentElement.textContent='THE SYNDICATE'"></a><button class="btn" id="openMenu" aria-label="Open navigation">☰ Menu</button></header>
+<div class="shade" id="shade"></div><nav class="drawer" id="drawer" aria-label="Site navigation"><button class="btn" id="closeMenu" style="float:right">✕</button><h2>The Syndicate</h2><a href="index.html">Home</a><a href="calendar.html">Calendar</a><a href="raids.html">Raid Hub</a><a href="resources.html">Resources</a></nav>
+<section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Resources</div><h1>Roll Bonuses</h1><p>Track earned Soft Reserve roll bonuses, submit your rolls, and look up bonuses while Master Looting.</p></div></section>
+<main class="wrap">
+<div class="tabs"><button class="tab active" data-view="balances" aria-pressed="true">All Roll Bonuses</button><button class="tab" data-view="loot" aria-pressed="false">Master Looter</button><button class="tab" data-view="submit" aria-pressed="false">Submit a Roll</button></div>
+<div id="notice" class="status" role="status" aria-live="polite">Connecting to the loot database…</div>
+<section id="lootView" hidden>
+<div class="toolbar"><div class="filters"><div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div><div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div></div><div class="field"><label class="label" for="lootSearch">Find an item or roller</label><input type="search" id="lootSearch" placeholder="Search this boss…" autocomplete="off"></div></div>
+<div class="boss-banner"><div><div class="eyebrow">Current loot source</div><h2 id="bossTitle">Select a raid</h2></div><div class="counter" id="bossCounter"></div></div>
+<div class="loot-grid" id="lootGrid"><div class="empty">Loading loot…</div></div>
+<div class="nav-bottom"><button class="btn" id="prevBoss">← Previous Boss</button><button class="btn primary" id="nextBoss">Next Boss →</button></div>
+<div class="helper small"><strong style="color:var(--bright)">During Master Looting:</strong> Only items with active Roll Bonuses appear here. Bonuses are shown by character, highest first. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
 </section>
-<section class="rb-section" id="expirationSection" hidden>
-<div class="rb-panel">
- <div class="rb-toolbar"><div><h2>Player-Level Expiration Check</h2><p class="rb-help">A person's most recent raid on any confirmed main or alt determines inactivity. Bonuses themselves remain with the character and item.</p></div><button class="rb-button primary" id="runExpiration" type="button">Run Expiration Check</button></div>
- <p class="rb-note">Only players with potential expiration issues appear here. Anyone with confirmed raid attendance in the last two months is hidden. <strong>Questionable</strong> means attendance is unknown—not proof of inactivity. No bonus expires without officer approval.</p>
- <div class="rb-totals"><div class="rb-stat"><strong id="readyCount">—</strong><span>Over 2 months (confirmed)</span></div><div class="rb-stat"><strong id="extendedCount">—</strong><span>Hidden (recent / extended)</span></div><div class="rb-stat"><strong id="unknownCount">—</strong><span>Questionable (history incomplete)</span></div></div>
- <div class="rb-table-scroll"><table class="rb-table"><thead><tr><th>Player (main)</th><th>Bonuses</th><th>Last Raid</th><th>Status / Extension</th><th>Officer Action</th></tr></thead><tbody id="expirationRows"><tr><td colspan="5" class="rb-empty">Run the check to view eligible players.</td></tr></tbody></table></div>
- <p class="rb-muted" id="expirationFootnote"></p>
-</div>
+<section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon or item</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
+<section id="submitView" hidden>
+  <div class="submit-shell"><h2>Report a Soft Reserve Roll</h2><p class="small">Report a lost or winning roll from a Syndicate raid in the last seven days. Reports are sent for officer review. An approved lost roll adds +10; an approved winning roll resets that item bonus.</p>
+    <div id="submitNotice" class="status" hidden role="status" aria-live="polite"></div>
+    <form id="rollForm" autocomplete="off">
+      <div class="submit-fields">
+        <div class="field"><label class="label" for="toonInput">Character name</label><input id="toonInput" maxlength="40" required placeholder="Your toon name"></div>
+        <div class="field"><label class="label" for="eventSelect">Raid within the last seven days</label><select id="eventSelect" required><option value="">Loading recent raids…</option></select></div>
+        <div class="field"><label class="label" for="itemSelect">Soft reserved item</label><select id="itemSelect" required><option value="">Choose a raid first</option></select></div>
+        <div class="field"><label class="label" for="outcomeSelect">Roll result</label><select id="outcomeSelect" required><option value="loss">Lost SR roll (+10 per loss)</option><option value="win">Won SR roll (resets item bonus immediately)</option></select></div>
+        <div class="field" id="countField"><label class="label" for="countInput">Number of lost rolls</label><input id="countInput" type="number" min="1" max="20" value="1" required></div>
+      </div>
+      <div id="guestStep" class="guest-step" hidden><h3>Not on The Syndicate roster?</h3><p class="small">We couldn't match this character on the guild roster. Guest raiders are welcome and still earn Roll Bonuses. Choose your guild below.</p><div class="field"><label class="label" for="guestGuild">Your guild</label><select id="guestGuild"><option value="">Select your guild</option><option value="Balanced">Balanced</option><option value="VOID">VOID</option><option value="PUG">PUG / No guild</option><option value="Other">Other guild</option></select></div><div class="field" id="otherGuildField" hidden><label class="label" for="otherGuild">Guild name</label><input id="otherGuild" maxlength="100" placeholder="Enter guild name"></div></div>
+      <p class="small">Reports are pending until an officer approves them. Submit only your own genuine Soft Reserve rolls. Duplicate reports for the same raid, character, item, and result are blocked.</p>
+      <button class="btn primary" id="reportButton" type="submit">Continue</button>
+    </form>
+  </div>
 </section>
-<section class="rb-section" id="manualSection" hidden>
-<div class="rb-panel"><h2>Manually Award an Approved Bonus</h2><p class="rb-help">Use this to correct a missed roll or award an officer-approved adjustment. This writes directly to bonus history and takes effect immediately—there is no pending approval.</p>
- <form id="manualForm" class="rb-form">
-  <div class="rb-field"><label for="manualCharacter">Character</label><input id="manualCharacter" list="manualCharacterOptions" placeholder="Type a character name…" autocomplete="off" required><datalist id="manualCharacterOptions"></datalist></div>
-  <div class="rb-field"><label for="manualRaid">Raid filter</label><select id="manualRaid"><option value="">All raids</option></select></div>
-  <div class="rb-field"><label for="manualItem">Item</label><input id="manualItem" list="manualItemOptions" placeholder="Type an item name…" autocomplete="off" required><datalist id="manualItemOptions"></datalist></div>
-  <div class="rb-field"><label for="manualPoints">Bonus points to add</label><input id="manualPoints" type="number" min="1" max="200" step="1" value="10" required></div>
-  <div class="rb-field rb-full"><label for="manualReason">Reason / officer note (required)</label><textarea id="manualReason" rows="3" required minlength="3" placeholder="Example: Missed SR loss from Wednesday MC"></textarea></div>
-  <div class="rb-full"><button class="rb-button primary" type="submit" id="manualSubmit">Add Approved Bonus</button></div>
- </form>
- <p class="rb-muted">Only existing roll-bonus characters are listed. If a character is missing, they must first be registered through the existing roll submission process. No character/main relationships are edited here.</p>
-</div>
-</section>
-</main><div id="syndicate-footer"></div>
+<div class="footer">◆ THIS IS THE WAY. ◆</div>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!-- Connection path resolved relative to this page at startup. -->
 <script>
-document.addEventListener('DOMContentLoaded',()=>{
 'use strict';
-const $=id=>document.getElementById(id);const db=window.syndicateDB;
-const state={characters:[],items:[],events:[],bosses:[],lootLinks:[],reviewing:false};
-function status(msg,type=''){const n=$('rbStatus');n.textContent=msg;n.className='rb-status '+type;}
-function textCell(tr,s){const td=document.createElement('td');td.textContent=String(s??'—');tr.append(td);return td;}
-function button(label,kind,fn){const b=document.createElement('button');b.type='button';b.className='rb-button '+(kind||'');b.textContent=label;b.addEventListener('click',fn);return b;}
-function empty(tbody,text,col=6){tbody.replaceChildren();const tr=document.createElement('tr'),td=textCell(tr,text);td.colSpan=col;td.className='rb-empty';tbody.append(tr);}
-function selectFill(node,values,placeholder){node.replaceChildren();const opt=new Option(placeholder,'');node.add(opt);for(const [v,label] of values)node.add(new Option(label,String(v)));}
-function confirmAction(msg){return window.confirm(msg);}
-function niceDate(s){return s?String(s).slice(0,10):'Unknown';}
-function names(){return new Map(state.characters.map(c=>[String(c.id),c]));}
-function events(){return new Map(state.events.map(e=>[String(e.id),e]));}
-function items(){return new Map(state.items.map(i=>[String(i.id),i]));}
-async function query(table,fields,sort='id',ascending=true,limit=1000){const {data,error}=await db.from(table).select(fields).order(sort,{ascending}).limit(limit);if(error)throw Error(table+': '+error.message);return data||[];}
-async function runRpc(name,args){const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message);return data;}
-function showTab(tab){for(const b of document.querySelectorAll('.rb-tab')){const active=b.dataset.tab===tab;b.classList.toggle('active',active);b.setAttribute('aria-pressed',String(active));}for(const id of ['approval','expiration','manual'])$(id+'Section').hidden=id!==tab;}
-for(const b of document.querySelectorAll('.rb-tab'))b.addEventListener('click',()=>showTab(b.dataset.tab));
-async function loadEvery(table,fields,sort='id'){
- const all=[];for(let offset=0;offset<10000;offset+=1000){const {data,error}=await db.from(table).select(fields).order(sort,{ascending:true}).range(offset,offset+999);if(error)throw Error(table+': '+error.message);all.push(...(data||[]));if(!data||data.length<1000)return all;}throw Error(table+': row limit exceeded');
-}
-function characterLabel(c){return `${c.toon_name} · ${c.guild_name||'Unknown Guild'}`;}
-function availableItems(){const raid=$('manualRaid').value;if(!raid)return state.items;const bossIds=new Set(state.bosses.filter(b=>b.raid_code===raid).map(b=>String(b.id)));const itemIds=new Set(state.lootLinks.filter(l=>bossIds.has(String(l.boss_id))).map(l=>String(l.item_id)));return state.items.filter(i=>itemIds.has(String(i.id)));}
-function setSuggestions(listId,labels){const list=$(listId);list.replaceChildren();for(const label of labels){const option=document.createElement('option');option.value=label;list.append(option);}}
-function updateManualItems(){setSuggestions('manualItemOptions',availableItems().map(i=>i.item_name));$('manualItem').value='';}
-async function loadReference(){const [chars,itemsList,ev,bosses,links]=await Promise.all([loadEvery('roll_bonus_characters','id,toon_name,guild_name,realm','id'),loadEvery('raid_items','id,item_name','id'),query('Events','id,date,name','date',false,500),loadEvery('raid_bosses','id,raid_code','id'),loadEvery('raid_boss_loot','id,boss_id,item_id','id')]);state.characters=chars;state.items=itemsList;state.events=ev;state.bosses=bosses;state.lootLinks=links;
- setSuggestions('manualCharacterOptions',chars.map(characterLabel));
- const raids=[...new Set(bosses.map(b=>b.raid_code))].sort((a,b)=>['Ony','ZG','AQ20','MC','BWL','AQ40','Naxx'].indexOf(a)-['Ony','ZG','AQ20','MC','BWL','AQ40','Naxx'].indexOf(b));
- selectFill($('manualRaid'),[['','All raids'],...raids.map(r=>[r,r])],'All raids');
- updateManualItems();
-}
-$('manualRaid').addEventListener('change',updateManualItems);
+const $=id=>document.getElementById(id);
+const state={bosses:[],items:[],links:[],bonuses:[],events:[],raid:'',bossId:null,view:'balances',client:null,guestRequired:false};
+const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n};
+function message(text,kind=''){const n=$('notice');n.textContent=text;n.className='status '+kind;n.hidden=!text;}
+function populate(select,options,value){select.replaceChildren();for(const [v,label] of options){const op=el('option','',label);op.value=String(v);select.append(op)}if(value!=null)select.value=String(value)}
+function currentBosses(){return state.bosses.filter(b=>b.raid_code===state.raid).sort((a,b)=>(a.display_order??0)-(b.display_order??0)||a.boss_name.localeCompare(b.boss_name))}
+function selectedBoss(){return currentBosses().find(b=>String(b.id)===String(state.bossId))}
+function switchRaid(code){state.raid=code;const bosses=currentBosses();state.bossId=bosses.length?bosses[0].id:null;populate($('bossSelect'),bosses.map(b=>[b.id,b.boss_name]),state.bossId);$('lootSearch').value='';renderLoot()}
+function switchBoss(id){state.bossId=id;$('bossSelect').value=String(id);$('lootSearch').value='';renderLoot()}
+function renderLoot(){const bosses=currentBosses(),boss=selectedBoss(),ix=bosses.findIndex(b=>String(b.id)===String(state.bossId));$('bossTitle').textContent=boss?boss.boss_name:'No bosses listed';$('bossCounter').textContent=boss?`${ix+1} of ${bosses.length}`:'';$('prevBoss').disabled=ix<=0;$('nextBoss').disabled=ix<0||ix===bosses.length-1;const grid=$('lootGrid');grid.replaceChildren();if(!boss){grid.append(el('div','empty','No boss information is available for this raid.'));return}const itemIds=new Set(state.links.filter(l=>String(l.boss_id)===String(boss.id)).map(l=>String(l.item_id)));const q=$('lootSearch').value.trim().toLowerCase();const rows=state.items.filter(i=>itemIds.has(String(i.id))&&state.bonuses.some(b=>String(b.item_id)===String(i.id)&&Number(b.current_bonus)>0)).sort((a,b)=>a.item_name.localeCompare(b.item_name));let visible=0;for(const item of rows){const rollers=state.bonuses.filter(b=>String(b.item_id)===String(item.id)&&Number(b.current_bonus)>0).sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));if(q&&!item.item_name.toLowerCase().includes(q)&&!rollers.some(r=>r.toon_name.toLowerCase().includes(q)))continue;visible++;const card=el('article','loot-card');const heading=el('div','item-title',item.item_name);card.append(heading);const meta=el('div','item-meta',[(item.equipment_slot||''),item.item_level!=null&&item.item_level>0?'iLvl '+item.item_level:''].filter(Boolean).join(' · '));if(item.reservation_status&&item.reservation_status!=='available')meta.append(el('span','pill',item.reservation_status.replaceAll('_',' ')));card.append(meta);const people=el('div','roller-list');if(rollers.length){for(const r of rollers){const line=el('div','roller');line.append(el('span','name',r.toon_name+(r.guild_name&&r.guild_name!=='The Syndicate'?' ('+r.guild_name+')':'')),el('span','bonus','+'+r.current_bonus));people.append(line)}}card.append(people);grid.append(card)}if(!visible)grid.append(el('div','empty',q?'No matching loot or rollers on this boss.':'No active Roll Bonuses on this boss.'))}
+function renderBalances(){const host=$('balanceRows');host.replaceChildren();const q=$('balanceSearch').value.trim().toLowerCase(),raid=$('balanceRaid').value;let permitted=null;if(raid){const bossIds=new Set(state.bosses.filter(b=>b.raid_code===raid).map(b=>String(b.id)));permitted=new Set(state.links.filter(l=>bossIds.has(String(l.boss_id))).map(l=>String(l.item_id)))}const active=state.bonuses.filter(b=>Number(b.current_bonus)>0&&(!permitted||permitted.has(String(b.item_id)))).filter(b=>[b.toon_name,b.guild_name,b.item_name].some(x=>String(x||'').toLowerCase().includes(q))).sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));for(const b of active){const tr=el('tr');for(const v of [b.toon_name,b.guild_name||'PUG / Unknown',b.item_name,'+'+b.current_bonus])tr.append(el('td','',v));host.append(tr)}if(!active.length){const tr=el('tr'),td=el('td','','No matching bonuses found for this raid or search.');td.colSpan=4;tr.append(td);host.append(tr)}}
 
-async function loadPending(){try{const [pending,reviewed]=await Promise.all([db.from('roll_bonus_submissions').select('*').eq('status','pending').order('submitted_at',{ascending:true}).limit(500),db.from('roll_bonus_submissions').select('*').in('status',['approved','rejected']).order('reviewed_at',{ascending:false}).limit(40)]);if(pending.error)throw pending.error;if(reviewed.error)throw reviewed.error;
- // Fetch any item references omitted by the initial item-list request (Supabase's default row limit can be 1,000).
- const missingIds=[...new Set([...(pending.data||[]),...(reviewed.data||[])].map(s=>s.item_id).filter(id=>!items().has(String(id))))];
- if(missingIds.length){
-   for(let offset=0;offset<missingIds.length;offset+=100){
-     const ids=missingIds.slice(offset,offset+100);
-     const {data:extra,error:itemError}=await db.from('raid_items').select('id,item_name').in('id',ids);
-     if(itemError)throw Error('Unable to resolve item names: '+itemError.message);
-     state.items.push(...(extra||[]).filter(i=>!items().has(String(i.id))));
-   }
- }
- const cmap=names(),emap=events(),imap=items();$('pendingCount').textContent='('+(pending.data||[]).length+')';const host=$('pendingRows');host.replaceChildren();
- for(const s of pending.data||[]){const c=cmap.get(String(s.character_id)),i=imap.get(String(s.item_id)),e=emap.get(String(s.event_id));const tr=document.createElement('tr');textCell(tr,(c?.toon_name||'#'+s.character_id)+' · '+(c?.guild_name||'Unknown'));textCell(tr,e?`${e.name} · ${e.date}`:'#'+s.event_id);textCell(tr,i?.item_name||'#'+s.item_id);textCell(tr,niceDate(s.submitted_at));textCell(tr,s.result==='loss'?`Lost ${s.roll_count} · +${s.roll_count*10}`:'Won · Reset');const td=textCell(tr,'');const actions=document.createElement('div');actions.className='rb-actions';actions.append(button('Approve','primary',()=>review(s,'approved')),button('Reject','danger',()=>review(s,'rejected')));td.append(actions);host.append(tr);}if(!(pending.data||[]).length)empty(host,'No submissions are awaiting approval.');
- const done=$('reviewedRows');done.replaceChildren();for(const s of reviewed.data||[]){const tr=document.createElement('tr');textCell(tr,cmap.get(String(s.character_id))?.toon_name||'#'+s.character_id);textCell(tr,imap.get(String(s.item_id))?.item_name||'#'+s.item_id);textCell(tr,s.result);textCell(tr,s.status);textCell(tr,niceDate(s.reviewed_at));done.append(tr);}if(!(reviewed.data||[]).length)empty(done,'No previously reviewed submissions.',5);
- status('Submission review loaded.','ok');}catch(e){status('Could not load submissions: '+e.message,'error');empty($('pendingRows'),'Submission list unavailable.');}}
-async function review(s,decision){if(state.reviewing)return;const c=names().get(String(s.character_id));const label=c?.toon_name||'this character';if(!confirmAction(`${decision==='approved'?'Approve':'Reject'} ${s.result} submission for ${label}?`))return;const notes=window.prompt('Optional review note:','');if(notes===null)return;state.reviewing=true;try{await runRpc('syndicate_rb_review_submission',{p_submission_id:s.id,p_decision:decision,p_notes:notes});await loadPending();status(`Submission #${s.id} ${decision}.`,'ok');}catch(e){status('Review failed: '+e.message,'error');}finally{state.reviewing=false;}}
-async function expiration(){
- status('Checking confirmed player identities and raid attendance…');
- try {
-  const {data,error}=await db.from('syndicate_rb_expiration_review').select('*').order('player_name',{ascending:true});
-  if(error)throw error;
-  const all=data||[];
-  // The database groups bonus-holding characters under their confirmed player.
-  // Only potentially expired players belong on this list. ACTIVE and EXTENDED are hidden.
-  const definitive=all.filter(x=>x.review_status==='READY_FOR_REVIEW');
-  const questionable=all.filter(x=>x.review_status==='ATTENDANCE_UNKNOWN');
-  const rows=[...definitive,...questionable];
-  $('readyCount').textContent=definitive.length;
-  $('extendedCount').textContent=all.filter(x=>x.review_status==='ACTIVE'||x.review_status==='EXTENDED').length;
-  $('unknownCount').textContent=questionable.length;
-  const host=$('expirationRows');host.replaceChildren();
-  for(const x of rows){
-   const confirmed=x.review_status==='READY_FOR_REVIEW';
-   const tr=document.createElement('tr');
-   textCell(tr,x.player_name);
-   textCell(tr,`${x.outstanding_items} items · ${x.character_count} characters · +${x.total_points}`);
-   textCell(tr,confirmed?niceDate(x.last_raid_date):'Not documented');
-   const td=textCell(tr,confirmed?'Over 2 months — eligible for review':'Questionable — attendance unknown');
-   td.className='rb-muted';
-   const actions=textCell(tr,'');const box=document.createElement('div');box.className='rb-actions';
-   if(confirmed){
-    box.append(button('Approve Expiration','danger',()=>expirePlayer(x)));
-    box.append(button('Extend','',()=>extendPlayer(x)));
-   } else {
-    const info=document.createElement('span');info.className='rb-muted';
-    info.textContent='Confirm historical attendance before expiration';
-    box.append(info);
-   }
-   actions.append(box);host.append(tr);
+async function fetchAll(client,table,fields,sort='id'){let out=[];for(let from=0;from<20000;from+=1000){const {data,error}=await client.from(table).select(fields).order(sort,{ascending:true}).range(from,from+999);if(error)throw Error(table+': '+error.message);out.push(...(data||[]));if(!data||data.length<1000)return out}throw Error(table+': too many rows to load in one request')}
+async function load(){if(!window.syndicateDB){message('Shared Supabase connection did not load. Check settings/supabase-config.js.','error');return}try{const client=window.syndicateDB;state.client=client;const [bosses,items,links,bonuses]=await Promise.all([fetchAll(client,'raid_bosses','id,raid_code,boss_name,display_order,is_active'),fetchAll(client,'raid_items','id,item_name,equipment_slot,item_level,reservation_status,is_active'),fetchAll(client,'raid_boss_loot','id,boss_id,item_id'),fetchAll(client,'roll_bonus_public_totals','character_id,item_id,toon_name,guild_name,item_name,current_bonus','character_id')]);state.bosses=bosses.filter(b=>b.is_active!==false);state.items=items.filter(i=>i.is_active!==false);state.links=links;state.bonuses=bonuses;const raids=[...new Set(state.bosses.map(b=>b.raid_code))].sort((a,b)=>['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'].indexOf(a)-['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'].indexOf(b));populate($('balanceRaid'),[['','All Raids'],...raids.map(r=>[r,r])],'');populate($('raidSelect'),raids.map(r=>[r,r]),raids.includes('AQ40')?'AQ40':raids[0]);switchRaid($('raidSelect').value);renderBalances();loadRecentRaids();message(`Loaded ${state.items.length} items, ${state.bosses.length} loot sources and ${state.bonuses.filter(b=>b.current_bonus>0).length} active character/item bonuses.`,'ok')}catch(err){message('Unable to load Supabase data: '+err.message+'. Check that the website read policies and roll_bonus_public_totals view are installed.','error');$('lootGrid').replaceChildren(el('div','empty','Could not load loot. See the error above.'))}}
+function identifyRaid(name){const n=String(name||'').toUpperCase();if(/AQ\s*40|AHN.QIRAJ/.test(n))return 'AQ40';if(/AQ\s*20|RUINS OF AHN/.test(n))return 'AQ20';if(/BWL|BLACKWING/.test(n))return 'BWL';if(/MOLTEN CORE|\bMC\b/.test(n))return 'MC';if(/ONY|ONYXIA/.test(n))return 'ONY';if(/ZUL.GURUB|\bZG\b/.test(n))return 'ZG';if(/NAXX/.test(n))return 'NAXX';return ''}
+let recentLoadPromise=null;
+async function loadRecentRaids(){if(!state.client)return;if(recentLoadPromise)return recentLoadPromise;recentLoadPromise=(async()=>{try{const cutoff=new Date();cutoff.setDate(cutoff.getDate()-7);const localDate=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const start=localDate(cutoff);const {data,error}=await state.client.from('Events').select('id,date,name,type').gte('date',start).order('date',{ascending:false}).limit(80);if(error)throw error;const today=localDate(new Date());state.events=(data||[]).filter(e=>e.date<=today&&String(e.type||'').toLowerCase()==='raid'&&identifyRaid(e.name));populate($('eventSelect'),[['','Select a recent raid'],...state.events.map(e=>[e.id,`${e.date} · ${e.name}`])],'');populate($('itemSelect'),[['','Select a raid first']],'');if(!state.events.length)submissionMessage('No eligible raid events from the past seven days are available.','');}catch(err){submissionMessage('Could not load recent raids: '+err.message,'error');populate($('eventSelect'),[['','Recent raids unavailable']],'')}finally{recentLoadPromise=null}})();return recentLoadPromise}
+async function refreshBonusTotals(){const bonuses=await fetchAll(state.client,'roll_bonus_public_totals','character_id,item_id,toon_name,guild_name,item_name,current_bonus','character_id');state.bonuses=bonuses;renderBalances();renderLoot()}
+function submissionMessage(t,kind=''){const n=$('submitNotice');n.textContent=t;n.className='status '+kind;n.hidden=!t}
+function updateReportItems(){
+  const event=state.events.find(e=>String(e.id)===$('eventSelect').value);
+  const code=event?identifyRaid(event.name||event.title||''):'';
+  if(!event){populate($('itemSelect'),[['','Choose a raid first']],'');return;}
+  if(!code){
+    populate($('itemSelect'),[['','No items: raid name not recognized']],'');
+    submissionMessage('This event could not be matched to a raid. Please report its name to an officer.','error');
+    return;
   }
-  if(!rows.length)empty(host,'No players currently need expiration review. Recent raiders and extended players are hidden.',5);
-  $('expirationFootnote').textContent=`${definitive.length} confirmed over two months · ${questionable.length} questionable due to missing attendance · ${all.length-rows.length} recent or extended, hidden. Historical raid imports are incomplete; absence of a record is not evidence of inactivity.`;
-  status('Expiration check completed; no points were changed.','ok');
- }catch(e){status('Expiration check unavailable: '+e.message,'error');empty($('expirationRows'),'Unable to check expiration.',5);}
+  const bossIds=new Set(state.bosses.filter(b=>String(b.raid_code||'').trim().toUpperCase()===code).map(b=>String(b.id)));
+  const ids=new Set(state.links.filter(l=>bossIds.has(String(l.boss_id))).map(l=>String(l.item_id)));
+  const items=state.items.filter(i=>ids.has(String(i.id))&&i.reservation_status!=='hard_reserved'&&i.sr_eligible!==false).sort((a,b)=>a.item_name.localeCompare(b.item_name));
+  if(!items.length){
+    populate($('itemSelect'),[['','No eligible items found for '+code]],'');
+    submissionMessage(`No eligible items found for ${code}. Loaded ${bossIds.size} boss records and ${ids.size} linked item IDs. This usually means the raid-to-loot mapping needs checking.`, 'error');
+    return;
+  }
+  populate($('itemSelect'),[['','Choose an item'],...items.map(i=>[i.id,i.item_name])],'');
+  submissionMessage('');
 }
-async function extendPlayer(x){const until=window.prompt('Extend '+x.player_name+' until (YYYY-MM-DD):','');if(!until)return;const reason=window.prompt('Reason for this extension (required):','');if(!reason)return;if(!confirmAction('Extend expiration review for '+x.player_name+' until '+until+'?'))return;try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:reason});await expiration();status(x.player_name+' extended through '+until+'.','ok');}catch(e){status('Extension failed: '+e.message,'error');}}
-async function expirePlayer(x){if(!confirmAction(`Expire ALL ${x.outstanding_items} outstanding character/item bonuses for ${x.player_name}? This writes permanent expiration history records.`))return;const reason=window.prompt('Optional reason for expiration:','');if(reason===null)return;try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:reason});await expiration();status(`Expired ${result?.expired_items??'?'} item bonuses for ${x.player_name}.`,'ok');}catch(e){status('Expiration failed: '+e.message,'error');}}
-$('runExpiration').addEventListener('click',expiration);$('refreshPending').addEventListener('click',loadPending);
-$('manualForm').addEventListener('submit',async e=>{e.preventDefault();const characterMatches=state.characters.filter(c=>characterLabel(c).toLowerCase()===$('manualCharacter').value.trim().toLowerCase()),itemMatches=availableItems().filter(i=>i.item_name.toLowerCase()===$('manualItem').value.trim().toLowerCase());const characterId=characterMatches.length===1?Number(characterMatches[0].id):0,itemId=itemMatches.length===1?Number(itemMatches[0].id):0,points=Number($('manualPoints').value),reason=$('manualReason').value.trim();if(!characterId||!itemId||!Number.isInteger(points)||points<1||!reason){status('Select a valid character and item from the suggestions, enter points, and provide a reason.','error');return}const c=names().get(String(characterId)),i=items().get(String(itemId));if(!confirmAction(`Immediately add +${points} to ${c?.toon_name} for ${i?.item_name}?`))return;const btn=$('manualSubmit');btn.disabled=true;try{await runRpc('syndicate_rb_manual_award',{p_character_id:characterId,p_item_id:itemId,p_points:points,p_reason:reason});$('manualForm').reset();updateManualItems();status(`Approved manual award: +${points} for ${c?.toon_name}.`,'ok');}catch(err){status('Manual award failed: '+err.message,'error');}finally{btn.disabled=false;}});
-async function boot(){if(!db||typeof db.from!=='function'){status('Central Supabase configuration is unavailable.','error');return}try{await loadReference();await loadPending();}catch(e){status('Could not initialize manager: '+e.message,'error');}}
-boot();
-});
+function setGuestVisible(value){state.guestRequired=value;$('guestStep').hidden=!value;$('reportButton').textContent=value?'Submit Report':'Continue';if(!value){$('guestGuild').value='';$('otherGuild').value='';$('otherGuildField').hidden=true}}
+$('eventSelect').addEventListener('change',updateReportItems);
+$('guestGuild').addEventListener('change',()=>{$('otherGuildField').hidden=$('guestGuild').value!=='Other'});
+$('outcomeSelect').addEventListener('change',()=>{$('countField').hidden=$('outcomeSelect').value==='win';$('countInput').value='1'});
+$('toonInput').addEventListener('input',()=>{if(state.guestRequired)setGuestVisible(false)});
+$('rollForm').addEventListener('submit',async e=>{e.preventDefault();if(!state.client)return;const name=$('toonInput').value.trim();if(!name||!$('eventSelect').value||!$('itemSelect').value){submissionMessage('Select a character, recent raid, and item.','error');return}const btn=$('reportButton');btn.disabled=true;try{if(!state.guestRequired){const {data,error}=await state.client.rpc('roll_bonus_check_roster',{p_toon_name:name});if(error)throw Error(error.message);if(!data){setGuestVisible(true);submissionMessage('Character not on The Syndicate roster. Please select your guild to finish your report.');return}setGuestVisible(false)}const guild=state.guestRequired?($('guestGuild').value==='Other'?$('otherGuild').value.trim():$('guestGuild').value):null;if(state.guestRequired&&(!guild||guild==='Other')){submissionMessage('Please select or enter your guild.','error');return}const {data,error}=await state.client.rpc('roll_bonus_submit',{p_toon_name:name,p_event_id:Number($('eventSelect').value),p_item_id:Number($('itemSelect').value),p_result:$('outcomeSelect').value,p_roll_count:Number($('countInput').value),p_guild_name:guild});if(error)throw Error(error.message);submissionMessage('Report #'+data+' saved! An officer will review it before your bonus changes.','ok');await refreshBonusTotals();$('rollForm').reset();setGuestVisible(false);$('countField').hidden=false;updateReportItems()}catch(err){submissionMessage('Unable to submit: '+err.message,'error')}finally{btn.disabled=false}});
+$('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});$('lootView').hidden=state.view!=='loot';$('balancesView').hidden=state.view!=='balances';$('submitView').hidden=state.view!=='submit';if(state.view==='balances')renderBalances();if(state.view==='submit')loadRecentRaids()}));$('openMenu').onclick=()=>{$('drawer').classList.add('open');$('shade').classList.add('open')};$('closeMenu').onclick=$('shade').onclick=()=>{$('drawer').classList.remove('open');$('shade').classList.remove('open')};
+async function startPublicRollBonuses(){
+  if(!window.syndicateDB){
+    const paths=['settings/supabase-config.js','../settings/supabase-config.js','../../settings/supabase-config.js'];
+    for(const path of paths){
+      try{
+        await new Promise((resolve,reject)=>{
+          const script=document.createElement('script');
+          script.src=path;
+          script.onload=resolve;
+          script.onerror=()=>reject(new Error('Cannot load '+path));
+          document.head.appendChild(script);
+        });
+        if(window.syndicateDB)break;
+      }catch(e){console.debug('Supabase config path not found:',path)}
+    }
+  }
+  load();
+}
+startPublicRollBonuses();
 </script>
-</body></html>
+</body>
+</html>
