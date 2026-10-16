@@ -70,12 +70,14 @@ form.addEventListener('submit',async event=>{
   if(!db||!window.syndicateAuth)throw Error('The connection is unavailable. Please refresh.');
   const {data,error}=await db.auth.getSession();if(error)throw Error('Please reconnect Discord.');const session=data.session;
   if(!session){feedback.textContent='Sign in with Discord to submit. Your comment stays here.';await window.syndicateAuth.login();return;}
-  let token=session.provider_token;
-  if(!token){try{const saved=JSON.parse(sessionStorage.getItem('syndicate_discord_oauth')||'null');if(saved?.userId===session.user.id&&Date.now()-saved.savedAt<1800000)token=saved.token;}catch{}}
-  if(!token)throw Error('Please reconnect Discord using the account menu, then submit again.');
-  const result=await db.functions.invoke('wall-of-chaos',{body:{comment,discordAccessToken:token}});
-  if(result.error){let message='Submission failed. Your comment is still here. Please try again.';try{message=(await result.error.context.json()).error||message;}catch{}throw Error(message);}
-  if(result.data?.ok!==true)throw Error('Submission was not confirmed. Please try again.');
+  const membership=await window.syndicateAuth.verifyMembership();
+  if(membership?.verified!==true||membership?.status!=='member')throw Error('Guild membership could not be verified. Reconnect Discord or try again shortly.');
+  feedback.textContent='Sending your comment…';
+  const {error:saveError}=await db.from('guild_wall_posts').insert({comment});
+  if(saveError){
+   if(saveError.code==='42501')throw Error('Submissions are not enabled for your account yet. Please contact an officer.');
+   throw Error('Could not save your comment. Your words are still here; please try again.');
+  }
   input.value='';input.dispatchEvent(new Event('input'));feedback.textContent='Chaos received! Your comment is waiting for officer review.';
  }catch(error){feedback.textContent=error.message||'Submission failed. Please try again.';}finally{busy=false;submit.disabled=false;}
 });
