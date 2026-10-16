@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The Syndicate | Wall of Chaos</title>
+<link rel="stylesheet" href="../settings/styles.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500&family=Cinzel:wght@400;500&display=swap">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="../settings/supabase-config.js"></script>
+<script defer src="../settings/auth.js"></script>
+<script defer src="../settings/font-setting.js"></script>
+<script defer src="../settings/menu.js"></script>
+<script defer src="../settings/site-layout.js"></script>
+<style>
+body{margin:0;background:#141310;color:#eee6d5}#chaos-page{font:1rem/1.5 Palatino,Georgia,serif;max-width:85rem;margin:auto;padding:2.5rem clamp(1.25rem,5vw,4rem) 4rem;background:radial-gradient(ellipse at 65% 25%,#30271944,transparent 65%)}#chaos-page *{box-sizing:border-box}.wall-intro{transform:rotate(-2deg);padding:0 1rem 1rem}.wall-intro .eyebrow{font:.7rem Arial,sans-serif;letter-spacing:.18em;color:#bcaa83}.wall-intro h1{font:500 clamp(3.2rem,8vw,5rem)/1 Caveat,'Segoe Print',cursive;color:#d4af37;margin:.5rem 0 1rem}.wall-intro p{margin:0;color:#c3b59e}.submission{max-width:42rem;margin:1.5rem 0 2rem;padding:0 1rem}.submission summary{display:inline-block;color:#e0c16f;font:500 1.8rem Caveat,cursive;cursor:pointer;border-bottom:1px solid #a98b45;min-height:44px}.submission summary:before{content:'+ ';}.submission[open] summary:before{content:'− ';}.submission form{margin-top:1rem}.submission label{display:block;color:#e2d5b9;margin-bottom:.5rem}.submission textarea{display:block;width:100%;min-height:7rem;resize:vertical;border:1px solid #74603a;border-radius:2px;background:#211e17;color:#eee6d5;padding:.9rem;font:1rem/1.5 Georgia,serif}.submission .help,.submission output{font:.85rem/1.5 Georgia,serif;color:#c2b49a}.submission .actions{display:flex;align-items:center;gap:1rem;flex-wrap:wrap;margin:.7rem 0}.submission button,.wall-more{min-height:44px;border:1px solid #987b36;background:linear-gradient(#45371b,#292113);color:#edd18b;padding:.65rem 1.1rem;font:.9rem Georgia,serif;cursor:pointer}.submission button:disabled{opacity:.6;cursor:wait}.wall-state{color:#c5b494;padding:1rem}#chaos-wall{position:relative;width:100%;min-height:10rem}.chaos-entry{position:absolute;margin:0;padding:.7rem;white-space:pre-wrap;overflow-wrap:anywhere;transform:rotate(var(--tilt));transform-origin:center;color:#e4d7ba;font:400 1.4rem/1.2 Caveat,'Segoe Print',cursive}.chaos-entry.serif{font-family:Georgia,serif;font-size:1.05rem;line-height:1.45}.chaos-entry.loud{font-family:Cinzel,Georgia,serif;font-size:1.6rem;line-height:1.15;color:#d4af37}.chaos-entry.gold{color:#d4af37}.wall-more{display:block;margin:1.5rem auto}.wall-more[hidden]{display:none}.wall-motto{text-align:right;color:#b5a17b;font:1.4rem Caveat,cursive;margin:2rem 0 0}#chaos-page :focus-visible{outline:2px solid #e2c274;outline-offset:4px}@media(max-width:520px){#chaos-page{padding:2rem 1rem}.wall-intro,.submission{padding-left:.5rem;padding-right:.5rem}.chaos-entry{font-size:1.5rem}.chaos-entry.loud{font-size:1.4rem}}
+</style>
+</head>
+<body>
+<div id="syndicate-menu"></div>
+<main id="chaos-page">
+<section class="wall-intro"><span class="eyebrow">THE GUILD HAS SOMETHING TO SAY.</span><h1>Wall of Chaos</h1><p>Love letters. Raid quotes. Whatever this is.</p></section>
+<details class="submission" open><summary>Leave your mark</summary>
+<form id="chaos-form"><label for="chaos-comment">Your comment</label><textarea id="chaos-comment" name="comment" maxlength="600" required placeholder="Give someone their flowers. Preserve the incident."></textarea><p class="help">Just your words. We handle the chaos. Line breaks welcome. No author names are displayed. Comments are reviewed before appearing.</p><div class="actions"><button type="submit" id="chaos-submit">Submit to the Chaos</button><span class="help" id="chaos-count">0 / 600</span></div><output id="chaos-feedback" role="status" aria-live="polite"></output></form>
+</details>
+<p id="chaos-state" class="wall-state" role="status">Gathering the chaos…</p>
+<section id="chaos-wall" aria-label="Guild comments and recognition"></section>
+<button type="button" id="chaos-more" class="wall-more" hidden>More chaos</button>
+<p class="wall-motto">Loot is temporary. Guild chaos is forever.</p>
+</main><div id="syndicate-footer"></div>
+<script>
+document.addEventListener('DOMContentLoaded',()=>{
+'use strict';
+const db=window.syndicateDB, wall=document.getElementById('chaos-wall'),state=document.getElementById('chaos-state'),form=document.getElementById('chaos-form'),input=document.getElementById('chaos-comment'),feedback=document.getElementById('chaos-feedback'),submit=document.getElementById('chaos-submit'),more=document.getElementById('chaos-more');
+let rows=[],busy=false,cursor=null,loading=false;
+const hash=s=>{let h=2166136261;for(const c of s){h=Math.imul(h^c.charCodeAt(0),16777619);}return h>>>0;};
+function arrange(){
+ const width=wall.clientWidth;if(!width)return;const placed=[];let bottom=0;
+ wall.querySelectorAll('.chaos-entry').forEach((el,i)=>{
+  const seed=hash(el.dataset.id),narrow=width<570;
+  const itemWidth=narrow?Math.min(width-70,200+seed%65):Math.min(width*.38,210+seed%95);
+  el.style.width=itemWidth+'px';const angle=narrow?(seed%7)-3:(seed%15)-7;el.style.setProperty('--tilt',angle+'deg');
+  const height=el.offsetHeight,rad=Math.abs(angle)*Math.PI/180;
+  const bw=itemWidth*Math.cos(rad)+height*Math.sin(rad),bh=height*Math.cos(rad)+itemWidth*Math.sin(rad);
+  const pad=12,maxX=Math.max(pad,width-bw-pad);let chosen=null;
+  // Try scattered positions, then grow downward. Rotated bounding boxes reserve space.
+  for(let y=16;y<100000&&!chosen;y+=23){for(let k=0;k<9;k++){
+   const x=pad+((seed+k*97+i*43)%1000)/1000*Math.max(0,maxX-pad);
+   const candidate={x,y:y+(seed%29),w:bw,h:bh};
+   if(placed.every(p=>candidate.x+candidate.w+18<p.x||p.x+p.w+18<candidate.x||candidate.y+candidate.h+25<p.y||p.y+p.h+25<candidate.y)){chosen=candidate;break;}
+  }}
+  if(!chosen)chosen={x:pad,y:bottom+35,w:bw,h:bh};placed.push(chosen);bottom=Math.max(bottom,chosen.y+chosen.h);
+  el.style.left=(chosen.x+(bw-itemWidth)/2)+'px';el.style.top=(chosen.y+(bh-height)/2)+'px';
+ });wall.style.height=(bottom+35)+'px';
+}
+function render(){
+ const frag=document.createDocumentFragment();rows.forEach(row=>{const el=document.createElement('p'),seed=hash(row.id);el.className='chaos-entry '+(['','serif','gold','loud'][seed%4]);el.dataset.id=row.id;el.textContent=row.comment;frag.append(el);});wall.replaceChildren(frag);arrange();
+}
+async function load(){
+ if(loading)return;loading=true;more.disabled=true;
+ try{if(!db)throw Error();let query=db.from('guild_wall_posts').select('id,comment,published_at').eq('status','published').order('published_at',{ascending:false}).order('id',{ascending:false}).limit(60);
+ if(cursor)query=query.or('published_at.lt.'+cursor.published_at+',and(published_at.eq.'+cursor.published_at+',id.lt.'+cursor.id+')');
+ const {data,error}=await query;if(error)throw error;rows.push(...data);if(data.length)cursor=data[data.length-1];more.hidden=data.length<60;state.textContent=rows.length?'':'A beautifully empty wall. Someone has to start the chaos.';state.hidden=rows.length>0;render();
+ }catch{state.hidden=false;state.textContent='The wall could not load. Please refresh to try again.';}finally{loading=false;more.disabled=false;}
+}
+input.addEventListener('input',()=>document.getElementById('chaos-count').textContent=input.value.length+' / 600');
+form.addEventListener('submit',async event=>{
+ event.preventDefault();if(busy)return;const comment=input.value.trim();if(!comment){input.setCustomValidity('Write a comment first.');input.reportValidity();input.setCustomValidity('');return;}
+ busy=true;submit.disabled=true;feedback.textContent='Checking guild membership…';
+ try{
+  if(!db||!window.syndicateAuth)throw Error('The connection is unavailable. Please refresh.');
+  const {data,error}=await db.auth.getSession();if(error)throw Error('Please reconnect Discord.');const session=data.session;
+  if(!session){feedback.textContent='Sign in with Discord to submit. Your comment stays here.';await window.syndicateAuth.login();return;}
+  let token=session.provider_token;
+  if(!token){try{const saved=JSON.parse(sessionStorage.getItem('syndicate_discord_oauth')||'null');if(saved?.userId===session.user.id&&Date.now()-saved.savedAt<1800000)token=saved.token;}catch{}}
+  if(!token)throw Error('Please reconnect Discord using the account menu, then submit again.');
+  const result=await db.functions.invoke('wall-of-chaos',{body:{comment,discordAccessToken:token}});
+  if(result.error){let message='Submission failed. Your comment is still here. Please try again.';try{message=(await result.error.context.json()).error||message;}catch{}throw Error(message);}
+  if(result.data?.ok!==true)throw Error('Submission was not confirmed. Please try again.');
+  input.value='';input.dispatchEvent(new Event('input'));feedback.textContent='Chaos received! Your comment is waiting for officer review.';
+ }catch(error){feedback.textContent=error.message||'Submission failed. Please try again.';}finally{busy=false;submit.disabled=false;}
+});
+// Keep a draft through the Discord redirect, then remove it after a confirmed save.
+try{input.value=sessionStorage.getItem('syndicate_wall_draft')||'';input.dispatchEvent(new Event('input'));}catch{}
+input.addEventListener('input',()=>{try{sessionStorage.setItem('syndicate_wall_draft',input.value);}catch{}});
+more.addEventListener('click',load);new ResizeObserver(arrange).observe(wall);document.fonts.ready.then(arrange);load();
+});
+</script>
+</body>
+</html>
