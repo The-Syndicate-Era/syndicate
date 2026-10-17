@@ -85,7 +85,7 @@
   async function loginWithDiscord() {
     const { data, error } = await db.auth.signInWithOAuth({
       provider: 'discord',
-      options: { redirectTo: window.location.href, scopes: 'identify email guilds.members.read' }
+      options: { redirectTo: window.location.href, scopes: 'guilds.members.read' }
     });
     if (error) throw error;
     return { data, error: null };
