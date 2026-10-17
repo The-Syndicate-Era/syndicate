@@ -33,7 +33,7 @@
     <div id="submitNotice" class="status" hidden role="status" aria-live="polite"></div>
     <form id="rollForm" autocomplete="off">
       <div class="submit-fields">
-        <div class="field"><label class="label" for="characterType">Character type</label><select id="characterType"><option value="syndicate">The Syndicate character</option><option value="guest">Visiting / non-Syndicate character</option></select></div><div class="field" id="syndicateToonField"><label class="label" for="syndicateToon">Select your Syndicate character</label><select id="syndicateToon" required><option value="">Loading guild roster…</option></select></div><div class="field" id="guestToonField" hidden><label class="label" for="toonInput">Character name (exact)</label><input id="toonInput" maxlength="40" placeholder="Character who rolled" disabled></div>
+        <div class="field"><label class="label" for="characterType">Character type</label><select id="characterType"><option value="syndicate">The Syndicate character</option><option value="guest">Visiting / non-Syndicate character</option></select></div><div class="field" id="syndicateToonField"><label class="label" for="syndicateToon">Select your Syndicate character</label><input id="syndicateToon" type="text" list="syndicateToonOptions" maxlength="40" placeholder="Start typing your character name…" required autocomplete="off"><datalist id="syndicateToonOptions"></datalist></div><div class="field" id="guestToonField" hidden><label class="label" for="toonInput">Character name (exact)</label><input id="toonInput" maxlength="40" placeholder="Character who rolled" disabled></div>
         <div class="field"><label class="label" for="eventSelect">Raid within the last eight days</label><select id="eventSelect" required><option value="">Loading recent raids…</option></select></div>
         <div class="field"><label class="label" for="itemSelect">Soft reserved item</label><select id="itemSelect" required><option value="">Choose a raid first</option></select></div>
         <div class="field"><label class="label" for="outcomeSelect">Roll result</label><select id="outcomeSelect" required><option value="loss">Lost SR roll (+10 per loss)</option><option value="win">Won SR roll (resets item bonus immediately)</option></select></div>
@@ -41,7 +41,7 @@
       </div>
       <div id="guestStep" class="guest-step" hidden><h3>Visiting Raider Details</h3><p class="small">Use the exact character and realm that participated in the roll.</p><div class="field"><label class="label" for="guestRealm">Character realm / server</label><input id="guestRealm" maxlength="80" placeholder="e.g. Mankrik" disabled></div><div class="field"><label class="label" for="guestGuild">Your guild</label><select id="guestGuild"><option value="">Select your guild</option><option value="Balanced">Balanced</option><option value="VOID">VOID</option><option value="PUG">PUG / No guild</option><option value="Other">Other guild</option></select></div><div class="field" id="otherGuildField" hidden><label class="label" for="otherGuild">Guild name</label><input id="otherGuild" maxlength="100" placeholder="Enter guild name"></div></div>
       <p class="small">Reports remain pending until officer approval. Report only genuine rolls by the character named above. Duplicate submissions for the same raid, character, item, and outcome are blocked.</p>
-      <button class="btn primary" id="reportButton" type="submit">Submit for Officer Review</button>
+      <button class="btn primary" id="reportButton" type="submit">Submit Update</button>
     </form>
   </div>
 </section>
@@ -53,7 +53,7 @@
 <div class="nav-bottom"><button class="btn" id="prevBoss">← Previous Boss</button><button class="btn primary" id="nextBoss">Next Boss →</button></div>
 <div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Bonuses are shown by character, highest first. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
 </section>
-<section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon or item</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
+<section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
 </section>
 <div class="footer">◆ THIS IS THE WAY. ◆</div>
@@ -72,7 +72,27 @@ function selectedBoss(){return currentBosses().find(b=>String(b.id)===String(sta
 function switchRaid(code){state.raid=code;const bosses=currentBosses();state.bossId=bosses.length?bosses[0].id:null;populate($('bossSelect'),bosses.map(b=>[b.id,b.boss_name]),state.bossId);$('lootSearch').value='';renderLoot()}
 function switchBoss(id){state.bossId=id;$('bossSelect').value=String(id);$('lootSearch').value='';renderLoot()}
 function renderLoot(){const bosses=currentBosses(),boss=selectedBoss(),ix=bosses.findIndex(b=>String(b.id)===String(state.bossId));$('bossTitle').textContent=boss?boss.boss_name:'No bosses listed';$('bossCounter').textContent=boss?`${ix+1} of ${bosses.length}`:'';$('prevBoss').disabled=ix<=0;$('nextBoss').disabled=ix<0||ix===bosses.length-1;const grid=$('lootGrid');grid.replaceChildren();if(!boss){grid.append(el('div','empty','No boss information is available for this raid.'));return}const itemIds=new Set(state.links.filter(l=>String(l.boss_id)===String(boss.id)).map(l=>String(l.item_id)));const q=$('lootSearch').value.trim().toLowerCase();const rows=state.items.filter(i=>itemIds.has(String(i.id))&&state.bonuses.some(b=>String(b.item_id)===String(i.id)&&Number(b.current_bonus)>0)).sort((a,b)=>a.item_name.localeCompare(b.item_name));let visible=0;for(const item of rows){const rollers=state.bonuses.filter(b=>String(b.item_id)===String(item.id)&&Number(b.current_bonus)>0).sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));if(q&&!item.item_name.toLowerCase().includes(q)&&!rollers.some(r=>r.toon_name.toLowerCase().includes(q)))continue;visible++;const card=el('article','loot-card');const heading=el('div','item-title',item.item_name);card.append(heading);const meta=el('div','item-meta',[(item.equipment_slot||''),item.item_level!=null&&item.item_level>0?'iLvl '+item.item_level:''].filter(Boolean).join(' · '));if(item.reservation_status&&item.reservation_status!=='available')meta.append(el('span','pill',item.reservation_status.replaceAll('_',' ')));card.append(meta);const people=el('div','roller-list');if(rollers.length){for(const r of rollers){const line=el('div','roller');line.append(el('span','name',r.toon_name+(r.guild_name&&r.guild_name!=='The Syndicate'?' ('+r.guild_name+')':'')),el('span','bonus','+'+r.current_bonus));people.append(line)}}card.append(people);grid.append(card)}if(!visible)grid.append(el('div','empty',q?'No matching loot or rollers on this boss.':'No active Roll Bonuses on this boss.'))}
-function renderBalances(){const host=$('balanceRows');host.replaceChildren();const q=$('balanceSearch').value.trim().toLowerCase(),raid=$('balanceRaid').value;let permitted=null;if(raid){const bossIds=new Set(state.bosses.filter(b=>b.raid_code===raid).map(b=>String(b.id)));permitted=new Set(state.links.filter(l=>bossIds.has(String(l.boss_id))).map(l=>String(l.item_id)))}const active=state.bonuses.filter(b=>Number(b.current_bonus)>0&&(!permitted||permitted.has(String(b.item_id)))).filter(b=>[b.toon_name,b.guild_name,b.item_name].some(x=>String(x||'').toLowerCase().includes(q))).sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));for(const b of active){const tr=el('tr');for(const v of [b.toon_name,b.guild_name||'PUG / Unknown',b.item_name,'+'+b.current_bonus])tr.append(el('td','',v));host.append(tr)}if(!active.length){const tr=el('tr'),td=el('td','','No matching bonuses found for this raid or search.');td.colSpan=4;tr.append(td);host.append(tr)}}
+function raidCodesForItem(itemId){
+ const bossIds=new Set(state.links.filter(l=>String(l.item_id)===String(itemId)).map(l=>String(l.boss_id)));
+ const codes=[...new Set(state.bosses.filter(b=>bossIds.has(String(b.id))).map(b=>b.raid_code))];
+ const order=['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'];
+ return codes.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+}
+function renderBalances(){
+ const host=$('balanceRows');host.replaceChildren();
+ const q=$('balanceSearch').value.trim().toLowerCase(),raid=$('balanceRaid').value;
+ const active=state.bonuses.filter(b=>Number(b.current_bonus)>0)
+  .map(b=>({...b,associatedRaids:raidCodesForItem(b.item_id)}))
+  .filter(b=>(!raid||b.associatedRaids.includes(raid))&&
+   [b.toon_name,b.guild_name,b.item_name,b.associatedRaids.join(' ')].some(x=>String(x||'').toLowerCase().includes(q)))
+  .sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));
+ for(const b of active){
+  const tr=el('tr');
+  for(const v of [b.toon_name,b.guild_name||'PUG / Unknown',b.associatedRaids.join(', ')||'—',b.item_name,'+'+b.current_bonus])tr.append(el('td','',v));
+  host.append(tr);
+ }
+ if(!active.length){const tr=el('tr'),td=el('td','','No matching bonuses found for this raid or search.');td.colSpan=5;tr.append(td);host.append(tr)}
+}
 
 async function fetchAll(client,table,fields,sort='id'){let out=[];for(let from=0;from<20000;from+=1000){const {data,error}=await client.from(table).select(fields).order(sort,{ascending:true}).range(from,from+999);if(error)throw Error(table+': '+error.message);out.push(...(data||[]));if(!data||data.length<1000)return out}throw Error(table+': too many rows to load in one request')}
 async function load(){if(!window.syndicateDB){message('Shared Supabase connection did not load. Check settings/supabase-config.js.','error');return}try{const client=window.syndicateDB;state.client=client;const [bosses,items,links,bonuses]=await Promise.all([fetchAll(client,'raid_bosses','id,raid_code,boss_name,display_order,is_active'),fetchAll(client,'raid_items','id,item_name,equipment_slot,item_level,reservation_status,is_active'),fetchAll(client,'raid_boss_loot','id,boss_id,item_id'),fetchAll(client,'roll_bonus_public_totals','character_id,item_id,toon_name,guild_name,item_name,current_bonus','character_id')]);state.bosses=bosses.filter(b=>b.is_active!==false);state.items=items.filter(i=>i.is_active!==false);state.links=links;state.bonuses=bonuses;const raids=[...new Set(state.bosses.map(b=>b.raid_code))].sort((a,b)=>['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'].indexOf(a)-['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'].indexOf(b));populate($('balanceRaid'),[['','All Raids'],...raids.map(r=>[r,r])],'');populate($('raidSelect'),raids.map(r=>[r,r]),raids.includes('AQ40')?'AQ40':raids[0]);switchRaid($('raidSelect').value);renderBalances();loadRecentRaids();loadSyndicateRoster();message(`Loaded ${state.items.length} items, ${state.bosses.length} loot sources and ${state.bonuses.filter(b=>b.current_bonus>0).length} active character/item bonuses.`,'ok')}catch(err){message('Unable to load Supabase data: '+err.message+'. Check that the website read policies and roll_bonus_public_totals view are installed.','error');$('lootGrid').replaceChildren(el('div','empty','Could not load loot. See the error above.'))}}
@@ -107,10 +127,10 @@ async function loadSyndicateRoster(){
    state.roster=rows;
    const names=[...new Set(rows.map(r=>String(r.normalized_name||r.Name||'').trim()).filter(Boolean))]
      .sort((a,b)=>a.localeCompare(b));
-   populate($('syndicateToon'),[['','Select the character who rolled'],...names.map(n=>[n,n])],'');
+   const options=$('syndicateToonOptions');options.replaceChildren();for(const name of names){const option=document.createElement('option');option.value=name;options.append(option)}
  } catch(err){
    console.error('Guild roster selection failed:',err);
-   populate($('syndicateToon'),[['','Guild roster unavailable — try again later']],'');
+   $('syndicateToonOptions').replaceChildren();
    submissionMessage('Could not load the guild roster: '+err.message,'error');
  }
 }
@@ -126,7 +146,7 @@ function updateCharacterType(){
  $('guestRealm').required=guest;
  $('guestRealm').disabled=!guest;
  $('guestGuild').required=guest;
- $('reportButton').textContent='Submit for Officer Review';
+ $('reportButton').textContent='Submit Update';
  submissionMessage('');
 }
 $('characterType').addEventListener('change',updateCharacterType);
@@ -147,7 +167,7 @@ $('rollForm').addEventListener('submit',async e=>{
  const guildContext=guest?`${guild} [Realm: ${realm}]`:null;
  const btn=$('reportButton');btn.disabled=true;
  try{
-   if(!guest){const {data,error}=await state.client.rpc('roll_bonus_check_roster',{p_toon_name:name});if(error)throw Error(error.message);if(!data)throw Error('The selected character is not recognized on the guild roster. Please contact an officer.');}
+   if(!guest){const rosterMatch=state.roster.some(r=>String(r.normalized_name||r.Name||'').trim().toLowerCase()===name.toLowerCase());if(!rosterMatch)throw Error('Please choose an exact character name from the guild roster suggestions.');const {data,error}=await state.client.rpc('roll_bonus_check_roster',{p_toon_name:name});if(error)throw Error(error.message);if(!data)throw Error('The selected character is not recognized on the guild roster. Please contact an officer.');}
    const {data,error}=await state.client.rpc('roll_bonus_submit',{
      p_toon_name:name,p_event_id:Number($('eventSelect').value),p_item_id:Number($('itemSelect').value),
      p_result:$('outcomeSelect').value,p_roll_count:Number($('countInput').value),p_guild_name:guildContext
