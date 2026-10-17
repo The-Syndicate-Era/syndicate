@@ -14,6 +14,7 @@
   const menuItems = [
     ['HOME', 'index.html'],
     ['The Syndicate', 'guild.html'],
+    ['GUILD BANK & DONATIONS', 'guild/guild-bank-needs.html'],
     ['CALENDAR', 'calendar.html'],
     ['RAID HUB', 'raid-hub.html'],
     ['RESOURCES', 'resources.html']
