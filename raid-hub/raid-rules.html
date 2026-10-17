@@ -192,7 +192,7 @@
             .order('sort_order', { ascending: true })
             .order('id', { ascending: true });
           if (error) throw error;
-          const rows = data || [];
+          const rows = (data || []).filter(row => !(row.slug === 'guild-bank-needs' || String(row.slug || '').startsWith('guild-needs-') || String(row.section_title || '').trim().toLowerCase() === 'guild bank needs'));
           if (!rows.length) {
             setStatus('No raid rules have been published yet. Please check back soon.');
             return;
