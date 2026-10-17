@@ -81,6 +81,15 @@
       .calendar-controls:first-child {grid-row:2;grid-column:1;}
       .calendar-controls:last-child {grid-row:2;grid-column:2;}
     }
+    .calendar-timezone-note {
+  padding: 0.65rem 1rem;
+  text-align: center;
+  color: var(--calendar-gold);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: rgba(212, 175, 55, 0.04);
+  border-bottom: 1px solid var(--calendar-line);
+}
   </style>
 </head>
 <body>
@@ -99,6 +108,9 @@
           <h2 id="calendarTitle" aria-live="polite">Calendar</h2>
           <div class="calendar-controls"><button type="button" class="calendar-button" id="todayButton">Today</button><button type="button" class="calendar-button" id="nextMonth" aria-label="Next month">›</button></div>
         </div>
+      <div class="calendar-timezone-note">
+  ◷ All event times are displayed in Server Time (ST).
+</div>
         <p class="calendar-mobile-hint">Scroll sideways to view all seven days of the week →</p>
         <div class="calendar-scroll" tabindex="0" aria-label="Scrollable calendar days">
           <div class="calendar-table">
