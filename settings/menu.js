@@ -12,12 +12,12 @@
   const url = path => new URL(path, root).href;
 
   const menuItems = [
-    ['HOME', 'index.html'],
+    ['Home', 'index.html'],
     ['The Syndicate', 'guild.html'],
-    ['GUILD BANK & DONATIONS', 'guild/guild-bank-needs.html'],
-    ['CALENDAR', 'calendar.html'],
-    ['RAID HUB', 'raid-hub.html'],
-    ['RESOURCES', 'resources.html']
+    ['Guild Bank & Donations', 'guild/guild-bank-needs.html'],
+    ['Calendar', 'calendar.html'],
+    ['Raid Hub', 'raid-hub.html'],
+    ['Resources', 'resources.html']
   ];
 
   function render() {
