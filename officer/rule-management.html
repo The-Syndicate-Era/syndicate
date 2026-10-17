@@ -102,12 +102,13 @@ html.syn-access-pending .wrap { display: none !important; }
 
 <div class="workspace-tabs" role="tablist" aria-label="Management area">
 <button class="btn primary" id="rulesTab" role="tab" aria-controls="manager" aria-selected="true">Guild Rules</button>
-<button class="btn" id="addonsTab" role="tab" aria-controls="addonsManager" aria-selected="false">Add-on Management</button>
+<button class="btn" id="guildNeedsTab" role="tab" aria-controls="manager" aria-selected="false">Guild Needs</button>
+ <button class="btn" id="addonsTab" role="tab" aria-controls="addonsManager" aria-selected="false">Add-on Management</button>
 </div>
 <div id="manager" role="tabpanel">
 <div class="bar"><div><strong>Officer workspace</strong><div class="meta">Save drafts and publish sections when ready.</div></div><div class="actions"><button id="refresh" class="btn">Refresh</button></div></div>
 <div class="layout">
-<aside class="panel sidebar"><div class="section-top"><h2>Categories</h2><span id="count" class="meta"></span></div><div id="sectionList" class="section-list"></div><hr class="divider"><button class="btn" id="addCategory">+ Add Category</button><p class="help">Select a category to edit. Publish only when the section is ready for guild members.</p></aside>
+<aside class="panel sidebar"><div class="section-top"><h2>Categories</h2><span id="count" class="meta"></span></div><div id="sectionList" class="section-list"></div><hr class="divider"><button class="btn" id="addCategory">+ Add Category</button><button class="btn danger" id="deleteCategory" type="button" hidden>Delete Selected Category</button><p class="help">Select a category to edit. Publish only when the section is ready for guild members.</p></aside>
 <section class="panel editor">
 <div id="emptyEditor" class="meta">Select a category to begin editing.</div>
 <div id="editArea" hidden><div class="section-top"><div><h2 id="sectionHeading"></h2><div id="sectionMeta" class="meta"></div></div><span id="publishedBadge" class="pill"></span></div>
@@ -170,7 +171,10 @@ html.syn-access-pending .wrap { display: none !important; }
 const TABLE='raid_rules';
 const $=id=>document.getElementById(id);
 let db = null;
-let rows=[],selectedId=null,dirty=false,version='draft';
+let rows=[],selectedId=null,dirty=false,version='draft', currentArea='rules';
+// Slug identity is stable even if the display title changes. Existing bank category is recognized.
+const isGuildNeeds = r => r.slug === 'guild-bank-needs' || String(r.slug || '').startsWith('guild-needs-') || String(r.section_title || '').trim().toLowerCase() === 'guild bank needs';
+const visibleRows = () => rows.filter(r => isGuildNeeds(r) === (currentArea === 'needs'));
 const quill=window.Quill?new Quill('#content',{
  theme:'snow',placeholder:'Write guild rules and guidelines here...',
  modules:{toolbar:[[{header:[2,3,false]}],['bold','italic','underline','strike'],[{list:'ordered'},{list:'bullet'}],[{indent:'-1'},{indent:'+1'}],['link','blockquote'],['clean']]}
@@ -187,8 +191,8 @@ function protectChange(){return !dirty||confirm('You have unsaved changes. Disca
 function draft(){return {section_title:$('sectionTitle').value.trim(),sort_order:Number($('sortOrder').value)||0,draft_description:$('description').value,draft_content:richValue()}}
 async function start(){if(!quill||!window.DOMPurify){msg('Rich text editor or sanitizer did not load. Refresh the page.','error');return}if(!db){msg('Supabase is not connected. Check ../settings/supabase-config.js and the Supabase library.','error');return}await loadSections()}
 $('refresh').onclick=async()=>{if(!protectChange())return;await loadSections()};
-async function loadSections(){clearMsg();const {data,error}=await db.from(TABLE).select('id,section_title,slug,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').is('raid_key',null).order('sort_order',{ascending:true}).order('id',{ascending:true});if(error){msg('Unable to load editor categories: '+error.message+'. Check Supabase read policies for this page.','error');return}rows=data||[];if(!rows.some(r=>String(r.id)===String(selectedId)))selectedId=rows[0]?.id??null;renderList();renderEditor();setDirty(false)}
-function renderList(){const list=$('sectionList');list.replaceChildren();$('count').textContent=rows.length+' sections';for(const r of rows){const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(selectedId)?' active':'');const left=document.createElement('span');const number=document.createElement('span');number.className='number';number.textContent=String(r.sort_order).padStart(2,'0');left.append(number,document.createTextNode(' '+r.section_title));const badge=document.createElement('span');badge.className='pill'+(r.is_published?' live':'');badge.textContent=r.is_published?'Live':'Draft';b.append(left,badge);b.onclick=()=>{if(!protectChange())return;selectedId=r.id;renderList();renderEditor();setDirty(false)};list.append(b)}}
+async function loadSections(){clearMsg();const {data,error}=await db.from(TABLE).select('id,section_title,slug,sort_order,draft_description,draft_content,published_description,published_content,is_published,updated_at').is('raid_key',null).order('sort_order',{ascending:true}).order('id',{ascending:true});if(error){msg('Unable to load editor categories: '+error.message+'. Check Supabase read policies for this page.','error');return}rows=data||[];if(!visibleRows().some(r=>String(r.id)===String(selectedId)))selectedId=visibleRows()[0]?.id??null;renderList();renderEditor();setDirty(false)}
+function renderList(){const list=$('sectionList');list.replaceChildren();$('count').textContent=visibleRows().length+' sections';for(const r of visibleRows()){const b=document.createElement('button');b.type='button';b.className='section-item'+(String(r.id)===String(selectedId)?' active':'');const left=document.createElement('span');const number=document.createElement('span');number.className='number';number.textContent=String(r.sort_order).padStart(2,'0');left.append(number,document.createTextNode(' '+r.section_title));const badge=document.createElement('span');badge.className='pill'+(r.is_published?' live':'');badge.textContent=r.is_published?'Live':'Draft';b.append(left,badge);b.onclick=()=>{if(!protectChange())return;selectedId=r.id;renderList();renderEditor();setDirty(false)};list.append(b)}}
 function renderEditor(){
  const r=selected();$('emptyEditor').hidden=!!r;$('editArea').hidden=!r;if(!r)return;
  $('sectionHeading').textContent=r.section_title;
@@ -201,7 +205,7 @@ function renderEditor(){
  $('publishedTitle').textContent=r.section_title;
  $('publishedDesc').textContent=r.published_description||'';
  $('publishedText').innerHTML=safeHtml(r.published_content||'')||'<p class="muted">No published content yet.</p>';
- $('previewRegion').hidden=true;$('unpublishBtn').disabled=!r.is_published;
+ $('previewRegion').hidden=true;$('unpublishBtn').disabled=!r.is_published;$('deleteCategory').hidden=currentArea!=='needs';
  showVersion(version);
 }
 function showVersion(next){
@@ -236,7 +240,8 @@ $('closePreview').onclick=()=>{$('previewRegion').hidden=true};
 $('publishBtn').onclick=async()=>{const r=selected();if(!r)return;if(!draft().section_title)return msg('Enter a title before publishing.','error');if(!confirm('Publish this section? Any public page reading this category will show the new version.'))return;const values=draft();const payload={...values,published_description:values.draft_description,published_content:values.draft_content,is_published:true};const {data,error}=await db.from(TABLE).update(payload).eq('id',r.id).select('id');if(error||!data?.length)return msg('Publish failed: '+(error?.message||'no rows updated; check permissions'),'error');await loadSections();showVersion('published');msg('Section published. Public readers will see the updated published content.','success')};
 $('unpublishBtn').onclick=async()=>{const r=selected();if(!r||!confirm('Unpublish this section from public rule pages?'))return;const {error}=await db.from(TABLE).update({is_published:false}).eq('id',r.id);if(error)return msg('Unpublish failed: '+error.message,'error');await loadSections();msg('Section unpublished.','success')};
 function makeSlug(title){return title.toLowerCase().normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')}
-$('addCategory').onclick=async()=>{if(!protectChange())return;const name=prompt('New guild rules category name:');if(name===null)return;const title=name.trim();if(!title)return;const slug=makeSlug(title);if(!slug)return msg('Enter a title containing letters or numbers.','error');const order=rows.reduce((m,r)=>Math.max(m,Number(r.sort_order)||0),0)+1;const {data,error}=await db.from(TABLE).insert({section_title:title,slug,sort_order:order}).select('id').single();if(error)return msg('Could not add category: '+error.message,'error');selectedId=data.id;await loadSections();msg('Category added as an unpublished draft.','success')};
+$('addCategory').onclick=async()=>{if(!protectChange())return;const name=prompt(currentArea==='needs'?'New guild needs category name:':'New guild rules category name:');if(name===null)return;const title=name.trim();if(!title)return;const baseSlug=makeSlug(title);const slug=currentArea==='needs'?'guild-needs-'+baseSlug:baseSlug;if(!baseSlug)return msg('Enter a title containing letters or numbers.','error');const order=visibleRows().reduce((m,r)=>Math.max(m,Number(r.sort_order)||0),0)+1;const {data,error}=await db.from(TABLE).insert({section_title:title,slug,sort_order:order}).select('id').single();if(error)return msg('Could not add category: '+error.message,'error');selectedId=data.id;await loadSections();msg('Category added as an unpublished draft.','success')};
+$('deleteCategory').onclick=async()=>{if(currentArea!=='needs'||!protectChange())return;const r=selected();if(!r)return;if(!confirm('Permanently delete '+r.section_title+'? Both draft and published content will be lost. Use Unpublish instead to hide it without deleting.'))return;const {data,error}=await db.from(TABLE).delete().eq('id',r.id).select('id');if(error||!data?.length)return msg('Delete failed: '+(error?.message||'no rows deleted; check Supabase DELETE permissions'),'error');selectedId=null;await loadSections();msg('Guild Needs category deleted.','success')};
 window.addEventListener('beforeunload',e=>{if(dirty){e.preventDefault();e.returnValue=''}});
 
 /* ========================= ADD-ON MANAGEMENT ========================= */
@@ -247,14 +252,24 @@ const addon$ = id => document.getElementById(id);
 function addonNotice(text,type=''){const n=addon$('addonMessage');n.textContent=text;n.className='note '+type;n.hidden=false}
 function addonClearNotice(){addon$('addonMessage').hidden=true}
 function addonConfirmDiscard(){return !addonDirty || confirm('Discard unsaved add-on changes?')}
-addon$('rulesTab').onclick=()=>addonShowTab('rules');
-addon$('addonsTab').onclick=()=>addonShowTab('addons');
-async function addonShowTab(tab){
- if(tab==='rules'&&!addonConfirmDiscard())return;
- const addons=tab==='addons';addon$('manager').hidden=addons;addon$('addonsManager').hidden=!addons;
- addon$('rulesTab').classList.toggle('primary',!addons);addon$('addonsTab').classList.toggle('primary',addons);
- addon$('rulesTab').setAttribute('aria-selected',String(!addons));addon$('addonsTab').setAttribute('aria-selected',String(addons));
- if(addons)await addonLoad();
+addon$('rulesTab').onclick=()=>showManagementTab('rules');
+addon$('guildNeedsTab').onclick=()=>showManagementTab('needs');
+addon$('addonsTab').onclick=()=>showManagementTab('addons');
+async function showManagementTab(tab){
+ if((tab!=='addons' && !addonConfirmDiscard()) || (tab!==currentArea && currentArea!=='addons' && !protectChange()))return;
+ const addons=tab==='addons';
+ addon$('manager').hidden=addons;
+ addon$('addonsManager').hidden=!addons;
+ for(const [id,area] of [['rulesTab','rules'],['guildNeedsTab','needs'],['addonsTab','addons']]){
+  addon$(id).classList.toggle('primary',tab===area);
+  addon$(id).setAttribute('aria-selected',String(tab===area));
+ }
+ if(addons){await addonLoad();return;}
+ if(currentArea!==tab){currentArea=tab;selectedId=null;version='draft';}
+ $('message').hidden=true;
+ await loadSections();
+ $('addCategory').textContent=tab==='needs'?'+ Add Guild Needs Category':'+ Add Category';
+ $('rulesLabel').textContent=tab==='needs'?'Guild needs and donation information':'Rules and guidelines';
 }
 async function addonLoad(){
  addonClearNotice();
