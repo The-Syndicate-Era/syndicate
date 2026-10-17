@@ -1,84 +1,72 @@
-
 /* =========================================
    THE SYNDICATE
    SITE-WIDE FONT SETTINGS
    ========================================= */
+(() => {
+  'use strict';
 
-(function () {
-  const STORAGE_KEY = "syndicate-font-scale";
-
+  const STORAGE_KEY = 'syndicate-font-scale';
   const sizes = {
-    standard: "1",
-    large: "1.15",
-    extra: "1.3"
+    standard: 1,
+    large: 1.15,
+    extra: 1.3
   };
 
-  function setFontSize(size) {
-    if (!sizes[size]) {
-      size = "standard";
-    }
+  function setFontSize(requestedSize) {
+    const size = Object.hasOwn(sizes, requestedSize) ? requestedSize : 'standard';
+    const scale = sizes[size];
 
-    document.documentElement.style.setProperty(
-      "--font-scale",
-      sizes[size]
-    );
+    // Retain compatibility with styles that explicitly use --font-scale.
+    document.documentElement.style.setProperty('--font-scale', String(scale));
+
+    // Scale the root font size so all rem-based text changes too.
+    // The !important priority prevents page-specific root styles from overriding it.
+    document.documentElement.style.setProperty('font-size', `${scale * 100}%`, 'important');
 
     try {
       localStorage.setItem(STORAGE_KEY, size);
-    } catch (error) {
-      // Font controls still work if storage is unavailable.
+    } catch (_) {
+      // Controls continue to work without storage.
     }
 
-    document.querySelectorAll(".font-size-btn")
-      .forEach(button => {
-        const active = button.dataset.size === size;
-        button.classList.toggle("active", active);
-        button.setAttribute("aria-pressed", String(active));
-      });
+    document.querySelectorAll('#syndicate-font-controls .font-size-btn').forEach(button => {
+      const active = button.dataset.size === size;
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-pressed', String(active));
+    });
   }
 
   function createFontControls() {
-    if (document.getElementById("syndicate-font-controls")) {
-      return;
-    }
+    if (document.getElementById('syndicate-font-controls')) return;
 
-    const controls = document.createElement("div");
-    controls.id = "syndicate-font-controls";
-    controls.className = "font-controls";
-
+    const controls = document.createElement('div');
+    controls.id = 'syndicate-font-controls';
+    controls.className = 'font-controls';
+    controls.setAttribute('role', 'group');
+    controls.setAttribute('aria-label', 'Text size');
     controls.innerHTML = `
       <span class="font-controls-label">Text Size</span>
-      <button class="font-size-btn" data-size="standard">A</button>
-      <button class="font-size-btn" data-size="large">A+</button>
-      <button class="font-size-btn" data-size="extra">A++</button>
+      <button type="button" class="font-size-btn" data-size="standard" aria-label="Standard text size">A</button>
+      <button type="button" class="font-size-btn" data-size="large" aria-label="Large text size">A+</button>
+      <button type="button" class="font-size-btn" data-size="extra" aria-label="Extra large text size">A++</button>
     `;
-
     document.body.appendChild(controls);
-
-    controls.querySelectorAll(".font-size-btn")
-      .forEach(button => {
-        button.addEventListener("click", () => {
-          setFontSize(button.dataset.size);
-        });
-      });
+    controls.querySelectorAll('.font-size-btn').forEach(button => {
+      button.addEventListener('click', () => setFontSize(button.dataset.size));
+    });
   }
 
   function initialize() {
     createFontControls();
-
-    let savedSize = "standard";
-
+    let savedSize = 'standard';
     try {
-      savedSize = localStorage.getItem(STORAGE_KEY) || "standard";
-    } catch (error) {
-      // Default to standard if browser storage is unavailable.
-    }
-
+      savedSize = localStorage.getItem(STORAGE_KEY) || 'standard';
+    } catch (_) {}
     setFontSize(savedSize);
   }
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", initialize);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initialize, { once: true });
   } else {
     initialize();
   }
