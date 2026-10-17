@@ -9,7 +9,7 @@
 
   const script = document.currentScript;
   const siteRoot = new URL('../', script.src);
-  const homeURL = new URL('index.html', siteRoot).href;
+  const homeURL = new URL('index.html', siteRoot);
 
   const RETURN_KEY = 'syndicate_return_to';
 
@@ -89,7 +89,7 @@
 
     button.addEventListener('click', async () => {
       if (action === 'home') {
-        window.location.replace(homeURL);
+        window.location.replace(homeURL.href);
         return;
       }
 
@@ -162,7 +162,7 @@ console.log('Page guard verification result:', result);
 
       if (result?.status === 'logged_out') {
         rememberDestination();
-        window.location.replace(homeURL);
+        window.location.replace(homeURL.href);
         return;
       }
 
