@@ -37,6 +37,10 @@
     .bank-copy.ql-editor a{color:#eac767;text-decoration:underline}
     .bank-copy.ql-editor strong{color:#f2e4c6}
     .bank-extra{grid-column:2}
+    .bank-donation-policy { max-width:100%; margin:2rem 0 0; padding:1.5rem clamp(1.1rem,3vw,2rem); border:1px solid var(--bank-line); border-radius:9px; background:#12100d; color:var(--bank-copy); line-height:1.8; }
+    .bank-donation-policy p { margin:0 0 .9rem; }
+    .bank-donation-policy p:last-child {margin-bottom:0;}
+    .bank-donation-policy strong { color:#e8c15c; }
     .bank-footer {text-align:center;border-top:1px solid var(--bank-line);margin-top:2.5rem;padding:2rem .5rem .5rem;display:grid;gap:.35rem}
     .bank-footer strong{font:500 clamp(1.3rem,2.3vw,1.65rem) var(--font-heading,Georgia,serif);color:#e7c15b}
     .bank-footer span{color:var(--bank-muted)} .bank-footer small{color:#9e8551;margin-top:.8rem;letter-spacing:.14em}
@@ -53,6 +57,11 @@
     <p class="bank-description">Helping keep our guild thriving. Every contribution counts!</p>
     <div id="bankStatus" class="bank-status" role="status" aria-live="polite">Loading guild bank information…</div>
     <div id="bankGrid" class="bank-grid" aria-label="Guild bankers and donation needs"></div>
+    <section class="bank-donation-policy" aria-label="Guild Bank donation guidelines">
+      <p>Guild Bank needs change over time, but certain materials are always appreciated! Donations help support guild crafting, consumables, raid preparation, and fellow Syndicate members.</p>
+      <p>All donations become Guild Bank resources and will be distributed where they best support <strong>The Syndicate as a whole.</strong></p>
+      <p>Donations are always appreciated, never required. Thank you for helping keep the guild stocked!</p>
+    </section>
     <footer class="bank-footer"><strong>Every little bit helps.</strong><span>Donations are always appreciated, never required.</span><small>◆ THIS IS THE WAY ◆</small></footer>
   </main>
   <div id="syndicate-footer"></div>
@@ -66,11 +75,25 @@
     const bankerCategory=row=>String(row.section_title||'').trim().toLowerCase()==='guild bankers' || ['guild-needs-guild-bankers','guild-needs-bankers'].includes(row.slug);
     function fail(message){status.textContent=message;status.classList.add('error');status.hidden=false;}
     function richHtml(value){return window.DOMPurify.sanitize(String(value||''),{ALLOWED_TAGS:['p','br','strong','b','em','i','u','s','h2','h3','ul','ol','li','a','blockquote','span'],ALLOWED_ATTR:['href','target','rel','class','data-list'],ALLOW_DATA_ATTR:false});}
+    // The guild-wide donation guidelines live beneath BOTH columns, not inside
+    // the Guild Bank Needs panel. Hide any older copies still saved in Supabase.
+    const donationStarts=[
+      'guild bank needs change over time',
+      'all donations become guild bank resources',
+      'donations are always appreciated, never required'
+    ];
+    function removeDuplicateDonationText(panel){
+      for(const el of [...panel.querySelectorAll('p,li')]){
+        const value=(el.textContent||'').trim().toLowerCase();
+        if(donationStarts.some(start=>value.startsWith(start)))el.remove();
+      }
+    }
     function makePanel(row,extra){
       const article=document.createElement('section'); article.className='bank-panel'+(extra?' bank-extra':'');
       const heading=document.createElement('h2');heading.textContent=row.section_title||'Guild Needs';article.appendChild(heading);
       if(row.published_description){const desc=document.createElement('p');desc.className='bank-section-desc';desc.textContent=row.published_description;article.appendChild(desc);}
       if(row.published_content){const content=document.createElement('div');content.className='bank-copy ql-editor';const raw=String(row.published_content);if(/^\s*</.test(raw)){content.innerHTML=richHtml(raw)}else{raw.split(/\n\s*\n/).filter(Boolean).forEach(part=>{const p=document.createElement('p');p.textContent=part;content.appendChild(p)})}article.appendChild(content)}
+      removeDuplicateDonationText(article);
       return article;
     }
     async function load(){
