@@ -82,7 +82,7 @@
         }
         button.disabled = true;
         button.textContent = 'VERIFYING...';
-        await checkOfficerAccess();
+        await if (document.readyState === 'loading') {   document.addEventListener(     'DOMContentLoaded',     checkOfficerAccess,     { once: true }   ); } else {   checkOfficerAccess(); }
       });
 
 panel.append(heading, description, motto, button);
