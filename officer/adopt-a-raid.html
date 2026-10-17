@@ -55,13 +55,20 @@ html.syn-access-pending #dayModal {
   margin: 3rem auto;
 }
 
+
+/* Officer Hub navigation: visible, clickable link above the hero. */
+.raid-back-row { max-width:1260px; margin:0 auto; padding:1rem 18px .35rem; position:relative; z-index:2; }
+.raid-back-link { display:inline-flex; align-items:center; min-height:42px; padding:.55rem .9rem; color:var(--bright); background:#211b13; border:1px solid var(--gold); border-radius:8px; font-weight:600; text-decoration:none; }
+.raid-back-link:hover, .raid-back-link:focus-visible { background:#3a2c1b; color:#fff1cc; outline-offset:3px; }
+html.syn-access-pending .raid-back-row { display:none!important; }
  </style>
 </head>
 <body>
 
   <div id="syndicate-menu"></div>
-  <main class="roster-shell">
-    <a class="back-link" href="officer-hub.html">← Officer Hub</a>
+  <div class="raid-back-row">
+    <a class="raid-back-link" href="./officer-hub.html">← Back to Officer Hub</a>
+  </div>
  
  <section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Operations</div><h1>Raid Responsibilities</h1><p>A simple place for officers to volunteer as Raid Lead or Master Looter, and let the crew know when they're available.</p></div></section>
 <main class="wrap">
