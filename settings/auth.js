@@ -121,33 +121,77 @@
     try {
       const { data, error } = await db.functions.invoke('verify-syndicate-member', {
         body: { discordAccessToken: token }
-      });
-      if (error) {
-        const status = error?.context?.status;
-        console.warn('Discord verification request failed; HTTP status:', status || 'unknown');
-        if (status === 429 || data?.status === 'rate_limited') {
-          startCooldown();
-          return { verified: false, status: 'rate_limited' };
-        }
-        if (status === 401 || data?.status === 'reconnect_required')
-          return { verified: false, status: 'reconnect_required' };
-        return { verified: false, status: 'verification_failed' };
-      }
-      if (data?.verified === true && data?.status === 'member') {
-        const result = {
-          verified: true, status: 'member', isOfficer: data.isOfficer === true,
-          checkedAt: data.checkedAt
+async function performVerification(session, userId) {
+  try {
+    const { data, error } = await db.functions.invoke(
+      'verify-syndicate-member'
+    );
+
+    if (error) {
+      const status = error?.context?.status;
+
+      console.warn(
+        'Discord verification failed:',
+        status || 'unknown'
+      );
+
+      if (status === 429) {
+        startCooldown();
+
+        return {
+          verified: false,
+          status: 'rate_limited'
         };
-        setVerified(userId, result);
-        return result;
       }
-      if (data?.status === 'rate_limited') startCooldown();
-      return { verified: false, status: data?.status || 'verification_failed' };
-    } catch (error) {
-      console.warn('Membership verification request could not complete:', error);
-      return { verified: false, status: 'verification_failed' };
+
+      if (status === 401) {
+        return {
+          verified: false,
+          status: 'logged_out'
+        };
+      }
+
+      return {
+        verified: false,
+        status: 'verification_failed'
+      };
     }
+
+    if (
+      data?.verified === true &&
+      data?.status === 'member'
+    ) {
+      const result = {
+        verified: true,
+        status: 'member',
+        isOfficer: data.isOfficer === true,
+        isGuildMember: data.isGuildMember === true,
+        checkedAt: data.checkedAt
+      };
+
+      setVerified(userId, result);
+
+      return result;
+    }
+
+    if (data?.status === 'rate_limited') {
+      startCooldown();
+    }
+
+    return {
+      verified: false,
+      status: data?.status || 'verification_failed'
+    };
+
+  } catch (error) {
+    console.warn('Membership verification failed:', error);
+
+    return {
+      verified: false,
+      status: 'verification_failed'
+    };
   }
+}
 
   async function verifyMembership(options = {}) {
     // Intentionally reuse a recent successful result even if legacy callers use force:true.
