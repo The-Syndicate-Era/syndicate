@@ -189,13 +189,24 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 @media(max-width:550px){#lootView .boss-nav-standalone{gap:5px;padding:8px 5px}#lootView .boss-nav{font-size:calc(12px * var(--roll-font-scale));padding:7px 5px}#lootView .boss-title-group h2{white-space:normal;font-size:calc(15px * var(--roll-font-scale))}}
 /* SoftRes display options and status indicators */
 #lootView .softres-display-options{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 0 4px}
-#lootView .softres-display-options>.label{margin-right:3px}
-#lootView .softres-display-options .class-toggle{padding:3px 0;white-space:normal}
+#lootView .softres-display-options>.label{margin-right:3px;white-space:nowrap}
+#lootView .softres-display-options .class-toggle{display:inline-flex;align-items:center;gap:7px;margin:0;line-height:1.3}
+#lootView .softres-display-options .class-toggle input{margin:0;flex:none;accent-color:var(--gold)}
+#lootView .softres-display-options .class-toggle:has(input:disabled){opacity:.55;cursor:not-allowed}
+#lootView .softres-display-options .class-toggle{padding:3px 0;white-space:nowrap}
 #lootView .sr-marker{display:inline-flex;width:17px;min-width:17px;justify-content:center;margin-right:6px;font-weight:800;font-size:calc(13px * var(--roll-font-scale))}
 #lootView .sr-yes{color:var(--green)}
 #lootView .sr-no{color:#908780}
 #lootView .roller.not-reserved .roller-name{opacity:.65}
 #lootView .roller.not-reserved .bonus{opacity:.75}
+
+/* Compact controls: search stays visible when Settings is collapsed. */
+#lootView .loot-settings-head{display:flex;align-items:flex-end;gap:10px;flex-wrap:nowrap;margin-bottom:10px}
+#lootView .loot-settings-head #toggleLootSettings{flex:none;align-self:flex-end;padding:9px 11px;min-height:42px;font-size:calc(13px * var(--roll-font-scale));white-space:nowrap}
+#lootView .loot-search-always{flex:1;min-width:0;gap:4px}
+#lootView .loot-search-always input{width:100%;max-width:none;min-height:42px}
+#lootView .loot-search-always .label{font-size:calc(10px * var(--roll-font-scale))}
+@media(max-width:500px){#lootView .loot-settings-head{gap:7px}#lootView .loot-settings-head #toggleLootSettings{padding:9px 8px;font-size:calc(12px * var(--roll-font-scale))}#lootView .loot-search-always input{padding:9px 8px}}
 </style>
 </head>
 <body>
@@ -253,21 +264,17 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 <section id="lootView" hidden>
 <div class="loot-settings-head">
   <button type="button" class="btn" id="toggleLootSettings" aria-expanded="true" aria-controls="lootSettings">⚙ Settings <span id="filterActiveMark" hidden>· SoftRes active</span> <span id="settingsArrow">▴</span></button>
-  <span class="small" id="lootDisplayStatus">Configure your raid, search, and optional SoftRes filter.</span>
+  <div class="field loot-search-always"><label class="label" for="lootSearch">Find loot or character</label><input type="search" id="lootSearch" placeholder="Search all bosses in this raid…" autocomplete="off"></div>
 </div>
 <div class="loot-control-panel" id="lootSettings">
   <div class="loot-select-row">
     <div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div>
     <div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div>
   </div>
-  <div class="loot-find-row">
-    <div class="field"><label class="label" for="lootSearch">Find loot or character</label><input type="search" id="lootSearch" placeholder="Search all bosses in this raid…" autocomplete="off"></div>
-
-  </div>
   <div class="softres-display-options" aria-label="Display options">
     <span class="label">Display Options</span>
     <label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked> Show WoW class colors</label>
-    <label class="class-toggle" id="hideInactiveSrWrap" hidden><input type="checkbox" id="hideInactiveSr" checked> Hide items with no active SR bonuses</label>
+    <label class="class-toggle" id="hideInactiveSrWrap"><input type="checkbox" id="hideInactiveSr" checked disabled> Hide items with no active SR bonuses</label>
   </div>
   <div class="softres-actions">
     <button type="button" class="btn" id="openSoftres">Import SoftRes</button>
@@ -397,7 +404,7 @@ function applySoftresCsv(){
   softresItemNames=names;
   softresReserversByItem=reservations;
   softresImportedRows=importedRows;
-  $('hideInactiveSrWrap').hidden=false;
+  $('hideInactiveSr').disabled=false;
   $('hideInactiveSr').checked=true;
   $('softresCsv').value=''; // discard raw CSV, including Discord IDs
   $('softresPaste').hidden=true;
@@ -413,7 +420,7 @@ function clearSoftresFilter(){
  softresItemNames=null;
  softresReserversByItem=new Map();
  softresImportedRows=new Map();
- $('hideInactiveSrWrap').hidden=true;
+ $('hideInactiveSr').disabled=true;
  $('hideInactiveSr').checked=true;
  $('softresCsv').value='';$('softresError').textContent='';$('softresPaste').hidden=true;
  $('clearSoftres').hidden=true;$('filterActiveMark').hidden=true;
