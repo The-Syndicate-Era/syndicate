@@ -99,6 +99,39 @@ body{font-size:calc(14px * var(--roll-font-scale))}
 @media(max-width:950px){#lootView .loot-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}#lootView .loot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:650px){#lootView .loot-toolbar{grid-template-columns:1fr}#lootView .loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:470px){#lootView .loot-grid{grid-template-columns:1fr}}
+
+/* Three clear, compact rows for boss lookup */
+#lootView .loot-control-panel{border:1px solid var(--line);background:var(--panel);border-radius:11px;padding:12px 16px;margin-bottom:16px;display:grid;gap:10px}
+#lootView .loot-select-row{display:grid;grid-template-columns:minmax(140px,.65fr) minmax(210px,1.35fr);gap:12px}
+#lootView .loot-find-row{display:flex;align-items:end;gap:14px}
+#lootView .loot-find-row .field{flex:1;min-width:0}
+#lootView .loot-control-panel select,#lootView .loot-control-panel input[type=search]{width:100%;max-width:none}
+#lootView .class-toggle{white-space:nowrap;display:flex;align-items:center;gap:6px;padding:10px 2px}
+#lootView .boss-nav-row{border-top:1px solid var(--line);padding-top:9px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px}
+#lootView .boss-title-group{text-align:center;min-width:0}
+#lootView .boss-title-group h2{font-size:calc(17px * var(--roll-font-scale));overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#lootView .boss-nav{min-width:99px;padding:8px 10px}
+#lootView .loot-card{cursor:pointer;transition:border-color .15s,background .15s}
+#lootView .loot-card:hover,#lootView .loot-card:focus-visible{border-color:var(--gold);background:#221b20;outline:none}
+#balancesView tbody tr{cursor:pointer}
+#balancesView tbody tr:hover{background:#261f1b}
+#balancesView tbody tr.row-selected{background:#49351b;box-shadow:inset 3px 0 0 var(--gold)}
+#balancesView tbody tr:focus-visible{outline:2px solid var(--gold);outline-offset:-2px}
+.roll-modal-backdrop{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.82);display:flex;justify-content:center;align-items:center;padding:16px}
+.roll-modal{width:min(760px,100%);max-height:min(90vh,900px);overflow:auto;background:#19151b;border:1px solid var(--gold);border-radius:13px;box-shadow:0 20px 80px #000b;padding:22px;color:var(--text)}
+.roll-modal-head{display:flex;justify-content:space-between;gap:15px;align-items:start}
+.roll-modal-head h2{margin:4px 0 8px}.roll-modal .small{line-height:1.5}
+.roll-calc-scroll{overflow:auto;margin-top:14px}.calc-table{width:100%;border-collapse:collapse}
+.calc-table th,.calc-table td{text-align:left;padding:9px 10px;border-bottom:1px solid #493a2d}
+.calc-table th{color:var(--gold);font-size:calc(11px * var(--roll-font-scale));text-transform:uppercase}
+.calc-table td:nth-child(2),.calc-table td:nth-child(4){text-align:right;font-variant-numeric:tabular-nums}
+.calc-table td:nth-child(4){color:var(--green);font-weight:700}
+.calc-table .calc-roll{width:94px;max-width:100%;background:#100d12;color:var(--text);border:1px solid #665039;border-radius:6px;padding:8px;font:inherit}
+.calc-add{margin-top:17px}.calc-add-controls{display:flex;gap:8px;margin-top:6px}
+.calc-add-controls input{flex:1;min-width:0;background:#100d12;color:var(--text);border:1px solid #665039;border-radius:6px;padding:9px;font:inherit}
+.calc-result{margin-top:18px;border:1px solid #705634;border-radius:8px;background:#251d18;padding:13px;color:var(--bright);font-weight:700}
+.calc-result .small{display:block;margin-top:4px;font-weight:400}.calc-foot{margin-top:15px;display:flex;align-items:center;justify-content:space-between;gap:10px}
+@media(max-width:650px){#lootView .loot-select-row{grid-template-columns:1fr}#lootView .loot-find-row{flex-direction:column;align-items:stretch}#lootView .class-toggle{padding:0}#lootView .boss-nav{min-width:0}#lootView .boss-nav-row{gap:6px}.roll-modal{padding:14px}.calc-table th,.calc-table td{padding:7px 5px}}
 </style>
 </head>
 <body>
@@ -144,13 +177,21 @@ body{font-size:calc(14px * var(--roll-font-scale))}
 </section>
 <section class="lookup-shell"><div class="eyebrow">Roll Bonus Lookup</div><h2>Current Bonuses & Loot Sources</h2><p class="small">Browse current balances or look up bonuses for a particular raid boss.</p><div class="tabs"><button class="tab active" data-view="balances" aria-pressed="true">All Roll Bonuses</button><button class="tab" data-view="loot" aria-pressed="false">Bonuses by Boss</button></div>
 <section id="lootView" hidden>
-<div class="loot-toolbar">
- <div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div>
- <div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div>
- <div class="boss-banner" aria-label="Current loot source"><button class="btn boss-nav" id="prevBoss" aria-label="Previous boss">←</button><div class="boss-title-group"><h2 id="bossTitle">Select a raid</h2><div class="counter" id="bossCounter"></div></div><button class="btn boss-nav" id="nextBoss" aria-label="Next boss">→</button></div>
+<div class="loot-control-panel">
+  <div class="loot-select-row">
+    <div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div>
+    <div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div>
+  </div>
+  <div class="loot-find-row">
+    <div class="field"><label class="label" for="lootSearch">Find an item or roller</label><input type="search" id="lootSearch" placeholder="Search loot across this raid…" autocomplete="off"></div>
+    <label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked> Show WoW class colors</label>
+  </div>
+  <div class="boss-nav-row" aria-label="Boss navigation">
+    <button class="btn boss-nav" id="prevBoss" aria-label="Previous boss">← Previous</button>
+    <div class="boss-title-group"><h2 id="bossTitle">Select a raid</h2><div class="counter" id="bossCounter"></div></div>
+    <button class="btn boss-nav" id="nextBoss" aria-label="Next boss">Next →</button>
+  </div>
 </div>
-<div class="loot-search-options"><div class="field"><label class="label" for="lootSearch">Find an Item or Roller</label><input type="search" id="lootSearch" placeholder="Search loot across this raid…" autocomplete="off"></div>
-<div class="loot-options"><label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked>Show WoW class colors</label></div></div>
 <div class="loot-grid" id="lootGrid"><div class="empty">Loading loot…</div></div>
 
 <div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
@@ -158,6 +199,16 @@ body{font-size:calc(14px * var(--roll-font-scale))}
 <section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
 </section>
+<div class="roll-modal-backdrop" id="rollModal" hidden>
+ <section class="roll-modal" role="dialog" aria-modal="true" aria-labelledby="rollModalTitle">
+  <header class="roll-modal-head"><div><div class="eyebrow">Master Looter · Local Roll Calculator</div><h2 id="rollModalTitle">Item</h2></div><button type="button" class="btn" id="closeRollModal" aria-label="Close calculator">✕</button></header>
+  <p class="small">Enter in-game rolls. Totals include the current roll bonus. Nothing is saved, sent, or shared.</p>
+  <div class="roll-calc-scroll"><table class="calc-table"><thead><tr><th>Character</th><th>Bonus</th><th>Roll</th><th>Total</th></tr></thead><tbody id="calcRows"></tbody></table></div>
+  <div class="calc-add"><label class="label" for="extraRollName">Add a zero-bonus roller</label><div class="calc-add-controls"><input id="extraRollName" maxlength="50" placeholder="Character name"><button type="button" class="btn" id="addRoller">Add</button></div></div>
+  <div class="calc-result" id="calcResult" aria-live="polite">Enter the rolls to see the adjusted totals.</div>
+  <div class="calc-foot"><span class="small">On-screen math only · close with ✕ or Esc</span><button type="button" class="btn" id="closeRollModalBottom">Close ✕</button></div>
+ </section>
+</div>
 <div class="font-controls" aria-label="Font size controls"><span>Text size</span><button type="button" class="btn" id="decreaseFont" aria-label="Decrease font size">A−</button><span class="font-readout" id="fontPercent">100%</span><button type="button" class="btn" id="increaseFont" aria-label="Increase font size">A+</button><button type="button" class="btn" id="resetFont">Reset</button></div>
 <div class="footer">◆ THIS IS THE WAY. ◆</div>
 </main>
@@ -234,7 +285,11 @@ function renderLoot(){
    line.append(name,el('span','bonus','+'+r.current_bonus));
    people.append(line);
   }
-  card.append(people);grid.append(card);
+  card.append(people);
+  card.tabIndex=0;card.setAttribute('role','button');card.setAttribute('aria-label','Open roll calculator for '+item.item_name);
+  card.addEventListener('click',()=>openRollCalculator(item,rollers));
+  card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openRollCalculator(item,rollers)}});
+  grid.append(card);
  }
  if(!visible)grid.append(el('div','empty',q?'No matching loot or characters with active bonuses in this raid.':'No active Roll Bonuses on this boss.'));
 }
@@ -257,10 +312,76 @@ function renderBalances(){
   const tr=el('tr');
   const characterCell=el('td');characterCell.append(coloredName(b.toon_name,b.guild_name));tr.append(characterCell);
   for(const v of [b.guild_name||'PUG / Unknown',b.associatedRaids.join(', ')||'—',b.item_name,'+'+b.current_bonus])tr.append(el('td','',v));
+  tr.tabIndex=0;
+  tr.setAttribute('aria-selected','false');
+  const toggle=()=>{const wasSelected=tr.classList.contains('row-selected');host.querySelectorAll('.row-selected').forEach(row=>{row.classList.remove('row-selected');row.setAttribute('aria-selected','false')});if(!wasSelected){tr.classList.add('row-selected');tr.setAttribute('aria-selected','true')}};
+  tr.addEventListener('click',toggle);
+  tr.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();toggle()}});
   host.append(tr);
  }
  if(!active.length){const tr=el('tr'),td=el('td','','No matching bonuses found for this raid or search.');td.colSpan=5;tr.append(td);host.append(tr)}
 }
+
+// Calculator lives in browser memory only. No API requests or writes are performed.
+let calculatorRows=[];
+let previouslyFocused=null;
+function openRollCalculator(item,rollers){
+ previouslyFocused=document.activeElement;
+ calculatorRows=rollers.map((r,i)=>({key:'bonus-'+i,name:r.toon_name,guild:r.guild_name,bonus:Number(r.current_bonus)||0,roll:''}));
+ $('rollModalTitle').textContent=item.item_name;
+ $('extraRollName').value='';
+ $('rollModal').hidden=false;
+ document.body.style.overflow='hidden';
+ renderCalculator();
+ $('closeRollModal').focus();
+}
+function closeRollCalculator(){
+ $('rollModal').hidden=true;document.body.style.overflow='';calculatorRows=[];
+ if(previouslyFocused&&previouslyFocused.isConnected)previouslyFocused.focus();
+}
+function renderCalculator(){
+ const host=$('calcRows');host.replaceChildren();
+ calculatorRows.forEach((entry,index)=>{
+  const tr=el('tr');const name=el('td');name.append(coloredName(entry.name,entry.guild));
+  const bonus=el('td','',entry.bonus>0?'+'+entry.bonus:'—');
+  const rolltd=el('td');const inp=el('input','calc-roll');inp.type='number';inp.min='0';inp.max='100';inp.step='1';inp.inputMode='numeric';inp.placeholder='0–100';inp.value=entry.roll;
+  inp.setAttribute('aria-label','Roll for '+entry.name);
+  inp.addEventListener('input',()=>{entry.roll=inp.value;updateCalculatorTotals()});
+  rolltd.append(inp);const total=el('td','calc-total','—');
+  tr.append(name,bonus,rolltd,total);host.append(tr);
+ });
+ updateCalculatorTotals();
+}
+function updateCalculatorTotals(){
+ const entries=[];
+ [...$('calcRows').children].forEach((row,i)=>{
+  const entry=calculatorRows[i],roll=String(entry.roll).trim();
+  const numeric=roll!==''?Number(roll):NaN;
+  const valid=Number.isInteger(numeric)&&numeric>=0&&numeric<=100;
+  row.querySelector('.calc-roll').setCustomValidity(roll&&!valid?'Enter a whole number between 0 and 100.':'');
+  const totalCell=row.querySelector('.calc-total');totalCell.textContent=valid?String(numeric+entry.bonus):'—';
+  if(valid)entries.push({...entry,total:numeric+entry.bonus});
+ });
+ const result=$('calcResult');
+ if(!entries.length){result.textContent='Enter the rolls to see the adjusted totals.';return}
+ const max=Math.max(...entries.map(x=>x.total));const leaders=entries.filter(x=>x.total===max);
+ const complete=entries.length===calculatorRows.length;
+ result.replaceChildren(el('span','',complete?(leaders.length===1?'Winner: '+leaders[0].name:'Tie: '+leaders.map(x=>x.name).join(', ')):'Current leader'+(leaders.length===1?'':'s')+': '+leaders.map(x=>x.name).join(', ')));
+ result.append(el('span','small',`${max} adjusted total${complete?' · All entered rolls counted':' · Waiting for '+(calculatorRows.length-entries.length)+' roll(s)'}`));
+}
+$('closeRollModal').addEventListener('click',closeRollCalculator);
+$('closeRollModalBottom').addEventListener('click',closeRollCalculator);
+$('rollModal').addEventListener('click',event=>{if(event.target===$('rollModal'))closeRollCalculator()});
+document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!$('rollModal').hidden)closeRollCalculator()});
+function addZeroBonusRoller(){
+ const name=$('extraRollName').value.trim();if(!name)return;
+ if(calculatorRows.some(x=>normalizeToon(x.name)===normalizeToon(name))){$('extraRollName').focus();return}
+ calculatorRows.push({key:'extra-'+calculatorRows.length,name,guild:'',bonus:0,roll:''});
+ $('extraRollName').value='';renderCalculator();
+ const inputs=$('calcRows').querySelectorAll('.calc-roll');inputs[inputs.length-1]?.focus();
+}
+$('addRoller').addEventListener('click',addZeroBonusRoller);
+$('extraRollName').addEventListener('keydown',event=>{if(event.key==='Enter'){event.preventDefault();addZeroBonusRoller()}});
 
 async function fetchAll(client,table,fields,sort='id'){let out=[];for(let from=0;from<20000;from+=1000){const {data,error}=await client.from(table).select(fields).order(sort,{ascending:true}).range(from,from+999);if(error)throw Error(table+': '+error.message);out.push(...(data||[]));if(!data||data.length<1000)return out}throw Error(table+': too many rows to load in one request')}
 async function load(){if(!window.syndicateDB){message('Shared Supabase connection did not load. Check settings/supabase-config.js.','error');return}try{const client=window.syndicateDB;state.client=client;const [bosses,items,links,bonuses]=await Promise.all([fetchAll(client,'raid_bosses','id,raid_code,boss_name,display_order,is_active'),fetchAll(client,'raid_items','id,item_name,equipment_slot,item_level,reservation_status,is_active,sr_eligible'),fetchAll(client,'raid_boss_loot','id,boss_id,item_id'),fetchAll(client,'roll_bonus_public_totals','character_id,item_id,toon_name,guild_name,item_name,current_bonus','character_id')]);state.bosses=bosses.filter(b=>b.is_active!==false);state.items=items.filter(i=>i.is_active!==false);state.links=links;state.bonuses=bonuses;const raids=[...new Set(state.bosses.map(b=>b.raid_code))].sort((a,b)=>['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'].indexOf(a)-['ONY','ZG','AQ20','MC','BWL','AQ40','NAXX'].indexOf(b));populate($('balanceRaid'),[['','All Raids'],...raids.map(r=>[r,r])],'');populate($('raidSelect'),raids.map(r=>[r,r]),raids.includes('AQ40')?'AQ40':raids[0]);switchRaid($('raidSelect').value);renderBalances();loadRecentRaids();loadSyndicateRoster();message(`Loaded ${state.items.length} items, ${state.bosses.length} loot sources and ${state.bonuses.filter(b=>b.current_bonus>0).length} active character/item bonuses.`,'ok')}catch(err){message('Unable to load Supabase data: '+err.message+'. Check that the website read policies and roll_bonus_public_totals view are installed.','error');$('lootGrid').replaceChildren(el('div','empty','Could not load loot. See the error above.'))}}
