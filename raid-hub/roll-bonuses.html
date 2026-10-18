@@ -207,6 +207,9 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 #lootView .loot-search-always input{width:100%;max-width:none;min-height:42px}
 #lootView .loot-search-always .label{font-size:calc(10px * var(--roll-font-scale))}
 @media(max-width:500px){#lootView .loot-settings-head{gap:7px}#lootView .loot-settings-head #toggleLootSettings{padding:9px 8px;font-size:calc(12px * var(--roll-font-scale))}#lootView .loot-search-always input{padding:9px 8px}}
+/* Zero bonuses are neutral; names and all other row styling remain unchanged. */
+#lootView .roller .bonus.bonus-zero{color:#8f877f}
+#rollModal .calc-bonus-zero{color:#8f877f}
 </style>
 </head>
 <body>
@@ -498,7 +501,7 @@ function renderLoot(){
    }
    name.append(coloredName(r.toon_name,r.guild_name));
    if(r.guild_name&&r.guild_name!=='The Syndicate')name.append(el('span','small',' ('+r.guild_name+')'));
-   line.append(name,el('span','bonus','+'+r.current_bonus));
+   line.append(name,el('span',Number(r.current_bonus)===0?'bonus bonus-zero':'bonus','+'+r.current_bonus));
    people.append(line);
   }
   card.append(people);
@@ -559,7 +562,7 @@ function renderCalculator(){
  const host=$('calcRows');host.replaceChildren();
  calculatorRows.forEach((entry,index)=>{
   const tr=el('tr');const name=el('td');name.append(coloredName(entry.name,entry.guild));
-  const bonus=el('td','',entry.bonus>0?'+'+entry.bonus:'—');
+  const bonus=el('td',entry.bonus===0?'calc-bonus-zero':'',entry.bonus>0?'+'+entry.bonus:'+0');
   const rolltd=el('td');const inp=el('input','calc-roll');inp.type='number';inp.min='0';inp.max='100';inp.step='1';inp.inputMode='numeric';inp.placeholder='0–100';inp.value=entry.roll;
   inp.setAttribute('aria-label','Roll for '+entry.name);
   inp.addEventListener('input',()=>{entry.roll=inp.value;updateCalculatorTotals()});
