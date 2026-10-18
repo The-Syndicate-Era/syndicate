@@ -187,6 +187,15 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 #lootView #softresError{color:var(--red)}
 #lootView #filterActiveMark{color:var(--green)}
 @media(max-width:550px){#lootView .boss-nav-standalone{gap:5px;padding:8px 5px}#lootView .boss-nav{font-size:calc(12px * var(--roll-font-scale));padding:7px 5px}#lootView .boss-title-group h2{white-space:normal;font-size:calc(15px * var(--roll-font-scale))}}
+/* SoftRes display options and status indicators */
+#lootView .softres-display-options{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:8px 0 4px}
+#lootView .softres-display-options>.label{margin-right:3px}
+#lootView .softres-display-options .class-toggle{padding:3px 0;white-space:normal}
+#lootView .sr-marker{display:inline-flex;width:17px;min-width:17px;justify-content:center;margin-right:6px;font-weight:800;font-size:calc(13px * var(--roll-font-scale))}
+#lootView .sr-yes{color:var(--green)}
+#lootView .sr-no{color:#908780}
+#lootView .roller.not-reserved .roller-name{opacity:.65}
+#lootView .roller.not-reserved .bonus{opacity:.75}
 </style>
 </head>
 <body>
@@ -253,7 +262,12 @@ body{font-size:calc(16px * var(--roll-font-scale));}
   </div>
   <div class="loot-find-row">
     <div class="field"><label class="label" for="lootSearch">Find loot or character</label><input type="search" id="lootSearch" placeholder="Search all bosses in this raid…" autocomplete="off"></div>
-    <label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked> WoW class colors</label>
+
+  </div>
+  <div class="softres-display-options" aria-label="Display options">
+    <span class="label">Display Options</span>
+    <label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked> Show WoW class colors</label>
+    <label class="class-toggle" id="hideInactiveSrWrap" hidden><input type="checkbox" id="hideInactiveSr" checked> Hide items with no active SR bonuses</label>
   </div>
   <div class="softres-actions">
     <button type="button" class="btn" id="openSoftres">Import SoftRes</button>
@@ -274,7 +288,7 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 </div>
 <div class="loot-grid" id="lootGrid"><div class="empty">Loading loot…</div></div>
 
-<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Importing SoftRes temporarily hides items absent from that export; items are matched by name to the site loot catalog. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
+<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Without an import, only items with active Roll Bonuses appear here. With SoftRes imported, matching reserved items are shown according to Display Options; ✓ means reserved and × means not reserved for that item. Imported reservers appear first, then characters with existing bonuses. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
 </section>
 <section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
@@ -325,6 +339,8 @@ function switchRaid(code){state.raid=code;const bosses=currentBosses();state.bos
 function switchBoss(id){state.bossId=id;$('bossSelect').value=String(id);$('lootSearch').value='';renderLoot()}
 // CSV input stays in JS memory only. Never transmitted, persisted, or logged.
 let softresItemNames=null;
+let softresReserversByItem=new Map();
+let softresImportedRows=new Map();
 function normalizeLootName(name){
  return String(name||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
 }
@@ -356,9 +372,22 @@ function applySoftresCsv(){
   const rows=readCsvRows($('softresCsv').value.trim().replace(/^\uFEFF/,''));
   const head=(rows.shift()||[]).map(h=>h.trim().toLowerCase());
   const nameIndex=head.indexOf('item name');
+  const raiderIndex=head.indexOf('raider name');
+  if(raiderIndex<0)throw Error('Could not find the Raider Name column. Paste the full Softres.it export including its header.');
   if(nameIndex<0)throw Error('Could not find the Item Name column. Paste the Softres.it CSV including its header.');
-  const names=new Set();
-  for(const row of rows){const name=normalizeLootName(row[nameIndex]);if(name)names.add(name)}
+  const names=new Set(),reservations=new Map(),importedRows=new Map();
+  for(const row of rows){
+   const name=normalizeLootName(row[nameIndex]);
+   const raider=normalizeToon(row[raiderIndex]);
+   if(!name)continue;
+   names.add(name);
+   if(raider){
+    if(!reservations.has(name))reservations.set(name,new Set());
+    reservations.get(name).add(raider);
+    if(!importedRows.has(name))importedRows.set(name,[]);
+    if(!importedRows.get(name).some(r=>r.key===raider))importedRows.get(name).push({key:raider,name:String(row[raiderIndex]||'').trim()});
+   }
+  }
   if(!names.size)throw Error('No valid item names found in the export.');
   // raid_items.id is a Supabase row ID, not necessarily the WoW Item ID in Softres.it.
   // Match imported loot by normalized item name, not by these unrelated ID systems.
@@ -366,6 +395,10 @@ function applySoftresCsv(){
   const matched=[...names].filter(name=>catalogNames.has(name));
   if(!matched.length)throw Error(`None of the ${names.size} imported items matched the website loot catalog. Check the export and try again. No filter was applied.`);
   softresItemNames=names;
+  softresReserversByItem=reservations;
+  softresImportedRows=importedRows;
+  $('hideInactiveSrWrap').hidden=false;
+  $('hideInactiveSr').checked=true;
   $('softresCsv').value=''; // discard raw CSV, including Discord IDs
   $('softresPaste').hidden=true;
   $('softresError').textContent='';
@@ -378,6 +411,10 @@ function applySoftresCsv(){
 }
 function clearSoftresFilter(){
  softresItemNames=null;
+ softresReserversByItem=new Map();
+ softresImportedRows=new Map();
+ $('hideInactiveSrWrap').hidden=true;
+ $('hideInactiveSr').checked=true;
  $('softresCsv').value='';$('softresError').textContent='';$('softresPaste').hidden=true;
  $('clearSoftres').hidden=true;$('filterActiveMark').hidden=true;
  $('softresStatus').textContent='Showing all loot with active bonuses.';
@@ -409,11 +446,33 @@ function renderLoot(){
   if(!bonusByItem.has(key))bonusByItem.set(key,[]);
   bonusByItem.get(key).push(bonus);
  }
- const rows=state.items.filter(item=>itemSources.has(String(item.id))&&bonusByItem.has(String(item.id))&&(!softresItemNames||softresItemNames.has(normalizeLootName(item.item_name))))
-  .sort((a,b)=>a.item_name.localeCompare(b.item_name));
+ const imported=softresItemNames!==null;
+ const rows=state.items.filter(item=>{
+  const itemKey=normalizeLootName(item.item_name);
+  if(!itemSources.has(String(item.id)))return false;
+  if(imported&&!softresItemNames.has(itemKey))return false;
+  if(!imported)return bonusByItem.has(String(item.id));
+  if(!$('hideInactiveSr').checked)return true;
+  const reservers=softresReserversByItem.get(itemKey)||new Set();
+  return (bonusByItem.get(String(item.id))||[]).some(r=>reservers.has(normalizeToon(r.toon_name))&&Number(r.current_bonus)>0);
+ }).sort((a,b)=>a.item_name.localeCompare(b.item_name));
  let visible=0;
  for(const item of rows){
-  const rollers=bonusByItem.get(String(item.id)).slice().sort((a,b)=>Number(b.current_bonus)-Number(a.current_bonus)||a.toon_name.localeCompare(b.toon_name));
+  const itemKey=normalizeLootName(item.item_name);
+  const reservers=softresReserversByItem.get(itemKey)||new Set();
+  const original=bonusByItem.get(String(item.id))||[];
+  const rollers=original.map(r=>({...r}));
+  if(imported){
+   // Include current soft reservers who have no existing bonus as +0 entries.
+   const present=new Set(rollers.map(r=>normalizeToon(r.toon_name)));
+   // Retain the exact imported name, not its normalized comparison key.
+   for(const r of softresImportedRows.get(itemKey)||[]){
+    if(present.has(r.key))continue;
+    rollers.push({toon_name:r.name,guild_name:'',current_bonus:0,item_id:item.id});
+    present.add(r.key);
+   }
+  }
+  rollers.sort((a,b)=>imported?(Number(reservers.has(normalizeToon(b.toon_name)))-Number(reservers.has(normalizeToon(a.toon_name))))||Number(b.current_bonus)-Number(a.current_bonus)||a.toon_name.localeCompare(b.toon_name):Number(b.current_bonus)-Number(a.current_bonus)||a.toon_name.localeCompare(b.toon_name));
   if(q&&!item.item_name.toLowerCase().includes(q)&&!rollers.some(r=>r.toon_name.toLowerCase().includes(q)))continue;
   visible++;
   const card=el('article','loot-card');
@@ -422,6 +481,14 @@ function renderLoot(){
   for(const r of rollers){
    const line=el('div','roller');
    const name=el('div','roller-name');
+   if(imported){
+    const isReserved=reservers.has(normalizeToon(r.toon_name));
+    const marker=el('span','sr-marker '+(isReserved?'sr-yes':'sr-no'),isReserved?'✓':'×');
+    marker.title=isReserved?'Soft reserved this item':'Not on the imported reserves for this item';
+    marker.setAttribute('aria-label',marker.title);
+    name.append(marker);
+    if(!isReserved)line.classList.add('not-reserved');
+   }
    name.append(coloredName(r.toon_name,r.guild_name));
    if(r.guild_name&&r.guild_name!=='The Syndicate')name.append(el('span','small',' ('+r.guild_name+')'));
    line.append(name,el('span','bonus','+'+r.current_bonus));
@@ -648,6 +715,7 @@ $('openSoftres').addEventListener('click',()=>{$('softresPaste').hidden=false;$(
 $('cancelSoftres').addEventListener('click',()=>{$('softresPaste').hidden=true;$('softresCsv').value='';$('softresError').textContent=''});
 $('applySoftres').addEventListener('click',applySoftresCsv);
 $('clearSoftres').addEventListener('click',clearSoftresFilter);
+$('hideInactiveSr').addEventListener('change',renderLoot);
 setLootSettings(true);
 $('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-workspace]').forEach(button=>button.addEventListener('click',()=>showWorkspace(button.dataset.workspace)));
 function showWorkspace(name){
