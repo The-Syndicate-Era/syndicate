@@ -132,6 +132,49 @@ body{font-size:calc(14px * var(--roll-font-scale))}
 .calc-result{margin-top:18px;border:1px solid #705634;border-radius:8px;background:#251d18;padding:13px;color:var(--bright);font-weight:700}
 .calc-result .small{display:block;margin-top:4px;font-weight:400}.calc-foot{margin-top:15px;display:flex;align-items:center;justify-content:space-between;gap:10px}
 @media(max-width:650px){#lootView .loot-select-row{grid-template-columns:1fr}#lootView .loot-find-row{flex-direction:column;align-items:stretch}#lootView .class-toggle{padding:0}#lootView .boss-nav{min-width:0}#lootView .boss-nav-row{gap:6px}.roll-modal{padding:14px}.calc-table th,.calc-table td{padding:7px 5px}}
+
+/* Roll Bonus dashboard reset — preserve existing data calls and identifiers */
+:root { --roll-font-scale:1; }
+body{font-size:calc(16px * var(--roll-font-scale));}
+.wrap{max-width:1680px;padding:20px clamp(12px,2.2vw,32px) 54px}
+.hero{min-height:142px}.hero-inner{padding:23px 25px}.hero h1{font-size:calc(39px * var(--roll-font-scale))}
+.dashboard-layout{display:grid;grid-template-columns:265px minmax(0,1fr);align-items:start;gap:22px;margin:20px 0 0}
+.dashboard-sidebar{position:sticky;top:20px;background:#151116;border:1px solid #614d31;border-radius:12px;padding:13px;display:flex;flex-direction:column;gap:8px}
+.sidebar-eyebrow{font-weight:800;letter-spacing:.15em;font-size:calc(11px * var(--roll-font-scale));color:var(--gold);padding:8px 10px 6px}
+.workspace-link{color:#f1ebe0;background:#1d181d;text-align:left;border:1px solid transparent;border-radius:9px;padding:15px 14px;display:flex;flex-direction:column;gap:5px;cursor:pointer;line-height:1.35}
+.workspace-link:hover{border-color:#8b6a3b;background:#30271f}.workspace-link.active{border-color:#c29a54;background:linear-gradient(100deg,#44321f,#262024)}
+.workspace-link-title{font-size:calc(16px * var(--roll-font-scale));font-weight:750}
+.workspace-link-sub{color:#c7ac7e;font-size:calc(13px * var(--roll-font-scale));font-style:italic}
+.dashboard-workspace{min-width:0;max-width:100%;background:#141116;border:1px solid #493a2b;border-radius:12px;padding:clamp(15px,2.2vw,25px)}
+.workspace-heading{border-bottom:1px solid #4b3d2e;margin:0 0 21px;padding-bottom:15px}
+.workspace-heading h2{font-size:calc(27px * var(--roll-font-scale));margin:4px 0 5px}
+.workspace-heading p{font-size:calc(14px * var(--roll-font-scale));margin:0}
+#submitView{margin:0!important}#submitView .submit-shell{max-width:860px!important;margin:auto;background:transparent!important;border:0!important;padding:0!important}
+#submitView .submit-heading{display:none}
+#submitView .form-phase{padding:17px 0}
+#submitView .field input,#submitView .field select{font-size:calc(15px * var(--roll-font-scale))}
+#submitView .result-options{display:none}
+#submitView .form-phase h3{font-size:calc(13px * var(--roll-font-scale))}
+#submitView .form-hint,#submitView .submit-end p{font-size:calc(13px * var(--roll-font-scale))}
+#rollResultPhase{border:0;padding:9px 0}
+.lookup-shell{border:0!important;padding:0!important;margin:0!important;min-width:0}
+#balancesView .toolbar{gap:16px;align-items:center}
+#balancesView .balances{max-width:1100px;margin:0 auto;font-size:calc(16px * var(--roll-font-scale))}
+#balancesView .balances th,#balancesView .balances td{padding:11px 12px;font-size:calc(15px * var(--roll-font-scale))}
+#balancesView .balances td:first-child{font-weight:650}
+#balancesView .table-scroll{max-width:1160px;margin:0 auto}
+#lootView .loot-grid{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}
+#lootView .item-title{font-size:calc(15px * var(--roll-font-scale))}
+#lootView .roller .name,#lootView .roller .bonus{font-size:calc(16px * var(--roll-font-scale))}
+#lootView .loot-control-panel{margin-bottom:14px}
+#lootView .helper{font-size:calc(12px * var(--roll-font-scale));padding:11px 14px}
+.roll-modal{font-size:calc(16px * var(--roll-font-scale))}
+.roll-modal .calc-table td{font-size:calc(15px * var(--roll-font-scale))}
+.font-controls{font-size:calc(14px * var(--roll-font-scale))}
+@media(min-width:1500px){#lootView .loot-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+@media(max-width:1200px){.dashboard-layout{grid-template-columns:225px minmax(0,1fr)}#lootView .loot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:850px){.dashboard-layout{display:block}.dashboard-sidebar{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:15px}.sidebar-eyebrow{grid-column:1/-1}.dashboard-workspace{padding:17px}#lootView .loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:530px){.dashboard-sidebar{grid-template-columns:1fr}.dashboard-sidebar .workspace-link{padding:10px 12px}.dashboard-workspace{padding:13px}#lootView .loot-grid{grid-template-columns:1fr}.hero h1{font-size:calc(30px * var(--roll-font-scale))}}
 </style>
 </head>
 <body>
@@ -141,9 +184,19 @@ body{font-size:calc(14px * var(--roll-font-scale))}
 <main class="wrap">
 
 <div id="notice" class="status" role="status" aria-live="polite">Connecting to the loot database…</div>
+<div class="dashboard-layout">
+  <aside class="dashboard-sidebar" aria-label="Roll bonus sections">
+    <div class="sidebar-eyebrow">YOUR LOOT HUB</div>
+    <button type="button" class="workspace-link active" data-workspace="lost" aria-current="page"><span class="workspace-link-title">Report a Lost Roll</span><span class="workspace-link-sub">Better luck next time!</span></button>
+    <button type="button" class="workspace-link" data-workspace="won"><span class="workspace-link-title">Report an Item Won</span><span class="workspace-link-sub">Woo hoo, you did it!</span></button>
+    <button type="button" class="workspace-link" data-workspace="balances"><span class="workspace-link-title">All Roll Bonuses</span><span class="workspace-link-sub">Proof that everyone has bad luck</span></button>
+    <button type="button" class="workspace-link" data-workspace="loot"><span class="workspace-link-title">Bonuses by Boss</span><span class="workspace-link-sub">Master looters favorite tool</span></button>
+  </aside>
+  <div class="dashboard-workspace">
+    <header class="workspace-heading"><div class="eyebrow" id="workspaceEyebrow">BETTER LUCK NEXT TIME!</div><h2 id="workspaceTitle">Report a Lost Roll</h2><p class="small" id="workspaceDescription">Didn't win the loot? At least the roll can count toward your next attempt.</p></header>
 <section id="submitView" aria-labelledby="submitHeading">
   <div class="submit-shell">
-    <div class="submit-heading"><div><h2 id="submitHeading">Submit an SR Roll</h2><p class="small">Report a roll from the last eight calendar days. All reports require officer approval.</p></div><span class="review-chip">Officer review required</span></div>
+    <div class="submit-heading"><div><h2 id="submitHeading">Report a Lost Roll</h2><p class="small">Report a roll from the last eight calendar days. All reports require officer approval.</p></div><span class="review-chip">Officer review required</span></div>
     <form id="rollForm" autocomplete="off">
       <div class="form-phase">
         <h3>1. Character</h3>
@@ -165,9 +218,9 @@ body{font-size:calc(14px * var(--roll-font-scale))}
           <div class="field"><label class="label" for="itemSelect">Soft Reserved item</label><select id="itemSelect" required><option value="">Choose a raid first</option></select></div>
         </div>
       </div>
-      <div class="form-phase">
+      <div class="form-phase" id="rollResultPhase">
         <h3>3. Roll Result</h3>
-        <div class="field roll-result-field"><span class="label" id="resultLabel">Result</span><div class="result-options" role="radiogroup" aria-labelledby="resultLabel"><label><input type="radio" name="resultChoice" value="loss" checked> Lost SR Roll (+10)</label><label><input type="radio" name="resultChoice" value="win"> Won SR Roll</label></div><select id="outcomeSelect" hidden aria-hidden="true" tabindex="-1"><option value="loss">Lost</option><option value="win">Won</option></select></div>
+        <div class="field roll-result-field" hidden><span class="label" id="resultLabel">Result</span><div class="result-options" role="radiogroup" aria-labelledby="resultLabel"><label><input type="radio" name="resultChoice" value="loss" checked> Lost SR Roll (+10)</label><label><input type="radio" name="resultChoice" value="win"> Won SR Roll</label></div><select id="outcomeSelect" hidden aria-hidden="true" tabindex="-1"><option value="loss">Lost</option><option value="win">Won</option></select></div>
         <div id="multipleRollWrap"><label class="multiple-checkbox"><input type="checkbox" id="multipleRolls"> I lost more than one roll on this item</label><div class="field extra-count" id="countField" hidden><label class="label" for="countInput">Number of lost rolls</label><select id="countInput"><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option><option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option><option value="11">11</option><option value="12">12</option><option value="13">13</option><option value="14">14</option><option value="15">15</option><option value="16">16</option><option value="17">17</option><option value="18">18</option><option value="19">19</option><option value="20">20</option></select></div></div>
       </div>
       <div id="submitNotice" class="status submit-feedback" hidden role="status" aria-live="polite"></div>
@@ -175,7 +228,7 @@ body{font-size:calc(14px * var(--roll-font-scale))}
     </form>
   </div>
 </section>
-<section class="lookup-shell"><div class="eyebrow">Roll Bonus Lookup</div><h2>Current Bonuses & Loot Sources</h2><p class="small">Browse current balances or look up bonuses for a particular raid boss.</p><div class="tabs"><button class="tab active" data-view="balances" aria-pressed="true">All Roll Bonuses</button><button class="tab" data-view="loot" aria-pressed="false">Bonuses by Boss</button></div>
+<section class="lookup-shell">
 <section id="lootView" hidden>
 <div class="loot-control-panel">
   <div class="loot-select-row">
@@ -199,6 +252,8 @@ body{font-size:calc(14px * var(--roll-font-scale))}
 <section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
 </section>
+  </div>
+</div>
 <div class="roll-modal-backdrop" id="rollModal" hidden>
  <section class="roll-modal" role="dialog" aria-modal="true" aria-labelledby="rollModalTitle">
   <header class="roll-modal-head"><div><div class="eyebrow">Master Looter · Local Roll Calculator</div><h2 id="rollModalTitle">Item</h2></div><button type="button" class="btn" id="closeRollModal" aria-label="Close calculator">✕</button></header>
@@ -486,7 +541,7 @@ $('rollForm').addEventListener('submit',async e=>{
    });
    if(error)throw Error(error.message);
    submissionMessage('Report #'+data+' saved! An officer will review it before bonuses change.','ok');
-   await refreshBonusTotals();$('rollForm').reset();updateCharacterType();updateRollControls();updateReportItems();submissionMessage('Report #'+data+' saved! An officer will review it before bonuses change.','ok');
+   await refreshBonusTotals();$('rollForm').reset();updateCharacterType();showWorkspace($('submitView').hidden?'lost':document.querySelector('[data-workspace].active')?.dataset.workspace||'lost');updateReportItems();submissionMessage('Report #'+data+' saved! An officer will review it before bonuses change.','ok');
  }catch(err){submissionMessage('Unable to submit: '+err.message,'error')}
  finally{btn.disabled=false}
 });
@@ -501,7 +556,23 @@ $('decreaseFont').addEventListener('click',()=>{fontScale-=.05;applyFontScale()}
 $('increaseFont').addEventListener('click',()=>{fontScale+=.05;applyFontScale()});
 $('resetFont').addEventListener('click',()=>{fontScale=1;applyFontScale()});
 applyFontScale();
-$('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});$('lootView').hidden=state.view!=='loot';$('balancesView').hidden=state.view!=='balances';if(state.view==='balances')renderBalances();}));$('openMenu').onclick=()=>{$('drawer').classList.add('open');$('shade').classList.add('open')};$('closeMenu').onclick=$('shade').onclick=()=>{$('drawer').classList.remove('open');$('shade').classList.remove('open')};
+$('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-workspace]').forEach(button=>button.addEventListener('click',()=>showWorkspace(button.dataset.workspace)));
+function showWorkspace(name){
+ const meta={lost:['Report a Lost Roll','Better luck next time!',"Didn't win the loot? At least the roll can count toward your next attempt."],won:['Report an Item Won','Woo hoo, you did it!', 'Report your winning Soft Reserve roll for officer review.'],balances:['All Roll Bonuses','Proof that everyone has bad luck','Look up current bonuses across all raids and items.'],loot:['Bonuses by Boss','Master looters favorite tool','Find an item, check bonuses, and use the local roll calculator.']}[name];
+ if(!meta)return;
+ document.querySelectorAll('[data-workspace]').forEach(b=>{const on=b.dataset.workspace===name;b.classList.toggle('active',on);if(on)b.setAttribute('aria-current','page');else b.removeAttribute('aria-current')});
+ $('workspaceTitle').textContent=meta[0];$('workspaceEyebrow').textContent=meta[1];$('workspaceDescription').textContent=meta[2];
+ $('submitView').hidden=!(name==='lost'||name==='won');$('lookup-shell-ghost')?.remove();
+ $('balancesView').hidden=name!=='balances';$('lootView').hidden=name!=='loot';
+ state.view=name==='loot'?'loot':'balances';
+ const reportResult=name==='won'?'win':'loss';
+ const radio=document.querySelector('input[name="resultChoice"][value="'+reportResult+'"]');radio.checked=true;updateRollControls();
+ $('reportButton').textContent=name==='won'?'Submit Item Won':'Submit Lost Roll';
+ if(name==='balances')renderBalances();if(name==='loot')renderLoot();
+ try{sessionStorage.setItem('syndicate_roll_workspace',name)}catch{}
+}
+let savedWorkspace='lost';try{savedWorkspace=sessionStorage.getItem('syndicate_roll_workspace')||'lost'}catch{}
+showWorkspace(['lost','won','balances','loot'].includes(savedWorkspace)?savedWorkspace:'lost');$('openMenu').onclick=()=>{$('drawer').classList.add('open');$('shade').classList.add('open')};$('closeMenu').onclick=$('shade').onclick=()=>{$('drawer').classList.remove('open');$('shade').classList.remove('open')};
 async function startPublicRollBonuses(){
   if(!window.syndicateDB){
     const paths=['settings/supabase-config.js','../settings/supabase-config.js','../../settings/supabase-config.js'];
