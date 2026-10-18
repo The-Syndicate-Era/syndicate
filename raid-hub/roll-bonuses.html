@@ -7,7 +7,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
 :root{color-scheme:dark;--bg:#09090c;--panel:#161318;--panel2:#211b20;--line:#4d3e2a;--gold:#d7ac61;--bright:#f2d9a2;--text:#f1ebe0;--muted:#b6aa9b;--green:#8fdaad;--red:#ee9393}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,Arial,sans-serif}button,select,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.42}a{color:inherit;text-decoration:none}h1,h2,h3{font-family:Cinzel,Georgia,serif}h1{font-size:clamp(30px,4.5vw,48px);margin:9px 0}h2{font-size:20px;margin:0;color:var(--bright)}.site-header{height:70px;background:#0b0a0d;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 clamp(15px,4vw,42px)}.logo img{height:45px;max-width:220px;object-fit:contain}.btn{background:#29232a;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-weight:600}.btn:hover:not(:disabled){border-color:var(--gold)}.btn.primary{background:#b79351;border-color:#cbaa68;color:#14100a}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(345px,90vw);background:#151117;border-left:1px solid var(--line);transform:translateX(105%);transition:.2s;z-index:22;padding:25px;box-shadow:0 0 60px #000b}.drawer.open{transform:none}.drawer a{display:block;padding:13px 0;border-bottom:1px solid var(--line)}.shade{display:none;position:fixed;inset:0;z-index:21;background:#000b}.shade.open{display:block}.hero{min-height:218px;background:linear-gradient(90deg,rgba(8,7,10,.97),rgba(8,7,10,.60)),url('../images/Raiding.png') center 47%/cover no-repeat;border-bottom:1px solid var(--line);display:flex;align-items:center}.hero-inner{width:min(1450px,100%);margin:auto;padding:32px 24px}.eyebrow{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:var(--gold);font-weight:700}.hero p{max-width:710px;color:#e8dcc8;margin:0}.wrap{max-width:1450px;margin:auto;padding:23px 19px 58px}.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}.tab{background:#19151b;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:11px 17px;font-weight:700}.tab.active{background:#44331f;border-color:var(--gold);color:var(--bright)}[hidden]{display:none!important}.toolbar{display:grid;grid-template-columns:1fr auto;align-items:end;gap:15px;margin-bottom:15px}.field{display:flex;flex-direction:column;gap:6px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:800}.filters{display:flex;gap:10px;flex-wrap:wrap}.filters .field{min-width:160px}.field select,.field input{background:#19151b;border:1px solid #5a4732;color:var(--text);border-radius:8px;padding:10px 12px;min-height:42px;max-width:100%}.field input{width:min(350px,100%)}.status{padding:11px 14px;border:1px solid #5a4732;background:#1d1717;color:var(--muted);border-radius:9px;margin-bottom:16px}.status.error{border-color:#9d4b4b;color:#ffbaba}.status.ok{border-color:#417452;color:#bde9c5}.boss-banner{background:linear-gradient(100deg,#2a211d,#161419);border:1px solid var(--line);border-radius:12px;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:15px}.boss-banner h2{font-size:clamp(18px,2.6vw,27px);margin:4px 0 0}.small{font-size:12px;color:var(--muted)}.counter{font-size:12px;color:var(--muted);white-space:nowrap}.loot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}.loot-card{background:var(--panel);border:1px solid #4d4133;border-radius:9px;padding:11px 12px;min-width:0;box-shadow:0 2px 10px #0003}.item-title{font-size:13px;font-weight:800;color:var(--bright);line-height:1.3;overflow-wrap:anywhere}.item-meta{font-size:10px;color:#a99b88;margin-top:4px}.pill{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#deb581;border:1px solid #755f42;border-radius:4px;padding:1px 4px;display:inline-block;margin-left:4px}.roller-list{border-top:1px solid #45382a;margin-top:9px;padding-top:6px}.roller{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:3px 0}.roller .name{font-size:15px;font-weight:700;overflow-wrap:anywhere;min-width:0}.roller .bonus{font-size:15px;font-weight:800;color:var(--green);white-space:nowrap;font-variant-numeric:tabular-nums}.no-bonus{color:#8f877f;font-size:12px;font-style:italic;padding:4px 0}.nav-bottom{display:flex;justify-content:space-between;gap:12px;margin:22px 0 6px}.empty{padding:35px 15px;border:1px dashed #5a4934;border-radius:10px;color:var(--muted);text-align:center}.helper{padding:16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);margin:20px 0}.balances{width:100%;border-collapse:collapse}.balances th,.balances td{border-bottom:1px solid #41382e;text-align:left;padding:11px 12px}.balances th{color:var(--bright);font-size:12px}.balances td:last-child{text-align:right;font-weight:800;color:var(--green)}.balances th:last-child{text-align:right}.table-scroll{overflow:auto}.footer{text-align:center;color:#9c824d;letter-spacing:2px;font:13px Cinzel;margin:45px 0 0}.subtle-link{text-decoration:underline;text-underline-offset:3px;color:var(--bright)}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 Inter,Arial,sans-serif}button,select,input{font:inherit}button{cursor:pointer}button:disabled{cursor:not-allowed;opacity:.42}a{color:inherit;text-decoration:none}h1,h2,h3{font-family:Cinzel,Georgia,serif}h1{font-size:clamp(30px,4.5vw,48px);margin:9px 0}h2{font-size:20px;margin:0;color:var(--bright)}.site-header{height:70px;background:#0b0a0d;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;align-items:center;padding:0 clamp(15px,4vw,42px)}.logo img{height:45px;max-width:220px;object-fit:contain}.btn{background:#29232a;color:var(--text);border:1px solid var(--line);border-radius:8px;padding:10px 14px;font-weight:600}.btn:hover:not(:disabled){border-color:var(--gold)}.btn.primary{background:#b79351;border-color:#cbaa68;color:#14100a}.drawer{position:fixed;right:0;top:0;bottom:0;width:min(345px,90vw);background:#151117;border-left:1px solid var(--line);transform:translateX(105%);transition:.2s;z-index:22;padding:25px;box-shadow:0 0 60px #000b}.drawer.open{transform:none}.drawer a{display:block;padding:13px 0;border-bottom:1px solid var(--line)}.shade{display:none;position:fixed;inset:0;z-index:21;background:#000b}.shade.open{display:block}.hero{min-height:218px;background:linear-gradient(90deg,rgba(8,7,10,.97),rgba(8,7,10,.60)),url('../images/Raiding.png') center 47%/cover no-repeat;border-bottom:1px solid var(--line);display:flex;align-items:center}.hero-inner{width:min(1450px,100%);margin:auto;padding:32px 24px}.eyebrow{font-size:11px;letter-spacing:.20em;text-transform:uppercase;color:var(--gold);font-weight:700}.hero p{max-width:710px;color:#e8dcc8;margin:0}.wrap{max-width:1450px;margin:auto;padding:23px 19px 58px}.tabs{display:flex;gap:9px;flex-wrap:wrap;margin-bottom:20px}.tab{background:#19151b;border:1px solid var(--line);color:var(--text);border-radius:8px;padding:11px 17px;font-weight:700}.tab.active{background:#44331f;border-color:var(--gold);color:var(--bright)}[hidden]{display:none!important}.toolbar{display:grid;grid-template-columns:1fr auto;align-items:end;gap:15px;margin-bottom:15px}.field{display:flex;flex-direction:column;gap:6px}.label{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--gold);font-weight:800}.filters{display:flex;gap:10px;flex-wrap:wrap}.filters .field{min-width:160px}.field select,.field input{background:#19151b;border:1px solid #5a4732;color:var(--text);border-radius:8px;padding:10px 12px;min-height:42px;max-width:100%}.field input{width:min(350px,100%)}.status{padding:11px 14px;border:1px solid #5a4732;background:#1d1717;color:var(--muted);border-radius:9px;margin-bottom:16px}.status.error{border-color:#9d4b4b;color:#ffbaba}.status.ok{border-color:#417452;color:#bde9c5}.boss-banner{background:linear-gradient(100deg,#2a211d,#161419);border:1px solid var(--line);border-radius:12px;padding:17px 20px;display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:15px}.boss-banner h2{font-size:clamp(18px,2.6vw,27px);margin:4px 0 0}.small{font-size:12px;color:var(--muted)}.counter{font-size:12px;color:var(--muted);white-space:nowrap}.loot-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:start}.loot-card{background:var(--panel);border:1px solid #4d4133;border-radius:9px;padding:11px 12px;min-width:0;box-shadow:0 2px 10px #0003}.item-title{font-size:13px;font-weight:800;color:var(--bright);line-height:1.3;overflow-wrap:anywhere}.item-meta{font-size:10px;color:#a99b88;margin-top:4px}.pill{font-size:9px;text-transform:uppercase;letter-spacing:.04em;color:#deb581;border:1px solid #755f42;border-radius:4px;padding:1px 4px;display:inline-block;margin-left:4px}.roller-list{border-top:1px solid #45382a;margin-top:9px;padding-top:6px}.roller{display:flex;justify-content:space-between;align-items:baseline;gap:6px;padding:3px 0}.roller .name{font-size:15px;font-weight:700;overflow-wrap:anywhere;min-width:0}.roller-name{min-width:0;overflow-wrap:anywhere}.roller .bonus{font-size:15px;font-weight:800;color:var(--green);white-space:nowrap;font-variant-numeric:tabular-nums}.no-bonus{color:#8f877f;font-size:12px;font-style:italic;padding:4px 0}.nav-bottom{display:flex;justify-content:space-between;gap:12px;margin:22px 0 6px}.empty{padding:35px 15px;border:1px dashed #5a4934;border-radius:10px;color:var(--muted);text-align:center}.helper{padding:16px;border-radius:10px;border:1px solid var(--line);background:var(--panel);margin:20px 0}.balances{width:100%;border-collapse:collapse}.balances th,.balances td{border-bottom:1px solid #41382e;text-align:left;padding:11px 12px}.balances th{color:var(--bright);font-size:12px}.balances td:last-child{text-align:right;font-weight:800;color:var(--green)}.balances th:last-child{text-align:right}.table-scroll{overflow:auto}.footer{text-align:center;color:#9c824d;letter-spacing:2px;font:13px Cinzel;margin:45px 0 0}.subtle-link{text-decoration:underline;text-underline-offset:3px;color:var(--bright)}
 @media(max-width:1150px){.loot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}@media(max-width:800px){.loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.toolbar{grid-template-columns:1fr}.filters{width:100%}.filters .field{flex:1;min-width:135px}.hero{min-height:180px}}@media(max-width:490px){.wrap{padding:16px 10px 42px}.loot-grid{grid-template-columns:1fr;gap:8px}.hero-inner{padding:26px 15px}.boss-banner{padding:14px}.boss-banner h2{font-size:19px}.filters{flex-direction:column}.filters .field{width:100%}.field select,.field input{width:100%}.roller .name,.roller .bonus{font-size:16px}}
 .submit-shell{max-width:820px;border:1px solid var(--line);background:var(--panel);padding:24px;border-radius:13px}.submit-shell h2{margin-bottom:8px}.submit-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:22px 0}.submit-fields .field input,.submit-fields .field select,.guest-step .field input,.guest-step .field select{width:100%;max-width:none}.guest-step{padding:18px;border:1px solid #886638;border-radius:10px;background:#262018;margin:15px 0}.guest-step h3{color:var(--bright);margin:0 0 7px;font-size:17px}.guest-step .field{margin-top:12px}@media(max-width:600px){.submit-fields{grid-template-columns:1fr}.submit-shell{padding:16px}}
 
@@ -42,6 +42,41 @@
 .submit-end p{margin:0;flex:1;min-width:240px}
 .submit-feedback{margin:12px 0 0}
 @media(max-width:600px){.review-chip{display:none}.guest-fields{grid-template-columns:1fr}.submit-end{align-items:start;flex-direction:column}.submit-end p{min-width:0}}
+
+/* Master-loot quick reference: compact cards, one-row navigation, adjustable legibility. */
+:root{--roll-font-scale:1}
+body{font-size:calc(14px * var(--roll-font-scale))}
+#lootView .loot-toolbar{display:grid;grid-template-columns:minmax(145px,.8fr) minmax(175px,1fr) minmax(235px,1.7fr) minmax(230px,1.35fr);align-items:end;gap:10px;margin-bottom:13px}
+#lootView .loot-toolbar .field{min-width:0}
+#lootView .loot-toolbar input,#lootView .loot-toolbar select{width:100%;max-width:none}
+#lootView .boss-banner{min-height:42px;margin:0;padding:5px 11px;gap:7px;border-radius:8px}
+#lootView .boss-banner h2{font-size:calc(18px * var(--roll-font-scale));margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#lootView .boss-banner .counter{font-size:calc(11px * var(--roll-font-scale))}
+#lootView .boss-nav{padding:4px 7px;min-height:32px;flex-shrink:0}
+#lootView .boss-title-group{min-width:0;flex:1;text-align:center}
+#lootView .loot-grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;align-items:start}
+#lootView .loot-card{padding:9px 10px;border-radius:8px;min-width:0}
+#lootView .item-title{font-family:Cinzel,Georgia,serif;font-size:calc(14px * var(--roll-font-scale));font-weight:700;color:var(--bright);line-height:1.3}
+#lootView .roller-list{margin-top:6px;padding-top:5px}
+#lootView .roller{padding:1px 0;align-items:baseline;gap:5px}
+#lootView .roller .name{font-family:Inter,Arial,sans-serif;font-size:calc(15px * var(--roll-font-scale));font-weight:600;line-height:1.4}
+#lootView .roller .bonus{font-size:calc(14px * var(--roll-font-scale));font-weight:700}
+#lootView .roller-name{min-width:0;overflow-wrap:anywhere}
+#lootView .roller-name .small{font-size:calc(11px * var(--roll-font-scale))}
+#lootView .loot-card .item-meta{display:none}
+#lootView .loot-options{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin:0 0 10px}
+.class-toggle{display:inline-flex;align-items:center;gap:7px;font-size:calc(12px * var(--roll-font-scale));color:var(--muted);cursor:pointer}
+.class-toggle input{accent-color:var(--gold);width:16px;height:16px}
+.font-controls{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap;margin:25px 0 0;color:var(--muted)}
+.font-controls .btn{padding:6px 11px;min-width:39px}
+.font-controls .font-readout{min-width:46px;text-align:center;font-variant-numeric:tabular-nums}
+#balancesView .balances{font-size:calc(13px * var(--roll-font-scale))}
+#balancesView .balances th{font-size:calc(12px * var(--roll-font-scale))}
+@media(min-width:1650px){#lootView .loot-grid{grid-template-columns:repeat(6,minmax(0,1fr))}}
+@media(max-width:1250px){#lootView .loot-grid{grid-template-columns:repeat(4,minmax(0,1fr))}#lootView .loot-toolbar{grid-template-columns:minmax(135px,1fr) minmax(155px,1fr) minmax(215px,1.3fr)}}
+@media(max-width:900px){#lootView .loot-toolbar{grid-template-columns:repeat(2,minmax(0,1fr))}#lootView .loot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:650px){#lootView .loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:470px){#lootView .loot-toolbar{grid-template-columns:1fr}#lootView .loot-grid{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -87,15 +122,21 @@
 </section>
 <section class="lookup-shell"><div class="eyebrow">Roll Bonus Lookup</div><h2>Current Bonuses & Loot Sources</h2><p class="small">Browse current balances or look up bonuses for a particular raid boss.</p><div class="tabs"><button class="tab active" data-view="balances" aria-pressed="true">All Roll Bonuses</button><button class="tab" data-view="loot" aria-pressed="false">Bonuses by Boss</button></div>
 <section id="lootView" hidden>
-<div class="toolbar"><div class="filters"><div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div><div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div></div><div class="field"><label class="label" for="lootSearch">Find an item or roller</label><input type="search" id="lootSearch" placeholder="Search this boss…" autocomplete="off"></div></div>
-<div class="boss-banner"><div><div class="eyebrow">Current loot source</div><h2 id="bossTitle">Select a raid</h2></div><div class="counter" id="bossCounter"></div></div>
+<div class="loot-toolbar">
+ <div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div>
+ <div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div>
+ <div class="boss-banner" aria-label="Current loot source"><button class="btn boss-nav" id="prevBoss" aria-label="Previous boss">←</button><div class="boss-title-group"><h2 id="bossTitle">Select a raid</h2><div class="counter" id="bossCounter"></div></div><button class="btn boss-nav" id="nextBoss" aria-label="Next boss">→</button></div>
+ <div class="field"><label class="label" for="lootSearch">Find an Item or Roller</label><input type="search" id="lootSearch" placeholder="Search loot across this raid…" autocomplete="off"></div>
+</div>
+<div class="loot-options"><label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked>Show WoW class colors</label></div>
 <div class="loot-grid" id="lootGrid"><div class="empty">Loading loot…</div></div>
-<div class="nav-bottom"><button class="btn" id="prevBoss">← Previous Boss</button><button class="btn primary" id="nextBoss">Next Boss →</button></div>
-<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Bonuses are shown by character, highest first. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
+
+<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
 </section>
 <section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
 </section>
+<div class="font-controls" aria-label="Font size controls"><span>Text size</span><button type="button" class="btn" id="decreaseFont" aria-label="Decrease font size">A−</button><span class="font-readout" id="fontPercent">100%</span><button type="button" class="btn" id="increaseFont" aria-label="Increase font size">A+</button><button type="button" class="btn" id="resetFont">Reset</button></div>
 <div class="footer">◆ THIS IS THE WAY. ◆</div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -103,15 +144,78 @@
 <script>
 'use strict';
 const $=id=>document.getElementById(id);
-const state={bosses:[],items:[],links:[],bonuses:[],events:[],raid:'',bossId:null,view:'balances',client:null,guestRequired:false,roster:[]};
+const state={bosses:[],items:[],links:[],bonuses:[],events:[],classByName:new Map(),raid:'',bossId:null,view:'balances',client:null,guestRequired:false,roster:[]};
 const el=(tag,cls,text)=>{const n=document.createElement(tag);if(cls)n.className=cls;if(text!==undefined)n.textContent=String(text);return n};
 function message(text,kind=''){const n=$('notice');n.textContent=text;n.className='status '+kind;n.hidden=!text;}
 function populate(select,options,value){select.replaceChildren();for(const [v,label] of options){const op=el('option','',label);op.value=String(v);select.append(op)}if(value!=null)select.value=String(value)}
+// Classic class colors. Unknown/unmatched characters retain the normal text color.
+const CLASS_COLORS={WARRIOR:'#C79C6E',PALADIN:'#F58CBA',HUNTER:'#ABD473',ROGUE:'#FFF569',PRIEST:'#FFFFFF',SHAMAN:'#0070DE',MAGE:'#69CCF0',WARLOCK:'#9482C9',DRUID:'#FF7D0A'};
+const normalizeToon=name=>String(name||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').trim().toLowerCase();
+function classColor(name,guild){
+ // Avoid applying a Syndicate roster match to a guest with the same character name.
+ if(guild&&String(guild).trim().toLowerCase()!=='the syndicate')return '';
+ const playerClass=state.classByName.get(normalizeToon(name));
+ return CLASS_COLORS[playerClass]||'';
+}
+function coloredName(name,guild){
+ const node=el('span','name',name);
+ const color=$('classColorsToggle').checked?classColor(name,guild):'';
+ if(color)node.style.color=color;
+ return node;
+}
 function currentBosses(){return state.bosses.filter(b=>b.raid_code===state.raid).sort((a,b)=>(a.display_order??0)-(b.display_order??0)||a.boss_name.localeCompare(b.boss_name))}
 function selectedBoss(){return currentBosses().find(b=>String(b.id)===String(state.bossId))}
 function switchRaid(code){state.raid=code;const bosses=currentBosses();state.bossId=bosses.length?bosses[0].id:null;populate($('bossSelect'),bosses.map(b=>[b.id,b.boss_name]),state.bossId);$('lootSearch').value='';renderLoot()}
 function switchBoss(id){state.bossId=id;$('bossSelect').value=String(id);$('lootSearch').value='';renderLoot()}
-function renderLoot(){const bosses=currentBosses(),boss=selectedBoss(),ix=bosses.findIndex(b=>String(b.id)===String(state.bossId));$('bossTitle').textContent=boss?boss.boss_name:'No bosses listed';$('bossCounter').textContent=boss?`${ix+1} of ${bosses.length}`:'';$('prevBoss').disabled=ix<=0;$('nextBoss').disabled=ix<0||ix===bosses.length-1;const grid=$('lootGrid');grid.replaceChildren();if(!boss){grid.append(el('div','empty','No boss information is available for this raid.'));return}const itemIds=new Set(state.links.filter(l=>String(l.boss_id)===String(boss.id)).map(l=>String(l.item_id)));const q=$('lootSearch').value.trim().toLowerCase();const rows=state.items.filter(i=>itemIds.has(String(i.id))&&state.bonuses.some(b=>String(b.item_id)===String(i.id)&&Number(b.current_bonus)>0)).sort((a,b)=>a.item_name.localeCompare(b.item_name));let visible=0;for(const item of rows){const rollers=state.bonuses.filter(b=>String(b.item_id)===String(item.id)&&Number(b.current_bonus)>0).sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));if(q&&!item.item_name.toLowerCase().includes(q)&&!rollers.some(r=>r.toon_name.toLowerCase().includes(q)))continue;visible++;const card=el('article','loot-card');const heading=el('div','item-title',item.item_name);card.append(heading);const meta=el('div','item-meta',[(item.equipment_slot||''),item.item_level!=null&&item.item_level>0?'iLvl '+item.item_level:''].filter(Boolean).join(' · '));if(item.reservation_status&&item.reservation_status!=='available')meta.append(el('span','pill',item.reservation_status.replaceAll('_',' ')));card.append(meta);const people=el('div','roller-list');if(rollers.length){for(const r of rollers){const line=el('div','roller');line.append(el('span','name',r.toon_name+(r.guild_name&&r.guild_name!=='The Syndicate'?' ('+r.guild_name+')':'')),el('span','bonus','+'+r.current_bonus));people.append(line)}}card.append(people);grid.append(card)}if(!visible)grid.append(el('div','empty',q?'No matching loot or rollers on this boss.':'No active Roll Bonuses on this boss.'))}
+function renderLoot(){
+ const bosses=currentBosses(),boss=selectedBoss(),ix=bosses.findIndex(b=>String(b.id)===String(state.bossId));
+ const q=$('lootSearch').value.trim().toLowerCase();
+ $('bossTitle').textContent=q?'Search results · '+state.raid:(boss?boss.boss_name:'No bosses listed');
+ $('bossCounter').textContent=q?'All raid bosses':(boss?`${ix+1} of ${bosses.length}`:'');
+ $('prevBoss').disabled=!!q||ix<=0;
+ $('nextBoss').disabled=!!q||ix<0||ix===bosses.length-1;
+ const grid=$('lootGrid');grid.replaceChildren();
+ if(!bosses.length){grid.append(el('div','empty','No boss information is available for this raid.'));return}
+ const targetBosses=q?bosses:(boss?[boss]:[]);
+ const targetIds=new Set(targetBosses.map(b=>String(b.id)));
+ const itemSources=new Map();
+ for(const link of state.links){
+  if(!targetIds.has(String(link.boss_id)))continue;
+  const key=String(link.item_id);
+  if(!itemSources.has(key))itemSources.set(key,new Set());
+  const source=bosses.find(b=>String(b.id)===String(link.boss_id));
+  if(source)itemSources.get(key).add(source.boss_name);
+ }
+ const bonusByItem=new Map();
+ for(const bonus of state.bonuses){
+  if(Number(bonus.current_bonus)<=0)continue;
+  const key=String(bonus.item_id);
+  if(!bonusByItem.has(key))bonusByItem.set(key,[]);
+  bonusByItem.get(key).push(bonus);
+ }
+ const rows=state.items.filter(item=>itemSources.has(String(item.id))&&bonusByItem.has(String(item.id)))
+  .sort((a,b)=>a.item_name.localeCompare(b.item_name));
+ let visible=0;
+ for(const item of rows){
+  const rollers=bonusByItem.get(String(item.id)).slice().sort((a,b)=>Number(b.current_bonus)-Number(a.current_bonus)||a.toon_name.localeCompare(b.toon_name));
+  if(q&&!item.item_name.toLowerCase().includes(q)&&!rollers.some(r=>r.toon_name.toLowerCase().includes(q)))continue;
+  visible++;
+  const card=el('article','loot-card');
+  card.append(el('div','item-title',item.item_name));
+  const people=el('div','roller-list');
+  for(const r of rollers){
+   const line=el('div','roller');
+   const name=el('div','roller-name');
+   name.append(coloredName(r.toon_name,r.guild_name));
+   if(r.guild_name&&r.guild_name!=='The Syndicate')name.append(el('span','small',' ('+r.guild_name+')'));
+   line.append(name,el('span','bonus','+'+r.current_bonus));
+   people.append(line);
+  }
+  card.append(people);grid.append(card);
+ }
+ if(!visible)grid.append(el('div','empty',q?'No matching loot or characters with active bonuses in this raid.':'No active Roll Bonuses on this boss.'));
+}
+
 function raidCodesForItem(itemId){
  const bossIds=new Set(state.links.filter(l=>String(l.item_id)===String(itemId)).map(l=>String(l.boss_id)));
  const codes=[...new Set(state.bosses.filter(b=>bossIds.has(String(b.id))).map(b=>b.raid_code))];
@@ -128,7 +232,8 @@ function renderBalances(){
   .sort((a,b)=>b.current_bonus-a.current_bonus||a.toon_name.localeCompare(b.toon_name));
  for(const b of active){
   const tr=el('tr');
-  for(const v of [b.toon_name,b.guild_name||'PUG / Unknown',b.associatedRaids.join(', ')||'—',b.item_name,'+'+b.current_bonus])tr.append(el('td','',v));
+  const characterCell=el('td');characterCell.append(coloredName(b.toon_name,b.guild_name));tr.append(characterCell);
+  for(const v of [b.guild_name||'PUG / Unknown',b.associatedRaids.join(', ')||'—',b.item_name,'+'+b.current_bonus])tr.append(el('td','',v));
   host.append(tr);
  }
  if(!active.length){const tr=el('tr'),td=el('td','','No matching bonuses found for this raid or search.');td.colSpan=5;tr.append(td);host.append(tr)}
@@ -163,8 +268,19 @@ function updateReportItems(){
 }
 async function loadSyndicateRoster(){
  try {
-   const rows=await fetchAll(state.client,'guild_roster','id,Name,normalized_name','id');
+   // Prefer all roster fields to pick up the site's actual class column; preserve roster input on restricted schemas.
+   let rows;
+   try { rows=await fetchAll(state.client,'guild_roster','*','id'); }
+   catch(error){ console.warn('Roster class metadata unavailable:',error); rows=await fetchAll(state.client,'guild_roster','id,Name,normalized_name','id'); }
    state.roster=rows;
+   state.classByName.clear();
+   for(const row of rows){
+     const name=String(row.normalized_name||row.Name||row.name||'').trim();
+     const raw=String(row.Class??row.class??row.character_class??row.characterClass??row.toon_class??'').trim().toUpperCase();
+     const cls=raw.replace(/[^A-Z]/g,'');
+     if(name&&CLASS_COLORS[cls])state.classByName.set(normalizeToon(name),cls);
+   }
+   renderLoot();renderBalances();
    const names=[...new Set(rows.map(r=>String(r.normalized_name||r.Name||'').trim()).filter(Boolean))]
      .sort((a,b)=>a.localeCompare(b));
    const options=$('syndicateToonOptions');options.replaceChildren();for(const name of names){const option=document.createElement('option');option.value=name;options.append(option)}
@@ -230,6 +346,17 @@ $('rollForm').addEventListener('submit',async e=>{
  }catch(err){submissionMessage('Unable to submit: '+err.message,'error')}
  finally{btn.disabled=false}
 });
+const readPref=(key,fallback)=>{try{return localStorage.getItem(key)??fallback}catch{return fallback}};
+const savePref=(key,value)=>{try{localStorage.setItem(key,String(value))}catch{}};
+$('classColorsToggle').checked=readPref('syndicate_roll_class_colors','on')!=='off';
+$('classColorsToggle').addEventListener('change',()=>{savePref('syndicate_roll_class_colors',$('classColorsToggle').checked?'on':'off');renderLoot();renderBalances()});
+let fontScale=Number(readPref('syndicate_roll_font_scale','1'));
+if(!Number.isFinite(fontScale))fontScale=1;
+function applyFontScale(){fontScale=Math.min(1.5,Math.max(.85,Math.round(fontScale*20)/20));document.documentElement.style.setProperty('--roll-font-scale',fontScale);$('fontPercent').textContent=Math.round(fontScale*100)+'%';savePref('syndicate_roll_font_scale',fontScale)}
+$('decreaseFont').addEventListener('click',()=>{fontScale-=.05;applyFontScale()});
+$('increaseFont').addEventListener('click',()=>{fontScale+=.05;applyFontScale()});
+$('resetFont').addEventListener('click',()=>{fontScale=1;applyFontScale()});
+applyFontScale();
 $('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-view]').forEach(b=>b.addEventListener('click',()=>{state.view=b.dataset.view;document.querySelectorAll('[data-view]').forEach(x=>{x.classList.toggle('active',x===b);x.setAttribute('aria-pressed',String(x===b))});$('lootView').hidden=state.view!=='loot';$('balancesView').hidden=state.view!=='balances';if(state.view==='balances')renderBalances();}));$('openMenu').onclick=()=>{$('drawer').classList.add('open');$('shade').classList.add('open')};$('closeMenu').onclick=$('shade').onclick=()=>{$('drawer').classList.remove('open');$('shade').classList.remove('open')};
 async function startPublicRollBonuses(){
   if(!window.syndicateDB){
