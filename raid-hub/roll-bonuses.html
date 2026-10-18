@@ -261,7 +261,7 @@ body{font-size:calc(16px * var(--roll-font-scale));}
     <span class="small" id="softresStatus" role="status" aria-live="polite">Showing all loot with active bonuses.</span>
   </div>
   <div class="softres-paste" id="softresPaste" hidden>
-    <label class="label" for="softresCsv">Paste Softres.it CSV export</label>
+    <label class="label" for="softresCsv">Paste Softres.it CSV export (matched by item name)</label>
     <textarea id="softresCsv" rows="5" placeholder="Item Name,Item ID,From,Raider Name,…" spellcheck="false"></textarea>
     <div class="softres-actions"><button type="button" class="btn primary" id="applySoftres">Apply Filter</button><button type="button" class="btn" id="cancelSoftres">Cancel</button></div>
     <div class="small" id="softresError" role="alert"></div>
@@ -274,7 +274,7 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 </div>
 <div class="loot-grid" id="lootGrid"><div class="empty">Loading loot…</div></div>
 
-<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Importing SoftRes temporarily hides items absent from that export. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
+<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Importing SoftRes temporarily hides items absent from that export; items are matched by name to the site loot catalog. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
 </section>
 <section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
@@ -324,7 +324,10 @@ function selectedBoss(){return currentBosses().find(b=>String(b.id)===String(sta
 function switchRaid(code){state.raid=code;const bosses=currentBosses();state.bossId=bosses.length?bosses[0].id:null;populate($('bossSelect'),bosses.map(b=>[b.id,b.boss_name]),state.bossId);$('lootSearch').value='';renderLoot()}
 function switchBoss(id){state.bossId=id;$('bossSelect').value=String(id);$('lootSearch').value='';renderLoot()}
 // CSV input stays in JS memory only. Never transmitted, persisted, or logged.
-let softresItemIds=null;
+let softresItemNames=null;
+function normalizeLootName(name){
+ return String(name||'').normalize('NFKD').replace(/[\u0300-\u036f]/g,'').replace(/[’‘`´]/g,"'").toLowerCase().replace(/[^a-z0-9]+/g,' ').trim().replace(/\s+/g,' ');
+}
 let lootSettingsWasOpened=false;
 function setLootSettings(open){
  $('lootSettings').hidden=!open;
@@ -352,24 +355,29 @@ function applySoftresCsv(){
  try{
   const rows=readCsvRows($('softresCsv').value.trim().replace(/^\uFEFF/,''));
   const head=(rows.shift()||[]).map(h=>h.trim().toLowerCase());
-  const idIndex=head.indexOf('item id');
-  if(idIndex<0)throw Error('Could not find the Item ID column. Paste the Softres.it CSV including its header.');
-  const ids=new Set();
-  for(const row of rows){const id=(row[idIndex]||'').trim();if(/^\d+$/.test(id))ids.add(String(Number(id)))}
-  if(!ids.size)throw Error('No valid item IDs found in the export.');
-  softresItemIds=ids;
-  $('softresCsv').value=''; // minimize retained sensitive Discord info
+  const nameIndex=head.indexOf('item name');
+  if(nameIndex<0)throw Error('Could not find the Item Name column. Paste the Softres.it CSV including its header.');
+  const names=new Set();
+  for(const row of rows){const name=normalizeLootName(row[nameIndex]);if(name)names.add(name)}
+  if(!names.size)throw Error('No valid item names found in the export.');
+  // raid_items.id is a Supabase row ID, not necessarily the WoW Item ID in Softres.it.
+  // Match imported loot by normalized item name, not by these unrelated ID systems.
+  const catalogNames=new Set(state.items.map(item=>normalizeLootName(item.item_name)));
+  const matched=[...names].filter(name=>catalogNames.has(name));
+  if(!matched.length)throw Error(`None of the ${names.size} imported items matched the website loot catalog. Check the export and try again. No filter was applied.`);
+  softresItemNames=names;
+  $('softresCsv').value=''; // discard raw CSV, including Discord IDs
   $('softresPaste').hidden=true;
   $('softresError').textContent='';
   $('clearSoftres').hidden=false;
   $('filterActiveMark').hidden=false;
-  $('softresStatus').textContent=`SoftRes filter active · ${ids.size} unique item IDs.`;
+  $('softresStatus').textContent=`SoftRes filter active · ${matched.length} of ${names.size} unique imported items matched${matched.length<names.size?' ('+(names.size-matched.length)+' not found)':''}.`;
   setLootSettings(false);
   renderLoot();
  }catch(err){$('softresError').textContent=err.message}
 }
 function clearSoftresFilter(){
- softresItemIds=null;
+ softresItemNames=null;
  $('softresCsv').value='';$('softresError').textContent='';$('softresPaste').hidden=true;
  $('clearSoftres').hidden=true;$('filterActiveMark').hidden=true;
  $('softresStatus').textContent='Showing all loot with active bonuses.';
@@ -401,7 +409,7 @@ function renderLoot(){
   if(!bonusByItem.has(key))bonusByItem.set(key,[]);
   bonusByItem.get(key).push(bonus);
  }
- const rows=state.items.filter(item=>itemSources.has(String(item.id))&&bonusByItem.has(String(item.id))&&(!softresItemIds||softresItemIds.has(String(item.id))))
+ const rows=state.items.filter(item=>itemSources.has(String(item.id))&&bonusByItem.has(String(item.id))&&(!softresItemNames||softresItemNames.has(normalizeLootName(item.item_name))))
   .sort((a,b)=>a.item_name.localeCompare(b.item_name));
  let visible=0;
  for(const item of rows){
@@ -425,7 +433,7 @@ function renderLoot(){
   card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openRollCalculator(item,rollers)}});
   grid.append(card);
  }
- if(!visible)grid.append(el('div','empty',softresItemIds?'No active bonus items match the imported SoftRes filter for this boss or search. Try another boss or Clear Filter.':(q?'No matching loot or characters with active bonuses in this raid.':'No active Roll Bonuses on this boss.')));
+ if(!visible)grid.append(el('div','empty',softresItemNames?'No active bonus items match the imported SoftRes filter for this boss or search. Try another boss or Clear Filter.':(q?'No matching loot or characters with active bonuses in this raid.':'No active Roll Bonuses on this boss.')));
 }
 
 function raidCodesForItem(itemId){
