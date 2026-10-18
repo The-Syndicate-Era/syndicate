@@ -175,6 +175,18 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 @media(max-width:1200px){.dashboard-layout{grid-template-columns:225px minmax(0,1fr)}#lootView .loot-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:850px){.dashboard-layout{display:block}.dashboard-sidebar{position:static;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));margin-bottom:15px}.sidebar-eyebrow{grid-column:1/-1}.dashboard-workspace{padding:17px}#lootView .loot-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:530px){.dashboard-sidebar{grid-template-columns:1fr}.dashboard-sidebar .workspace-link{padding:10px 12px}.dashboard-workspace{padding:13px}#lootView .loot-grid{grid-template-columns:1fr}.hero h1{font-size:calc(30px * var(--roll-font-scale))}}
+
+/* Master looter: temporary SoftRes filter and compact collapsible setup */
+#lootView .loot-settings-head{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:9px}
+#lootView .loot-settings-head .btn{white-space:nowrap}
+#lootView .loot-control-panel{margin-bottom:9px;gap:11px}
+#lootView .boss-nav-standalone{border:1px solid var(--line);border-radius:9px;background:#1d191d;margin:0 0 12px;padding:9px 11px}
+#lootView .softres-actions{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+#lootView .softres-paste{border-top:1px solid var(--line);padding-top:12px;display:grid;gap:9px}
+#lootView .softres-paste textarea{width:100%;min-height:120px;resize:vertical;background:#19151b;color:var(--text);border:1px solid #5a4732;border-radius:8px;padding:10px;font:inherit}
+#lootView #softresError{color:var(--red)}
+#lootView #filterActiveMark{color:var(--green)}
+@media(max-width:550px){#lootView .boss-nav-standalone{gap:5px;padding:8px 5px}#lootView .boss-nav{font-size:calc(12px * var(--roll-font-scale));padding:7px 5px}#lootView .boss-title-group h2{white-space:normal;font-size:calc(15px * var(--roll-font-scale))}}
 </style>
 </head>
 <body>
@@ -230,24 +242,39 @@ body{font-size:calc(16px * var(--roll-font-scale));}
 </section>
 <section class="lookup-shell">
 <section id="lootView" hidden>
-<div class="loot-control-panel">
+<div class="loot-settings-head">
+  <button type="button" class="btn" id="toggleLootSettings" aria-expanded="true" aria-controls="lootSettings">⚙ Settings <span id="filterActiveMark" hidden>· SoftRes active</span> <span id="settingsArrow">▴</span></button>
+  <span class="small" id="lootDisplayStatus">Configure your raid, search, and optional SoftRes filter.</span>
+</div>
+<div class="loot-control-panel" id="lootSettings">
   <div class="loot-select-row">
     <div class="field"><label class="label" for="raidSelect">Raid</label><select id="raidSelect"><option value="">Loading raids…</option></select></div>
     <div class="field"><label class="label" for="bossSelect">Boss / Loot Source</label><select id="bossSelect"><option value="">Loading bosses…</option></select></div>
   </div>
   <div class="loot-find-row">
-    <div class="field"><label class="label" for="lootSearch">Find an item or roller</label><input type="search" id="lootSearch" placeholder="Search loot across this raid…" autocomplete="off"></div>
-    <label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked> Show WoW class colors</label>
+    <div class="field"><label class="label" for="lootSearch">Find loot or character</label><input type="search" id="lootSearch" placeholder="Search all bosses in this raid…" autocomplete="off"></div>
+    <label class="class-toggle"><input type="checkbox" id="classColorsToggle" checked> WoW class colors</label>
   </div>
-  <div class="boss-nav-row" aria-label="Boss navigation">
-    <button class="btn boss-nav" id="prevBoss" aria-label="Previous boss">← Previous</button>
-    <div class="boss-title-group"><h2 id="bossTitle">Select a raid</h2><div class="counter" id="bossCounter"></div></div>
-    <button class="btn boss-nav" id="nextBoss" aria-label="Next boss">Next →</button>
+  <div class="softres-actions">
+    <button type="button" class="btn" id="openSoftres">Import SoftRes</button>
+    <button type="button" class="btn" id="clearSoftres" hidden>Clear Filter</button>
+    <span class="small" id="softresStatus" role="status" aria-live="polite">Showing all loot with active bonuses.</span>
   </div>
+  <div class="softres-paste" id="softresPaste" hidden>
+    <label class="label" for="softresCsv">Paste Softres.it CSV export</label>
+    <textarea id="softresCsv" rows="5" placeholder="Item Name,Item ID,From,Raider Name,…" spellcheck="false"></textarea>
+    <div class="softres-actions"><button type="button" class="btn primary" id="applySoftres">Apply Filter</button><button type="button" class="btn" id="cancelSoftres">Cancel</button></div>
+    <div class="small" id="softresError" role="alert"></div>
+  </div>
+</div>
+<div class="boss-nav-row boss-nav-standalone" aria-label="Boss navigation">
+  <button class="btn boss-nav" id="prevBoss" aria-label="Previous boss">← Previous</button>
+  <div class="boss-title-group"><h2 id="bossTitle">Select a raid</h2><div class="counter" id="bossCounter"></div></div>
+  <button class="btn boss-nav" id="nextBoss" aria-label="Next boss">Next →</button>
 </div>
 <div class="loot-grid" id="lootGrid"><div class="empty">Loading loot…</div></div>
 
-<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
+<div class="helper small"><strong style="color:var(--bright)">Bonuses by Boss:</strong> Only items with active Roll Bonuses appear here. Importing SoftRes temporarily hides items absent from that export. Bonuses are shown by character, highest first. Search finds matching loot across the selected raid. Changing bosses or searching does not alter anyone's points. Shared drops can appear under multiple loot sources.</div>
 </section>
 <section id="balancesView"><div class="toolbar"><div><h2>Current Roll Bonuses</h2><div class="small">Current balances across all loaded raid items. Roll Bonuses are updated weekly at Tuesday server reset, following officer review.</div></div><div class="filters"><div class="field"><label class="label" for="balanceRaid">Raid</label><select id="balanceRaid" aria-label="Filter roll bonuses by raid"><option value="">All Raids</option></select></div><div class="field"><label class="label" for="balanceSearch">Find a toon, item, or raid</label><input id="balanceSearch" type="search" placeholder="Search roll bonuses…"></div></div></div><div class="table-scroll"><table class="balances"><thead><tr><th>Character</th><th>Guild</th><th>Raid(s)</th><th>Item</th><th>Bonus</th></tr></thead><tbody id="balanceRows"></tbody></table></div></section>
 
@@ -296,6 +323,58 @@ function currentBosses(){return state.bosses.filter(b=>b.raid_code===state.raid)
 function selectedBoss(){return currentBosses().find(b=>String(b.id)===String(state.bossId))}
 function switchRaid(code){state.raid=code;const bosses=currentBosses();state.bossId=bosses.length?bosses[0].id:null;populate($('bossSelect'),bosses.map(b=>[b.id,b.boss_name]),state.bossId);$('lootSearch').value='';renderLoot()}
 function switchBoss(id){state.bossId=id;$('bossSelect').value=String(id);$('lootSearch').value='';renderLoot()}
+// CSV input stays in JS memory only. Never transmitted, persisted, or logged.
+let softresItemIds=null;
+let lootSettingsWasOpened=false;
+function setLootSettings(open){
+ $('lootSettings').hidden=!open;
+ $('toggleLootSettings').setAttribute('aria-expanded',String(open));
+ $('settingsArrow').textContent=open?'▴':'▾';
+ if(open)lootSettingsWasOpened=true;
+}
+function readCsvRows(csv){
+ const rows=[];let row=[],field='',quoted=false;
+ for(let i=0;i<csv.length;i++){
+  const c=csv[i];
+  if(c==='"'){
+   if(quoted&&csv[i+1]==='"'){field+='"';i++}else quoted=!quoted;
+  }else if(c===','&&!quoted){row.push(field);field=''}
+  else if((c==='\n'||c==='\r')&&!quoted){
+   if(c==='\r'&&csv[i+1]==='\n')i++;
+   row.push(field);if(row.some(x=>x.trim()))rows.push(row);row=[];field='';
+  }else field+=c;
+ }
+ if(quoted)throw Error('Unclosed quoted field in CSV.');
+ row.push(field);if(row.some(x=>x.trim()))rows.push(row);
+ return rows;
+}
+function applySoftresCsv(){
+ try{
+  const rows=readCsvRows($('softresCsv').value.trim().replace(/^\uFEFF/,''));
+  const head=(rows.shift()||[]).map(h=>h.trim().toLowerCase());
+  const idIndex=head.indexOf('item id');
+  if(idIndex<0)throw Error('Could not find the Item ID column. Paste the Softres.it CSV including its header.');
+  const ids=new Set();
+  for(const row of rows){const id=(row[idIndex]||'').trim();if(/^\d+$/.test(id))ids.add(String(Number(id)))}
+  if(!ids.size)throw Error('No valid item IDs found in the export.');
+  softresItemIds=ids;
+  $('softresCsv').value=''; // minimize retained sensitive Discord info
+  $('softresPaste').hidden=true;
+  $('softresError').textContent='';
+  $('clearSoftres').hidden=false;
+  $('filterActiveMark').hidden=false;
+  $('softresStatus').textContent=`SoftRes filter active · ${ids.size} unique item IDs.`;
+  setLootSettings(false);
+  renderLoot();
+ }catch(err){$('softresError').textContent=err.message}
+}
+function clearSoftresFilter(){
+ softresItemIds=null;
+ $('softresCsv').value='';$('softresError').textContent='';$('softresPaste').hidden=true;
+ $('clearSoftres').hidden=true;$('filterActiveMark').hidden=true;
+ $('softresStatus').textContent='Showing all loot with active bonuses.';
+ renderLoot();
+}
 function renderLoot(){
  const bosses=currentBosses(),boss=selectedBoss(),ix=bosses.findIndex(b=>String(b.id)===String(state.bossId));
  const q=$('lootSearch').value.trim().toLowerCase();
@@ -322,7 +401,7 @@ function renderLoot(){
   if(!bonusByItem.has(key))bonusByItem.set(key,[]);
   bonusByItem.get(key).push(bonus);
  }
- const rows=state.items.filter(item=>itemSources.has(String(item.id))&&bonusByItem.has(String(item.id)))
+ const rows=state.items.filter(item=>itemSources.has(String(item.id))&&bonusByItem.has(String(item.id))&&(!softresItemIds||softresItemIds.has(String(item.id))))
   .sort((a,b)=>a.item_name.localeCompare(b.item_name));
  let visible=0;
  for(const item of rows){
@@ -346,7 +425,7 @@ function renderLoot(){
   card.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();openRollCalculator(item,rollers)}});
   grid.append(card);
  }
- if(!visible)grid.append(el('div','empty',q?'No matching loot or characters with active bonuses in this raid.':'No active Roll Bonuses on this boss.'));
+ if(!visible)grid.append(el('div','empty',softresItemIds?'No active bonus items match the imported SoftRes filter for this boss or search. Try another boss or Clear Filter.':(q?'No matching loot or characters with active bonuses in this raid.':'No active Roll Bonuses on this boss.')));
 }
 
 function raidCodesForItem(itemId){
@@ -556,6 +635,12 @@ $('decreaseFont').addEventListener('click',()=>{fontScale-=.05;applyFontScale()}
 $('increaseFont').addEventListener('click',()=>{fontScale+=.05;applyFontScale()});
 $('resetFont').addEventListener('click',()=>{fontScale=1;applyFontScale()});
 applyFontScale();
+$('toggleLootSettings').addEventListener('click',()=>setLootSettings($('lootSettings').hidden));
+$('openSoftres').addEventListener('click',()=>{$('softresPaste').hidden=false;$('softresError').textContent='';$('softresCsv').focus()});
+$('cancelSoftres').addEventListener('click',()=>{$('softresPaste').hidden=true;$('softresCsv').value='';$('softresError').textContent=''});
+$('applySoftres').addEventListener('click',applySoftresCsv);
+$('clearSoftres').addEventListener('click',clearSoftresFilter);
+setLootSettings(true);
 $('raidSelect').addEventListener('change',e=>switchRaid(e.target.value));$('bossSelect').addEventListener('change',e=>switchBoss(e.target.value));$('lootSearch').addEventListener('input',renderLoot);$('balanceSearch').addEventListener('input',renderBalances);$('balanceRaid').addEventListener('change',renderBalances);$('prevBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>0)switchBoss(all[index-1].id)});$('nextBoss').addEventListener('click',()=>{const all=currentBosses(),index=all.findIndex(b=>String(b.id)===String(state.bossId));if(index>=0&&index<all.length-1)switchBoss(all[index+1].id)});document.querySelectorAll('[data-workspace]').forEach(button=>button.addEventListener('click',()=>showWorkspace(button.dataset.workspace)));
 function showWorkspace(name){
  const meta={lost:['Report a Lost Roll','Better luck next time!',"Didn't win the loot? At least the roll can count toward your next attempt."],won:['Report an Item Won','Woo hoo, you did it!', 'Report your winning Soft Reserve roll for officer review.'],balances:['All Roll Bonuses','Proof that everyone has bad luck','Look up current bonuses across all raids and items.'],loot:['Bonuses by Boss','Master looters favorite tool','Find an item, check bonuses, and use the local roll calculator.']}[name];
