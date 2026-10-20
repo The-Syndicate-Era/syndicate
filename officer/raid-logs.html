@@ -122,15 +122,36 @@ function renderHistory(){
  const message=$('historyStatus');message.hidden=false;message.textContent=`Showing ${filtered.length} of ${historyReports.length} reports`;
  for(const r of filtered)host.append(entry(r));if(!filtered.length){const p=document.createElement('p');p.className='rl-empty';p.textContent='No raid logs match these filters.';host.append(p)}
 }
-async function loadHistory(){const host=$('historyStatus');host.hidden=false;host.textContent='Loading reports…';try{const response=await officerRequest({action:'list'});historyReports=response.reports||[];
-  // Look up actual calendar raid names/dates so history never searches WCL URLs or report titles.
+function extractReports(response){
+ // Accept familiar response envelopes, but do not silently treat an unknown response as an empty history.
+ const candidates=[response?.reports,response?.data?.reports,response?.data?.data?.reports,response?.result?.reports,response?.data,response?.result];
+ return candidates.find(Array.isArray);
+}
+async function loadHistory(){
+ const host=$('historyStatus');host.hidden=false;host.textContent='Loading reports…';
+ try{
+  const response=await officerRequest({action:'list'});
+  const records=extractReports(response);
+  if(!records){
+   historyReports=[];refreshCalendarMarks();$('historyList').replaceChildren();
+   host.textContent='Raid log history could not be read. The import service returned no recognizable report list. Response fields: '+Object.keys(response||{}).join(', ')+'. Please inspect the syndicate-wcl-import list action.';
+   return;
+  }
+  historyReports=records;
+  if(!historyReports.length){
+   refreshCalendarMarks();$('historyList').replaceChildren();
+   host.textContent='The import service returned 0 logs. Supabase previously contained 21 reports, so this is a backend listing/authorization issue, not a search-filter result. Check the syndicate-wcl-import list action.';
+   return;
+  }
   const unknown=[...new Set(historyReports.map(r=>String(r.event_id||'')).filter(id=>id&&!calendarById.has(id)))];
   for(let offset=0;offset<unknown.length;offset+=100){
    const {data,error}=await db().from('Events').select('id,date,name,time').in('id',unknown.slice(offset,offset+100));
    if(error){console.warn('Raid history event details unavailable:',error.message);break;}
    for(const e of data||[])calendarById.set(String(e.id),e);
   }
-  refreshCalendarMarks();renderHistory();}catch(err){host.textContent='Unable to load history: '+err.message;}}
+  refreshCalendarMarks();renderHistory();
+ }catch(err){host.textContent='Unable to load history: '+err.message;}
+}
 async function deleteReport(report,button){
  const label=(report.raid_name||report.event_name||report.report_title||'this report')+' ('+(dateOfReport(report)||'unknown date')+')';
  if(!confirm('DELETE IMPORT?\n\n'+label+'\n\nThis must remove the imported report and its linked raid-log data, but not the calendar raid or unrelated roll bonuses. Continue?'))return;
