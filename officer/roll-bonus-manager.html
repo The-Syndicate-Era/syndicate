@@ -35,6 +35,15 @@
 .rb-detail small{display:block;color:#bbae93;margin-bottom:.2rem}
 .rb-note-warning{border-left:3px solid #dc8b64;padding:.6rem .85rem;margin:.6rem 0;color:#efc7b5}
 @media(max-width:700px){.rb-review-details{grid-template-columns:1fr}.rb-table{min-width:800px}}
+
+/* Compact officer review: show decisions and editable details without technical IDs */
+#reviewShade .rb-modal{width:min(780px,100%)}
+#reviewShade .rb-detail{padding:.6rem .75rem}
+#reviewShade .rb-review-group{padding:.8rem 0}
+#reviewShade .rb-review-group h3{margin:.25rem 0 .55rem}
+#reviewShade .rb-form{margin:.5rem 0;gap:.7rem}
+#reviewShade .rb-modal-header h2{font-size:clamp(1.35rem,2.8vw,2rem)}
+#reviewShade .rb-verification{padding:.65rem .8rem}
 </style>
 </head>
 <body>
@@ -91,19 +100,19 @@
 </main>
 <div class="rb-modal-shade" id="reviewShade" hidden>
  <div class="rb-modal wide" role="dialog" aria-modal="true" aria-labelledby="reviewTitle" tabindex="-1" id="reviewDialog">
-  <div class="rb-modal-header"><div><p class="rb-top">OFFICER REVIEW · <span id="reviewId"></span></p><h2 id="reviewTitle">Submission</h2><p class="rb-quiet" id="reviewSubtitle"></p></div><button class="rb-button" type="button" id="closeReview" aria-label="Close review">✕</button></div>
+  <div class="rb-modal-header"><div><p class="rb-top">OFFICER REVIEW <span id="reviewId" hidden></span></p><h2 id="reviewTitle">Submission</h2><p class="rb-quiet" id="reviewSubtitle"></p></div><button class="rb-button" type="button" id="closeReview" aria-label="Close review">✕</button></div>
   <div class="rb-badges" id="reviewBadges"></div><div id="reviewAlert" class="rb-status" hidden role="status"></div>
-  <div class="rb-review-group"><h3>SUBMITTED INFORMATION</h3><div class="rb-review-details" id="submittedDetails"></div></div>
-   <div class="rb-review-group"><h3>1. SUBMISSION DETAILS & CORRECTIONS</h3><div class="rb-form">
-   <div class="rb-field"><label for="editCharacter">Character</label><input id="editCharacter" list="editCharacterOptions" autocomplete="off"><datalist id="editCharacterOptions"></datalist></div>
-   <div class="rb-field"><label for="identityMatch">Match to existing roll-bonus character</label><select id="identityMatch"><option value="">Use submitted character</option></select><small class="rb-quiet">Select a guild member or existing PUG record. This does not create a new identity.</small></div>
-    <div class="rb-field"><label for="editGuild">Guild (override)</label><input id="editGuild" maxlength="100"></div>
-   <div class="rb-field"><label for="editItem">Soft Reserved Item</label><input id="editItem" list="editItemOptions" autocomplete="off"><datalist id="editItemOptions"></datalist></div>
-   <div class="rb-field"><label for="editResult">Result</label><select id="editResult"><option value="loss">Lost SR roll</option><option value="win">Won SR roll (reset)</option></select></div>
-   <div class="rb-field" id="editCountWrap"><label for="editCount">Number of lost rolls</label><input id="editCount" type="number" min="1" max="20" value="1"></div>
-  </div><p class="rb-quiet">Corrections replace the pending submission. Once approved, bonus history is written using the corrected values.</p></div>
-  <div class="rb-review-group"><h3>2. RAID LOG VERIFICATION</h3><div class="rb-verification" id="logVerification">Loading linked raid logs…</div><div class="rb-verification" id="guildVerification">Checking guilds represented in the raid…</div></div>
-  <div class="rb-review-group"><h3>3. OFFICER DECISION</h3><div class="rb-field"><label for="reviewNotes">Officer notes</label><textarea id="reviewNotes" rows="2" placeholder="Optional decision notes…"></textarea></div>
+  <div class="rb-review-group"><h3>Report Details</h3><div class="rb-review-details" id="submittedDetails"></div></div>
+  <div class="rb-review-group"><h3>Check or Correct</h3><div class="rb-form">
+    <div class="rb-field"><label for="editCharacter">Character name</label><input id="editCharacter" list="editCharacterOptions" autocomplete="off"><datalist id="editCharacterOptions"></datalist></div>
+    <div class="rb-field"><label for="identityMatch">Link to an existing character</label><select id="identityMatch"><option value="">Keep reported character</option></select></div>
+    <div class="rb-field"><label for="editGuild">Guild (if correction needed)</label><input id="editGuild" maxlength="100"></div>
+    <div class="rb-field"><label for="editItem">Item</label><input id="editItem" list="editItemOptions" autocomplete="off"><datalist id="editItemOptions"></datalist></div>
+    <div class="rb-field"><label for="editResult">Outcome</label><select id="editResult"><option value="loss">Lost roll</option><option value="win">Won item</option></select></div>
+    <div class="rb-field" id="editCountWrap"><label for="editCount">Lost rolls</label><input id="editCount" type="number" min="1" max="20" value="1"></div>
+  </div></div>
+  <div class="rb-review-group"><h3>Raid Log</h3><div class="rb-verification" id="logVerification">Checking attendance…</div></div>
+  <div class="rb-review-group"><h3>Decision</h3><div class="rb-field"><label for="reviewNotes">Officer notes</label><textarea id="reviewNotes" rows="2" placeholder="Optional decision notes…"></textarea></div>
    <div class="rb-review-actions"><button class="rb-button" id="saveReview" type="button">Save Changes</button><button class="rb-button primary" id="approveReview" type="button">Approve</button><button class="rb-button danger" id="rejectReview" type="button">Reject</button></div></div>
  </div>
 </div>
@@ -113,9 +122,7 @@
   <div class="rb-review-details" id="expirationDetails"></div>
   <div class="rb-panel"><h3>Linked characters and active roll bonuses</h3><div id="expirationCharacters" class="rb-help">Loading linked records…</div></div>
   <div class="rb-note-warning">Missing historical attendance does not prove inactivity. Check raid logs and main/alt links before removing any points.</div>
-  <div class="rb-field"><label for="expirationReason">Officer reason (required)</label><textarea id="expirationReason" rows="2" placeholder="Reason for this decision"></textarea></div>
-  <div class="rb-review-actions"><button class="rb-button danger" id="expireInReview" type="button">Remove Roll Bonuses</button><button class="rb-button primary" id="extendInReview" type="button">Extend 2 Months</button></div>
-  <p class="rb-quiet" id="expirationDialogNote"></p>
+  <p class="rb-quiet">Close this review to use Remove Bonuses or Extend 2 Months from the expiration list.</p>
  </div>
 </div>
 <div id="syndicate-footer"></div>
@@ -193,7 +200,7 @@ async function loadPending(){try{
  const cmap=names(),emap=events(),imap=items();
  for(const sub of state.pending){
   const c=cmap.get(String(sub.character_id)),i=imap.get(String(sub.item_id)),event=emap.get(String(sub.event_id));const tr=document.createElement('tr');
-  textCell(tr,(c?.toon_name||'#'+sub.character_id)+' · '+(c?.guild_name||'Unknown'));
+  textCell(tr,(c?.toon_name||'Character record missing')+' · '+(c?.guild_name||'Unverified'));
   textCell(tr,event?`${event.name} · ${event.date}`:'Event requires review');textCell(tr,i?.item_name||'#'+sub.item_id);
   textCell(tr,sub.result==='loss'?`Lost ${sub.roll_count} · +${sub.roll_count*10}`:'Won · Reset');
   const verify=textCell(tr,'');verify.className='rb-muted';verify.append(indicator(identityState(c).label,identityState(c).code));const log=document.createElement('div');log.className='rb-badges';log.append(indicator('Checking raid log…','unknown'));verify.append(log);
@@ -210,15 +217,12 @@ async function loadPending(){try{
 async function quickDecision(sub,decision){
  if(state.reviewing)return;
  const c=names().get(String(sub.character_id));const identity=identityState(c),log=await checkLog(sub,c);
- if(decision==='approved'&&(identity.code==='question'||log.code!=='guild')){
-  if(!confirmAction(`ATTENTION: ${identity.label}; ${log.label}.\n\nApproval has not been verified by both checks. Review details before approving?\n\nOK = Open Review / Cancel = Stay here.`))return;
-  return openReview(sub);
- }
  const verb=decision==='approved'?'Approve':'Reject';
- if(!confirmAction(`${verb} ${c?.toon_name||'character'} — ${items().get(String(sub.item_id))?.item_name||'item'}?`))return;
- const notes=window.prompt('Optional officer note:','');if(notes===null)return;
+ const warning=decision==='approved'&&(identity.code==='question'||log.code!=='guild')
+  ?`Verification incomplete: ${identity.label}; ${log.label}.\nOnly proceed if you have independently checked this submission.\n\n`:'';
+ if(!confirmAction(`${warning}${verb} ${c?.toon_name||'unresolved character'} — ${items().get(String(sub.item_id))?.item_name||'item'}?`))return;
  state.reviewing=true;
- try{await runRpc('syndicate_rb_review_submission',{p_submission_id:sub.id,p_decision:decision,p_notes:notes});state.logChecks.clear();await loadPending();status(`Submission #${sub.id} ${decision}.`,'ok')}
+ try{await runRpc('syndicate_rb_review_submission',{p_submission_id:sub.id,p_decision:decision,p_notes:warning?'Officer confirmed submission despite incomplete automatic verification':''});state.logChecks.clear();await loadPending();status(`Submission #${sub.id} ${decision}.`,'ok')}
  catch(e){status('Decision failed: '+e.message,'error')}
  finally{state.reviewing=false}
 }
@@ -247,8 +251,8 @@ async function expiration(){
    const td=textCell(tr,confirmed?'Over 2 months — eligible for review':'Questionable — attendance unknown');
    td.className='rb-muted';
    const actions=textCell(tr,'');const box=document.createElement('div');box.className='rb-actions';
-   box.append(button('Remove Bonuses','danger',()=>openExpirationReview(x)));
-   box.append(button('Extend 2 Months','primary',()=>openExpirationReview(x)));
+   box.append(button('Remove Bonuses','danger',()=>expirePlayer(x)));
+   box.append(button('Extend 2 Months','primary',()=>extendPlayer(x)));
    box.append(button('Review','',()=>openExpirationReview(x)));
    actions.append(box);host.append(tr);
   }
@@ -276,10 +280,24 @@ async function openExpirationReview(x){
 function closeExpiration(){if(state.reviewing)return;$('expirationShade').hidden=true;state.expirationActive=null;document.body.classList.remove('rb-backdrop-locked')}
 $('closeExpiration').addEventListener('click',closeExpiration);
 $('expirationShade').addEventListener('click',e=>{if(e.target===$('expirationShade'))closeExpiration()});
-$('expireInReview').addEventListener('click',async()=>{const x=state.expirationActive;if(!x)return;const reason=$('expirationReason').value.trim();if(reason.length<3){$('expirationDialogNote').textContent='Please enter a reason (at least 3 characters).';return}if(!confirmAction('REMOVE ALL '+x.outstanding_items+' outstanding item bonuses for '+x.player_name+'? This writes permanent expiration history.'))return;state.reviewing=true;try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:reason});state.reviewing=false;closeExpiration();await expiration();status('Removed '+(result?.expired_items??'?')+' item bonuses for '+x.player_name+'.','ok')}catch(e){$('expirationDialogNote').textContent=e.message}finally{state.reviewing=false}});
-$('extendInReview').addEventListener('click',async()=>{const x=state.expirationActive;if(!x)return;const reason=$('expirationReason').value.trim();if(reason.length<3){$('expirationDialogNote').textContent='Please enter a reason (at least 3 characters).';return}const until=monthExtension();if(!confirmAction('Extend '+x.player_name+' through '+until+'?'))return;state.reviewing=true;try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:reason});state.reviewing=false;closeExpiration();await expiration();status(x.player_name+' extended through '+until+'.','ok')}catch(e){$('expirationDialogNote').textContent=e.message}finally{state.reviewing=false}});
-async function extendPlayer(x){const until=window.prompt('Extend '+x.player_name+' until (YYYY-MM-DD):','');if(!until)return;const reason=window.prompt('Reason for this extension (required):','');if(!reason)return;if(!confirmAction('Extend expiration review for '+x.player_name+' until '+until+'?'))return;try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:reason});await expiration();status(x.player_name+' extended through '+until+'.','ok');}catch(e){status('Extension failed: '+e.message,'error');}}
-async function expirePlayer(x){if(!confirmAction(`Expire ALL ${x.outstanding_items} outstanding character/item bonuses for ${x.player_name}? This writes permanent expiration history records.`))return;const reason=window.prompt('Optional reason for expiration:','');if(reason===null)return;try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:reason});await expiration();status(`Expired ${result?.expired_items??'?'} item bonuses for ${x.player_name}.`,'ok');}catch(e){status('Expiration failed: '+e.message,'error');}}
+async function extendPlayer(x){
+ if(state.reviewing)return;
+ const until=monthExtension();
+ if(!confirmAction(`Extend ${x.player_name}'s roll bonuses for two months (through ${until})?`))return;
+ state.reviewing=true;
+ try{await runRpc('syndicate_rb_extend_player',{p_player_id:x.player_id,p_until:until,p_reason:'Officer approved a two-month extension'});await expiration();status(x.player_name+' extended through '+until+'.','ok')}
+ catch(e){status('Extension failed: '+e.message,'error')}
+ finally{state.reviewing=false}
+}
+async function expirePlayer(x){
+ if(state.reviewing)return;
+ const caution=x.review_status==='ATTENDANCE_UNKNOWN'?'WARNING: Raid attendance is not documented. Lack of a log does not prove inactivity.\n\n':'';
+ if(!confirmAction(`${caution}Remove ALL ${x.outstanding_items} outstanding item bonuses for ${x.player_name}? This writes permanent expiration history.`))return;
+ state.reviewing=true;
+ try{const result=await runRpc('syndicate_rb_expire_player',{p_player_id:x.player_id,p_reason:'Officer approved bonus removal from expiration list'});await expiration();status(`Removed ${result?.expired_items??'?'} item bonuses for ${x.player_name}.`,'ok')}
+ catch(e){status('Removal failed: '+e.message,'error')}
+ finally{state.reviewing=false}
+}
 $('runExpiration').addEventListener('click',expiration);$('refreshPending').addEventListener('click',loadPending);
 $('manualType').addEventListener('change',()=>{const guest=$('manualType').value==='guest';$('manualRealmWrap').hidden=!guest;$('manualGuildWrap').hidden=!guest;$('manualCharacter').value='';updateManualCharacterOptions();});
 function updateManualCharacterOptions(){const guest=$('manualType').value==='guest';const list=state.characters.filter(c=>guest?c.guild_name!=='The Syndicate':c.guild_name==='The Syndicate');setSuggestions('manualCharacterOptions',list.map(c=>c.toon_name));}
@@ -303,8 +321,15 @@ function populateIdentityMatch(current){
  options.value='';
 }
 $('identityMatch').addEventListener('change',()=>{const c=names().get($('identityMatch').value);if(!c)return;$('editCharacter').value=c.toon_name;$('editGuild').value=c.guild_name||'PUG';reviewMessage('Selected existing roll-bonus character #'+c.id+'. Save changes before approving.','ok')});
-async function openReview(sub){state.activeSubmission=sub;const c=names().get(String(sub.character_id)),item=items().get(String(sub.item_id)),event=events().get(String(sub.event_id));$('reviewId').textContent='#'+sub.id;$('reviewTitle').textContent=(c?.toon_name||'Unknown character')+' — '+(item?.item_name||'Item #'+sub.item_id);$('reviewSubtitle').textContent=event?event.name+' · '+event.date:'Event #'+sub.event_id;$('editCharacter').value=c?.toon_name||'';$('editGuild').value=c?.guild_name||'';$('editItem').value=item?.item_name||'';$('editResult').value=sub.result;$('editCount').value=sub.roll_count;showCount();$('reviewNotes').value='';populateIdentityMatch(c);const details=$('submittedDetails');details.replaceChildren(detail('Submitted character',c?.toon_name||'#'+sub.character_id),detail('Roll Bonus Character ID',sub.character_id),detail('Linked guild main',rosterMatch(c)?.main_character_name||'Not linked to guild roster'),detail('Guild on record',c?.guild_name||'Unknown'),detail('Event linked to submission',event?event.name+' · '+event.date:'Event not resolved'),detail('Item',item?.item_name||'#'+sub.item_id),detail('Result',sub.result==='loss'?'Lost '+sub.roll_count+' roll(s)':'Won · reset'));const badges=$('reviewBadges');badges.replaceChildren(indicator(identityState(c).label,identityState(c).code));badges.append(indicator('Checking raid log…','unknown'));checkLog(sub,c).then(r=>{if(state.activeSubmission?.id===sub.id){badges.lastChild?.remove();badges.append(indicator(r.label,r.code))}});setSuggestions('editCharacterOptions',state.characters.map(c=>c.toon_name));reviewItemOptions();reviewMessage('');$('reviewShade').hidden=false;document.body.classList.add('rb-backdrop-locked');$('reviewDialog').focus();await verifyRaidLog(sub,c);}
-async function verifyRaidLog(sub,c){const host=$('logVerification'),guildHost=$('guildVerification');setVerification(host,'Checking event-linked logs…');setVerification(guildHost,'Checking raid guilds…');try{const {data:reports,error}=await db.from('raid_log_reports').select('id,report_code,report_url,report_title').eq('event_id',sub.event_id).limit(30);if(error)throw error;if(!reports?.length){setVerification(host,'Raid log not available. Attendance cannot be verified; manual officer review is still possible.');setVerification(guildHost,'Raid log not available; no guild comparison can be made.');return}const ids=reports.map(r=>r.id);const {data:participants,error:pe}=await db.from('raid_log_participants').select('report_id,character_name,character_realm,roster_character_id,roll_bonus_character_id,member_main_name,guild_name_snapshot,match_status').in('report_id',ids).limit(3000);if(pe)throw pe;const people=participants||[];const submitted=c?.toon_name||'';const exact=people.filter(p=>safeName(p.character_name)===safeName(submitted));const roster=state.roster.find(r=>safeName(r.normalized_name||r.Name)===safeName(submitted));const main=safeName(roster?.main_character_name||'');const related=people.filter(p=>p.roll_bonus_character_id===sub.character_id||p.roster_character_id===roster?.id||(main&&safeName(p.member_main_name)===main));const candidates=people.filter(p=>similar(p.character_name,submitted)&&!exact.includes(p)&&!related.includes(p));host.replaceChildren();host.append(document.createElement('strong')).textContent=`${reports.length} linked raid log(s)`;const url=reports.find(r=>/^https:\/\//i.test(r.report_url||''))?.report_url;if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=' · Open raid log ↗';host.append(a)}const line=(t)=>{const n=document.createElement('div');n.textContent=t;n.style.marginTop='.45rem';host.append(n)};if(exact.length)line('✓ Exact character in raid: '+[...new Set(exact.map(p=>p.character_name))].join(', '));else line('Exact character not found in linked log.');if(related.length){line('Related main/alt or linked character attended:');for(const p of related.slice(0,8))addSuggested(host,p.character_name,p.character_realm)}if(candidates.length){line('Similar names found:');for(const p of candidates.slice(0,8))addSuggested(host,p.character_name,p.character_realm)}if(!exact.length&&!related.length&&!candidates.length)line('No matching character identified. This does not automatically invalidate the submission.');const guilds=[...new Set(people.map(p=>String(p.guild_name_snapshot||'').trim()).filter(Boolean))].sort();setVerification(guildHost,`Submitted guild: ${c?.guild_name||'Unknown'}. Guilds recorded in raid: ${guilds.length?guilds.join(', '):'Not available'}. Officer may override guild above.`);}catch(err){setVerification(host,'Raid log verification unavailable: '+err.message);setVerification(guildHost,'Guild comparison unavailable.')}}
+async function openReview(sub){state.activeSubmission=sub;const c=names().get(String(sub.character_id)),item=items().get(String(sub.item_id)),event=events().get(String(sub.event_id));$('reviewId').textContent='#'+sub.id;$('reviewTitle').textContent=(c?.toon_name||'Unknown character')+' — '+(item?.item_name||'Item #'+sub.item_id);$('reviewSubtitle').textContent=event?event.name+' · '+event.date:'Event #'+sub.event_id;$('editCharacter').value=c?.toon_name||'';$('editGuild').value=c?.guild_name||'';$('editItem').value=item?.item_name||'';$('editResult').value=sub.result;$('editCount').value=sub.roll_count;showCount();$('reviewNotes').value='';populateIdentityMatch(c);const details=$('submittedDetails');details.replaceChildren(
+ detail('Character',c?.toon_name||'Character record not found'),
+ detail('Raid',event?event.name+' · '+event.date:'Raid event needs verification'),
+ detail('Item',item?.item_name||'Item not found'),
+ detail('Result',sub.result==='loss'?`Lost ${sub.roll_count} roll${sub.roll_count===1?'':'s'}`:'Won item'),
+ detail('Identity',identityState(c).label),
+ detail('Linked main',rosterMatch(c)?.main_character_name||'Not linked to guild roster')
+);const badges=$('reviewBadges');badges.replaceChildren(indicator(identityState(c).label,identityState(c).code));badges.append(indicator('Checking raid log…','unknown'));checkLog(sub,c).then(r=>{if(state.activeSubmission?.id===sub.id){badges.lastChild?.remove();badges.append(indicator(r.label,r.code))}});setSuggestions('editCharacterOptions',state.characters.map(c=>c.toon_name));reviewItemOptions();reviewMessage('');$('reviewShade').hidden=false;document.body.classList.add('rb-backdrop-locked');$('reviewDialog').focus();await verifyRaidLog(sub,c);}
+async function verifyRaidLog(sub,c){const host=$('logVerification');setVerification(host,'Checking event-linked logs…');try{const {data:reports,error}=await db.from('raid_log_reports').select('id,report_code,report_url,report_title').eq('event_id',sub.event_id).limit(30);if(error)throw error;if(!reports?.length){setVerification(host,'Raid log not available. Attendance cannot be verified; manual officer review is still possible.');return}const ids=reports.map(r=>r.id);const {data:participants,error:pe}=await db.from('raid_log_participants').select('report_id,character_name,character_realm,roster_character_id,roll_bonus_character_id,member_main_name,guild_name_snapshot,match_status').in('report_id',ids).limit(3000);if(pe)throw pe;const people=participants||[];const submitted=c?.toon_name||'';const exact=people.filter(p=>safeName(p.character_name)===safeName(submitted));const roster=state.roster.find(r=>safeName(r.normalized_name||r.Name)===safeName(submitted));const main=safeName(roster?.main_character_name||'');const related=people.filter(p=>p.roll_bonus_character_id===sub.character_id||p.roster_character_id===roster?.id||(main&&safeName(p.member_main_name)===main));const candidates=people.filter(p=>similar(p.character_name,submitted)&&!exact.includes(p)&&!related.includes(p));host.replaceChildren();host.append(document.createElement('strong')).textContent=`${reports.length} linked raid log(s)`;const url=reports.find(r=>/^https:\/\//i.test(r.report_url||''))?.report_url;if(url){const a=document.createElement('a');a.href=url;a.target='_blank';a.rel='noopener noreferrer';a.textContent=' · Open raid log ↗';host.append(a)}const line=(t)=>{const n=document.createElement('div');n.textContent=t;n.style.marginTop='.45rem';host.append(n)};if(exact.length)line('✓ Exact character in raid: '+[...new Set(exact.map(p=>p.character_name))].join(', '));else line('Exact character not found in linked log.');if(related.length){line('Related main/alt or linked character attended:');for(const p of related.slice(0,8))addSuggested(host,p.character_name,p.character_realm)}if(candidates.length){line('Similar names found:');for(const p of candidates.slice(0,8))addSuggested(host,p.character_name,p.character_realm)}if(!exact.length&&!related.length&&!candidates.length)line('No matching character identified. This does not automatically invalidate the submission.');const guilds=[...new Set(people.map(p=>String(p.guild_name_snapshot||'').trim()).filter(Boolean))].sort();}catch(err){setVerification(host,'Raid log verification unavailable: '+err.message);}}
 function addSuggested(host,name,realm){const btn=button('Use logged toon: '+name+(realm?' — '+realm:''),'rb-review-suggestion',()=>{$('editCharacter').value=name;reviewMessage('Character changed to the logged toon. Save Changes before approving.','ok')});host.append(btn)}
 function getReviewEdits(){const s=state.activeSubmission;if(!s)throw Error('No submission selected');const name=$('editCharacter').value.trim();const chars=state.characters.filter(c=>safeName(c.toon_name)===safeName(name));let chosen=state.characters.find(c=>String(c.id)===$('identityMatch').value)||null;if(!chosen)chosen=chars.find(c=>String(c.id)===String(s.character_id))||null;if(!chosen&&chars.length===1)chosen=chars[0];if(!chosen)throw Error('Choose an existing, unambiguous character from the suggestions. New guest identities must first be registered.');const itemName=$('editItem').value.trim().toLowerCase();const candidates=state.items.filter(i=>i.item_name.toLowerCase()===itemName&&i.sr_eligible===true&&i.is_active===true&&i.reservation_status!=='hard_reserved');if(candidates.length!==1)throw Error('Choose a valid unique Soft Reserve item.');const chosenItem=candidates[0];const event=events().get(String(s.event_id));const code=String(event?.name||'').toUpperCase();const raidCode=/ONY/.test(code)?'ONY':/AQ\s*40/.test(code)?'AQ40':/AQ\s*20/.test(code)?'AQ20':/BWL|BLACKWING/.test(code)?'BWL':/MC|MOLTEN CORE/.test(code)?'MC':/ZG|ZUL/.test(code)?'ZG':/NAXX/.test(code)?'NAXX':null;if(raidCode){const bossIds=new Set(state.bosses.filter(b=>String(b.raid_code).toUpperCase()===raidCode).map(b=>String(b.id)));if(!state.lootLinks.some(l=>String(l.item_id)===String(chosenItem.id)&&bossIds.has(String(l.boss_id))))throw Error('Selected item does not belong to the submitted raid.')}const result=$('editResult').value;const count=result==='win'?1:Number($('editCount').value);if(!Number.isInteger(count)||count<1||count>20)throw Error('Lost roll count must be 1–20.');const guild=$('editGuild').value.trim();if(guild.length<2||guild.length>100)throw Error('Enter a guild or PUG (2–100 characters).');return {character_id:chosen.id,item_id:chosenItem.id,result,roll_count:count,guild,chosen};}
 async function saveEdits(){if(state.reviewing)throw Error('Review already in progress');const s=state.activeSubmission;const edit=getReviewEdits();const changes={character_id:edit.character_id,item_id:edit.item_id,result:edit.result,roll_count:edit.roll_count};const guildChanged=edit.chosen.guild_name!==edit.guild;if(guildChanged&&!confirmAction('This guild change updates the roll-bonus character record, including other submissions for that character. Continue?'))throw Error('Guild change cancelled.');state.reviewing=true;try{const {data,error}=await db.from('roll_bonus_submissions').update(changes).eq('id',s.id).eq('status','pending').select('id,character_id,item_id,result,roll_count').single();if(error)throw Error('Unable to save pending submission: '+error.message+'. Check UPDATE permission on roll_bonus_submissions.');if(!data)throw Error('Submission was changed or reviewed elsewhere.');if(guildChanged){const {error:ge}=await db.from('roll_bonus_characters').update({guild_name:edit.guild}).eq('id',edit.character_id);if(ge)throw Error('Submission updated, but guild override failed: '+ge.message+'. Review the guild before approving.');edit.chosen.guild_name=edit.guild;}Object.assign(s,changes);$('reviewTitle').textContent=edit.chosen.toon_name+' — '+items().get(String(edit.item_id))?.item_name;reviewMessage('Corrections saved.','ok');await loadPending();return true;}finally{state.reviewing=false;}}
