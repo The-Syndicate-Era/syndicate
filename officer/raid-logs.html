@@ -38,7 +38,7 @@
 </div></div>
 <section class="rl-panel" id="historyPanel" hidden><div class="rl-card">
 <div class="rl-actions" style="justify-content:space-between;margin-bottom:12px"><div><h2 style="margin:0">Raid Log History</h2><p class="rl-muted">Find reports by raid and date, open the original log, or remove an incorrect import.</p></div><button class="rl-btn" type="button" id="refreshHistory">Refresh</button></div>
-<div class="rl-history-controls"><input id="historySearch" type="search" placeholder="Search raid name or report title…" aria-label="Search raid logs" class="rl-history-input"><input id="historyFrom" type="date" aria-label="From date"><input id="historyTo" type="date" aria-label="Through date"></div>
+<div class="rl-history-controls"><input id="historySearch" type="search" placeholder="Search raid (ZG, BWL, MC…) or date (YYYY-MM-DD)…" aria-label="Search raid logs" class="rl-history-input"><input id="historyFrom" type="date" aria-label="From date"><input id="historyTo" type="date" aria-label="Through date"></div>
 <div id="historyStatus" class="rl-muted" aria-live="polite">Loading raid reports…</div><div id="historyList" class="rl-history-list"></div>
 </div></section>
 <section class="rl-panel" id="charactersPanel" hidden><section class="rl-card rl-section" id="characterReview"><div class="rl-actions" style="justify-content:space-between;margin-bottom:14px"><h2 style="margin:0">Character Review</h2><button class="rl-btn" type="button" id="refreshReview">Refresh Characters</button></div>
@@ -68,13 +68,45 @@ const localToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.get
 function message(id,text,isError=false,success=false){const el=$(id);el.hidden=false;el.textContent=text;el.className='rl-status'+(isError?' error':success?' success':'')}
 function extractToken(session){if(session?.provider_token)return session.provider_token;try{const item=JSON.parse(sessionStorage.getItem('syndicate_discord_oauth')||'null');if(item?.userId===session?.user?.id&&typeof item.token==='string'&&Date.now()-item.savedAt<30*60*1000)return item.token;}catch{}return null;}
 async function officerRequest(body){const client=db();if(!client)throw Error('Supabase not initialized.');const {data:auth,error:authError}=await client.auth.getSession();if(authError||!auth?.session)throw Error('Discord login required. Please sign in again.');const discordAccessToken=extractToken(auth.session);if(!discordAccessToken)throw Error('Discord authorization expired. Sign out and reconnect Discord to import or view reports.');const {data,error}=await client.functions.invoke('syndicate-wcl-import',{body:{...body,discordAccessToken}});if(error)throw Error(data?.error||error.message||'Function request failed');if(!data?.success)throw Error(data?.error||'Request failed');return data;}
-async function loadCalendar(){const select=$('eventId'),previous=select.value;select.replaceChildren(new Option('Loading calendar raids…',''));select.disabled=true;try{const start=localToday();const d=new Date(start+'T12:00:00');d.setDate(d.getDate()-180);const earliest=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');const {data,error}=await db().from('Events').select('id,date,name,time,type').eq('type','Raid').gte('date',earliest).lte('date',start).order('date',{ascending:false}).order('time',{ascending:false}).limit(400);if(error)throw error;select.replaceChildren(new Option('Select the matching raid event…',''));for(const e of data||[]){const name=e.name||'Raid';select.add(new Option(`${e.date} · ${String(e.time||'').slice(0,5)} · ${name} (#${e.id})`,String(e.id)));}if(previous&&[...select.options].some(x=>x.value===previous))select.value=previous;if(!(data||[]).length)message('importStatus','No raids found for the last 180 days. Check your calendar.',true);}catch(e){select.replaceChildren(new Option('Could not load calendar',''));message('importStatus','Calendar lookup failed: '+e.message,true)}finally{select.disabled=false;}}
+async function loadCalendar(){
+ const select=$('eventId');select.replaceChildren(new Option('Loading calendar raids…',''));select.disabled=true;
+ try{
+  const today=localToday(), d=new Date(today+'T12:00:00');d.setDate(d.getDate()-180);
+  const earliest=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+  const {data,error}=await db().from('Events').select('id,date,name,time,type').eq('type','Raid').gte('date',earliest).lte('date',today).order('date',{ascending:false}).order('time',{ascending:false}).limit(400);
+  if(error)throw error;
+  calendarEvents=data||[];
+  for(const e of calendarEvents)calendarById.set(String(e.id),e);
+  refreshCalendarMarks();
+  if(!calendarEvents.length)message('importStatus','No raids found for the last 180 days. Check your calendar.',true);
+ }catch(e){select.replaceChildren(new Option('Could not load calendar',''));message('importStatus','Calendar lookup failed: '+e.message,true)}
+ finally{select.disabled=false;}
+}
 let historyReports=[];
-function dateOfReport(report){return String(report.raid_date||report.event_date||report.event?.date||report.report_start_time||'').slice(0,10)}
+let calendarEvents=[];
+let calendarById=new Map();
+function displayRaid(report){const evt=calendarById.get(String(report.event_id));return evt?.name||report.raid_name||report.event_name||report.event?.name||'Unknown raid';}
+function refreshCalendarMarks(){
+ const select=$('eventId'),chosen=select.value;
+ if(!calendarEvents.length)return;
+ const logged=new Map();
+ for(const r of historyReports){if(r.event_id!=null){const key=String(r.event_id);logged.set(key,(logged.get(key)||0)+1);}}
+ select.replaceChildren(new Option('Select the matching raid event…',''));
+ for(const e of calendarEvents){
+  const amount=logged.get(String(e.id))||0;
+  const marker=amount?` ✓ Log attached${amount>1?` (${amount})`: ''}`:'';
+  const label=`${e.date} · ${String(e.time||'').slice(0,5)} · ${e.name||'Raid'}${marker}`;
+  const option=new Option(label,String(e.id));
+  select.add(option);
+ }
+ if(chosen&&[...select.options].some(x=>x.value===chosen))select.value=chosen;
+}
+
+function dateOfReport(report){return String(calendarById.get(String(report.event_id))?.date||report.raid_date||report.event_date||report.event?.date||report.report_start_time||'').slice(0,10)}
 function entry(report){
  const node=document.createElement('article');node.className='rl-entry';
  const top=document.createElement('div');top.className='rl-entry-top';
- const title=document.createElement('strong');title.textContent=report.raid_name||report.event_name||report.event?.name||report.report_title||'Raid report';
+ const title=document.createElement('strong');title.textContent=displayRaid(report);
  const when=document.createElement('small');when.textContent=(dateOfReport(report)||'Date unavailable')+' · '+(report.report_title||'Warcraft Logs')+' · Imported '+escDate(report.imported_at);
  const heading=document.createElement('div');heading.append(title,when);top.append(heading);node.append(top);
  const counts=document.createElement('div');counts.className='rl-counts';const stats=report.stats||{};
@@ -86,11 +118,19 @@ function entry(report){
 }
 function renderHistory(){
  const host=$('historyList');host.replaceChildren();const term=$('historySearch').value.trim().toLowerCase(),from=$('historyFrom').value,to=$('historyTo').value;
- const filtered=historyReports.filter(r=>{const date=dateOfReport(r);const label=[r.raid_name,r.event_name,r.event?.name,r.report_title,r.report_code].filter(Boolean).join(' ').toLowerCase();return (!term||label.includes(term))&&(!from||date>=from)&&(!to||date<=to)});
+ const filtered=historyReports.filter(r=>{const date=dateOfReport(r);const label=(displayRaid(r)+' '+date).toLowerCase();return (!term||label.includes(term))&&(!from||date>=from)&&(!to||date<=to)});
  const message=$('historyStatus');message.hidden=false;message.textContent=`Showing ${filtered.length} of ${historyReports.length} reports`;
  for(const r of filtered)host.append(entry(r));if(!filtered.length){const p=document.createElement('p');p.className='rl-empty';p.textContent='No raid logs match these filters.';host.append(p)}
 }
-async function loadHistory(){const host=$('historyStatus');host.hidden=false;host.textContent='Loading reports…';try{const response=await officerRequest({action:'list'});historyReports=response.reports||[];renderHistory();}catch(err){host.textContent='Unable to load history: '+err.message;}}
+async function loadHistory(){const host=$('historyStatus');host.hidden=false;host.textContent='Loading reports…';try{const response=await officerRequest({action:'list'});historyReports=response.reports||[];
+  // Look up actual calendar raid names/dates so history never searches WCL URLs or report titles.
+  const unknown=[...new Set(historyReports.map(r=>String(r.event_id||'')).filter(id=>id&&!calendarById.has(id)))];
+  for(let offset=0;offset<unknown.length;offset+=100){
+   const {data,error}=await db().from('Events').select('id,date,name,time').in('id',unknown.slice(offset,offset+100));
+   if(error){console.warn('Raid history event details unavailable:',error.message);break;}
+   for(const e of data||[])calendarById.set(String(e.id),e);
+  }
+  refreshCalendarMarks();renderHistory();}catch(err){host.textContent='Unable to load history: '+err.message;}}
 async function deleteReport(report,button){
  const label=(report.raid_name||report.event_name||report.report_title||'this report')+' ('+(dateOfReport(report)||'unknown date')+')';
  if(!confirm('DELETE IMPORT?\n\n'+label+'\n\nThis must remove the imported report and its linked raid-log data, but not the calendar raid or unrelated roll bonuses. Continue?'))return;
