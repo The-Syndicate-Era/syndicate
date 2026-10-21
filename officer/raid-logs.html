@@ -38,7 +38,7 @@
 <div class="rl-actions"><button class="rl-btn primary" type="submit" id="importBtn">Import Report</button><button class="rl-btn" id="reloadEvents" type="button">Refresh Calendar</button></div>
 </form><div id="importStatus" class="rl-status" role="status" aria-live="polite" hidden></div>
 <p class="rl-note">All logged characters are preserved. Only unambiguous existing links should match automatically; PUGs and unclear names remain available for review.</p></section>
-<section class="rl-card"><h2>How it works</h2><p class="rl-muted">Select a raid from today or earlier, paste the Warcraft Logs link, and import.</p><p class="rl-muted">After importing, the page requests automatic matching of known characters. Uncertain identities stay in Character Matching for officer review.</p><p class="rl-warning">Matching and attendance updates require the import Edge Function to support the new match action. Until that is deployed, importing still saves the log but cannot automatically award attendance.</p></section>
+<section class="rl-card"><h2>How it works</h2><p class="rl-muted">Select a raid from today or earlier, paste the Warcraft Logs link, and import.</p><p class="rl-muted">The importer automatically recognizes confirmed Syndicate members and records their attendance. Uncertain identities remain in Character Matching for officer review.</p><p class="rl-warning">Deploy the attendance SQL function and updated Edge Function before importing. Existing attendance is protected from duplicates; roll bonuses are unchanged.</p></section>
 </div></div>
 <section class="rl-panel" id="historyPanel" hidden><div class="rl-card">
 <div class="rl-actions" style="justify-content:space-between;margin-bottom:12px"><div><h2 style="margin:0">Raid Log History</h2><p class="rl-muted">Find reports by raid and date, open the original log, or remove an incorrect import.</p></div><button class="rl-btn" type="button" id="refreshHistory">Refresh</button></div>
@@ -46,7 +46,7 @@
 <div id="historyStatus" class="rl-muted" aria-live="polite">Loading raid reports…</div><div id="historyList" class="rl-history-list"></div>
 </div></section>
 <section class="rl-panel" id="charactersPanel" hidden><section class="rl-card rl-section" id="characterReview"><div class="rl-actions" style="justify-content:space-between;margin-bottom:14px"><h2 style="margin:0">Character Review</h2><button class="rl-btn" type="button" id="refreshReview">Refresh Characters</button></div>
-<p class="rl-muted">Identify Syndicate members, partner guilds and PUGs. A saved match applies to other unmatched appearances of the same character and realm. Matching does not award attendance.</p>
+<p class="rl-muted">Identify Syndicate members, partner guilds and PUGs. A saved match applies to other unmatched appearances of the same character and realm. Confirmed Syndicate matches update attendance automatically. Partner/PUG matches do not affect Syndicate attendance.</p>
 <div class="rl-review-grid"><div>
 <div class="rl-field"><label for="reviewReport">Show characters from</label><select id="reviewReport"><option value="all">All imported raids</option></select></div>
 <div id="reviewSummary" class="rl-muted">Loading characters…</div><div id="reviewList"></div>
@@ -167,7 +167,11 @@ async function deleteReport(report,button){
  finally{button.disabled=false}
 }
 for(const id of ['historySearch','historyFrom','historyTo'])$(id).addEventListener('input',renderHistory);
-$('importForm').addEventListener('submit',async e=>{e.preventDefault();const eventId=Number($('eventId').value),url=$('reportUrl').value.trim();if(!Number.isSafeInteger(eventId)||eventId<=0)return message('importStatus','Please choose the matching calendar raid.',true);if(!confirm('Import this Warcraft Logs report into the selected raid?'))return;const button=$('importBtn');button.disabled=true;button.textContent='Importing…';message('importStatus','Retrieving report and saving raid data…');try{const r=await officerRequest({action:'import',report_url:url,event_id:eventId});const s=r.saved||{};let matchInfo='';try{const result=await officerRequest({action:'auto_match',report_id:r.report_id||r.id,report_code:r.report_code});matchInfo=` Automatic matching: ${result.matched??0} confirmed, ${result.unmatched??0} still need review. Attendance recorded: ${result.attendance_added??0}.`;}catch(matchError){matchInfo=' Automatic matching not completed: '+matchError.message+'. Deploy the auto_match action in syndicate-wcl-import before relying on automatic attendance.';}message('importStatus',`Imported ${r.report_title||r.report_code}. Saved ${s.participants||0} characters and ${s.boss_kills||0} kills.${matchInfo}`,false,true);$('reportUrl').value='';await Promise.all([loadHistory(),loadReview()]);}catch(err){message('importStatus',err.message,true)}finally{button.disabled=false;button.textContent='Import Report';}});
+$('importForm').addEventListener('submit',async e=>{e.preventDefault();const eventId=Number($('eventId').value),url=$('reportUrl').value.trim();if(!Number.isSafeInteger(eventId)||eventId<=0)return message('importStatus','Please choose the matching calendar raid.',true);if(!confirm('Import this Warcraft Logs report into the selected raid?'))return;const button=$('importBtn');button.disabled=true;button.textContent='Importing…';message('importStatus','Retrieving report and saving raid data…');try{const r=await officerRequest({action:'import',report_url:url,event_id:eventId});const s=r.saved||{};
+ const matchInfo=` Automatically matched: ${r.auto_matched_characters??0}. Attendance added: ${r.attendance_added??0}.`;
+ const warning=r.attendance_warning?` WARNING: ${r.attendance_warning}`:'';
+ message('importStatus',`Imported ${r.report_title||r.report_code}. Saved ${s.participants||0} characters and ${s.boss_kills||0} kills.${matchInfo}${warning}`,Boolean(r.attendance_warning),true);
+ $('reportUrl').value='';await Promise.all([loadHistory(),loadReview()]);}catch(err){message('importStatus',err.message,true)}finally{button.disabled=false;button.textContent='Import Report';}});
 function fillReviewPlayers(){const s=$('reviewPlayerId');s.replaceChildren(new Option('Select a known outside player…',''));for(const p of reviewData?.outside_players||[])s.add(new Option(`${p.display_name} (#${p.id})`,String(p.id)));}
 function showMode(){const existing=$('reviewMode').value==='existing';$('newPlayerField').hidden=existing;$('existingPlayerField').hidden=!existing;}
 function fillRosterOptions(){
@@ -201,7 +205,7 @@ $('reviewForm').addEventListener('submit',async e=>{
   const selected=reviewData?.syndicate_roster?.find(r=>Number(r.id)===rosterId);
   if(!selected?.player_linked)return message('reviewStatus','That roster character has no linked player/main. Link them in the player roster first.',true);
   body={action:'review_syndicate',participant_id:selectedParticipant.id,roster_character_id:rosterId,notes:$('reviewNotes').value};
-  confirmation=`Match ${selectedParticipant.character_name} (${selectedParticipant.character_realm||'unknown realm'}) to Syndicate roster character ${selected.name}${selected.main_name?' (main: '+selected.main_name+')':''}? All other unmatched appearances of that name and realm will be linked. No attendance is awarded.`;
+  confirmation=`Match ${selectedParticipant.character_name} (${selectedParticipant.character_realm||'unknown realm'}) to Syndicate roster character ${selected.name}${selected.main_name?' (main: '+selected.main_name+')':''}? Other unmatched appearances of the same name and realm will be linked, and attendance synchronized.`;
  }else{
   const mode=$('reviewMode').value;
   body={action:'review_save',participant_id:selectedParticipant.id,mode,notes:$('reviewNotes').value,player_type:category,guild_name:$('reviewGuildName').value.trim()};
@@ -214,7 +218,9 @@ $('reviewForm').addEventListener('submit',async e=>{
  const btn=$('saveReview');btn.disabled=true;
  try{
   const result=await officerRequest(body);
-  const status=`Saved ${result.character_name||selectedParticipant.character_name}: ${result.updated_report_rows} report entries matched. No attendance awarded.`;
+  const status=category==='syndicate'
+    ? `Saved ${result.character_name||selectedParticipant.character_name}: ${result.updated_report_rows} appearances matched; ${result.attendance_added??0} attendance records added.${result.attendance_warning?' WARNING: '+result.attendance_warning:''}`
+    : `Saved ${result.character_name||selectedParticipant.character_name}: ${result.updated_report_rows} outside-player appearances matched. No Syndicate attendance added.`;
   closeReview();await loadReview();
   // Keep the success message visible without leaving a stale editable selection.
   message('reviewSummary',status,false,true);
