@@ -1,0 +1,37 @@
+<!DOCTYPE html><html lang="en" class="syn-access-pending"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Poll Manager | The Syndicate</title>
+<link rel="stylesheet" href="../settings/styles.css"><link rel="stylesheet" href="../settings/polls.css">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script defer src="../settings/supabase-config.js"></script><script defer src="../settings/auth.js"></script><script defer src="../settings/officer-guard.js"></script><script defer src="../settings/font-setting.js"></script><script defer src="../settings/menu.js"></script><script defer src="../settings/site-layout.js"></script><script defer src="../settings/polls-ui.js"></script>
+</head><body><div id="syndicate-header"></div><main class="polls-shell"><header class="polls-heading"><div class="polls-eyebrow">Dark Council • Poll Administration</div><h1>Poll Manager</h1><p>Create questions, set deadlines, and manage the guild's voice.</p></header>
+<div class="polls-columns two"><aside id="managerNav" class="poll-panel poll-nav"><h2>Management</h2><button type="button" data-tab="create">＋ Create Poll</button><button type="button" data-tab="active">◷ Active Polls</button><button type="button" data-tab="history">▣ Results & History</button><a class="poll-btn secondary small" href="officer-poll.html" style="display:block;text-align:center;text-decoration:none;margin-top:16px">← Officer Voting</a></aside><div>
+<div class="poll-alert poll-warning">Design preview only. Form values can be previewed, but saving and publishing are disabled until the secure officer management endpoint is built. No changes will be made to Supabase.</div>
+<section data-panel="create"><h2 class="poll-section-title">Create a Poll</h2><form id="pollCreator" class="poll-card">
+<div class="poll-grid"><div class="poll-field"><label for="audience">Voting audience</label><select id="audience"><option value="guild">Syndicate guild members</option><option value="officer">Officers and Guild Master</option></select></div><div class="poll-field"><label for="kind">Answer type</label><select id="kind"><option value="single">One choice</option><option value="multiple">Multiple choices</option><option value="text">Written answer</option></select></div></div>
+<div class="poll-field"><label for="title">Question / title</label><input id="title" required maxlength="200" placeholder="What should the guild vote on?"></div>
+<div class="poll-field"><label for="description">Optional context</label><textarea id="description" maxlength="1500" placeholder="Explain the issue or give additional background"></textarea></div>
+<div id="answerSection" class="poll-field"><label for="answers">Answer choices (one option per line)</label><textarea id="answers" placeholder="Yes&#10;No&#10;Abstain"></textarea><span class="poll-help">Two or more choices for choice-based polls. Officers can add as many as needed (up to 20).</span></div>
+<div class="poll-grid"><div class="poll-field"><label for="duration">Voting period</label><select id="duration"><option value="10">10 minutes</option><option value="60">1 hour</option><option value="1440">1 day</option><option value="4320" selected>3 days</option><option value="10080">1 week</option><option value="custom">Custom closing date/time</option></select></div><div id="customSection" class="poll-field poll-hidden"><label for="customEnd">Custom closing date/time</label><input type="datetime-local" id="customEnd"></div></div>
+<div class="poll-grid"><div class="poll-field"><label for="publishMode">Guild results</label><select id="publishMode"><option value="manual">Officer review before publishing</option><option value="automatic">Automatically publish after closing</option></select></div><div class="poll-field"><label for="visibility">Voting privacy</label><select id="visibility" disabled><option>Anonymous ballots</option></select><span class="poll-help">Both audiences use anonymous ballots in this initial design.</span></div></div>
+<div class="poll-btn-row"><button type="button" id="preview" class="poll-btn secondary">Preview Poll</button><button type="button" class="poll-btn" disabled>Publish Poll (backend pending)</button></div></form>
+<div id="previewPanel" class="poll-card poll-hidden" aria-live="polite"><h3>Poll Preview</h3><div id="previewBody"></div></div></section>
+<section data-panel="active" class="poll-hidden"><h2 class="poll-section-title">Active Polls</h2><div class="poll-card"><h3>Management tools</h3><p>Once connected, active polls will appear here with response counts, live anonymized guild results, and options to extend or close voting.</p><p>Officer vote totals will stay hidden until their deadlines, including from the manager.</p><p class="poll-help">No live poll data is shown in preview mode.</p></div></section>
+<section data-panel="history" class="poll-hidden"><h2 class="poll-section-title">Results & History</h2><div class="poll-card"><h3>Completed polls</h3><p>Final results, publication status, and archived officer decisions will appear here. Guild results can be reviewed and manually published.</p></div></section>
+</div></div><div class="poll-footer">THE DARK COUNCIL • THIS IS THE WAY</div></main><div id="syndicate-footer"></div>
+<script>
+window.addEventListener('load',()=>{
+ const ui=window.syndicatePollsUI; if(!ui)return;ui.tabs('#managerNav');
+ const get=id=>document.getElementById(id);
+ get('kind').addEventListener('change',()=>get('answerSection').classList.toggle('poll-hidden',get('kind').value==='text'));
+ get('duration').addEventListener('change',()=>get('customSection').classList.toggle('poll-hidden',get('duration').value!=='custom'));
+ get('preview').addEventListener('click',()=>{
+  const title=get('title').value.trim();if(!title){get('title').focus();return;}
+  const audience=get('audience').value, kind=get('kind').value;
+  const choices=get('answers').value.split('\n').map(x=>x.trim()).filter(Boolean).slice(0,20);
+  if(kind!=='text'&&choices.length<2){alert('Add at least two answer choices.');return;}
+  const safe=ui.escape;
+  const options=kind==='text'?'<textarea disabled placeholder="Anonymous written answer"></textarea>':choices.map(c=>`<label class="poll-choice"><input disabled type="${kind==='single'?'radio':'checkbox'}" name="preview-choice"> ${safe(c)}</label>`).join('');
+  let ends='';if(get('duration').value==='custom'){ends=get('customEnd').value ? new Date(get('customEnd').value).toLocaleString() : 'Select a custom deadline';}else{ends=new Date(Date.now()+Number(get('duration').value)*60000).toLocaleString();}
+  get('previewBody').innerHTML=`<p class="poll-meta">${audience==='guild'?'Guild':'Officer'} poll • closes ${safe(ends)}</p><h3>${safe(title)}</h3><p class="poll-desc">${safe(get('description').value)}</p><div class="poll-choices">${options}</div><p class="poll-note">Preview only. No vote can be cast.</p>`;
+  get('previewPanel').classList.remove('poll-hidden'); get('previewPanel').scrollIntoView({behavior:'smooth',block:'nearest'});
+ });
+});
+</script></body></html>
