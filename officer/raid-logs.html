@@ -20,6 +20,15 @@
 #eventId option.rl-log-missing{color:#e6ddcb;background-color:#201b15}
 
 .rl-review-overlay:not([hidden]){position:fixed;inset:0;z-index:100000;background:rgba(0,0,0,.78);display:flex;justify-content:center;align-items:center;padding:16px;box-sizing:border-box}.rl-review-modal:not([hidden]){width:min(560px,100%);max-height:min(90vh,850px);overflow-y:auto;overscroll-behavior:contain;box-shadow:0 18px 60px rgba(0,0,0,.8);padding:24px}.rl-modal-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}.rl-modal-heading .rl-btn{padding:4px 11px}.rl-modal-open{overflow:hidden}.rl-category-group{border:0;padding:0;margin:0 0 16px;min-width:0}.rl-category-group legend{color:#dfc68a;margin-bottom:8px}.rl-category-buttons{display:flex;gap:8px}.rl-category-buttons label{flex:1;min-width:0;cursor:pointer}.rl-category-buttons input{position:absolute;opacity:0;width:1px;height:1px}.rl-category-buttons span{display:block;text-align:center;padding:11px 4px;border-radius:8px;border:1px solid #826b45;background:#201b15;color:#f5e8cf}.rl-category-buttons input:checked+span{background:#745623;color:#fff0cd;border-color:#e5b84a;font-weight:bold}.rl-category-buttons input:focus-visible+span{outline:2px solid #e5b84a;outline-offset:2px}.rl-review-modal .rl-actions .rl-btn{width:auto}@media(max-width:500px){.rl-review-modal:not([hidden]){padding:16px;max-height:94vh}.rl-category-buttons{gap:5px}}
+
+.rl-filter-overlay:not([hidden]){position:fixed;inset:0;z-index:100001;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+.rl-filter-dialog:not([hidden]){width:min(520px,100%);max-height:90vh;overflow:auto;padding:23px;box-shadow:0 18px 55px #000c}
+.rl-filter-head{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:16px}
+.rl-filter-head h3{margin:0;color:#e6c262}.rl-filter-actions{display:flex;justify-content:flex-end;gap:9px;flex-wrap:wrap}
+.rl-filter-date-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.rl-filter-active{font-size:.84rem;color:#d3b867;margin:0 0 10px}.rl-review-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:10px 0 13px}
+.rl-filter-dialog .rl-field{margin-bottom:13px}.rl-filter-dialog select,.rl-filter-dialog input{width:100%;box-sizing:border-box}
+@media(max-width:540px){.rl-filter-date-row{grid-template-columns:1fr}.rl-filter-actions .rl-btn{width:auto}}
 </style>
 </head>
 <body>
@@ -51,8 +60,17 @@
 <p class="rl-muted">Identify Syndicate members, partner guilds and PUGs. A saved match applies to other unmatched appearances of the same character and realm. Attendance is recorded for confirmed Syndicate members, partner-guild raiders, and PUGs. Outside-player attendance is tracked separately from Syndicate roll bonuses.</p>
 <div class="rl-review-grid"><div>
 <div class="rl-field"><label for="reviewReport">Show characters from</label><select id="reviewReport"><option value="all">All imported raids</option></select></div>
-<div id="reviewSummary" class="rl-muted">Loading characters…</div><div id="reviewList"></div>
+<div class="rl-review-toolbar"><div id="reviewSummary" class="rl-muted" aria-live="polite">Loading characters…</div><button class="rl-btn" type="button" id="openReviewFilters">⚑ Filters <span id="reviewFilterCount"></span></button></div><div id="reviewActiveFilters" class="rl-filter-active" hidden></div><div id="reviewList"></div>
 </div></div></section></section>
+<div id="reviewFilterOverlay" class="rl-filter-overlay" hidden><section id="reviewFilterDialog" class="rl-card rl-filter-dialog" role="dialog" aria-modal="true" aria-labelledby="reviewFilterTitle" tabindex="-1">
+<div class="rl-filter-head"><h3 id="reviewFilterTitle">Filter Characters</h3><button type="button" class="rl-btn" id="closeReviewFilters" aria-label="Close filters">✕</button></div>
+<div class="rl-field"><label for="filterCharacterSearch">Character name</label><input id="filterCharacterSearch" type="search" placeholder="Search character…"></div>
+<div class="rl-field"><label for="filterServer">Server</label><select id="filterServer"><option value="">All servers</option></select></div>
+<div class="rl-filter-date-row"><div class="rl-field"><label for="filterLastFrom">Last raid — from</label><input id="filterLastFrom" type="date"></div><div class="rl-field"><label for="filterLastTo">Last raid — through</label><input id="filterLastTo" type="date"></div></div>
+<div class="rl-field"><label for="filterClass">Class</label><select id="filterClass"><option value="">All classes</option></select></div>
+<div class="rl-field"><label for="filterSort">Sort characters by</label><select id="filterSort"><option value="recent">Last raid — newest first</option><option value="oldest">Last raid — oldest first</option><option value="name">Character name A–Z</option><option value="appearances">Most raid appearances</option></select></div>
+<div class="rl-filter-actions"><button type="button" class="rl-btn" id="clearReviewFilters">Clear Filters</button><button type="button" class="rl-btn primary" id="applyReviewFilters">Apply Filters</button></div>
+</section></div>
 <div id="reviewOverlay" class="rl-review-overlay" hidden><form id="reviewForm" class="rl-card rl-review-modal" role="dialog" aria-modal="true" aria-labelledby="reviewModalTitle" tabindex="-1" hidden>
 <div class="rl-modal-heading"><h3 id="reviewModalTitle" style="color:#e6c262;margin:0 0 12px">Identify raider</h3><button type="button" id="reviewClose" class="rl-btn" aria-label="Close review">✕</button></div><p id="reviewSelected" class="rl-muted"></p>
 <fieldset class="rl-category-group"><legend>Raider category</legend><div class="rl-category-buttons"><label><input type="radio" name="reviewCategory" value="syndicate"><span>Syndicate</span></label><label><input type="radio" name="reviewCategory" value="partner" checked><span>Partner</span></label><label><input type="radio" name="reviewCategory" value="pug"><span>PUG</span></label></div></fieldset>
@@ -84,7 +102,7 @@ async function loadCalendar(){
   if(error)throw error;
   calendarEvents=data||[];
   for(const e of calendarEvents)calendarById.set(String(e.id),e);
-  refreshCalendarMarks();
+  refreshCalendarMarks();if(reviewData)renderReview();
   if(!calendarEvents.length)message('importStatus','No raids found for the last 180 days. Check your calendar.',true);
  }catch(e){select.replaceChildren(new Option('Could not load calendar',''));message('importStatus','Calendar lookup failed: '+e.message,true)}
  finally{select.disabled=false;}
@@ -158,7 +176,7 @@ async function loadHistory(){
    if(error){console.warn('Raid history event details unavailable:',error.message);break;}
    for(const e of data||[])calendarById.set(String(e.id),e);
   }
-  refreshCalendarMarks();renderHistory();
+  refreshCalendarMarks();renderHistory();if(reviewData)renderReview();
  }catch(err){host.textContent='Unable to load history: '+err.message;}
 }
 async function deleteReport(report,button){
@@ -192,7 +210,55 @@ function updateReviewCategory(){
  showMode();
 }
 function closeReview(){ $('reviewOverlay').hidden=true; $('reviewForm').hidden=true; document.body.classList.remove('rl-modal-open'); selectedParticipant=null; reviewReturnFocus?.focus(); reviewReturnFocus=null; }
-function renderReview(){const area=$('reviewList');area.replaceChildren();const report=$('reviewReport').value;const unmatched=(reviewData?.participants||[]).filter(p=>p.match_status==='unmatched'&&!p.outside_player_id&&(report==='all'||String(p.report_id)===report));const seen=new Set();const unique=[];for(const p of unmatched){const key=`${p.character_name.toLocaleLowerCase()}|${(p.character_realm||'').toLocaleLowerCase()}`;if(seen.has(key))continue;seen.add(key);unique.push(p)}$('reviewSummary').textContent=`${unmatched.length} unmatched raid entries · ${unique.length} distinct characters needing review`;if(!unique.length){const empty=document.createElement('p');empty.className='rl-empty';empty.textContent='No unmatched characters in this selection.';area.append(empty);return;}for(const p of unique){const el=document.createElement('div');el.className='rl-review-row';el.setAttribute('aria-selected',String(selectedParticipant?.id===p.id));const info=document.createElement('div');const b=document.createElement('strong');b.textContent=`${p.character_name} — ${p.character_realm||'Realm unknown'}`;const s=document.createElement('small');s.textContent=p.character_class||'Class unknown';info.append(b,s);const btn=document.createElement('button');btn.className='rl-btn';btn.type='button';btn.textContent='Identify';btn.addEventListener('click',()=>{reviewReturnFocus=btn;selectedParticipant=p;$('reviewOverlay').hidden=false;$('reviewForm').hidden=false;document.body.classList.add('rl-modal-open');$('reviewSelected').textContent=`${p.character_name} — ${p.character_realm||'Unknown realm'}`;$('reviewPlayerName').value=p.character_name;$('reviewNotes').value='';document.querySelector('input[name=reviewCategory][value=partner]').checked=true;$('reviewMode').value='new';$('reviewRosterSearch').value='';fillRosterOptions();updateReviewCategory();$('reviewGuildName').value='';$('reviewStatus').hidden=true;renderReview();$('reviewForm').focus();});el.append(info,btn);area.append(el);}}
+// Dates come from the linked calendar event; fallback to the Warcraft Logs start date.
+function reviewRaidDate(p){
+ const r=(reviewData?.reports||[]).find(x=>String(x.id)===String(p.report_id)) || historyReports.find(x=>String(x.id)===String(p.report_id));
+ const eventId=r?.event_id;
+ return String(calendarById.get(String(eventId))?.date||r?.raid_date||r?.report_start_time||'').slice(0,10);
+}
+const reviewFilters={name:'',server:'',from:'',to:'',className:'',sort:'recent'};
+function reviewGroups(){
+ const report=$('reviewReport').value;
+ const rows=(reviewData?.participants||[]).filter(p=>p.match_status==='unmatched'&&!p.outside_player_id&&(report==='all'||String(p.report_id)===report));
+ const groups=new Map();
+ for(const p of rows){const key=String(p.character_name||'').trim().toLocaleLowerCase()+'|'+String(p.character_realm||'').trim().toLocaleLowerCase();let g=groups.get(key);
+  if(!g){g={participant:p,name:p.character_name||'',server:p.character_realm||'',className:p.character_class||'',lastRaid:'',count:0};groups.set(key,g)}
+  g.count++;const date=reviewRaidDate(p);if(date&&date>g.lastRaid)g.lastRaid=date;
+ }
+ return {rows,groups:[...groups.values()]};
+}
+function refreshReviewFilterOptions(groups){
+ for(const [id,items] of [['filterServer',groups.map(g=>g.server||'Unknown')],['filterClass',groups.map(g=>g.className||'Unknown')]]){
+  const el=$(id),prev=el.value;el.replaceChildren(new Option(id==='filterServer'?'All servers':'All classes',''));
+  for(const value of [...new Set(items)].sort((a,b)=>a.localeCompare(b)))el.add(new Option(value,value));
+  if([...el.options].some(o=>o.value===prev))el.value=prev;
+ }
+}
+function renderReview(){
+ const area=$('reviewList');area.replaceChildren();const {rows,groups}=reviewGroups();
+ const f=reviewFilters;let shown=groups.filter(g=>
+  (!f.name||g.name.toLocaleLowerCase().includes(f.name))&&(!f.server||(g.server||'Unknown')===f.server)&&
+  (!f.className||(g.className||'Unknown')===f.className)&&(!f.from||(g.lastRaid&&g.lastRaid>=f.from))&&(!f.to||(g.lastRaid&&g.lastRaid<=f.to)));
+ shown.sort((a,b)=>f.sort==='name'?a.name.localeCompare(b.name):f.sort==='appearances'?b.count-a.count||a.name.localeCompare(b.name):f.sort==='oldest'?(a.lastRaid||'9999').localeCompare(b.lastRaid||'9999')||a.name.localeCompare(b.name):(b.lastRaid||'').localeCompare(a.lastRaid||'')||a.name.localeCompare(b.name));
+ const count=[f.name,f.server,f.className,f.from,f.to].filter(Boolean).length+(f.sort!=='recent'?1:0);
+ $('reviewFilterCount').textContent=count?`(${count})`:'';
+ $('reviewActiveFilters').hidden=!count;$('reviewActiveFilters').textContent=count?`${count} active filter${count===1?'':'s'} · Clear filters to see all characters`:'';
+ $('reviewSummary').textContent=`${shown.length} of ${groups.length} characters shown · ${rows.length} unmatched raid entries`;
+ if(!shown.length){const p=document.createElement('p');p.className='rl-empty';p.textContent=groups.length?'No characters match these filters.':'No unmatched characters in this selection.';area.append(p);return}
+ for(const g of shown){const p=g.participant;const el=document.createElement('div');el.className='rl-review-row';el.setAttribute('aria-selected',String(selectedParticipant?.id===p.id));
+ const info=document.createElement('div');const b=document.createElement('strong');b.textContent=`${g.name} — ${g.server||'Realm unknown'}`;
+ const s=document.createElement('small');s.textContent=`${g.className||'Class unknown'} · Last raid: ${g.lastRaid||'Date unavailable'} · ${g.count} raid appearance${g.count===1?'':'s'}`;info.append(b,s);
+ const btn=document.createElement('button');btn.className='rl-btn';btn.type='button';btn.textContent='Identify';btn.addEventListener('click',()=>{reviewReturnFocus=btn;selectedParticipant=p;$('reviewOverlay').hidden=false;$('reviewForm').hidden=false;document.body.classList.add('rl-modal-open');$('reviewSelected').textContent=`${p.character_name} — ${p.character_realm||'Unknown realm'}`;$('reviewPlayerName').value=p.character_name;$('reviewNotes').value='';document.querySelector('input[name=reviewCategory][value=partner]').checked=true;$('reviewMode').value='new';$('reviewRosterSearch').value='';fillRosterOptions();updateReviewCategory();$('reviewGuildName').value='';$('reviewStatus').hidden=true;renderReview();$('reviewForm').focus();});el.append(info,btn);area.append(el);
+ }
+}
+function openReviewFilters(){refreshReviewFilterOptions(reviewGroups().groups);$('filterCharacterSearch').value=reviewFilters.name;$('filterServer').value=reviewFilters.server;$('filterLastFrom').value=reviewFilters.from;$('filterLastTo').value=reviewFilters.to;$('filterClass').value=reviewFilters.className;$('filterSort').value=reviewFilters.sort;$('reviewFilterOverlay').hidden=false;document.body.classList.add('rl-modal-open');$('reviewFilterDialog').focus()}
+function closeReviewFilters(){$('reviewFilterOverlay').hidden=true;document.body.classList.remove('rl-modal-open');$('openReviewFilters').focus()}
+$('openReviewFilters').addEventListener('click',openReviewFilters);
+$('closeReviewFilters').addEventListener('click',closeReviewFilters);
+$('reviewFilterOverlay').addEventListener('click',e=>{if(e.target===$('reviewFilterOverlay'))closeReviewFilters()});
+$('applyReviewFilters').addEventListener('click',()=>{Object.assign(reviewFilters,{name:$('filterCharacterSearch').value.trim().toLocaleLowerCase(),server:$('filterServer').value,from:$('filterLastFrom').value,to:$('filterLastTo').value,className:$('filterClass').value,sort:$('filterSort').value});closeReviewFilters();renderReview()});
+$('clearReviewFilters').addEventListener('click',()=>{Object.assign(reviewFilters,{name:'',server:'',from:'',to:'',className:'',sort:'recent'});closeReviewFilters();renderReview()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('reviewFilterOverlay').hidden){e.preventDefault();closeReviewFilters()}});
 async function loadReview(){try{const result=await officerRequest({action:'review_list'});reviewData=result;const select=$('reviewReport'),prev=select.value;select.replaceChildren(new Option('All imported raids','all'));for(const r of result.reports||[])select.add(new Option(`${r.report_title||r.report_code} (#${r.event_id??'—'})`,String(r.id)));if([...select.options].some(x=>x.value===prev))select.value=prev;fillReviewPlayers();fillRosterOptions();renderReview();}catch(e){$('reviewSummary').textContent='Unable to load character review: '+e.message;}}
 $('reviewMode').addEventListener('change',showMode);for(const radio of document.querySelectorAll('input[name=reviewCategory]'))radio.addEventListener('change',updateReviewCategory);$('reviewRosterSearch').addEventListener('input',fillRosterOptions);
 $('reviewReport').addEventListener('change',()=>{closeReview();renderReview();});
