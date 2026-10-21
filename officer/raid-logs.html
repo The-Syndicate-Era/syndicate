@@ -46,7 +46,7 @@
 <div id="historyStatus" class="rl-muted" aria-live="polite">Loading raid reports…</div><div id="historyList" class="rl-history-list"></div>
 </div></section>
 <section class="rl-panel" id="charactersPanel" hidden><section class="rl-card rl-section" id="characterReview"><div class="rl-actions" style="justify-content:space-between;margin-bottom:14px"><h2 style="margin:0">Character Review</h2><button class="rl-btn" type="button" id="refreshReview">Refresh Characters</button></div>
-<p class="rl-muted">Identify Syndicate members, partner guilds and PUGs. A saved match applies to other unmatched appearances of the same character and realm. Confirmed Syndicate matches update attendance automatically. Partner/PUG matches do not affect Syndicate attendance.</p>
+<p class="rl-muted">Identify Syndicate members, partner guilds and PUGs. A saved match applies to other unmatched appearances of the same character and realm. Attendance is recorded for confirmed Syndicate members, partner-guild raiders, and PUGs. Outside-player attendance is tracked separately from Syndicate roll bonuses.</p>
 <div class="rl-review-grid"><div>
 <div class="rl-field"><label for="reviewReport">Show characters from</label><select id="reviewReport"><option value="all">All imported raids</option></select></div>
 <div id="reviewSummary" class="rl-muted">Loading characters…</div><div id="reviewList"></div>
@@ -212,7 +212,7 @@ $('reviewForm').addEventListener('submit',async e=>{
   if(category==='partner'&&!body.guild_name)return message('reviewStatus','Enter the partner guild name.',true);
   if(mode==='new'){body.player_name=$('reviewPlayerName').value.trim();if(!body.player_name)return message('reviewStatus','Enter a player name.',true);}
   else{body.player_id=Number($('reviewPlayerId').value);if(!body.player_id)return message('reviewStatus','Select an existing outside player.',true);}
-  confirmation=`Link ${selectedParticipant.character_name} (${selectedParticipant.character_realm||'unknown realm'}) to this outside player across matching reports? No attendance is awarded.`;
+  confirmation=`Link ${selectedParticipant.character_name} (${selectedParticipant.character_realm||'unknown realm'}) to this outside player across matching reports? Raid attendance will be synchronized for this outside player.`;
  }
  if(!confirm(confirmation))return;
  const btn=$('saveReview');btn.disabled=true;
@@ -220,7 +220,7 @@ $('reviewForm').addEventListener('submit',async e=>{
   const result=await officerRequest(body);
   const status=category==='syndicate'
     ? `Saved ${result.character_name||selectedParticipant.character_name}: ${result.updated_report_rows} appearances matched; ${result.attendance_added??0} attendance records added.${result.attendance_warning?' WARNING: '+result.attendance_warning:''}`
-    : `Saved ${result.character_name||selectedParticipant.character_name}: ${result.updated_report_rows} outside-player appearances matched. No Syndicate attendance added.`;
+    : `Saved ${result.character_name||selectedParticipant.character_name}: ${result.updated_report_rows} outside-player appearances matched; ${result.attendance_added??0} attendance records added.${result.attendance_warning?' WARNING: '+result.attendance_warning:''}`;
   closeReview();await loadReview();
   // Keep the success message visible without leaving a stale editable selection.
   message('reviewSummary',status,false,true);
