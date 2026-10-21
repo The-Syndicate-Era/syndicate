@@ -1,5 +1,5 @@
 /* The Syndicate | Polls UI, shared across three pages */
-:root{--poll-bg:#0c0b09;--poll-card:#1c1914;--poll-panel:#14120f;--poll-gold:#d4af37;--poll-border:#6a552b;--poll-muted:#b5a98f;--poll-text:#e9dfc8}
+:root{--poll-bg:#0c0b09;--poll-card:#1c1914;--poll-panel:#14120f;--poll-gold:#d4af37;--poll-border:#6a552b;--poll-muted:#b5a98f;--poll-text:#e9dfc8} 
 html,body{background:var(--poll-bg)!important;color:var(--poll-text);min-height:100%}body{background-image:none!important}
 .polls-shell{max-width:1420px;margin:0 auto;padding:45px 22px 80px}.polls-heading{text-align:center;margin-bottom:30px}.polls-eyebrow{color:#b89a51;letter-spacing:.22em;text-transform:uppercase;font-size:.78rem}.polls-heading h1{font-family:var(--font-heading,'Cinzel',serif);font-size:clamp(2rem,4vw,3.2rem);color:var(--poll-gold);margin:9px 0}.polls-heading p{color:var(--poll-muted);margin:.5rem 0}
 .polls-columns{display:grid;grid-template-columns:minmax(175px,230px) minmax(0,1fr) minmax(170px,235px);gap:20px;align-items:start}.polls-columns.two{grid-template-columns:230px minmax(0,1fr)}
