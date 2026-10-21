@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Guild Polls | The Syndicate</title>
+<link rel="stylesheet" href="../settings/styles.css">
+<link rel="stylesheet" href="../settings/polls.css">
+<script defer src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script defer src="../settings/supabase-config.js"></script>
+<script defer src="../settings/auth.js"></script>
+<script defer src="../settings/font-setting.js"></script>
+<script defer src="../settings/menu.js"></script>
+<script defer src="../settings/site-layout.js"></script>
+<script defer src="../settings/polls-ui.js"></script>
+<style>html.syn-access-pending #pollsContent{display:none}</style>
+</head>
+<body>
+<div id="syndicate-header"></div>
+<main class="polls-shell">
+ <header class="polls-heading"><div class="polls-eyebrow">The Syndicate • Guild Hall</div><h1>The Guild Has Spoken</h1><p>Your voice. Your guild. Your Syndicate.</p></header>
+ <div id="pollAuth" class="poll-panel poll-locked" role="status">Checking your Syndicate Discord role…</div>
+ <div id="pollsContent" class="polls-columns poll-hidden">
+  <aside class="poll-panel poll-nav" id="guildPollNav"><h2>Guild Polls</h2><button type="button" data-tab="active">⚔ Active Polls</button><button type="button" data-tab="archive">▣ Poll Archive</button><button type="button" data-tab="help">? How Voting Works</button></aside>
+  <div>
+   <section data-panel="active"><div class="poll-heading-line"><h2 class="poll-section-title">Active Polls</h2><span class="poll-badge">Guild voice</span></div>
+    <div class="poll-alert">Page preview: live polls are not available until the secured poll-reading endpoint is connected. Nothing submitted here will count as a vote.</div>
+    <article class="poll-card"><div class="poll-heading-line"><span class="poll-badge">Illustrative poll</span><span class="poll-meta">Example only</span></div><h3>What guild event should we organize next?</h3><p class="poll-desc">Give the Dark Council your opinion on our next guild activity.</p><fieldset class="poll-choices" style="border:0;padding:0"><legend class="poll-help">Choose one answer</legend><label class="poll-choice"><input type="radio" name="example-event">Trivia Night</label><label class="poll-choice"><input type="radio" name="example-event">Scavenger Hunt</label><label class="poll-choice"><input type="radio" name="example-event">PvP Night</label></fieldset><button class="poll-btn" type="button" disabled>Vote (available after integration)</button><p class="poll-note">🔒 Anonymous • One submission per poll • Answers cannot be changed</p></article>
+   </section>
+   <section data-panel="archive" class="poll-hidden"><h2 class="poll-section-title">The Archives</h2><p class="poll-desc">Completed guild polls appear here after officers publish their results.</p><article class="poll-card"><h3>Guild Event Schedule <small class="poll-badge">Illustrative</small></h3><p class="poll-meta">Example results, not live data</p><div class="poll-result"><div class="poll-result-line"><span>Saturday</span><span>56%</span></div><div class="poll-bar"><span style="width:56%"></span></div></div><div class="poll-result"><div class="poll-result-line"><span>Sunday</span><span>31%</span></div><div class="poll-bar"><span style="width:31%"></span></div></div><div class="poll-result"><div class="poll-result-line"><span>Friday</span><span>13%</span></div><div class="poll-bar"><span style="width:13%"></span></div></div></article></section>
+   <section data-panel="help" class="poll-hidden"><h2 class="poll-section-title">How Voting Works</h2><article class="poll-card"><h3>Your vote is your voice</h3><p>Guild polls are for members with The Syndicate role in Discord. Sign in with your existing Discord account. When voting is enabled, each eligible member can submit once per poll.</p><p>Answers are stored separately from participation records. The system does not place Discord IDs inside ballots. As with any online vote, absolute anonymity against all technical logs or timing analysis is not guaranteed.</p><p>Votes cannot be changed after submission. Results appear in the archive when published.</p></article></section>
+  </div>
+  <aside class="poll-art" aria-hidden="true"><span class="crest">⚓</span><strong>THE SYNDICATE</strong><p>Every voice has a place in the crew.</p><strong>THIS IS THE WAY</strong></aside>
+ </div>
+ <div class="poll-footer">THE SYNDICATE • THIS IS THE WAY</div>
+</main>
+<div id="syndicate-footer"></div>
+<script>
+window.addEventListener('load', async () => {
+ const status=document.getElementById('pollAuth'), content=document.getElementById('pollsContent');
+ try {
+   const db=await window.syndicatePollsUI.verifiedClient();
+   // Reuses the EXISTING Discord verification function; no new membership service.
+   const { data, error } = await db.functions.invoke('verify-syndicate-member');
+   if(error) throw new Error('Discord role verification is unavailable. Please reload or try again.');
+   if(data?.hasSyndicateRole !== true) {
+     status.textContent='The Syndicate Discord role is required to view Guild Polls.';
+     return;
+   }
+   status.classList.add('poll-hidden'); content.classList.remove('poll-hidden');
+   document.documentElement.classList.remove('syn-access-pending');
+   window.syndicatePollsUI.tabs('#guildPollNav');
+ } catch(error) {status.textContent=error.message || 'Unable to verify Discord access.';}
+});
+</script>
+</body></html>
