@@ -23,3 +23,7 @@ html,body{background:var(--poll-bg)!important;color:var(--poll-text);min-height:
 .poll-delete-preview{border-top:1px solid #69512c;margin-top:20px;padding-top:17px}
 .poll-btn.danger{background:#512323;border-color:#ae5b5b;color:#ffe2e2}
 @media(max-width:650px){.poll-audience-tabs{grid-template-columns:1fr}}
+.poll-answer{border-left:3px solid #b99138;padding:12px 14px;margin:12px 0;background:#272017;white-space:pre-wrap;overflow-wrap:anywhere}
+.poll-results{border-top:1px solid #5c4727;margin-top:18px;padding-top:12px}
+.poll-results h4{color:#e6c879;margin:4px 0 14px}
+.poll-vote-form textarea{width:100%;box-sizing:border-box;background:#120f0b;color:#e9dfc8;border:1px solid #705b36;border-radius:6px;min-height:90px;padding:10px;font:inherit}
