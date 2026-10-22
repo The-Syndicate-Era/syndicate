@@ -1,4 +1,4 @@
-/* The Syndicate polling frontend: all privileged reads/actions use Edge Functions. */
+/* The Syndicate polling frontend: all privileged reads/actions use Edge Functions. */ 
 (() => {
  'use strict';
  const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
