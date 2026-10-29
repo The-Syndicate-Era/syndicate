@@ -50,8 +50,14 @@
       <p class="muted">Upload a Guild Roster Manager export, preview membership changes, and update the roster while keeping main/alt information in sync with GRM.</p>
     </header>
     <div class="notice"><strong>Officer-controlled import.</strong> Preview is read-only. The roster changes only after server validation and explicit confirmation. Every completed import also reprocesses GRM main/alt relationships; existing character IDs and Warcraft Logs history are preserved.</div>
-    <section class="panel" aria-labelledby="uploadHeading">
+    <nav class="actions" aria-label="Roster manager sections" style="margin-top:1.3rem">
+      <button type="button" class="syn-btn" id="currentTab" aria-pressed="true">Current Roster</button>
+      <button type="button" class="syn-btn" id="formerTab" aria-pressed="false">Former Members</button>
+      <button type="button" class="syn-btn" id="reviewTab" aria-pressed="false">Review Needed</button>
+    </nav>
+    <section class="panel" id="uploadPanel" aria-labelledby="uploadHeading">
       <h2 id="uploadHeading">1. Select GRM Export</h2>
+      <p id="uploadModeNote" class="muted">Complete CURRENT guild roster export. Missing characters are marked absent after confirmation.</p>
       <p class="muted">Supports the 18-column Guild Roster Manager pipe-delimited CSV format, including the outer quotation marks GRM uses. The CSV is validated in the browser and sent securely to the officer-only Supabase function for authoritative comparison. No database writes occur during preview.</p>
       <label for="fileInput">GRM roster CSV file</label>
       <div class="actions">
@@ -60,6 +66,13 @@
         <button class="syn-btn" type="button" id="clearButton">Clear</button>
       </div>
       <p id="status" class="status" role="status">Select your export to begin.</p>
+    </section>
+    <section class="panel hidden" id="reviewPanel" aria-label="Informational main/alt reviews">
+      <h2>Review Needed</h2>
+      <p class="muted">Read-only reconciliation notices from GRM imports. Correct main/alt information in-game and import again; no website main edits.</p>
+      <button type="button" class="syn-btn" id="refreshReviews">Refresh Reviews</button>
+      <p id="reviewStatus" class="status"></p>
+      <div class="table-wrap"><table><thead><tr><th>Character ID</th><th>Issue</th><th>Details</th></tr></thead><tbody id="reviewBody"></tbody></table></div>
     </section>
     <section class="panel hidden" id="results" aria-labelledby="resultsHeading">
       <h2 id="resultsHeading">2. Import Preview</h2>
@@ -89,7 +102,7 @@
       <section class="panel" id="commitPanel" aria-label="Confirm roster import">
         <h2>3. Confirm Import</h2>
         <p class="muted">Review the additions and removals above. This import updates the roster, retains removed character records, refreshes unambiguous main/alt relationships from the GRM export, and records a snapshot. Unresolved mains remain for later review; this page does not change their main assignment. Player-level Former Syndicate classification and Warcraft Logs identity suggestions are not included yet.</p>
-        <label style="font-weight:normal"><input type="checkbox" id="completeCheck"> I confirm this file is a <strong>complete</strong> Guild Roster Manager export for The Syndicate, not a partial roster.</label>
+        <label style="font-weight:normal"><input type="checkbox" id="completeCheck"> <span id="confirmationLabel">I confirm this file is a <strong>complete</strong> Guild Roster Manager export for The Syndicate, not a partial roster.</span></label>
         <div class="actions"><button class="syn-btn" type="button" id="commitButton" disabled>Confirm &amp; Update Guild Roster</button></div>
         <p class="status" id="commitStatus" role="status">Complete a server-validated preview to enable import.</p>
       </section>
@@ -102,6 +115,42 @@
   const REQUIRED = ['Name','Rank','Level','Class','Race','Sex','Last Online (Days)','Main/Alt','Player Alts','Join Date','Promo Date','Rank History','Birthday','Public Note','Officer Note','Custom Note','Faction','Player GUID'];
   const $ = id => document.getElementById(id);
   let differences = [], shown = 0, confirmedPreview = null, selectedFileBytes = null, importBusy = false;
+  let rosterType = 'current';
+  function switchTab(mode){
+    rosterType=mode==='review'?rosterType:mode;
+    for(const [key,id] of [['current','currentTab'],['former','formerTab'],['review','reviewTab']])
+      $(id).setAttribute('aria-pressed',String(key===mode));
+    $('uploadPanel').classList.toggle('hidden',mode==='review');
+    $('reviewPanel').classList.toggle('hidden',mode!=='review');
+    $('results').classList.add('hidden');
+    $('fileInput').value='';resetConfirmation();
+    $('uploadHeading').textContent=mode==='former'?'1. Select Former Members GRM Export':'1. Select GRM Export';
+    $('uploadModeNote').textContent=mode==='former'?
+      'Historical former-member export. Existing current guildies are protected. Only rows with a Left Guild date can be imported; missing rows are never treated as departures.':
+      'Complete CURRENT guild roster export. Missing characters are marked absent after confirmation.';
+    $('confirmationLabel').textContent=mode==='former'?
+      'I confirm this is a historical former-member GRM export.':
+      'I confirm this is a complete current guild GRM export, not a partial roster.';
+    setStatus('Select your export to begin.');
+    if(mode==='review')loadReviews();
+  }
+  async function loadReviews(){
+    $('reviewStatus').textContent='Loading reconciliation notices…';
+    $('reviewBody').replaceChildren();
+    const db=window.syndicateDB;
+    if(!db?.from){$('reviewStatus').textContent='Database connection unavailable.';return;}
+    const {data,error}=await db.from('guild_roster_reconciliation')
+      .select('roster_character_id,issue_type,detail,import_id').limit(200);
+    if(error){$('reviewStatus').textContent='Could not load reviews: '+error.message;return;}
+    $('reviewStatus').textContent=`${(data||[]).length} review notices (up to 200 across imports). Historical notices may remain after correction.`;
+    for(const r of data||[]){
+      const tr=document.createElement('tr');
+      for(const value of [r.roster_character_id,r.issue_type,JSON.stringify(r.detail||{})]){
+        const td=document.createElement('td');td.textContent=String(value??'');tr.append(td);
+      }
+      $('reviewBody').append(tr);
+    }
+  }
   const setStatus = (message, error = false) => { $('status').textContent = message; $('status').classList.toggle('error',error); };
   function decodeFile(buffer) {
     try { return new TextDecoder('utf-8', {fatal:true}).decode(buffer); }
@@ -227,7 +276,7 @@
     const {data:auth,error:authError}=await db.auth.getSession();
     if(authError || !auth?.session)throw new Error('Website login required. Please sign in again.');
     const {data,error}=await db.functions.invoke('syndicate-roster-import',{
-      body:{action,filename:file.name,file_base64:toBase64(selectedFileBytes),
+      body:{action,roster_type:rosterType,filename:file.name,file_base64:toBase64(selectedFileBytes),
         ...(action==='commit'?{confirm_complete:true,confirm_sha256:expectedHash}:{})}
     });
     if(error){
@@ -251,7 +300,10 @@
     $('stats').replaceChildren();
     stat(data.currently_present,'Currently present');stat(data.csv_characters,'CSV characters');
     stat(data.new_characters,'New GUIDs');stat(data.removed_characters,'Removed characters');
-    stat(data.main_alt_changes,'Main / Alt changes');stat(data.rejoining_characters,'Returning characters');
+    if(rosterType==='former'){
+      stat(data.updated_former||0,'Existing former');stat(data.skipped_active||0,'Current protected');
+      stat(data.missing_departure_date||0,'No leave date (skipped)');
+    } else {stat(data.main_alt_changes,'Main / Alt changes');stat(data.rejoining_characters,'Returning characters');}
     differences=[
       ...(data.additions||[]).map(r=>({type:'new',name:r.name,guid:r.guid,detail:'New character GUID'})),
       ...(data.removals||[]).map(r=>({type:'missing',name:r.name,guid:r.guid,detail:'Absent from confirmed complete snapshot'})),
@@ -259,7 +311,9 @@
     ];
     $('differenceSection').classList.remove('hidden');
     $('viewFilter').value='all';renderDetails();
-    $('comparisonNote').textContent=`Server verified ${data.csv_characters} incoming GUIDs against ${data.currently_present} active roster records. Level and rank changes are excluded. Other details may update during import even when not shown here.`;
+    $('comparisonNote').textContent=rosterType==='former'?
+      `Historical preview: ${data.new_characters} new former records, ${data.updated_former} existing former records, ${data.skipped_active} current members protected, ${data.missing_departure_date} rows without explicit leave dates skipped.`:
+      `Server verified ${data.csv_characters} incoming GUIDs against ${data.currently_present} active roster records. Level and rank changes are excluded. Other details may update during import even when not shown here.`;
     if(!data.allowed_to_commit){
       const li=document.createElement('li');li.textContent='Server blocked import: '+data.warning;warnings.append(li);
     }
@@ -281,14 +335,16 @@
       stat(rows.filter(r=>normalized(r['Main/Alt'])==='main').length,'Marked Main');
       stat(rows.filter(r=>normalized(r['Main/Alt'])==='alt').length,'Marked Alt');
       stat(rows.filter(r=>!['main','alt'].includes(normalized(r['Main/Alt']))).length,'Unclassified');
-      const li=document.createElement('li');li.textContent='Only confirm a complete export. Removed characters will be marked absent but not deleted.';$('warnings').append(li);
+      const li=document.createElement('li');li.textContent=rosterType==='former'?
+        'Historical import: no current members are removed and rows without explicit Left Guild dates are skipped.':
+        'Only confirm a complete export. Removed characters will be marked absent but not deleted.';$('warnings').append(li);
       $('differenceSection').classList.add('hidden');
       setStatus('CSV parsed. Requesting officer-authorized server preview…');
       const data=await serverRequest('preview',file);
-      confirmedPreview={sha256:data.sha256,filename:file.name,fileSize:file.size,allowed:data.allowed_to_commit};
+      confirmedPreview={sha256:data.sha256,filename:file.name,fileSize:file.size,allowed:data.allowed_to_commit,rosterType};
       renderServerSummary(data);
       $('completeCheck').disabled=!data.allowed_to_commit;
-      $('commitStatus').textContent=data.allowed_to_commit?'Review the comparison, then confirm that the roster export is complete.': 'Import blocked by server safety check.';
+      $('commitStatus').textContent=data.allowed_to_commit?(rosterType==='former'?'Review historical changes, then confirm the former-member file.':'Review the comparison, then confirm that the roster export is complete.'):'Import blocked by server safety check.';
       setStatus('Server preview complete. No database records have been changed.');
     }catch(err){
       resetConfirmation();setStatus(err?.message||String(err),true);
@@ -297,18 +353,23 @@
   }
   async function commitImport(){
     const file=$('fileInput').files?.[0],preview=confirmedPreview;
-    if(importBusy||!file||!preview?.allowed||!$('completeCheck').checked)return;
+    if(importBusy||!file||!preview?.allowed||!$('completeCheck').checked||preview.rosterType!==rosterType)return;
     if(file.name!==preview.filename||file.size!==preview.fileSize){
       $('commitStatus').textContent='The selected file changed. Please preview it again.';resetConfirmation();return;
     }
-    if(!window.confirm(`Apply this COMPLETE roster export to The Syndicate?\n\nThis updates current characters, refreshes clear GRM main/alt relationships, and marks missing characters absent. Unresolved mains stay unresolved. Existing roster IDs, officer mappings, and raid history remain intact.`))return;
+    const question=rosterType==='former'?
+      'Import historical GRM records?\n\nExisting current members will not be removed or overwritten. Rows without an explicit Left Guild date will be skipped.':
+      'Apply this COMPLETE roster export to The Syndicate?\n\nThis updates current characters and marks missing characters absent. Existing IDs and raid history remain intact.';
+    if(!window.confirm(question))return;
     importBusy=true;$('commitButton').disabled=true;$('previewButton').disabled=true;
     $('completeCheck').disabled=true;$('commitStatus').textContent='Applying validated roster transaction…';
     try{
       const result=await serverRequest('commit',file,preview.sha256);
       const value=result.result||{};
-      $('commitStatus').textContent=`Import completed. New: ${value.new_characters??'—'}; updated: ${value.existing_characters??'—'}; removed from current roster: ${value.removed_characters??'—'}; unresolved main-review tasks created: ${value.main_missing_review??'—'}. Import ID: ${value.import_id||'available in database'}.`;
-      setStatus('Roster import completed. Confirmed GRM main/alt relationships were refreshed; unresolved mains can be corrected in-game before a future export.');
+      $('commitStatus').textContent=rosterType==='former'?
+        `Former import completed. New former: ${value.new_former??'—'}; updated former: ${value.updated_former??'—'}; current members protected: ${value.skipped_current??'—'}; rows with no leave date skipped: ${value.missing_departure_date??'—'}. Import ID: ${value.import_id||'—'}.`:
+        `Import completed. New: ${value.new_characters??'—'}; updated: ${value.existing_characters??'—'}; removed from current roster: ${value.removed_characters??'—'}; unresolved main-review tasks created: ${value.main_missing_review??'—'}. Import ID: ${value.import_id||'available in database'}.`;
+      setStatus(rosterType==='former'?'Historical GRM records imported. Current guild membership was not changed.':'Roster import completed. Confirmed GRM main/alt relationships were refreshed; unresolved mains can be corrected in-game before a future export.');
       confirmedPreview=null;selectedFileBytes=null;$('completeCheck').checked=false;
       $('fileInput').value='';
     }catch(err){
@@ -316,6 +377,10 @@
       $('completeCheck').disabled=false;
     }finally{importBusy=false;$('previewButton').disabled=false;}
   }
+  $('currentTab').addEventListener('click',()=>switchTab('current'));
+  $('formerTab').addEventListener('click',()=>switchTab('former'));
+  $('reviewTab').addEventListener('click',()=>switchTab('review'));
+  $('refreshReviews').addEventListener('click',loadReviews);
   $('previewButton').addEventListener('click',runPreview);
   $('commitButton').addEventListener('click',commitImport);
   $('completeCheck').addEventListener('change',()=>{ $('commitButton').disabled=importBusy||!confirmedPreview?.allowed||!$('completeCheck').checked; });
