@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Raiding Nerd Data | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="../settings/supabase-config.js" defer></script>
+  <script src="../settings/auth.js" defer></script>
+  <script src="../settings/officer-guard.js" defer></script>
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/menu.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
+  <style>
+    html,body{background:#080807!important;color:#e4dac6;min-height:100%} body{background-image:none!important}
+    .nerd-shell{max-width:1600px;margin:0 auto;padding:2rem 1.2rem 5rem}
+    .nerd-shell h1,.nerd-shell h2,.nerd-shell h3{font-family:var(--font-heading,Cinzel,serif);color:#d4af37}
+    .nerd-shell h1{font-size:clamp(2rem,4vw,3rem);margin:.4rem 0}.nerd-shell h2{font-size:1.5rem;margin:0 0 .8rem}.nerd-shell h3{font-size:1.1rem;margin:0 0 .65rem}
+    .eyebrow{font-size:.75rem;letter-spacing:.16em;text-transform:uppercase;color:#c7aa61}.muted{color:#bcb19e;line-height:1.55}.back-link{color:#e1b94d}
+    .layout{display:grid;grid-template-columns:minmax(180px,225px) minmax(0,1fr) minmax(170px,245px);gap:1.1rem;align-items:start;margin-top:1.7rem}
+    .sidebar,.content,.art-panel{border:1px solid #51401f;background:#14110b;border-radius:.65rem}
+    .sidebar{padding:1.2rem;position:sticky;top:1rem}.sidebar-title{color:#e9ca7c;font-size:.76rem;text-transform:uppercase;letter-spacing:.14em;margin-bottom:.75rem}
+    .tabs{display:grid;gap:.55rem}.tab{display:block;width:100%;text-align:left;background:#1d170e;color:#d4c5a7;border:1px solid #493a21;border-radius:.35rem;padding:1rem .75rem;cursor:pointer;font:inherit;font-weight:600}
+    .tab:hover,.tab:focus-visible{border-color:#d4af37;color:#f8db89}.tab[aria-selected="true"]{background:#362714;border-color:#d4af37;color:#f4d583}
+    .tab small{display:block;font-size:.72rem;color:#a89a84;margin-top:.25rem;font-weight:400}
+    .content{padding:1.35rem;min-height:600px}.section{display:none}.section.active{display:block}.section-header{border-bottom:1px solid #473820;margin-bottom:1.25rem;padding-bottom:.8rem}
+    .cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.75rem;margin:1rem 0 1.35rem}.stat,.panel{background:#1b160e;border:1px solid #4d3c21;border-radius:.45rem;padding:1rem}
+    .stat span{display:block;font-size:.78rem;color:#baa98c}.stat strong{display:block;color:#ebc96f;font-size:1.45rem;margin:.45rem 0;font-variant-numeric:tabular-nums}
+    .panel{margin:1rem 0}.panel-heading{display:flex;gap:1rem;justify-content:space-between;align-items:center;flex-wrap:wrap}
+    .chart{height:215px;display:flex;align-items:end;gap:1.2rem;padding:1rem .4rem .2rem;border-bottom:1px solid #705932;margin:.75rem 0 1.7rem}
+    .chart-col{flex:1;max-width:100px;text-align:center;display:flex;flex-direction:column;justify-content:end;height:100%;gap:.45rem}.chart-fill{border:1px solid #e5c265;background:linear-gradient(#d4af37,#74602a);border-radius:3px 3px 0 0;min-height:4px}
+    .chart-col strong{font-size:.82rem;color:#ebd48e}.chart-col span{font-size:.77rem;color:#bcb19e}
+    .row{display:flex;align-items:center;gap:.7rem;flex-wrap:wrap}.control{background:#0e0c08;color:#f1daa3;border:1px solid #766038;padding:.6rem .7rem;border-radius:.35rem;font:inherit;max-width:100%}
+    select.control{min-width:160px}.input{width:100%;box-sizing:border-box}.tag{display:inline-block;padding:.25rem .65rem;border:1px solid #725d32;border-radius:999px;color:#edd087;font-size:.8rem}
+    .placeholder{border:1px dashed #6d542b;border-radius:.45rem;padding:1.3rem;text-align:center;color:#bcb19e;background:#131009}
+    .table-wrap{width:100%;overflow-x:auto}table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:380px}th,td{text-align:left;padding:.7rem;border-bottom:1px solid #3d3020}th{color:#e8c975}td{color:#ddd1ba}
+    .art-panel{position:sticky;top:1rem;overflow:hidden}.art-panel img{width:100%;height:auto;display:block;min-height:500px;object-fit:cover;background:#0b0a07}.art-fallback{padding:1.6rem;text-align:center;color:#c4a667;min-height:350px;display:none;align-items:center;justify-content:center;flex-direction:column;gap:.75rem}
+    .mini-label{color:#cbb27a;font-size:.76rem;letter-spacing:.1em;text-transform:uppercase}.notice{font-size:.83rem;color:#a99b80;margin:.75rem 0}
+    @media(max-width:1050px){.layout{grid-template-columns:180px minmax(0,1fr)}.art-panel{display:none}}
+    @media(max-width:660px){.nerd-shell{padding:1rem .8rem 3rem}.layout{grid-template-columns:1fr}.sidebar{position:static}.tabs{grid-template-columns:repeat(3,minmax(0,1fr))}.tab{padding:.7rem .45rem;font-size:.8rem}.tab small{display:none}.content{padding:1rem}.cards{grid-template-columns:1fr 1fr}}
+  </style>
+</head>
+<body>
+  <div id="syndicate-menu"></div>
+  <main class="nerd-shell">
+    <a class="back-link" href="officer-hub.html">← Officer Hub</a>
+    <header>
+      <p class="eyebrow">The Syndicate · Dark Council</p>
+      <h1>RAIDING NERD DATA</h1>
+      <p class="muted">The numbers behind the chaos. Raid history, attendance leaders, and individual raider activity.</p>
+    </header>
+    <div class="layout">
+      <aside class="sidebar" aria-label="Nerd Data sections">
+        <div class="sidebar-title">Explore the Data</div>
+        <div class="tabs" role="tablist" aria-label="Analytics tabs">
+          <button class="tab" id="tab-analytics" role="tab" aria-controls="analytics" aria-selected="true" data-tab="analytics">Raid Analytics<small>History &amp; composition</small></button>
+          <button class="tab" id="tab-leaders" role="tab" aria-controls="leaders" aria-selected="false" data-tab="leaders">Top Raiders<small>Top 40 / Top 20</small></button>
+          <button class="tab" id="tab-lookup" role="tab" aria-controls="lookup" aria-selected="false" data-tab="lookup">Raider Lookup<small>Mains, alts &amp; activity</small></button>
+        </div>
+      </aside>
+      <article class="content">
+        <section class="section active" id="analytics" role="tabpanel" aria-labelledby="tab-analytics">
+          <div class="section-header"><h2>Raid Analytics</h2><p class="muted">Raid history, boss completion, raid composition, and Guild Independence.</p></div>
+          <h3>Guild Independence by Month</h3>
+          <p class="muted">Percent of logged raid appearances classified as Syndicate members on the raid date.</p>
+          <div class="cards">
+            <div class="stat"><span>July 2026</span><strong>49.72%</strong></div>
+            <div class="stat"><span>October 2026</span><strong>75.48%</strong></div>
+            <div class="stat"><span>Change</span><strong>+25.76 pts</strong></div>
+          </div>
+          <div class="panel"><div class="mini-label">Verified data · July–October 2026</div><div class="chart" aria-label="Guild independence rose from 49.72% in July to 75.48% in October">
+            <div class="chart-col"><strong>49.72%</strong><div class="chart-fill" style="height:49.72%"></div><span>Jul</span></div>
+            <div class="chart-col"><strong>66.43%</strong><div class="chart-fill" style="height:66.43%"></div><span>Aug</span></div>
+            <div class="chart-col"><strong>65.99%</strong><div class="chart-fill" style="height:65.99%"></div><span>Sep</span></div>
+            <div class="chart-col"><strong>75.48%</strong><div class="chart-fill" style="height:75.48%"></div><span>Oct</span></div>
+          </div><p class="notice">This chart uses our verified summary. Connect the Supabase reporting view for automatic updates.</p></div>
+          <div class="panel"><div class="panel-heading"><h3>Raid History</h3><select class="control" aria-label="Raid history filter"><option>All raid types</option><option>BWL</option><option>MC</option><option>AQ40</option><option>ZG</option><option>AQ20</option><option>Onyxia</option></select></div><div class="placeholder">Upcoming live connection: chronological raids, bosses defeated / total bosses, and completion details.</div></div>
+          <div class="panel"><div class="panel-heading"><h3>Raid Composition</h3><select class="control" aria-label="Composition view"><option>Guild association</option><option>Character definition</option></select></div><div class="placeholder">Upcoming live connection: composition by historically accurate guild association or character definition from raid logs.</div></div>
+        </section>
+        <section class="section" id="leaders" role="tabpanel" aria-labelledby="tab-leaders" hidden>
+          <div class="section-header"><h2>Top Raiders</h2><p class="muted">The most frequent raiders, with mains and linked alts counted together when identities are confirmed.</p></div>
+          <div class="panel"><div class="panel-heading"><h3 id="leader-heading">Top 40 · All Raids</h3><select id="raid-select" class="control" aria-label="Leaderboard raid"><option value="all">All raids</option><option value="BWL">BWL</option><option value="MC">MC</option><option value="AQ40">AQ40</option><option value="ZG">ZG</option><option value="AQ20">AQ20</option><option value="Ony">Onyxia</option></select></div>
+          <div class="table-wrap"><table><thead><tr><th>#</th><th>Raider / Main</th><th>Raids attended</th><th>Last raid</th></tr></thead><tbody><tr><td colspan="4" class="muted">Live leaderboard will populate from distinct attended raid events. No fabricated rankings.</td></tr></tbody></table></div></div>
+          <p class="notice">All raids: Top 40. ZG and AQ20: Top 20. Other raids: Top 40. Historical coverage depends on uploaded reports.</p>
+        </section>
+        <section class="section" id="lookup" role="tabpanel" aria-labelledby="tab-lookup" hidden>
+          <div class="section-header"><h2>Raider Lookup</h2><p class="muted">Search Syndicate, former guild members, partner raiders, or PUGs.</p></div>
+          <div class="panel"><label for="raider-search" class="mini-label">Find a character or main</label><input id="raider-search" class="control input" type="search" placeholder="Type a character name..." disabled><p class="notice">Search becomes active after the live player index is connected.</p></div>
+          <div class="cards"><div class="stat"><span>Overall attendance</span><strong>—</strong></div><div class="stat"><span>Raids attended</span><strong>—</strong></div><div class="stat"><span>Last raid date</span><strong>—</strong></div></div>
+          <div class="panel"><h3>Current Guild Association &amp; Rank</h3><p class="muted">Show current Syndicate rank for members; show current partner, PUG, or former-member association when known.</p></div>
+          <div class="panel"><h3>Raids Attended · Last 30 Days</h3><div class="placeholder">Show only the raid types actually attended, e.g. AQ40 · 4 (without listing any other raid types).</div></div>
+          <div class="panel"><h3>Main &amp; Raiding Alts</h3><div class="table-wrap"><table><thead><tr><th>Character</th><th>Main / Alt</th><th>Raids</th><th>Last raid</th></tr></thead><tbody><tr><td colspan="4" class="muted">Only characters with logged raid attendance will appear here.</td></tr></tbody></table></div></div>
+          <div class="panel"><h3>Raid Attendance History</h3><div class="placeholder">Date · Raid · Character used · Historical guild association</div></div>
+        </section>
+      </article>
+      <aside class="art-panel" aria-label="Nerd Data artwork">
+        <!-- Change the src if nerd-data.png is stored elsewhere in your site's assets. -->
+        <img src="../images/nerd-data.png" alt="The Syndicate Raiding Nerd Data artwork" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+        <div class="art-fallback"><strong>NERD DATA</strong><span>Place nerd-data.png at <code>images/nerd-data.png</code> or update the image path in this file.</span></div>
+      </aside>
+    </div>
+  </main>
+  <script>
+    (function(){
+      const tabs=[...document.querySelectorAll('[data-tab]')];
+      tabs.forEach(tab=>tab.addEventListener('click',()=>{
+        tabs.forEach(t=>t.setAttribute('aria-selected',String(t===tab)));
+        document.querySelectorAll('.section').forEach(section=>{
+          const active=section.id===tab.dataset.tab;
+          section.classList.toggle('active',active);
+          section.hidden=!active;
+        });
+      }));
+      const raid=document.getElementById('raid-select');
+      raid.addEventListener('change',()=>{
+        const twenty=['ZG','AQ20'].includes(raid.value);
+        document.getElementById('leader-heading').textContent='Top '+(twenty?'20':'40')+' · '+(raid.value==='all'?'All Raids':raid.options[raid.selectedIndex].text);
+      });
+    })();
+  </script>
+</body>
+</html>
 
