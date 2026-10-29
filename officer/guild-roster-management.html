@@ -216,14 +216,29 @@
     shown+=next.length;$('detailCount').textContent=`Showing ${shown} of ${records.length}`;
     $('showMore').classList.toggle('hidden',shown>=records.length);
   }
-  function extractToken(session){
-    if(session?.provider_token)return session.provider_token;
-    try{
-      const item=JSON.parse(sessionStorage.getItem('syndicate_discord_oauth')||'null');
-      if(item?.userId===session?.user?.id && typeof item.token==='string' &&
-         Number.isFinite(item.savedAt) && Date.now()-item.savedAt<30*60*1000)return item.token;
-    }catch{}return null;
+ function extractToken(session) {
+  if (session?.provider_token) {
+    return session.provider_token;
   }
+
+  try {
+    const item = JSON.parse(
+      sessionStorage.getItem('syndicate_discord_oauth') || 'null'
+    );
+
+    if (
+      item?.userId === session?.user?.id &&
+      typeof item.token === 'string' &&
+      item.token.length > 0
+    ) {
+      return item.token;
+    }
+  } catch (error) {
+    console.warn('Unable to retrieve Discord token:', error);
+  }
+
+  return null;
+}
   function toBase64(bytes){
     let output='';const size=8192;
     for(let i=0;i<bytes.length;i+=size)output+=String.fromCharCode(...bytes.subarray(i,i+size));
