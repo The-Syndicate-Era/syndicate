@@ -50,6 +50,14 @@
       <p class="muted">Upload a Guild Roster Manager export, preview membership changes, and update the roster while keeping main/alt information in sync with GRM.</p>
     </header>
     <div class="notice"><strong>Officer-controlled import.</strong> Preview is read-only. The roster changes only after server validation and explicit confirmation. Every completed import also reprocesses GRM main/alt relationships; existing character IDs and Warcraft Logs history are preserved.</div>
+    <section class="panel" aria-label="Latest roster imports" style="margin-bottom:.7rem">
+      <div class="section-head"><h2 style="margin:0">Latest GRM Imports</h2><button type="button" class="syn-btn" id="refreshImports">Refresh Dates</button></div>
+      <div class="stats" style="grid-template-columns:repeat(2,minmax(0,1fr))">
+        <div class="stat"><span>Current roster</span><strong id="lastCurrentImport" style="font-size:1rem;margin-top:.5rem">Loading…</strong></div>
+        <div class="stat"><span>Former members</span><strong id="lastFormerImport" style="font-size:1rem;margin-top:.5rem">Loading…</strong></div>
+      </div>
+      <p id="importDatesStatus" class="muted" style="font-size:.85rem;margin:0"></p>
+    </section>
     <nav class="actions" aria-label="Roster manager sections" style="margin-top:1.3rem">
       <button type="button" class="syn-btn" id="currentTab" aria-pressed="true">Current Roster</button>
       <button type="button" class="syn-btn" id="formerTab" aria-pressed="false">Former Members</button>
@@ -69,10 +77,10 @@
     </section>
     <section class="panel hidden" id="reviewPanel" aria-label="Informational main/alt reviews">
       <h2>Review Needed</h2>
-      <p class="muted">Read-only reconciliation notices from GRM imports. Correct main/alt information in-game and import again; no website main edits.</p>
+      <p class="muted">Current, active roster characters flagged for review. This is informational only; correct main/alt details in-game and import again.</p>
       <button type="button" class="syn-btn" id="refreshReviews">Refresh Reviews</button>
       <p id="reviewStatus" class="status"></p>
-      <div class="table-wrap"><table><thead><tr><th>Character ID</th><th>Issue</th><th>Details</th></tr></thead><tbody id="reviewBody"></tbody></table></div>
+      <div class="table-wrap"><table><thead><tr><th>Character</th><th>ID</th><th>Issue</th><th>GRM main / alts</th></tr></thead><tbody id="reviewBody"></tbody></table></div>
     </section>
     <section class="panel hidden" id="results" aria-labelledby="resultsHeading">
       <h2 id="resultsHeading">2. Import Preview</h2>
@@ -135,21 +143,37 @@
     if(mode==='review')loadReviews();
   }
   async function loadReviews(){
-    $('reviewStatus').textContent='Loading reconciliation notices…';
+    $('reviewStatus').textContent='Loading current roster review statuses…';
     $('reviewBody').replaceChildren();
     const db=window.syndicateDB;
     if(!db?.from){$('reviewStatus').textContent='Database connection unavailable.';return;}
-    const {data,error}=await db.from('guild_roster_reconciliation')
-      .select('roster_character_id,issue_type,detail,import_id').limit(200);
+    const {data,error}=await db.from('guild_roster')
+      .select('id,Name,cleanup_status,main_character_name,"Player Alts"')
+      .eq('roster_present',true).ilike('cleanup_status','REVIEW%')
+      .order('Name',{ascending:true}).limit(500);
     if(error){$('reviewStatus').textContent='Could not load reviews: '+error.message;return;}
-    $('reviewStatus').textContent=`${(data||[]).length} review notices (up to 200 across imports). Historical notices may remain after correction.`;
+    $('reviewStatus').textContent=`${(data||[]).length} current character(s) flagged for review. Historical reconciliation notices are excluded.`;
     for(const r of data||[]){
       const tr=document.createElement('tr');
-      for(const value of [r.roster_character_id,r.issue_type,JSON.stringify(r.detail||{})]){
+      for(const value of [r.Name,r.id,r.cleanup_status,`${r.main_character_name||'Main unknown'} · ${r['Player Alts']||'No alt list'}`]){
         const td=document.createElement('td');td.textContent=String(value??'');tr.append(td);
       }
       $('reviewBody').append(tr);
     }
+  }
+  async function loadImportDates(){
+    const db=window.syndicateDB;
+    if(!db?.from)return;
+    const {data,error}=await db.from('guild_roster_imports')
+      .select('source_name,applied_at,status')
+      .eq('status','completed').order('applied_at',{ascending:false}).limit(100);
+    if(error){$('importDatesStatus').textContent='Import dates unavailable: '+error.message;return;}
+    const current=(data||[]).find(r=>r.source_name==='GRM CSV');
+    const former=(data||[]).find(r=>r.source_name==='GRM former CSV');
+    const format=r=>r?.applied_at?new Date(r.applied_at).toLocaleString():'No completed import found';
+    $('lastCurrentImport').textContent=format(current);
+    $('lastFormerImport').textContent=format(former);
+    $('importDatesStatus').textContent='Dates reflect completed database imports.';
   }
   const setStatus = (message, error = false) => { $('status').textContent = message; $('status').classList.toggle('error',error); };
   function decodeFile(buffer) {
@@ -370,6 +394,7 @@
         `Former import completed. New former: ${value.new_former??'—'}; updated former: ${value.updated_former??'—'}; current members protected: ${value.skipped_current??'—'}; rows with no leave date skipped: ${value.missing_departure_date??'—'}. Import ID: ${value.import_id||'—'}.`:
         `Import completed. New: ${value.new_characters??'—'}; updated: ${value.existing_characters??'—'}; removed from current roster: ${value.removed_characters??'—'}; unresolved main-review tasks created: ${value.main_missing_review??'—'}. Import ID: ${value.import_id||'available in database'}.`;
       setStatus(rosterType==='former'?'Historical GRM records imported. Current guild membership was not changed.':'Roster import completed. Confirmed GRM main/alt relationships were refreshed; unresolved mains can be corrected in-game before a future export.');
+      loadImportDates();
       confirmedPreview=null;selectedFileBytes=null;$('completeCheck').checked=false;
       $('fileInput').value='';
     }catch(err){
@@ -381,6 +406,8 @@
   $('formerTab').addEventListener('click',()=>switchTab('former'));
   $('reviewTab').addEventListener('click',()=>switchTab('review'));
   $('refreshReviews').addEventListener('click',loadReviews);
+  $('refreshImports').addEventListener('click',loadImportDates);
+  loadImportDates();
   $('previewButton').addEventListener('click',runPreview);
   $('commitButton').addEventListener('click',commitImport);
   $('completeCheck').addEventListener('change',()=>{ $('commitButton').disabled=importBusy||!confirmedPreview?.allowed||!$('completeCheck').checked; });
