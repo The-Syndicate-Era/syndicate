@@ -216,29 +216,6 @@
     shown+=next.length;$('detailCount').textContent=`Showing ${shown} of ${records.length}`;
     $('showMore').classList.toggle('hidden',shown>=records.length);
   }
- function extractToken(session) {
-  if (session?.provider_token) {
-    return session.provider_token;
-  }
-
-  try {
-    const item = JSON.parse(
-      sessionStorage.getItem('syndicate_discord_oauth') || 'null'
-    );
-
-    if (
-      item?.userId === session?.user?.id &&
-      typeof item.token === 'string' &&
-      item.token.length > 0
-    ) {
-      return item.token;
-    }
-  } catch (error) {
-    console.warn('Unable to retrieve Discord token:', error);
-  }
-
-  return null;
-}
   function toBase64(bytes){
     let output='';const size=8192;
     for(let i=0;i<bytes.length;i+=size)output+=String.fromCharCode(...bytes.subarray(i,i+size));
@@ -248,11 +225,9 @@
     const db=window.syndicateDB;
     if(!db?.functions)throw new Error('Central Supabase connection is unavailable.');
     const {data:auth,error:authError}=await db.auth.getSession();
-    if(authError || !auth?.session)throw new Error('Sign in with Discord before importing.');
-    const discordAccessToken=extractToken(auth.session);
-    if(!discordAccessToken)throw new Error('Discord authorization expired. Reconnect Discord and try again.');
+    if(authError || !auth?.session)throw new Error('Website login required. Please sign in again.');
     const {data,error}=await db.functions.invoke('syndicate-roster-import',{
-      body:{action,filename:file.name,file_base64:toBase64(selectedFileBytes),discordAccessToken,
+      body:{action,filename:file.name,file_base64:toBase64(selectedFileBytes),
         ...(action==='commit'?{confirm_complete:true,confirm_sha256:expectedHash}:{})}
     });
     if(error){
