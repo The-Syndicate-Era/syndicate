@@ -162,6 +162,7 @@
     let events = [];
     const DISCORD_GUILD_ID='945513309925412905';
     let signupChannels=new Map();
+    let scheduleChannels=new Map();
     const raidLogStatus=new Map(); // event ID -> true (logs), false (no logs)
     let calendarLoadVersion=0;
     const pad = n => String(n).padStart(2,'0');
@@ -192,10 +193,16 @@
       const channelResponse=await db.from('CalendarDiscordChannels').select('id,discord_channel_id,channel_name,is_active');
       if(channelResponse.error){console.warn('Signup channel directory:',channelResponse.error.message);signupChannels=new Map();}
       else signupChannels=new Map((channelResponse.data||[]).map(c=>[String(c.id),c]));
+      // A recurring event may not have an individual channel assignment.
+      // Fall back to its parent weekly schedule's assigned channel.
+      const schedulesResponse=await db.from('CalendarSchedules').select('id,signup_channel_id');
+      if(schedulesResponse.error){console.warn('Schedule signup channels:',schedulesResponse.error.message);scheduleChannels=new Map();}
+      else scheduleChannels=new Map((schedulesResponse.data||[]).map(s=>[String(s.id),s.signup_channel_id]));
       events=(data||[]).map(r=>({
         id:r.id,date:r.date,name:r.event||r.event_name||r.name||'Event',
         time:formatTime(r.time),type:r.type||'',notes:r.notes||'',
         signup_channel_id:r.signup_channel_id||null,
+        schedule_id:r.schedule_id||null,
         raid_status:r.raid_status||''
       }));
       renderCalendar();
@@ -266,7 +273,8 @@
     calDialog.addEventListener('click',e=>{if(e.target===calDialog)closeCalendarEvent()});
     document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!calDialog.hidden){e.preventDefault();closeCalendarEvent()}});
     function discordUrl(event){
-      const channel=signupChannels.get(String(event.signup_channel_id||''));
+      const assignedId=event.signup_channel_id || scheduleChannels.get(String(event.schedule_id||''));
+      const channel=signupChannels.get(String(assignedId||''));
       if(!channel||channel.is_active===false||!/^[0-9]{16,22}$/.test(String(channel.discord_channel_id||'')))return null;
       return `https://discord.com/channels/${DISCORD_GUILD_ID}/${channel.discord_channel_id}`;
     }
@@ -291,7 +299,13 @@
       const notes=document.getElementById('synCalEventNotes');notes.textContent=event.notes||'';notes.hidden=!event.notes;
       calLinks.replaceChildren();calResults.replaceChildren();
       // Show a signup only for upcoming/today events; logged raids replace it with results.
-      if(!isPastEvent(event))calendarLink('Discord Sign-up',discordUrl(event));
+      if(!isPastEvent(event)){
+        const url=discordUrl(event);
+        if(url)calendarLink('Discord Sign-up',url);
+        else {const n=document.createElement('p');n.textContent='Discord sign-ups have not been linked for this event yet.';calResults.append(n);}
+      } else if(String(event.type).trim().toLowerCase()!=='raid'){
+        const n=document.createElement('p');n.textContent='This event has passed.';calResults.append(n);
+      }
       calDialog.hidden=false;calCard.focus();
       if(String(event.type).toLowerCase()!=='raid'||!event.id||!isPastEvent(event))return;
       const msg=document.createElement('p');msg.textContent='Checking for uploaded raid logs…';calResults.append(msg);
