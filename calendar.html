@@ -44,26 +44,26 @@
     .calendar-button:focus-visible {outline:3px solid var(--gold);outline-offset:2px;}
     /* Horizontally scrollable on small screens instead of shrinking event type to 7px. */
     .calendar-scroll {overflow-x:auto;scrollbar-color:#8f7320 #15110b;}
-    .calendar-table {min-width:720px;}
+    .calendar-table {min-width:0;width:100%;}
     .calendar-weekdays,.calendar-grid {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
     .calendar-weekdays {border-bottom:1px solid var(--calendar-line);background:#11100e;}
     .calendar-weekdays div {padding:.7rem .2rem;text-align:center;color:var(--calendar-gold);font-family:var(--font-heading);font-size:.85rem;border-right:1px solid rgba(217,180,56,.15);}
     .calendar-weekdays div:last-child {border-right:none;}
-    .calendar-day {min-height:8rem;padding:.5rem;min-width:0;background:#0b0b0b;border-right:1px solid rgba(217,180,56,.14);border-bottom:1px solid rgba(217,180,56,.14);}
+    .calendar-day {min-height:5.75rem;padding:.35rem .4rem;min-width:0;background:#0b0b0b;border-right:1px solid rgba(217,180,56,.14);border-bottom:1px solid rgba(217,180,56,.14);}
     .calendar-day:nth-child(7n) {border-right:none;}
     .calendar-day.other-month {background:#080808;color:#666052;}
     .calendar-day.today {box-shadow:inset 0 0 0 2px var(--calendar-gold);}
-    .day-number {font-family:var(--font-heading);font-size:.85rem;margin-bottom:.4rem;color:#d3c5a9;}
+    .day-number {font-family:var(--font-heading);font-size:.82rem;margin-bottom:.18rem;color:#d3c5a9;}
     .calendar-day.today .day-number {color:#f0d376;font-weight:700;}
-    .event {display:block;margin-top:.35rem;padding:.35rem .4rem;font-size:.82rem;line-height:1.35;color:#f3ead3;border-left:3px solid var(--calendar-gold);overflow-wrap:anywhere;background:rgba(217,180,56,.10);}
-    .event.raid {background:rgba(110,20,20,.45);border-color:#b53a3a;}
-    /* A muted raid with a green outline means Warcraft Logs are attached. */
-    .event.raid.has-logs {background:rgba(68,23,25,.42);border-left-color:#5ca476;box-shadow:inset 0 0 0 1.5px rgba(94,168,113,.80);border-radius:4px;}
-    .event.raid.has-logs:hover {background:rgba(76,30,30,.62);}
+    .event {display:block;margin-top:.22rem;padding:.24rem .35rem;font-size:.82rem;line-height:1.35;color:#f3ead3;border-left:3px solid var(--calendar-gold);overflow-wrap:anywhere;background:rgba(217,180,56,.10);}
+    .event.raid {background:#281819;border-color:#9a4247;}
+    /* Completed raids use charcoal instead of clashing red; green outline marks uploaded logs. */
+    .event.raid.has-logs {background:#191e1b;border-left-color:#5ca476;box-shadow:inset 0 0 0 1.5px rgba(94,168,113,.82);border-radius:4px;}
+    .event.raid.has-logs:hover {background:#233026;}
     .event.guild-event {background:rgba(24,55,105,.47);border-color:#4b78bd;}
-    .event-name {display:block;font-family:var(--font-heading);font-size:.84em;line-height:1.4;color:#f3e5ba;font-weight:600;}
+    .event-name {display:block;font-family:var(--font-heading);font-size:.84em;line-height:1.25;color:#f3e5ba;font-weight:600;}
     .event:focus-visible{outline:2px solid var(--calendar-gold);outline-offset:2px}
-    .event-time {display:block;margin-top:.15rem;font-size:.86em;color:#e0d2af;}
+    .event-time {display:block;margin-top:.08rem;font-size:.86em;color:#e0d2af;}
     .calendar-message {grid-column:1/-1;min-height:10rem;display:flex;justify-content:center;align-items:center;padding:1.5rem;text-align:center;color:#dfcfae;}
     .calendar-message.error {color:#ffc2c2;}
     .calendar-legend {display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:1.25rem;padding:.85rem 1rem;border-top:1px solid var(--calendar-line);font-size:.9rem;color:#d8caae;}
@@ -77,6 +77,7 @@
       .calendar-toolbar {gap:.5rem;padding:.8rem;}
       .calendar-toolbar h2 {font-size:1.15rem;}
       .calendar-mobile-hint {display:block;}
+      .calendar-table {min-width:700px;}
       .calendar-legend {justify-content:center;}
     }
     @media(max-width:420px) {
@@ -236,7 +237,8 @@
       const previousDays=new Date(y,m,0).getDate();
       const byDate=new Map();
       for(const event of events){if(!byDate.has(event.date))byDate.set(event.date,[]);byDate.get(event.date).push(event);}
-      for(let index=0;index<42;index++){
+      const cellCount=Math.ceil((firstDay+daysInMonth)/7)*7;
+      for(let index=0;index<cellCount;index++){
         const offset=index-firstDay+1;
         const actual=new Date(y,m,offset);
         const key=dateKey(actual.getFullYear(),actual.getMonth(),actual.getDate());
@@ -301,7 +303,19 @@
       // Show a signup only for upcoming/today events; logged raids replace it with results.
       if(!isPastEvent(event)){
         const url=discordUrl(event);
-        if(url)calendarLink('Discord Sign-up',url);
+        if(url){
+          calendarLink('Discord Sign-up (Web)',url);
+          // Optional OS protocol handler: browser may prompt to open installed Discord.
+          // Keep the HTTPS fallback for browsers without the desktop application.
+          const match=url.match(/^https:\/\/discord\.com\/channels\/(\d+)\/(\d+)$/);
+          if(match){
+            const desktop=document.createElement('a');
+            desktop.textContent='Open in Discord App';
+            desktop.href=`discord://-/channels/${match[1]}/${match[2]}`;
+            desktop.title='Opens the installed Discord app if your browser and operating system allow it';
+            calLinks.append(desktop);
+          }
+        }
         else {const n=document.createElement('p');n.textContent='Discord sign-ups have not been linked for this event yet.';calResults.append(n);}
       } else if(String(event.type).trim().toLowerCase()!=='raid'){
         const n=document.createElement('p');n.textContent='This event has passed.';calResults.append(n);
