@@ -61,3 +61,22 @@ el('lookup-form').addEventListener('submit',e=>{e.preventDefault();const v=el('l
 // Delay the initial API request until Supabase + officer guard can initialize.
 window.addEventListener('load',()=>{loadedAnalytics=true;analytics()});
 })();
+
+
+const WOW_CLASS_COLORS = {
+  warrior: "#C79C6E",
+  paladin: "#F58CBA",
+  hunter: "#ABD473",
+  rogue: "#FFF569",
+  priest: "#FFFFFF",
+  shaman: "#0070DE",
+  mage: "#69CCF0",
+  warlock: "#9482C9",
+  druid: "#FF7D0A"
+};
+
+function classColor(characterClass) {
+  return WOW_CLASS_COLORS[
+    String(characterClass || "").trim().toLowerCase()
+  ] || "#EBC46E";
+}
