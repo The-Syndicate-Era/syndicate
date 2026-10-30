@@ -1,207 +1,239 @@
 <!DOCTYPE html>
-<html lang="en" class="syn-access-pending"> 
+<html lang="en" class="syn-access-pending">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>The Syndicate | Calendar</title>
-  <link rel="stylesheet" href="settings/styles.css">
- 
-<!-- Supabase library -->
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calendar Management | The Syndicate</title>
+<link rel="stylesheet" href="../settings/styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
+<script src="../settings/auth.js" defer></script>
+<script src="../settings/officer-guard.js" defer></script>
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+<style>
+:root{--cm-gold:#d4af37;--cm-brd:#67522d;--cm-bg:#100f0e;--cm-txt:#e8decf}
+*{box-sizing:border-box}body{background:#090909!important;color:var(--cm-txt);margin:0;font:1rem/1.55 var(--font-body,Palatino,serif)}[hidden]{display:none!important}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.45;cursor:not-allowed}
+.cm-wrap{max-width:1600px;margin:auto;padding:24px 18px 65px}.cm-crumb{max-width:1600px;margin:auto;padding:14px 18px;color:#bdaa83}.cm-crumb a{color:var(--cm-gold)}.cm-head{border-block:1px solid #5c4528;background:linear-gradient(100deg,#16120d,#110d12)}.cm-head>div{max-width:1600px;margin:auto;padding:24px 18px}.cm-head h1{font:500 clamp(2rem,4vw,3rem) var(--font-heading,Cinzel,serif);color:var(--cm-gold);margin:0 0 6px}.cm-head p{margin:0;color:#c5b7a1}.cm-grid{display:grid;grid-template-columns:1fr;gap:18px}.cm-panel{background:var(--cm-bg);border:1px solid var(--cm-brd);border-radius:8px;padding:20px;min-width:0}.cm-panel h2{font:500 1.35rem var(--font-heading,Georgia,serif);color:var(--cm-gold);margin:0 0 15px}.cm-form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:13px}.cm-field{display:flex;flex-direction:column;gap:5px;min-width:0}.cm-field.full{grid-column:1/-1}.cm-field label{color:#e3c88c;font-size:.91rem}.cm-field input,.cm-field select,.cm-field textarea{width:100%;min-width:0;background:#1a1715;border:1px solid #655033;color:#f3e8d6;border-radius:5px;padding:10px}.cm-field textarea{min-height:76px;resize:vertical}.cm-btn{padding:9px 15px;background:#231b13;border:1px solid #a07e3d;border-radius:5px;color:#e9ca7f}.cm-btn:hover{background:#372719}.cm-btn.primary{background:#9e7830;color:#0a0806;font-weight:700}.cm-btn.danger{border-color:#9e5151;color:#ffbab5}.cm-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center;margin-top:14px}.cm-note{color:#b7aa97;font-size:.88rem}.cm-message{margin-bottom:16px;padding:12px 15px;background:#171410;border:1px solid #7c6035;border-radius:6px}.cm-message.error{border-color:#aa5757;color:#ffc8c8}.cm-message.success{border-color:#4e8e65;color:#bceac9}.cm-list{display:grid;gap:10px;margin-top:14px}.cm-item{padding:12px;background:#191613;border-left:3px solid #8c6b39;display:flex;justify-content:space-between;align-items:center;gap:12px}.cm-item strong{color:#eed49a}.cm-item small{display:block;color:#beaF99;margin-top:4px}.cm-item .cm-actions{margin:0}.cm-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.cm-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}.cm-status{border:1px solid #87682e;border-radius:18px;padding:2px 8px;font-size:.76rem;color:#d2be89}.cm-section{margin-top:20px}.cm-empty{color:#a99d8c;font-style:italic}
+html.syn-access-pending .cm-crumb,html.syn-access-pending .cm-head,html.syn-access-pending .cm-wrap{display:none!important}#syndicate-officer-access-message{display:block!important;visibility:visible!important}
+@media(max-width:790px){.cm-grid{grid-template-columns:1fr}}@media(max-width:520px){.cm-form{grid-template-columns:1fr}.cm-field.full{grid-column:auto}.cm-item{align-items:start;flex-direction:column}}
 
-<!-- Shared Supabase connection -->
-<script src="settings/supabase-config.js" defer></script>
-
-<!-- Discord authentication -->
-<script src="settings/auth.js" defer></script>
-
-<!-- Syndicate membership protection -->
-<script src="settings/page-guard.js" defer></script>
-
-<!-- Existing website scripts -->
-<script src="settings/font-setting.js" defer></script>
-<script src="settings/menu.js" defer></script>
-<script src="settings/site-layout.js" defer></script>
-
-  <style>
-    /* Calendar-specific layout only. Font sizes use rem so the shared text settings control scale. */
-    :root { --calendar-line:rgba(217,180,56,.3); --calendar-muted:#c0b59b; --calendar-gold:#e2bc52; }
-    .calendar-page { color:#e9e0cb; min-height:65vh; }
-    .calendar-page a {color:inherit;}
-    .calendar-heading {max-width:1250px;margin:auto;padding:2.5rem 1.25rem 1rem;}
-    .calendar-heading h1 {color:var(--gold);font-size:clamp(2rem,4vw,3rem);font-weight:400;letter-spacing:.06em;margin:0 0 .75rem;}
-    .calendar-heading p {max-width:52rem;margin:0 0 .8rem;font-size:1rem;line-height:1.65;color:#e0d3b8;}
-    .calendar-heading .schedule-note {color:var(--calendar-gold);font-size:.92rem;}
-    .heading-rule {height:1px;margin-top:1.5rem;background:linear-gradient(90deg,#7d651c,#d9b438,#7d651c);}
-    .calendar-section {max-width:1250px;margin:auto;padding:.75rem 1.25rem 4rem;}
-    .calendar-shell {background:#0d0d0d;border:1px solid var(--calendar-line);min-width:0;}
-    .calendar-toolbar {display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;padding:1rem;border-bottom:1px solid var(--calendar-line);}
-    .calendar-toolbar h2 {margin:0;text-align:center;color:var(--gold);font-size:1.5rem;font-weight:400;letter-spacing:.04em;}
-    .calendar-controls {display:flex;gap:.5rem;}
-    .calendar-controls:last-child {justify-content:flex-end;}
-    .calendar-button {font-family:var(--font-heading);font-size:1rem;min-width:2.6rem;min-height:2.5rem;padding:.4rem .8rem;background:transparent;border:1px solid #8f7320;color:var(--gold);cursor:pointer;}
-    .calendar-button:hover {background:var(--gold);color:#080808;}
-    .calendar-button:focus-visible {outline:3px solid var(--gold);outline-offset:2px;}
-    /* Horizontally scrollable on small screens instead of shrinking event type to 7px. */
-    .calendar-scroll {overflow-x:auto;scrollbar-color:#8f7320 #15110b;}
-    .calendar-table {min-width:720px;}
-    .calendar-weekdays,.calendar-grid {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
-    .calendar-weekdays {border-bottom:1px solid var(--calendar-line);background:#11100e;}
-    .calendar-weekdays div {padding:.7rem .2rem;text-align:center;color:var(--calendar-gold);font-family:var(--font-heading);font-size:.85rem;border-right:1px solid rgba(217,180,56,.15);}
-    .calendar-weekdays div:last-child {border-right:none;}
-    .calendar-day {min-height:8rem;padding:.5rem;min-width:0;background:#0b0b0b;border-right:1px solid rgba(217,180,56,.14);border-bottom:1px solid rgba(217,180,56,.14);}
-    .calendar-day:nth-child(7n) {border-right:none;}
-    .calendar-day.other-month {background:#080808;color:#666052;}
-    .calendar-day.today {box-shadow:inset 0 0 0 2px var(--calendar-gold);}
-    .day-number {font-family:var(--font-heading);font-size:.85rem;margin-bottom:.4rem;color:#d3c5a9;}
-    .calendar-day.today .day-number {color:#f0d376;font-weight:700;}
-    .event {display:block;margin-top:.35rem;padding:.35rem .4rem;font-size:.82rem;line-height:1.35;color:#f3ead3;border-left:3px solid var(--calendar-gold);overflow-wrap:anywhere;background:rgba(217,180,56,.10);}
-    .event.raid {background:rgba(110,20,20,.45);border-color:#b53a3a;}
-    .event.guild-event {background:rgba(24,55,105,.47);border-color:#4b78bd;}
-    .event-name {display:block;font-family:var(--font-heading);font-size:.84em;line-height:1.4;color:#f3e5ba;font-weight:600;}
-    .event-time {display:block;margin-top:.15rem;font-size:.86em;color:#e0d2af;}
-    .calendar-message {grid-column:1/-1;min-height:10rem;display:flex;justify-content:center;align-items:center;padding:1.5rem;text-align:center;color:#dfcfae;}
-    .calendar-message.error {color:#ffc2c2;}
-    .calendar-legend {display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:1.25rem;padding:.85rem 1rem;border-top:1px solid var(--calendar-line);font-size:.9rem;color:#d8caae;}
-    .legend-item {display:flex;align-items:center;gap:.4rem;}
-    .legend-color {width:.8rem;height:.8rem;display:inline-block;}
-    .legend-color.raid {background:#b53a3a;}.legend-color.event {background:#4b78bd;}
-    .calendar-mobile-hint {display:none;color:#cbbd9a;font-size:.85rem;padding:.7rem 1rem;border-bottom:1px solid var(--calendar-line);}
-    @media(max-width:760px) {
-      .calendar-heading {padding:1.8rem 1rem .8rem;}
-      .calendar-section {padding:.5rem .5rem 3rem;}
-      .calendar-toolbar {gap:.5rem;padding:.8rem;}
-      .calendar-toolbar h2 {font-size:1.15rem;}
-      .calendar-mobile-hint {display:block;}
-      .calendar-legend {justify-content:center;}
-    }
-    @media(max-width:420px) {
-      .calendar-toolbar {grid-template-columns:1fr auto;}
-      .calendar-toolbar h2 {grid-column:1/-1;grid-row:1;}
-      .calendar-controls:first-child {grid-row:2;grid-column:1;}
-      .calendar-controls:last-child {grid-row:2;grid-column:2;}
-    }
-    .calendar-timezone-note {
-  padding: 0.65rem 1rem;
-  text-align: center;
-  color: var(--calendar-gold);
-  font-size: 0.9rem;
-  font-weight: 600;
-  background: rgba(212, 175, 55, 0.04);
-  border-bottom: 1px solid var(--calendar-line);
-}
-  </style>
+.cm-workspace{display:grid;grid-template-columns:208px minmax(0,1fr) 238px;gap:16px;align-items:start}
+.cm-sidebar,.cm-insights{position:sticky;top:20px}
+.cm-nav{display:flex;flex-direction:column;gap:6px}
+.cm-nav button{width:100%;text-align:left;background:#191612;border:1px solid #443725;color:#e3d1ab;border-radius:6px;padding:12px 10px}
+.cm-nav button.active{background:#3a2c16;border-color:#c29a43;color:#f8d77f;font-weight:700}
+.cm-pane{display:none;min-width:0}.cm-pane.active{display:block}
+.cm-mini{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0 16px}
+.cm-metric{background:#1b1611;border:1px solid #473723;border-radius:6px;padding:12px 8px;text-align:center}
+.cm-metric b{font-size:1.5rem;color:#f0c66f;display:block}.cm-metric small{font-size:.76rem;color:#c5b8a6}
+.cm-filters{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin:12px 0}
+.cm-filters label{font-size:.82rem;color:#dabd83}.cm-filters input,.cm-filters select{width:100%;background:#1a1715;border:1px solid #655033;color:#f3e8d6;border-radius:5px;padding:9px}
+.cm-summary{color:#bfb29d;font-size:.86rem;line-height:1.7}
+.cm-dir{display:grid;gap:10px}.cm-dir-item{display:flex;align-items:center;justify-content:space-between;gap:10px;background:#1b1814;padding:12px;border:1px solid #4b3b28;border-radius:6px}
+.cm-dir-item small{display:block;color:#b7a78f}.cm-link{color:#e5c27f}
+.cm-subtitle{color:#b8a98f;margin:-7px 0 15px;font-size:.9rem}
+.cm-bar{display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap}
+.cm-sheet{max-width:850px}.cm-item{flex-wrap:wrap}
+.cm-item .cm-actions{flex-shrink:0}.cm-item>div:first-child{min-width:180px;flex:1}
+@media(max-width:1140px){.cm-workspace{grid-template-columns:180px minmax(0,1fr)}.cm-insights{grid-column:1/-1;position:static}}
+@media(max-width:720px){.cm-workspace{grid-template-columns:1fr}.cm-sidebar{position:static}.cm-nav{display:grid;grid-template-columns:repeat(2,1fr)}.cm-filters{grid-template-columns:1fr 1fr}}
+@media(max-width:520px){.cm-filters{grid-template-columns:1fr}.cm-nav{grid-template-columns:1fr 1fr}}
+</style>
 </head>
 <body>
-  <div id="syndicate-menu"></div>
-  <main class="calendar-page">
-    <section class="calendar-heading">
-      <h1>Upcoming Events</h1>
-      <p>Keep up with upcoming raids, guild events, and important dates for The Syndicate.</p>
-      <p class="schedule-note">Raid schedules may shift for progression, special events, holidays, or other guild needs. Discord sign-ups and announcements are always the final word for schedule changes.</p>
-      <div class="heading-rule"></div>
-    </section>
-    <section class="calendar-section" aria-label="Guild events calendar">
-      <div class="calendar-shell">
-        <div class="calendar-toolbar">
-          <div class="calendar-controls"><button type="button" class="calendar-button" id="prevMonth" aria-label="Previous month">‹</button></div>
-          <h2 id="calendarTitle" aria-live="polite">Calendar</h2>
-          <div class="calendar-controls"><button type="button" class="calendar-button" id="todayButton">Today</button><button type="button" class="calendar-button" id="nextMonth" aria-label="Next month">›</button></div>
-        </div>
-      <div class="calendar-timezone-note">
-  ◷ All event times are displayed in Server Time (ST).
+<div id="syndicate-menu"></div>
+<nav class="cm-crumb"><a href="officer-hub.html">← Officer Hub</a> › Calendar Management</nav>
+<header class="cm-head"><div><h1>CALENDAR MANAGEMENT</h1><p>Manage weekly raids and one-time events without editing Supabase manually.</p></div></header>
+<main class="cm-wrap">
+<div id="cmMessage" class="cm-message" role="status" hidden></div>
+<div class="cm-workspace">
+<aside class="cm-sidebar cm-panel"><h2>War Room</h2><nav class="cm-nav" aria-label="Calendar management sections">
+<button type="button" class="active" data-pane="calendar">Full Calendar Manager</button>
+<button type="button" data-pane="schedules">Weekly Schedules</button>
+<button type="button" data-pane="event">One-Time Events</button>
+<button type="button" data-pane="channels">Discord Channels</button>
+</nav><p class="cm-note">Changes are saved using the verified officer gateway.</p></aside>
+<div class="cm-content">
+<section class="cm-pane active" id="pane-calendar"><div class="cm-panel"><h2>Full Calendar Manager</h2><p class="cm-subtitle">Find, edit or remove past and upcoming occurrences. Raid history stays protected.</p>
+<div class="cm-filters">
+<div><label for="eventSearch">Search events</label><input id="eventSearch" type="search" placeholder="Raid name or notes"></div>
+<div><label for="dateFrom">From date</label><input id="dateFrom" type="date"></div>
+<div><label for="dateTo">Through date</label><input id="dateTo" type="date"></div>
+<div><label for="typeFilter">Type</label><select id="typeFilter"><option value="">All types</option><option value="Raid">Raids</option><option value="Event">Guild events</option></select></div>
+<div><label for="statusFilter">Raid status</label><select id="statusFilter"><option value="">All statuses</option><option value="Farm">Farm</option><option value="Progression">Progression</option><option value="Coming Soon">Coming Soon</option></select></div>
+<div><label for="logFilter">Warcraft Logs</label><select id="logFilter"><option value="">Any</option><option value="yes">Has linked logs</option><option value="no">No linked logs</option></select></div>
+</div><div class="cm-bar"><span id="eventCount" class="cm-note"></span><div class="cm-row"><button class="cm-btn" type="button" id="clearFilters">Clear filters</button><button class="cm-btn" type="button" id="refresh">Refresh</button></div></div>
+<div id="eventList" class="cm-list"><p class="cm-empty">Loading events…</p></div>
+<div class="cm-actions"><button class="cm-btn" type="button" id="loadMore">Load more events</button></div></div></section>
+<section class="cm-pane" id="pane-schedules"><div class="cm-panel"><div class="cm-bar"><h2>Weekly Schedules</h2><button class="cm-btn" type="button" id="newScheduleBtn">+ New Schedule</button></div><p class="cm-subtitle">View each recurrence, its last generated date, and extend future lockouts.</p><div id="scheduleList" class="cm-list"><p class="cm-empty">Loading schedules…</p></div></div><details id="scheduleEditor" class="cm-panel cm-section"><summary style="cursor:pointer;color:#e3c88c">Open schedule editor</summary>
+<div class="cm-grid">
+<section class="cm-panel"><h2 id="scheduleHeading">Weekly Schedule</h2>
+<form id="scheduleForm" class="cm-form">
+<div class="cm-field full"><label for="sTitle">Raid or schedule name</label><input id="sTitle" required maxlength="120" placeholder="Blackwing Lair"></div>
+<div class="cm-field"><label for="sRaid">Raid</label><select id="sRaid"><option value="">Other / Custom</option><option value="ony">Onyxia's Lair</option><option value="zg">Zul'Gurub</option><option value="aq20">AQ20</option><option value="mc">Molten Core</option><option value="bwl">Blackwing Lair</option><option value="aq40">AQ40</option><option value="naxx">Naxxramas</option></select></div>
+<div class="cm-field"><label for="sDay">Day of week</label><select id="sDay"><option value="0">Sunday</option><option value="1">Monday</option><option value="2">Tuesday</option><option value="3">Wednesday</option><option value="4">Thursday</option><option value="5">Friday</option><option value="6">Saturday</option></select></div>
+<div class="cm-field"><label for="sTime">Start time (server time)</label><input id="sTime" type="time" value="20:00" required></div>
+<div class="cm-field"><label for="sRepeat">Repeat</label><select id="sRepeat"><option value="1">Every week</option><option value="2">Every other week</option><option value="3">Every 3 weeks</option><option value="4">Every 4 weeks</option></select></div>
+<div class="cm-field"><label for="sStart">Start date</label><input id="sStart" type="date" required></div>
+<div class="cm-field"><label for="sEnd">End date (optional)</label><input id="sEnd" type="date"></div>
+<div class="cm-field"><label for="sStatus">Raid status</label><select id="sStatus"><option value="">No status</option><option value="Farm">Farm</option><option value="Progression">Progression</option><option value="Coming Soon">Coming Soon</option></select></div>
+<div class="cm-field"><label for="sActive">Schedule</label><select id="sActive"><option value="true">Active</option><option value="false">Paused</option></select></div>
+<div class="cm-field full"><label for="sSignup">Discord sign-up channel</label><select id="sSignup"><option value="">No sign-up channel</option></select><small id="sSignupPreview" class="cm-note" aria-live="polite">Choose a channel to preview its Discord link.</small></div><div class="cm-field full"><label for="sNotes">Notes (optional)</label><textarea id="sNotes" maxlength="500"></textarea></div>
+<div class="cm-field full"><div class="cm-actions"><button class="cm-btn primary" type="submit" id="sSave">Save & Generate 8 Weeks</button><button class="cm-btn" type="button" id="sClear">New Schedule</button></div><span class="cm-note">Changing a schedule updates upcoming linked events. Individually edited events and past dates stay untouched. Dates with existing signups retain their event IDs. Discord channels are selected from the centrally managed channel directory.</span></div>
+</form></section></div></details></section>
+<section class="cm-pane" id="pane-event"><section class="cm-panel cm-sheet"><h2 id="eventHeading">One-Time Event</h2>
+<form id="eventForm" class="cm-form">
+<div class="cm-field full"><label for="eTitle">Event title</label><input id="eTitle" required maxlength="120" placeholder="Guild meeting or bonus raid"></div>
+<div class="cm-field"><label for="eDate">Date</label><input id="eDate" type="date" required></div>
+<div class="cm-field"><label for="eTime">Time (server time)</label><input id="eTime" type="time" value="20:00" required></div>
+<div class="cm-field"><label for="eType">Type</label><select id="eType"><option value="Event">Guild Event</option><option value="Raid">Raid</option></select></div>
+<div class="cm-field"><label for="eStatus">Raid status</label><select id="eStatus"><option value="">None</option><option value="Farm">Farm</option><option value="Progression">Progression</option><option value="Coming Soon">Coming Soon</option></select></div>
+<div class="cm-field full"><label for="eSignup">Discord sign-up channel</label><select id="eSignup"><option value="">No sign-up channel</option></select><small id="eSignupPreview" class="cm-note" aria-live="polite">Choose a channel to preview its Discord link.</small></div><div class="cm-field full"><label for="eNotes">Notes (optional)</label><textarea id="eNotes" maxlength="500"></textarea></div>
+<div class="cm-field full"><div class="cm-actions"><button class="cm-btn primary" type="submit" id="eSave">Add Event</button><button class="cm-btn" type="button" id="eClear">Clear</button></div></div>
+</form>
+<p class="cm-note">One-time raids and guild events are inserted directly into Events and appear in the public calendar. Raids also appear in the RL/ML signup calendar.</p>
+</section>
+</section>
+<section class="cm-pane" id="pane-channels"><section class="cm-panel"><div class="cm-bar"><h2>Discord Channel Directory</h2><button class="cm-btn" type="button" id="newChannelBtn">+ Add Channel</button></div><p class="cm-subtitle">Manage reusable signup channels. Channel changes do not alter raid event IDs.</p>
+<form id="channelForm" class="cm-form" hidden>
+<div class="cm-field full"><label for="cName">Channel name</label><input id="cName" maxlength="120" required placeholder="Friday AQ40 Sign-ups"></div>
+<div class="cm-field"><label for="cServer">Discord server ID</label><input id="cServer" pattern="[0-9]{17,20}" required value="945513309925412905"></div>
+<div class="cm-field"><label for="cDiscord">Discord channel ID</label><input id="cDiscord" pattern="[0-9]{17,20}" required placeholder="18 or 19 digit channel ID"></div>
+<div class="cm-field"><label for="cActive">Status</label><select id="cActive"><option value="true">Active</option><option value="false">Inactive</option></select></div>
+<div class="cm-field full"><div class="cm-actions"><button type="submit" class="cm-btn primary">Save Channel</button><button type="button" class="cm-btn" id="cancelChannel">Cancel</button></div></div>
+</form><div id="channelList" class="cm-dir"></div><p class="cm-note">To get a channel ID in Discord, enable Developer Mode, right-click the channel, and choose Copy Channel ID.</p></section></section>
 </div>
-        <p class="calendar-mobile-hint">Scroll sideways to view all seven days of the week →</p>
-        <div class="calendar-scroll" tabindex="0" aria-label="Scrollable calendar days">
-          <div class="calendar-table">
-            <div class="calendar-weekdays" aria-hidden="true"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
-            <div class="calendar-grid" id="calendarGrid" aria-live="polite"></div>
-          </div>
-        </div>
-        <div class="calendar-legend"><span class="legend-item"><span class="legend-color raid"></span>Raid</span><span class="legend-item"><span class="legend-color event"></span>Guild Event</span></div>
-      </div>
-    </section>
-  </main>
-  <div id="syndicate-footer"></div>
-
-  <script>
-    'use strict';
- let db = null;
-    const grid = document.getElementById('calendarGrid');
-    const title = document.getElementById('calendarTitle');
-    const today = new Date();
-    let displayedDate = new Date(today.getFullYear(), today.getMonth(), 1);
-    let events = [];
-    const pad = n => String(n).padStart(2,'0');
-    const dateKey = (y,m,d) => `${y}-${pad(m+1)}-${pad(d)}`;
-    function formatTime(time) {
-      if (!time) return '';
-      const parts = String(time).split(':');
-      const hour = Number(parts[0]);
-      if (!Number.isFinite(hour)) return String(time);
-      return `${hour%12||12}:${pad(parts[1]||'00')} ${hour>=12?'PM':'AM'}`;
-    }
-    function showMessage(message, error=false) {
-      grid.replaceChildren();
-      const n=document.createElement('div'); n.className='calendar-message'+(error?' error':''); n.textContent=message;grid.append(n);
-    }
-    async function loadEvents() {
-      title.textContent=displayedDate.toLocaleString('en-US',{month:'long',year:'numeric'});
-      if (!db) {showMessage('Supabase is not connected. Check settings/supabase-config.js.',true);return;}
-      showMessage('Loading events…');
-      const y=displayedDate.getFullYear(),m=displayedDate.getMonth();
-      const start=dateKey(y,m,1),end=dateKey(y,m,new Date(y,m+1,0).getDate());
-      const {data,error}=await db.from('Events').select('*').gte('date',start).lte('date',end).order('date',{ascending:true}).order('time',{ascending:true});
-      if(error){console.error('Calendar data error',error);showMessage('Calendar events could not be loaded. Please try again later.',true);return;}
-      events=(data||[]).map(r=>({date:r.date,name:r.event||r.event_name||r.name||'Event',time:formatTime(r.time),type:r.type||'',notes:r.notes||''}));
-      renderCalendar();
-    }
-    function renderCalendar(){
-      grid.replaceChildren();
-      const y=displayedDate.getFullYear(),m=displayedDate.getMonth();
-      title.textContent=displayedDate.toLocaleString('en-US',{month:'long',year:'numeric'});
-      const firstDay=new Date(y,m,1).getDay();
-      const daysInMonth=new Date(y,m+1,0).getDate();
-      const previousDays=new Date(y,m,0).getDate();
-      const byDate=new Map();
-      for(const event of events){if(!byDate.has(event.date))byDate.set(event.date,[]);byDate.get(event.date).push(event);}
-      for(let index=0;index<42;index++){
-        const offset=index-firstDay+1;
-        const actual=new Date(y,m,offset);
-        const key=dateKey(actual.getFullYear(),actual.getMonth(),actual.getDate());
-        const outside=offset<1||offset>daysInMonth;
-        const day=document.createElement('div');
-        day.className='calendar-day'+(outside?' other-month':'')+(actual.toDateString()===today.toDateString()?' today':'');
-        const number=document.createElement('div');number.className='day-number';number.textContent=actual.getDate();day.append(number);
-        for(const event of (byDate.get(key)||[])){
-          const kind=String(event.type).trim().toLowerCase();
-          const block=document.createElement('div');block.className='event '+(kind==='raid'?'raid':(kind==='event'||kind==='guild event'?'guild-event':'other-event'));
-          const name=document.createElement('span');name.className='event-name';name.textContent=event.name;block.append(name);
-          if(event.time){const time=document.createElement('span');time.className='event-time';time.textContent=event.time;block.append(time);}
-          if(event.notes)block.title=event.notes;
-          day.append(block);
-        }
-        grid.append(day);
-      }
-    }
-    document.getElementById('prevMonth').addEventListener('click',()=>{displayedDate=new Date(displayedDate.getFullYear(),displayedDate.getMonth()-1,1);loadEvents();});
-    document.getElementById('nextMonth').addEventListener('click',()=>{displayedDate=new Date(displayedDate.getFullYear(),displayedDate.getMonth()+1,1);loadEvents();});
-    document.getElementById('todayButton').addEventListener('click',()=>{displayedDate=new Date(today.getFullYear(),today.getMonth(),1);loadEvents();});
-    
-window.addEventListener('DOMContentLoaded', () => {
-  db = window.syndicateDB;
-
-  if (!db) {
-    showMessage(
-      'Supabase connection is unavailable. Please refresh the page.',
-      true
-    );
-    return;
+<aside class="cm-insights cm-panel"><h2>Calendar Snapshot</h2><div class="cm-mini"><div class="cm-metric"><b id="metricSchedules">—</b><small>Schedules</small></div><div class="cm-metric"><b id="metricUpcoming">—</b><small>Upcoming</small></div><div class="cm-metric"><b id="metricPast">—</b><small>Past loaded</small></div><div class="cm-metric"><b id="metricChannels">—</b><small>Channels</small></div></div><div id="snapshotText" class="cm-summary">Loading data…</div><hr style="border:0;border-top:1px solid #4c3922;margin:16px 0"><p class="cm-note">Recurring changes preserve manually overridden occurrences. Raid logs and attendance block unsafe deletions.</p></aside>
+</div>
+</main><div id="syndicate-footer"></div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),db=()=>window.syndicateDB;
+const DAYS=['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const RAIDNAMES={ony:"Onyxia's Lair",zg:"Zul'Gurub",aq20:"AQ20",mc:"Molten Core",bwl:"Blackwing Lair",aq40:"AQ40",naxx:"Naxxramas"};
+let schedules=[],events=[],channels=[],editingSchedule=null,editingEvent=null,editingChannel=null,loadedTo=null,logIds=new Set(),logStatusKnown=false,channelFormReady=false;
+const localDay=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const later=n=>{const d=new Date(localDay()+'T12:00:00');d.setDate(d.getDate()+n);return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const title=e=>e.event||e.event_name||e.name||e.title||'Untitled event';
+const text=(el,str)=>{el.textContent=String(str??'');return el};
+const el=(tag,cls,content)=>{const a=document.createElement(tag);if(cls)a.className=cls;if(content!==undefined)text(a,content);return a};
+const field=id=>$(id).value;
+const info=(msg,error=false)=>{const a=$('cmMessage');a.hidden=false;a.textContent=msg;a.className='cm-message '+(error?'error':'success');a.scrollIntoView({block:'nearest',behavior:'smooth'})};
+const fail=e=>{console.error('Calendar Management:',e);info(e?.message||String(e),true)};
+async function call(action,scheduleId=null,eventId=null,payload={}){
+  const client=db();if(!client)throw Error('Supabase is not available.');
+  const {data:sessionData,error:sessionError}=await client.auth.getSession();
+  if(sessionError||!sessionData?.session)throw Error('Sign in through Discord to manage the calendar.');
+  const {data,error}=await client.functions.invoke('syndicate-wcl-import',{
+    body:{action:'calendar_manage',calendar_action:action,schedule_id:scheduleId,event_id:eventId==null?null:String(eventId),payload}
+  });
+  if(error){
+    let detail=data?.error||error.message||'Calendar operation failed';
+    try{if(error.context&&typeof error.context.json==='function'){
+      const body=await error.context.json();detail=body?.error||detail;
+    }}catch{}
+    throw Error(detail);
   }
-
-  loadEvents();
-});
-
-  </script>
-</body>
-</html>
+  if(!data?.success)throw Error(data?.error||'Calendar operation failed');
+  return data.result;
+}
+const DISCORD_GUILD_ID='945513309925412905';
+function channelLabel(id){return channels.find(c=>c.id===id)?.channel_name||''}
+function updateChannelPreview(key){
+  const id=field(key),node=$(key+'Preview'),channel=channels.find(c=>c.id===id);
+  node.replaceChildren();
+  if(!id){node.textContent='No Discord channel selected.';return}
+  if(!channel){node.textContent='This previously saved channel is not available in the directory.';return}
+  const url=`https://discord.com/channels/${DISCORD_GUILD_ID}/${channel.discord_channel_id}`;
+  const link=document.createElement('a');link.href=url;link.target='_blank';link.rel='noopener noreferrer';link.textContent='Open Discord sign-up channel';link.style.color='#e3c88c';
+  node.append(link);
+}
+function setChannel(key,id){
+  const select=$(key);select.value=id||'';
+  if(id && select.value!==id){
+    const option=new Option('Saved channel (currently unavailable)',id);option.dataset.missing='true';select.add(option);select.value=id;
+  }
+  updateChannelPreview(key);
+}
+function renderChannelOptions(){
+  for(const key of ['sSignup','eSignup']){
+    const select=$(key),previous=select.value;
+    select.replaceChildren(new Option('No sign-up channel',''));
+    for(const channel of channels.filter(c=>c.is_active)){const opt=new Option(channel.channel_name,channel.id);select.add(opt)}
+    setChannel(key,previous);
+  }
+}
+function resetSchedule(){editingSchedule=null;$('scheduleHeading').textContent='Weekly Schedule';$('scheduleForm').reset();$('sStart').value=localDay();$('sTime').value='20:00';$('sRepeat').value='1';$('sActive').value='true';$('sSave').textContent='Save & Generate 8 Weeks';updateChannelPreview('sSignup')}
+function resetEvent(){editingEvent=null;$('eventHeading').textContent='One-Time Event';$('eventForm').reset();$('eDate').value=localDay();$('eTime').value='20:00';$('eSave').textContent='Add Event';updateChannelPreview('eSignup')}
+function b(label,action,cls=''){const x=el('button','cm-btn '+cls,label);x.type='button';x.onclick=action;return x}
+function addEntry(host,item,border){const x=el('div','cm-item');if(border)x.style.borderLeftColor=border;const a=el('div');const name=el('strong','',item.name);const desc=el('small','',item.description);a.append(name,desc);const actions=el('div','cm-actions');x.append(a,actions);host.append(x);return actions}
+function renderSchedules(){const host=$('scheduleList');host.replaceChildren();if(!schedules.length){host.append(el('p','cm-empty','No weekly schedules yet. Add one above.'));return}
+for(const s of schedules){const desc=`${DAYS[s.day_of_week]} · ${String(s.start_time).slice(0,5)} · ${s.interval_weeks===1?'Weekly':'Every '+s.interval_weeks+' weeks'} · From ${s.start_date} · Through ${s.end_date||'open'} · Latest loaded occurrence ${events.filter(e=>e.schedule_id===s.id).reduce((a,e)=>e.schedule_date>a?e.schedule_date:a,'—')} · ${s.is_active?'Active':'Paused'}`;const actions=addEntry(host,{name:s.title,description:desc},'#bd994e');actions.append(b('Edit',()=>{editingSchedule=s.id;$('scheduleHeading').textContent='Edit Weekly Schedule';$('sTitle').value=s.title;$('sRaid').value=s.raid_key||'';$('sDay').value=s.day_of_week;$('sTime').value=String(s.start_time).slice(0,5);$('sRepeat').value=String(s.interval_weeks);$('sStart').value=s.start_date;$('sEnd').value=s.end_date||'';$('sStatus').value=s.raid_status||'';$('sNotes').value=s.notes||'';setChannel('sSignup',s.signup_channel_id);$('sActive').value=String(s.is_active);$('sSave').textContent='Save Future Schedule';openPane('schedules');$('scheduleEditor').open=true;$('scheduleForm').scrollIntoView({behavior:'smooth'});}));actions.append(b('Extend 8 Weeks',async()=>{try{const r=await call('sync_schedule',s.id);info(`Generated ${r.created||0}, updated ${r.updated||0}, preserved ${r.preserved_overrides||0} exceptions.`);await load()}catch(e){fail(e)}}));actions.append(b(s.is_active?'Pause':'Resume',async()=>{if(!confirm(`${s.is_active?'Pause':'Resume'} ${s.title}? Pausing prevents additional generation but does not remove existing entries.`))return;try{await call('toggle_schedule',s.id,null,{is_active:!s.is_active});info('Schedule updated.');await load()}catch(e){fail(e)}}));}
+}
+function openPane(id){
+ document.querySelectorAll('.cm-pane').forEach(x=>x.classList.toggle('active',x.id==='pane-'+id));
+ document.querySelectorAll('[data-pane]').forEach(x=>{const active=x.dataset.pane===id;x.classList.toggle('active',active);x.setAttribute('aria-current',active?'page':'false')});
+}
+function renderEvents(){const host=$('eventList');host.replaceChildren();let shown=0;
+const q=field('eventSearch').toLowerCase().trim(),from=field('dateFrom'),to=field('dateTo'),ty=field('typeFilter'),st=field('statusFilter'),lg=field('logFilter');
+for(const e of events){
+ if(from&&e.date<from||to&&e.date>to||ty&&e.type!==ty||st&&e.raid_status!==st)continue;
+ if(q&&!`${title(e)} ${e.notes||''} ${e.date}`.toLowerCase().includes(q))continue;
+ if(lg&&(!logStatusKnown||(lg==='yes')!==logIds.has(String(e.id))))continue;
+ shown++;
+ const linked=logIds.has(String(e.id));
+ const desc=`${e.date} · ${String(e.time||'').slice(0,5)} · ${e.type||'Event'}${e.schedule_id?' · Recurring':''}${e.schedule_override?' · Individually adjusted':''}${linked?' · Warcraft Logs attached':''}${e.signup_channel_id?' · Discord channel set':''}`;
+ const actions=addEntry(host,{name:title(e),description:desc},linked?'#699f7c':e.type==='Raid'?'#b95d5d':'#598bab');
+ actions.append(b('Edit',()=>{editingEvent=e.id;$('eventHeading').textContent='Edit One Occurrence';$('eTitle').value=title(e);$('eDate').value=e.date;$('eTime').value=String(e.time||'20:00').slice(0,5);$('eType').value=e.type==='Raid'?'Raid':'Event';$('eStatus').value=e.raid_status||'';$('eNotes').value=e.notes||'';setChannel('eSignup',e.signup_channel_id);$('eSave').textContent='Save This Occurrence';openPane('event');$('eventForm').scrollIntoView({behavior:'smooth'});}));
+ actions.append(b('Delete',async()=>{if(!confirm(`Permanently delete ${title(e)} on ${e.date}? Events with linked raids, attendance or signups cannot be removed.`))return;try{await call('cancel_event',null,e.id);info('Event deleted.');await load()}catch(err){fail(err)}},'danger'));
+}
+$('eventCount').textContent=`Showing ${shown} of ${events.length} loaded events`+(lg&&!logStatusKnown?' · Log filter requires read access':'');
+if(!shown)host.append(el('p','cm-empty','No matching events. Adjust filters or load more.'));
+}
+function renderDirectory(){const host=$('channelList');host.replaceChildren();for(const c of channels){const row=el('div','cm-dir-item');const label=el('div');label.append(el('strong','',c.channel_name));label.append(el('small','',`${c.is_active?'Active':'Inactive'} · ${c.discord_channel_id}`));const actions=el('div','cm-actions');const link=el('a','cm-btn','Discord');link.href=`https://discord.com/channels/${c.discord_server_id||DISCORD_GUILD_ID}/${c.discord_channel_id}`;link.target='_blank';link.rel='noopener noreferrer';actions.append(link,b('Edit',()=>{editingChannel=c.id;$('channelForm').hidden=false;$('cName').value=c.channel_name;$('cServer').value=c.discord_server_id||DISCORD_GUILD_ID;$('cDiscord').value=c.discord_channel_id;$('cActive').value=String(c.is_active);$('channelForm').scrollIntoView({behavior:'smooth'});}));actions.append(b(c.is_active?'Deactivate':'Activate',()=>changeChannelState(c),c.is_active?'danger':''));actions.append(b('Delete',()=>deleteChannel(c),'danger'));row.append(label,actions);host.append(row)}if(!channels.length)host.append(el('p','cm-empty','No channels found.'));}
+async function channelAction(action,payload={}){
+ const client=db();const {data,error}=await client.functions.invoke('syndicate-wcl-import',{body:{action:'calendar_channel_manage',channel_action:action,payload}});
+ if(error){let msg=error.message;try{msg=(await error.context.json())?.error||msg}catch{}throw Error(msg)}
+ if(!data?.success)throw Error(data?.error||'Channel operation failed');return data.result;
+}
+async function changeChannelState(c){if(!confirm(`${c.is_active?'Deactivate':'Activate'} ${c.channel_name}?`))return;try{await channelAction('save_channel',{id:c.id,channel_name:c.channel_name,discord_server_id:c.discord_server_id,discord_channel_id:c.discord_channel_id,is_active:!c.is_active});info('Channel updated.');await load()}catch(e){fail(e)}}
+async function deleteChannel(c){if(!confirm(`Delete ${c.channel_name}? This is blocked when a schedule or event still references it.`))return;try{await channelAction('delete_channel',{id:c.id});info('Channel deleted.');await load()}catch(e){fail(e)}}
+async function load(reset=false){if(!db()){info('Database connection missing.',true);return}
+ if(reset||!loadedTo)loadedTo=later(55);let from='2026-01-01'; // allows review of past imported raids
+ try{
+  const [s,c]=await Promise.all([db().from('CalendarSchedules').select('*').order('day_of_week').order('start_time'),db().from('CalendarDiscordChannels').select('id,channel_name,discord_server_id,discord_channel_id,is_active').order('channel_name')]);
+  if(s.error)throw s.error;if(c.error)throw c.error;
+  const all=[];let start=0;const chunk=500;
+  for(let i=0;i<20;i++){const r=await db().from('Events').select('*').gte('date',from).lte('date',loadedTo).order('date',{ascending:false}).order('time').range(start,start+chunk-1);if(r.error)throw r.error;all.push(...(r.data||[]));if((r.data||[]).length<chunk)break;start+=chunk;}
+  schedules=s.data||[];events=all;channels=c.data||[];
+  logIds=new Set();logStatusKnown=false;
+  try {const [reports,mappings]=await Promise.all([db().from('raid_log_reports').select('event_id').not('event_id','is',null).limit(5000),db().from('raid_log_encounter_events').select('event_id').not('event_id','is',null).limit(5000)]);
+   if(!reports.error&&!mappings.error){for(const r of [...reports.data,...mappings.data])if(r.event_id!=null)logIds.add(String(r.event_id));logStatusKnown=true;}
+  }catch(err){console.warn('Log status lookup unavailable',err)}
+  renderChannelOptions();renderSchedules();renderEvents();renderDirectory();
+  $('metricSchedules').textContent=schedules.length;$('metricUpcoming').textContent=events.filter(e=>e.date>=localDay()).length;
+  $('metricPast').textContent=events.filter(e=>e.date<localDay()).length;$('metricChannels').textContent=channels.filter(c=>c.is_active).length;
+  $('snapshotText').textContent=`${schedules.filter(s=>s.is_active).length} active weekly schedules. ${events.filter(e=>e.date>=localDay()&&e.signup_channel_id).length} upcoming occurrences have a signup channel. ${logStatusKnown?logIds.size+' events have linked Warcraft Logs.':'Warcraft Logs status could not be checked with current read access.'}`;
+ }catch(err){fail(err)}
+}
+$('scheduleForm').onsubmit=async ev=>{ev.preventDefault();const p={title:field('sTitle').trim(),raid_key:field('sRaid')||null,day_of_week:Number(field('sDay')),start_time:field('sTime'),interval_weeks:Number(field('sRepeat')),start_date:field('sStart'),end_date:field('sEnd')||null,event_type:'Raid',raid_status:field('sStatus')||null,notes:field('sNotes'),signup_channel_id:field('sSignup')||null,is_active:field('sActive')==='true'};if(!p.title)return info('Enter the raid name.',true);if(p.end_date&&p.end_date<p.start_date)return info('End date cannot come before start date.',true);const btn=$('sSave');btn.disabled=true;try{const r=await call('save_schedule',editingSchedule,null,p);info(`Schedule saved. Created ${r.created||0} new events and updated ${r.updated||0} upcoming events.`);resetSchedule();await load()}catch(e){fail(e)}finally{btn.disabled=false}};
+$('eventForm').onsubmit=async ev=>{ev.preventDefault();const p={title:field('eTitle').trim(),date:field('eDate'),time:field('eTime'),type:field('eType'),raid_status:field('eStatus')||null,notes:field('eNotes'),signup_channel_id:field('eSignup')||null};if(!p.title)return info('Enter an event title.',true);const btn=$('eSave');btn.disabled=true;try{await call(editingEvent?'edit_event':'one_time',null,editingEvent,p);info(editingEvent?'Event updated; existing signups preserved.':'Event added to calendar.');resetEvent();await load()}catch(e){fail(e)}finally{btn.disabled=false}};
+$('sSignup').onchange=()=>updateChannelPreview('sSignup');$('eSignup').onchange=()=>updateChannelPreview('eSignup');
+$('sRaid').onchange=()=>{const name=RAIDNAMES[field('sRaid')];if(name&&!field('sTitle'))$('sTitle').value=name};
+$('sClear').onclick=resetSchedule;$('eClear').onclick=resetEvent;$('refresh').onclick=()=>load();
+ document.querySelectorAll('[data-pane]').forEach(x=>x.onclick=()=>openPane(x.dataset.pane));
+ $('newScheduleBtn').onclick=()=>{resetSchedule();$('scheduleEditor').open=true;$('sTitle').focus()};
+ for(const id of ['eventSearch','dateFrom','dateTo','typeFilter','statusFilter','logFilter'])$(id).addEventListener(id==='eventSearch'?'input':'change',renderEvents);
+ $('clearFilters').onclick=()=>{for(const id of ['eventSearch','dateFrom','dateTo','typeFilter','statusFilter','logFilter'])$(id).value='';renderEvents()};
+ $('loadMore').onclick=async()=>{loadedTo=later(Math.max(56,Math.round((new Date(loadedTo+'T12:00:00')-new Date(localDay()+'T12:00:00'))/86400000)+1)+56);await load()};
+ $('newChannelBtn').onclick=()=>{editingChannel=null;$('channelForm').reset();$('cServer').value=DISCORD_GUILD_ID;$('channelForm').hidden=false;$('cName').focus()};
+ $('cancelChannel').onclick=()=>{$('channelForm').hidden=true;editingChannel=null};
+ $('channelForm').onsubmit=async ev=>{ev.preventDefault();const payload={id:editingChannel,channel_name:field('cName').trim(),discord_server_id:field('cServer'),discord_channel_id:field('cDiscord'),is_active:field('cActive')==='true'};try{await channelAction('save_channel',payload);$('channelForm').hidden=true;editingChannel=null;info('Discord channel saved.');await load()}catch(e){fail(e)}};
+resetSchedule();resetEvent();
+// Same Officer Guard as Raid Management. Wait for access before loading data.
+const observer=new MutationObserver(()=>{if(document.documentElement.classList.contains('syn-access-granted')){observer.disconnect();load()}});
+if(document.documentElement.classList.contains('syn-access-granted'))load();else observer.observe(document.documentElement,{attributes:true,attributeFilter:['class']});
+})();
+</script>
+</body></html>
