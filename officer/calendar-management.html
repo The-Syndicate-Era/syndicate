@@ -84,6 +84,7 @@ html.syn-access-pending .cm-crumb,html.syn-access-pending .cm-head,html.syn-acce
 </form></section></div></details></section>
 <section class="cm-pane" id="pane-event"><section class="cm-panel cm-sheet"><h2 id="eventHeading">One-Time Event</h2>
 <form id="eventForm" class="cm-form">
+<div class="cm-field full"><div id="editingEventNotice" class="cm-note" role="status" aria-live="polite">Creating a new event. To update a raid with logs, select Edit from Full Calendar instead.</div></div>
 <div class="cm-field full"><label for="eTitle">Event title</label><input id="eTitle" required maxlength="120" placeholder="Guild meeting or bonus raid"></div>
 <div class="cm-field"><label for="eDate">Date</label><input id="eDate" type="date" required></div>
 <div class="cm-field"><label for="eTime">Time (server time)</label><input id="eTime" type="time" value="20:00" required></div>
@@ -165,7 +166,7 @@ function renderChannelOptions(){
   }
 }
 function resetSchedule(){editingSchedule=null;$('scheduleHeading').textContent='Weekly Schedule';$('scheduleForm').reset();$('sStart').value=localDay();$('sTime').value='20:00';$('sRepeat').value='1';$('sActive').value='true';$('sSave').textContent='Save & Generate 8 Weeks';updateChannelPreview('sSignup')}
-function resetEvent(){editingEvent=null;$('eventHeading').textContent='One-Time Event';$('eventForm').reset();$('eDate').value=localDay();$('eTime').value='20:00';$('eSave').textContent='Add Event';updateChannelPreview('eSignup')}
+function resetEvent(){editingEvent=null;$('editingEventNotice').textContent='Creating a new event. To update a raid with logs, select Edit from Full Calendar instead.';$('eventHeading').textContent='One-Time Event';$('eventForm').reset();$('eDate').value=localDay();$('eTime').value='20:00';$('eSave').textContent='Add Event';updateChannelPreview('eSignup')}
 function b(label,action,cls=''){const x=el('button','cm-btn '+cls,label);x.type='button';x.onclick=action;return x}
 function addEntry(host,item,border){const x=el('div','cm-item');if(border)x.style.borderLeftColor=border;const a=el('div');const name=el('strong','',item.name);const desc=el('small','',item.description);a.append(name,desc);const actions=el('div','cm-actions');x.append(a,actions);host.append(x);return actions}
 function renderSchedules(){const host=$('scheduleList');host.replaceChildren();if(!schedules.length){host.append(el('p','cm-empty','No weekly schedules yet. Add one above.'));return}
@@ -183,13 +184,13 @@ for(const e of events){
  if(lg&&(!logStatusKnown||(lg==='yes')!==logIds.has(String(e.id))))continue;
  shown++;
  const linked=logIds.has(String(e.id));
- const desc=`${e.date} · ${String(e.time||'').slice(0,5)} · ${e.type||'Event'}${e.schedule_id?' · Recurring':''}${e.schedule_override?' · Individually adjusted':''}${linked?' · Warcraft Logs attached':''}${e.signup_channel_id?' · Discord channel set':''}`;
+ const desc=`${e.date} · ${String(e.time||'').slice(0,5)} · ${e.type||'Event'}${e.schedule_id?' · Recurring':''}${e.schedule_override?' · Individually adjusted':''}${logStatusKnown?(linked?' · ✓ Verified logs':' · No linked logs'):' · Logs status unavailable'}${e.signup_channel_id?' · Discord channel set':''}`;
  const actions=addEntry(host,{name:title(e),description:desc},linked?'#699f7c':e.type==='Raid'?'#b95d5d':'#598bab');
- actions.append(b('Edit',()=>{editingEvent=e.id;$('eventHeading').textContent='Edit One Occurrence';$('eTitle').value=title(e);$('eDate').value=e.date;$('eTime').value=String(e.time||'20:00').slice(0,5);$('eType').value=e.type==='Raid'?'Raid':'Event';$('eStatus').value=e.raid_status||'';$('eNotes').value=e.notes||'';setChannel('eSignup',e.signup_channel_id);$('eSave').textContent='Save This Occurrence';openPane('event');$('eventForm').scrollIntoView({behavior:'smooth'});}));
+ actions.append(b('Edit',()=>{editingEvent=e.id;$('editingEventNotice').textContent=`Editing existing event #${e.id} (${e.date} · ${title(e)}). Saving changes keeps this same event ID and its Warcraft Logs associations.`;$('eventHeading').textContent='Edit One Occurrence';$('eTitle').value=title(e);$('eDate').value=e.date;$('eTime').value=String(e.time||'20:00').slice(0,5);$('eType').value=e.type==='Raid'?'Raid':'Event';$('eStatus').value=e.raid_status||'';$('eNotes').value=e.notes||'';setChannel('eSignup',e.signup_channel_id);$('eSave').textContent='Save This Occurrence';openPane('event');$('eventForm').scrollIntoView({behavior:'smooth'});}));
  actions.append(b('Delete',async()=>{if(!confirm(`Permanently delete ${title(e)} on ${e.date}? Events with linked raids, attendance or signups cannot be removed.`))return;try{await call('cancel_event',null,e.id);info('Event deleted.');await load()}catch(err){fail(err)}},'danger'));
 }
 $('eventCount').textContent=`Showing ${shown} of ${events.length} loaded events`+(lg&&!logStatusKnown?' · Log filter requires read access':'');
-if(!shown)host.append(el('p','cm-empty','No matching events. Adjust filters or load more.'));
+if(!shown)host.append(el('p','cm-empty',lg&&!logStatusKnown?'Log status unavailable — check the calendar_log_status Edge Function action.':'No matching events. Adjust filters or load more.'));
 }
 function renderDirectory(){const host=$('channelList');host.replaceChildren();for(const c of channels){const row=el('div','cm-dir-item');const label=el('div');label.append(el('strong','',c.channel_name));label.append(el('small','',`${c.is_active?'Active':'Inactive'} · ${c.discord_channel_id}`));const actions=el('div','cm-actions');const link=el('a','cm-btn','Discord');link.href=`https://discord.com/channels/${c.discord_server_id||DISCORD_GUILD_ID}/${c.discord_channel_id}`;link.target='_blank';link.rel='noopener noreferrer';actions.append(link,b('Edit',()=>{editingChannel=c.id;$('channelForm').hidden=false;$('cName').value=c.channel_name;$('cServer').value=c.discord_server_id||DISCORD_GUILD_ID;$('cDiscord').value=c.discord_channel_id;$('cActive').value=String(c.is_active);$('channelForm').scrollIntoView({behavior:'smooth'});}));actions.append(b(c.is_active?'Deactivate':'Activate',()=>changeChannelState(c),c.is_active?'danger':''));actions.append(b('Delete',()=>deleteChannel(c),'danger'));row.append(label,actions);host.append(row)}if(!channels.length)host.append(el('p','cm-empty','No channels found.'));}
 async function channelAction(action,payload={}){
@@ -208,8 +209,13 @@ async function load(reset=false){if(!db()){info('Database connection missing.',t
   for(let i=0;i<20;i++){const r=await db().from('Events').select('*').gte('date',from).lte('date',loadedTo).order('date',{ascending:false}).order('time').range(start,start+chunk-1);if(r.error)throw r.error;all.push(...(r.data||[]));if((r.data||[]).length<chunk)break;start+=chunk;}
   schedules=s.data||[];events=all;channels=c.data||[];
   logIds=new Set();logStatusKnown=false;
-  try {const [reports,mappings]=await Promise.all([db().from('raid_log_reports').select('event_id').not('event_id','is',null).limit(5000),db().from('raid_log_encounter_events').select('event_id').not('event_id','is',null).limit(5000)]);
-   if(!reports.error&&!mappings.error){for(const r of [...reports.data,...mappings.data])if(r.event_id!=null)logIds.add(String(r.event_id));logStatusKnown=true;}
+  try {
+    // Use officer-verified service-role lookup. Direct client reads may be blocked by RLS.
+    const {data:logData,error:logError}=await db().functions.invoke('syndicate-wcl-import',{body:{action:'calendar_log_status'}});
+    if(logError)throw logError;
+    if(!logData?.success)throw Error(logData?.error||'Log status lookup failed');
+    for(const id of logData.event_ids||[])logIds.add(String(id));
+    logStatusKnown=true;
   }catch(err){console.warn('Log status lookup unavailable',err)}
   renderChannelOptions();renderSchedules();renderEvents();renderDirectory();
   $('metricSchedules').textContent=schedules.length;$('metricUpcoming').textContent=events.filter(e=>e.date>=localDay()).length;
@@ -218,7 +224,51 @@ async function load(reset=false){if(!db()){info('Database connection missing.',t
  }catch(err){fail(err)}
 }
 $('scheduleForm').onsubmit=async ev=>{ev.preventDefault();const p={title:field('sTitle').trim(),raid_key:field('sRaid')||null,day_of_week:Number(field('sDay')),start_time:field('sTime'),interval_weeks:Number(field('sRepeat')),start_date:field('sStart'),end_date:field('sEnd')||null,event_type:'Raid',raid_status:field('sStatus')||null,notes:field('sNotes'),signup_channel_id:field('sSignup')||null,is_active:field('sActive')==='true'};if(!p.title)return info('Enter the raid name.',true);if(p.end_date&&p.end_date<p.start_date)return info('End date cannot come before start date.',true);const btn=$('sSave');btn.disabled=true;try{const r=await call('save_schedule',editingSchedule,null,p);info(`Schedule saved. Created ${r.created||0} new events and updated ${r.updated||0} upcoming events.`);resetSchedule();await load()}catch(e){fail(e)}finally{btn.disabled=false}};
-$('eventForm').onsubmit=async ev=>{ev.preventDefault();const p={title:field('eTitle').trim(),date:field('eDate'),time:field('eTime'),type:field('eType'),raid_status:field('eStatus')||null,notes:field('eNotes'),signup_channel_id:field('eSignup')||null};if(!p.title)return info('Enter an event title.',true);const btn=$('eSave');btn.disabled=true;try{await call(editingEvent?'edit_event':'one_time',null,editingEvent,p);info(editingEvent?'Event updated; existing signups preserved.':'Event added to calendar.');resetEvent();await load()}catch(e){fail(e)}finally{btn.disabled=false}};
+// Never silently create a second copy of an existing raid. ZG and ZG #2
+// remain distinct events, even when they share a start time.
+function raidIdentity(name){
+  const n=String(name||'').toLowerCase().replace(/[^a-z0-9# ]/g,' ').replace(/\s+/g,' ').trim();
+  const match=n.match(/^(onyxia|ony|molten core|mc|blackwing lair|bwl|zul gurub|zg|ahn qiraj 20|aq20|ahn qiraj 40|aq40)(?:\s*(?:part\s*)?(?:#\s*)?(\d+))?(?:\b|$)/);
+  if(!match)return n;
+  const map={'onyxia':'ony','ony':'ony','molten core':'mc','mc':'mc','blackwing lair':'bwl','bwl':'bwl','zul gurub':'zg','zg':'zg','ahn qiraj 20':'aq20','aq20':'aq20','ahn qiraj 40':'aq40','aq40':'aq40'};
+  return map[match[1]]+(match[2]?'#'+match[2]:'');
+}
+function likelyDuplicates(p){
+  return events.filter(e=>e.date===p.date && e.type===p.type &&
+    String(e.time||'').slice(0,5)===String(p.time||'').slice(0,5) &&
+    raidIdentity(title(e))===raidIdentity(p.title) &&
+    String(e.id)!==String(editingEvent||''));
+}
+$('eventForm').onsubmit=async ev=>{
+  ev.preventDefault();
+  const p={title:field('eTitle').trim(),date:field('eDate'),time:field('eTime'),type:field('eType'),raid_status:field('eStatus')||null,notes:field('eNotes'),signup_channel_id:field('eSignup')||null};
+  if(!p.title)return info('Enter an event title.',true);
+  // This is a create form only when no event is selected.
+  if(editingEvent===null){
+    const duplicates=likelyDuplicates(p);
+    if(duplicates.length){
+      const original=duplicates[0];
+      info(`Existing event #${original.id} (${title(original)}) found on ${original.date} at ${String(original.time).slice(0,5)}. Open it using Edit in Full Calendar instead of creating a duplicate.`,true);
+      openPane('full');
+      $('eventSearch').value=title(original);
+      $('dateFrom').value=original.date;
+      $('dateTo').value=original.date;
+      renderEvents();
+      return;
+    }
+  }else if(!events.some(e=>String(e.id)===String(editingEvent))){
+    return info('The selected event is no longer in the loaded calendar. Refresh before editing.',true);
+  }
+  const savedId=editingEvent;
+  const btn=$('eSave');btn.disabled=true;
+  try{
+    const result=await call(savedId!==null?'edit_event':'one_time',null,savedId,p);
+    if(savedId!==null && Number(result?.updated)!==1)throw Error(`Edit did not confirm updating event #${savedId}. Please refresh and verify.`);
+    resetEvent();
+    await load();
+    info(savedId!==null?`Updated event #${savedId} in place. Warcraft Logs associations remain tied to that ID.`:'New event added to calendar.');
+  }catch(e){fail(e)}finally{btn.disabled=false}
+};
 $('sSignup').onchange=()=>updateChannelPreview('sSignup');$('eSignup').onchange=()=>updateChannelPreview('eSignup');
 $('sRaid').onchange=()=>{const name=RAIDNAMES[field('sRaid')];if(name&&!field('sTitle'))$('sTitle').value=name};
 $('sClear').onclick=resetSchedule;$('eClear').onclick=resetEvent;$('refresh').onclick=()=>load();
