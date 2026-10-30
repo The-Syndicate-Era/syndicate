@@ -1,1 +1,315 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending"> 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Syndicate | Calendar</title>
+  <link rel="stylesheet" href="settings/styles.css">
+ 
+<!-- Supabase library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 
+<!-- Shared Supabase connection -->
+<script src="settings/supabase-config.js" defer></script>
+
+<!-- Discord authentication -->
+<script src="settings/auth.js" defer></script>
+
+<!-- Syndicate membership protection -->
+<script src="settings/page-guard.js" defer></script>
+
+<!-- Existing website scripts -->
+<script src="settings/font-setting.js" defer></script>
+<script src="settings/menu.js" defer></script>
+<script src="settings/site-layout.js" defer></script>
+
+  <style>
+    /* Calendar-specific layout only. Font sizes use rem so the shared text settings control scale. */
+    :root { --calendar-line:rgba(217,180,56,.3); --calendar-muted:#c0b59b; --calendar-gold:#e2bc52; }
+    .calendar-page { color:#e9e0cb; min-height:65vh; }
+    .calendar-page a {color:inherit;}
+    .calendar-heading {max-width:1250px;margin:auto;padding:2.5rem 1.25rem 1rem;}
+    .calendar-heading h1 {color:var(--gold);font-size:clamp(2rem,4vw,3rem);font-weight:400;letter-spacing:.06em;margin:0 0 .75rem;}
+    .calendar-heading p {max-width:52rem;margin:0 0 .8rem;font-size:1rem;line-height:1.65;color:#e0d3b8;}
+    .calendar-heading .schedule-note {color:var(--calendar-gold);font-size:.92rem;}
+    .heading-rule {height:1px;margin-top:1.5rem;background:linear-gradient(90deg,#7d651c,#d9b438,#7d651c);}
+    .calendar-section {max-width:1250px;margin:auto;padding:.75rem 1.25rem 4rem;}
+    .calendar-shell {background:#0d0d0d;border:1px solid var(--calendar-line);min-width:0;}
+    .calendar-toolbar {display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:1rem;padding:1rem;border-bottom:1px solid var(--calendar-line);}
+    .calendar-toolbar h2 {margin:0;text-align:center;color:var(--gold);font-size:1.5rem;font-weight:400;letter-spacing:.04em;}
+    .calendar-controls {display:flex;gap:.5rem;}
+    .calendar-controls:last-child {justify-content:flex-end;}
+    .calendar-button {font-family:var(--font-heading);font-size:1rem;min-width:2.6rem;min-height:2.5rem;padding:.4rem .8rem;background:transparent;border:1px solid #8f7320;color:var(--gold);cursor:pointer;}
+    .calendar-button:hover {background:var(--gold);color:#080808;}
+    .calendar-button:focus-visible {outline:3px solid var(--gold);outline-offset:2px;}
+    /* Horizontally scrollable on small screens instead of shrinking event type to 7px. */
+    .calendar-scroll {overflow-x:auto;scrollbar-color:#8f7320 #15110b;}
+    .calendar-table {min-width:720px;}
+    .calendar-weekdays,.calendar-grid {display:grid;grid-template-columns:repeat(7,minmax(0,1fr));}
+    .calendar-weekdays {border-bottom:1px solid var(--calendar-line);background:#11100e;}
+    .calendar-weekdays div {padding:.7rem .2rem;text-align:center;color:var(--calendar-gold);font-family:var(--font-heading);font-size:.85rem;border-right:1px solid rgba(217,180,56,.15);}
+    .calendar-weekdays div:last-child {border-right:none;}
+    .calendar-day {min-height:8rem;padding:.5rem;min-width:0;background:#0b0b0b;border-right:1px solid rgba(217,180,56,.14);border-bottom:1px solid rgba(217,180,56,.14);}
+    .calendar-day:nth-child(7n) {border-right:none;}
+    .calendar-day.other-month {background:#080808;color:#666052;}
+    .calendar-day.today {box-shadow:inset 0 0 0 2px var(--calendar-gold);}
+    .day-number {font-family:var(--font-heading);font-size:.85rem;margin-bottom:.4rem;color:#d3c5a9;}
+    .calendar-day.today .day-number {color:#f0d376;font-weight:700;}
+    .event {display:block;margin-top:.35rem;padding:.35rem .4rem;font-size:.82rem;line-height:1.35;color:#f3ead3;border-left:3px solid var(--calendar-gold);overflow-wrap:anywhere;background:rgba(217,180,56,.10);}
+    .event.raid {background:rgba(110,20,20,.45);border-color:#b53a3a;}
+    .event.guild-event {background:rgba(24,55,105,.47);border-color:#4b78bd;}
+    .event-name {display:block;font-family:var(--font-heading);font-size:.84em;line-height:1.4;color:#f3e5ba;font-weight:600;}
+    .event:focus-visible{outline:2px solid var(--calendar-gold);outline-offset:2px}
+    .event-time {display:block;margin-top:.15rem;font-size:.86em;color:#e0d2af;}
+    .calendar-message {grid-column:1/-1;min-height:10rem;display:flex;justify-content:center;align-items:center;padding:1.5rem;text-align:center;color:#dfcfae;}
+    .calendar-message.error {color:#ffc2c2;}
+    .calendar-legend {display:flex;justify-content:flex-end;align-items:center;flex-wrap:wrap;gap:1.25rem;padding:.85rem 1rem;border-top:1px solid var(--calendar-line);font-size:.9rem;color:#d8caae;}
+    .legend-item {display:flex;align-items:center;gap:.4rem;}
+    .legend-color {width:.8rem;height:.8rem;display:inline-block;}
+    .legend-color.raid {background:#b53a3a;}.legend-color.event {background:#4b78bd;}
+    .calendar-mobile-hint {display:none;color:#cbbd9a;font-size:.85rem;padding:.7rem 1rem;border-bottom:1px solid var(--calendar-line);}
+    @media(max-width:760px) {
+      .calendar-heading {padding:1.8rem 1rem .8rem;}
+      .calendar-section {padding:.5rem .5rem 3rem;}
+      .calendar-toolbar {gap:.5rem;padding:.8rem;}
+      .calendar-toolbar h2 {font-size:1.15rem;}
+      .calendar-mobile-hint {display:block;}
+      .calendar-legend {justify-content:center;}
+    }
+    @media(max-width:420px) {
+      .calendar-toolbar {grid-template-columns:1fr auto;}
+      .calendar-toolbar h2 {grid-column:1/-1;grid-row:1;}
+      .calendar-controls:first-child {grid-row:2;grid-column:1;}
+      .calendar-controls:last-child {grid-row:2;grid-column:2;}
+    }
+    .calendar-timezone-note {
+  padding: 0.65rem 1rem;
+  text-align: center;
+  color: var(--calendar-gold);
+  font-size: 0.9rem;
+  font-weight: 600;
+  background: rgba(212, 175, 55, 0.04);
+  border-bottom: 1px solid var(--calendar-line);
+}
+
+/* Calendar event details */
+.event{width:100%;text-align:left;font:inherit;cursor:pointer;border-top:0;border-right:0;border-bottom:0;border-radius:0;transition:filter .12s}
+.event:hover{filter:brightness(1.3)}
+.event:focus-visible{outline:2px solid #e2bc52;outline-offset:2px}
+.syn-cal-dialog:not([hidden]){position:fixed;inset:0;z-index:100020;display:flex;align-items:center;justify-content:center;padding:18px;background:rgba(0,0,0,.79)}
+.syn-cal-card{width:min(530px,100%);max-height:90vh;overflow:auto;border:1px solid #806434;border-radius:9px;background:#1c1915;color:#e8dac1;padding:24px;box-shadow:0 20px 60px #000a}
+.syn-cal-top{display:flex;justify-content:space-between;gap:14px;align-items:start}.syn-cal-top h2{font-size:1.8rem;font-family:var(--font-heading,Georgia,serif);color:#ebc46e;margin:0}
+.syn-cal-close{background:transparent;color:#e9cb7d;border:1px solid #806434;border-radius:4px;padding:5px 11px;cursor:pointer}
+.syn-cal-meta{margin:10px 0 18px;color:#d1bb95}.syn-cal-result{display:flex;gap:15px;flex-wrap:wrap;border:1px solid #685330;background:#292319;border-radius:6px;padding:12px 14px;margin:14px 0}
+.syn-cal-result strong{color:#eed080}.syn-cal-links{display:flex;flex-wrap:wrap;gap:10px;margin:16px 0 0}
+.syn-cal-links a{display:inline-block;color:#f3cd6c;border:1px solid #806434;border-radius:5px;padding:9px 12px;text-decoration:none}
+.syn-cal-links a:hover{background:#45331e}.syn-cal-notes{white-space:pre-wrap;line-height:1.5}
+
+  </style>
+</head>
+<body>
+  <div id="syndicate-menu"></div>
+  <main class="calendar-page">
+    <section class="calendar-heading">
+      <h1>Upcoming Events</h1>
+      <p>Keep up with upcoming raids, guild events, and important dates for The Syndicate.</p>
+      <p class="schedule-note">Raid schedules may shift for progression, special events, holidays, or other guild needs. Discord sign-ups and announcements are always the final word for schedule changes.</p>
+      <div class="heading-rule"></div>
+    </section>
+    <section class="calendar-section" aria-label="Guild events calendar">
+      <div class="calendar-shell">
+        <div class="calendar-toolbar">
+          <div class="calendar-controls"><button type="button" class="calendar-button" id="prevMonth" aria-label="Previous month">‹</button></div>
+          <h2 id="calendarTitle" aria-live="polite">Calendar</h2>
+          <div class="calendar-controls"><button type="button" class="calendar-button" id="todayButton">Today</button><button type="button" class="calendar-button" id="nextMonth" aria-label="Next month">›</button></div>
+        </div>
+      <div class="calendar-timezone-note">
+  ◷ All event times are displayed in Server Time (ST).
+</div>
+        <p class="calendar-mobile-hint">Scroll sideways to view all seven days of the week →</p>
+        <div class="calendar-scroll" tabindex="0" aria-label="Scrollable calendar days">
+          <div class="calendar-table">
+            <div class="calendar-weekdays" aria-hidden="true"><div>Sun</div><div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div></div>
+            <div class="calendar-grid" id="calendarGrid" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="calendar-legend"><span class="legend-item"><span class="legend-color raid"></span>Raid</span><span class="legend-item"><span class="legend-color event"></span>Guild Event</span></div>
+      </div>
+    </section>
+  </main>
+
+<div class="syn-cal-dialog" id="synCalendarDialog" hidden>
+  <section class="syn-cal-card" role="dialog" aria-modal="true" aria-labelledby="synCalEventName" tabindex="-1">
+    <div class="syn-cal-top"><h2 id="synCalEventName"></h2><button type="button" class="syn-cal-close" id="synCalClose" aria-label="Close event details">✕</button></div>
+    <p class="syn-cal-meta" id="synCalEventMeta"></p>
+    <p class="syn-cal-notes" id="synCalEventNotes" hidden></p>
+    <div id="synCalRaidResults" aria-live="polite"></div>
+    <div class="syn-cal-links" id="synCalEventLinks"></div>
+  </section>
+</div>
+  <div id="syndicate-footer"></div>
+
+  <script>
+    'use strict';
+ let db = null;
+    const grid = document.getElementById('calendarGrid');
+    const title = document.getElementById('calendarTitle');
+    const today = new Date();
+    let displayedDate = new Date(today.getFullYear(), today.getMonth(), 1);
+    let events = [];
+    const DISCORD_GUILD_ID='945513309925412905';
+    let signupChannels=new Map();
+    const pad = n => String(n).padStart(2,'0');
+    const dateKey = (y,m,d) => `${y}-${pad(m+1)}-${pad(d)}`;
+    function formatTime(time) {
+      if (!time) return '';
+      const parts = String(time).split(':');
+      const hour = Number(parts[0]);
+      if (!Number.isFinite(hour)) return String(time);
+      return `${hour%12||12}:${pad(parts[1]||'00')} ${hour>=12?'PM':'AM'}`;
+    }
+    function showMessage(message, error=false) {
+      grid.replaceChildren();
+      const n=document.createElement('div'); n.className='calendar-message'+(error?' error':''); n.textContent=message;grid.append(n);
+    }
+    async function loadEvents() {
+      title.textContent=displayedDate.toLocaleString('en-US',{month:'long',year:'numeric'});
+      if (!db) {showMessage('Supabase is not connected. Check settings/supabase-config.js.',true);return;}
+      showMessage('Loading events…');
+      const y=displayedDate.getFullYear(),m=displayedDate.getMonth();
+      const start=dateKey(y,m,1),end=dateKey(y,m,new Date(y,m+1,0).getDate());
+      const {data,error}=await db.from('Events').select('*').gte('date',start).lte('date',end).order('date',{ascending:true}).order('time',{ascending:true});
+      if(error){console.error('Calendar data error',error);showMessage('Calendar events could not be loaded. Please try again later.',true);return;}
+      // The channel directory stores the Discord snowflake; Events stores its UUID.
+      // Read only, no extra Edge Function or database write permission needed.
+      const channelResponse=await db.from('CalendarDiscordChannels').select('id,discord_channel_id,channel_name,is_active');
+      if(channelResponse.error){console.warn('Signup channel directory:',channelResponse.error.message);signupChannels=new Map();}
+      else signupChannels=new Map((channelResponse.data||[]).map(c=>[String(c.id),c]));
+      events=(data||[]).map(r=>({
+        id:r.id,date:r.date,name:r.event||r.event_name||r.name||'Event',
+        time:formatTime(r.time),type:r.type||'',notes:r.notes||'',
+        signup_channel_id:r.signup_channel_id||null,
+        raid_status:r.raid_status||''
+      }));
+      renderCalendar();
+    }
+    function renderCalendar(){
+      grid.replaceChildren();
+      const y=displayedDate.getFullYear(),m=displayedDate.getMonth();
+      title.textContent=displayedDate.toLocaleString('en-US',{month:'long',year:'numeric'});
+      const firstDay=new Date(y,m,1).getDay();
+      const daysInMonth=new Date(y,m+1,0).getDate();
+      const previousDays=new Date(y,m,0).getDate();
+      const byDate=new Map();
+      for(const event of events){if(!byDate.has(event.date))byDate.set(event.date,[]);byDate.get(event.date).push(event);}
+      for(let index=0;index<42;index++){
+        const offset=index-firstDay+1;
+        const actual=new Date(y,m,offset);
+        const key=dateKey(actual.getFullYear(),actual.getMonth(),actual.getDate());
+        const outside=offset<1||offset>daysInMonth;
+        const day=document.createElement('div');
+        day.className='calendar-day'+(outside?' other-month':'')+(actual.toDateString()===today.toDateString()?' today':'');
+        const number=document.createElement('div');number.className='day-number';number.textContent=actual.getDate();day.append(number);
+        for(const event of (byDate.get(key)||[])){
+          const kind=String(event.type).trim().toLowerCase();
+          const block=document.createElement('button');block.type='button';block.className='event '+(kind==='raid'?'raid':(kind==='event'||kind==='guild event'?'guild-event':'other-event'));
+          const name=document.createElement('span');name.className='event-name';name.textContent=event.name;block.append(name);
+          if(event.time){const time=document.createElement('span');time.className='event-time';time.textContent=event.time;block.append(time);}
+          block.title='View details: '+event.name;block.setAttribute('aria-label','View '+event.name+' on '+event.date);
+          block.addEventListener('click',()=>openCalendarEvent(event));
+          day.append(block);
+        }
+        grid.append(day);
+      }
+    }
+
+    // One dialog for every calendar event. Raid results require a guild-authorized
+    // read-only backend action; no officer-only endpoint is called from public calendar.
+    let previousCalendarFocus=null,calendarRequest=0;
+    const calDialog=document.getElementById('synCalendarDialog');
+    const calCard=calDialog.querySelector('.syn-cal-card');
+    const calLinks=document.getElementById('synCalEventLinks');
+    const calResults=document.getElementById('synCalRaidResults');
+    function closeCalendarEvent(){calendarRequest++;calDialog.hidden=true;previousCalendarFocus?.focus();}
+    document.getElementById('synCalClose').addEventListener('click',closeCalendarEvent);
+    calDialog.addEventListener('click',e=>{if(e.target===calDialog)closeCalendarEvent()});
+    document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!calDialog.hidden){e.preventDefault();closeCalendarEvent()}});
+    function discordUrl(event){
+      const channel=signupChannels.get(String(event.signup_channel_id||''));
+      if(!channel||channel.is_active===false||!/^[0-9]{16,22}$/.test(String(channel.discord_channel_id||'')))return null;
+      return `https://discord.com/channels/${DISCORD_GUILD_ID}/${channel.discord_channel_id}`;
+    }
+    function isPastEvent(event){
+      // Compare server calendar dates, not UTC timestamps.
+      const d=new Date();const todayKey=dateKey(d.getFullYear(),d.getMonth(),d.getDate());
+      return event.date<todayKey;
+    }
+    function calendarLink(label,url){
+      if(typeof url!=='string')return;
+      let parsed;try{parsed=new URL(url)}catch{return}
+      if(parsed.protocol!=='https:')return;
+      if(label==='Discord Sign-up'&&!/(^|\.)discord(?:app)?\.com$/.test(parsed.hostname))return;
+      if(label==='Warcraft Logs'&&!/(^|\.)warcraftlogs\.com$/.test(parsed.hostname))return;
+      const a=document.createElement('a');a.textContent=label;a.href=parsed.href;a.target='_blank';a.rel='noopener noreferrer';calLinks.append(a);
+    }
+    async function openCalendarEvent(event){
+      previousCalendarFocus=document.activeElement;
+      const request=++calendarRequest;
+      document.getElementById('synCalEventName').textContent=event.name;
+      document.getElementById('synCalEventMeta').textContent=event.date+(event.time?' · '+event.time+' ST':'')+(event.raid_status?' · '+event.raid_status:'');
+      const notes=document.getElementById('synCalEventNotes');notes.textContent=event.notes||'';notes.hidden=!event.notes;
+      calLinks.replaceChildren();calResults.replaceChildren();
+      // Show a signup only for upcoming/today events; logged raids replace it with results.
+      if(!isPastEvent(event))calendarLink('Discord Sign-up',discordUrl(event));
+      calDialog.hidden=false;calCard.focus();
+      if(String(event.type).toLowerCase()!=='raid'||!event.id)return;
+      const msg=document.createElement('p');msg.textContent='Checking for uploaded raid logs…';calResults.append(msg);
+      try{
+        // Calendar-safe summary action: this must verify Syndicate guild membership
+        // on the SERVER, not just by the page-guard in this browser.
+        const {data,error}=await db.functions.invoke('syndicate-nerd-data',{body:{action:'calendar_event',event_id:event.id}});
+        if(request!==calendarRequest)return;
+        if(error||!data?.success)throw Error(data?.error||error?.message||'Summary unavailable');
+        calResults.replaceChildren();
+        if(!data.raid){
+          if(isPastEvent(event)){
+            const noLog=document.createElement('p');noLog.textContent='No raid logs uploaded for this event.';calResults.append(noLog);
+          }
+          return;
+        }
+        // An uploaded log replaces signups (even if the log was uploaded early).
+        calLinks.replaceChildren();
+        const result=data.raid;
+        const line=document.createElement('div');line.className='syn-cal-result';
+        for(const val of [String(result.bosses_killed)+'/'+String(result.bosses_available??result.total_bosses)+' bosses',String(result.boss_wipes)+' wipes',String(result.attendance_records)+' raiders']){
+          const part=document.createElement('strong');part.textContent=val;line.append(part);
+        }
+        calResults.append(line);
+        calendarLink('Warcraft Logs',result.report_url);
+      }catch(error){if(request!==calendarRequest)return;calResults.replaceChildren();
+        const n=document.createElement('p');n.textContent='Raid results are not available yet.';n.title=String(error?.message||error);calResults.append(n);
+        console.warn('Calendar raid results:',error);
+      }
+    }
+
+    document.getElementById('prevMonth').addEventListener('click',()=>{displayedDate=new Date(displayedDate.getFullYear(),displayedDate.getMonth()-1,1);loadEvents();});
+    document.getElementById('nextMonth').addEventListener('click',()=>{displayedDate=new Date(displayedDate.getFullYear(),displayedDate.getMonth()+1,1);loadEvents();});
+    document.getElementById('todayButton').addEventListener('click',()=>{displayedDate=new Date(today.getFullYear(),today.getMonth(),1);loadEvents();});
+    
+window.addEventListener('DOMContentLoaded', () => {
+  db = window.syndicateDB;
+
+  if (!db) {
+    showMessage(
+      'Supabase connection is unavailable. Please refresh the page.',
+      true
+    );
+    return;
+  }
+
+  loadEvents();
+});
+
+  </script>
+</body>
+</html>
