@@ -262,7 +262,7 @@
       // Show a signup only for upcoming/today events; logged raids replace it with results.
       if(!isPastEvent(event))calendarLink('Discord Sign-up',discordUrl(event));
       calDialog.hidden=false;calCard.focus();
-      if(String(event.type).toLowerCase()!=='raid'||!event.id)return;
+      if(String(event.type).toLowerCase()!=='raid'||!event.id||!isPastEvent(event))return;
       const msg=document.createElement('p');msg.textContent='Checking for uploaded raid logs…';calResults.append(msg);
       try{
         // Calendar-safe summary action: this must verify Syndicate guild membership
@@ -273,7 +273,7 @@
         calResults.replaceChildren();
         if(!data.raid){
           if(isPastEvent(event)){
-            const noLog=document.createElement('p');noLog.textContent='No raid logs uploaded for this event.';calResults.append(noLog);
+            const noLog=document.createElement('p');noLog.textContent='Hold your horses, we will upload soon.';calResults.append(noLog);
           }
           return;
         }
@@ -287,7 +287,7 @@
         calResults.append(line);
         calendarLink('Warcraft Logs',result.report_url);
       }catch(error){if(request!==calendarRequest)return;calResults.replaceChildren();
-        const n=document.createElement('p');n.textContent='Raid results are not available yet.';n.title=String(error?.message||error);calResults.append(n);
+        const n=document.createElement('p');n.textContent='Raid results are temporarily unavailable. Please check back shortly.';n.title=String(error?.message||error);calResults.append(n);
         console.warn('Calendar raid results:',error);
       }
     }
