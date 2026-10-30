@@ -23,6 +23,32 @@
 .nh-main-label{margin-top:4px}
 @media(max-width:650px){.nh-raider-heading{gap:12px}.nh-raider-badge{font-size:1rem;padding:8px 15px}}
 
+
+/* Raid Analytics workspace */
+.nh-analytics-filters{display:flex;align-items:end;gap:10px;flex-wrap:wrap;margin:20px 0;padding:13px;border:1px solid #594628;border-radius:8px;background:#242017}
+.nh-analytics-filters label{display:grid;gap:6px;color:#d9bf87;font-size:.85rem;flex:1 1 145px;min-width:125px}
+.nh-analytics-filters .nh-input,.nh-analytics-filters .nh-select{width:100%;max-width:none}
+.nh-analytics-filters .nh-filter-search{flex:2 1 205px}
+.nh-subnav{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.nh-subnav button,.nh-more{border:1px solid #685232;border-radius:6px;background:#2a2319;color:#e8ca83;padding:9px 14px;cursor:pointer;font:inherit}
+.nh-subnav button[aria-selected=true]{background:#765728;border-color:#dfbc68;color:#fff3d0}
+.nh-analytics-panel[hidden]{display:none!important}
+.nh-analytics-panel{min-width:0}
+.nh-analytics-panel h3{color:#ebc46e;font-size:1.35rem;margin:16px 0 8px}
+.nh-analytics-panel .nh-note{margin-bottom:16px}
+.nh-insight-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.nh-compact-card{padding:14px 16px;background:#211d17;border:1px solid #534328;border-radius:7px;margin:9px 0}
+.nh-compact-card strong{color:#f0d391}
+.nh-compact-card .nh-composition{margin-top:10px;height:14px}
+.nh-compact-footer{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-top:7px;color:#c4ae81;font-size:.82rem}
+.nh-history-controls{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:12px 0}
+.nh-history-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:14px}
+.nh-history-actions button:disabled{opacity:.45;cursor:default}
+.nh-analytics-panel .nh-table th{white-space:nowrap}
+.nh-analytics-panel .nh-table{font-size:.9rem}
+.nh-analytic-empty{padding:20px;border:1px dashed #695332;border-radius:7px;color:#c9b58f}
+@media(max-width:720px){.nh-insight-row{grid-template-columns:1fr}.nh-analytics-filters{gap:9px}}
+
 </style>
 </head>
 <body>
@@ -36,7 +62,18 @@
   <button class="nh-tab" data-tab="lookup" aria-selected="false">Raider Lookup</button>
  </nav>
  <section class="nh-panel">
-  <div class="nh-pane" id="pane-analytics"><h2>Raid Analytics</h2><p class="nh-muted">Boss progression, raid history, composition, and monthly independence.</p><div id="analytics-data" aria-live="polite"><p class="nh-status">Loading raid analytics…</p></div></div>
+  <div class="nh-pane" id="pane-analytics"><h2>Raid Analytics</h2><p class="nh-muted">Boss progression, raid history, composition, and monthly independence.</p><div class="nh-analytics-filters" role="group" aria-label="Raid analytics filters">
+<label>Raid <select class="nh-select" id="analytics-raid"><option value="all">All raid types</option><option value="zg">ZG</option><option value="aq20">AQ20</option><option value="ony">Ony</option><option value="mc">MC</option><option value="bwl">BWL</option><option value="aq40">AQ40</option><option value="naxx">Naxx</option></select></label>
+<label>Month <select class="nh-select" id="analytics-month"><option value="all">All months</option></select></label>
+<label class="nh-filter-search">Find a raid <input class="nh-input" id="analytics-search" type="search" placeholder="Name or date…" autocomplete="off"></label>
+</div>
+<div class="nh-subnav" role="tablist" aria-label="Analytics views">
+<button type="button" class="nh-analytics-tab" data-view="overview" role="tab" aria-selected="true">Overview</button>
+<button type="button" class="nh-analytics-tab" data-view="composition" role="tab" aria-selected="false">Raid Composition</button>
+<button type="button" class="nh-analytics-tab" data-view="aq40" role="tab" aria-selected="false">AQ40 Progress</button>
+<button type="button" class="nh-analytics-tab" data-view="history" role="tab" aria-selected="false">Raid History</button>
+</div>
+<div id="analytics-data" aria-live="polite"><p class="nh-status">Loading raid analytics…</p></div></div>
   <div class="nh-pane" id="pane-top" hidden><h2>Top Raiders</h2><p class="nh-muted">Current Syndicate members only. Historical raid attendance across all linked mains and alts.</p><div class="nh-toolbar"><label for="raid-filter">Raid type</label><select class="nh-select" id="raid-filter"><option value="all">All raids — Top 40</option><option value="zg">ZG — Top 20</option><option value="aq20">AQ20 — Top 20</option><option value="ony">Ony — Top 40</option><option value="mc">MC — Top 40</option><option value="bwl">BWL — Top 40</option><option value="aq40">AQ40 — Top 40</option><option value="naxx">Naxx — Top 40</option></select></div><div id="leaderboard-data" aria-live="polite"></div></div>
   <div class="nh-pane" id="pane-lookup" hidden><h2>Raider Lookup</h2><p class="nh-muted">Find Syndicate, Ex-Syndicate, partner, and PUG raiders by main or alt.</p><form class="nh-search" id="lookup-form"><input class="nh-input" id="lookup-input" aria-label="Character or player name" placeholder="Search character or player…" minlength="2" maxlength="70" required><button type="submit">Search</button></form><div id="lookup-results" aria-live="polite"></div><div id="profile-data"></div></div>
  </section>
@@ -45,4 +82,3 @@
 <div id="syndicate-footer"></div>
 <script src="../settings/nerd-hub.js" defer></script>
 </body></html>
-
