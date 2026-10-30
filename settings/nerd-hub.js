@@ -32,6 +32,7 @@ const colors=['#c1a15b','#6e92b2','#96918b','#7c705d','#605a53'];
 function composition(row){const names=['syndicate','partners','pugs','outside_unclassified','unknown'];const total=names.reduce((s,k)=>s+Number(row[k]||0),0);if(!total)return '—';return `<div class="nh-composition">${names.map((k,i)=>`<span title="${esc(k)}: ${row[k]||0}" style="width:${Number(row[k]||0)*100/total}%;background:${colors[i]}"></span>`).join('')}</div>`}
 
 let analyticsData=null;
+const analyticsOpen={independence:true,composition:true,history:true};
 const analyticsState={composition:{raid:'all',month:'all',search:'',limit:6},history:{raid:'all',month:'all',search:'',page:0}};
 const PAGE_SIZE=10;
 const raidOptions=[['all','All raid types'],['zg','ZG'],['aq20','AQ20'],['ony','Ony'],['mc','MC'],['bwl','BWL'],['aq40','AQ40'],['naxx','Naxx']];
@@ -79,35 +80,59 @@ function raidBosses(row){
  return pair?`${num(row.bosses_killed)}/${num(pair.remaining_for_part2)}`:`${num(row.bosses_killed)}/${num(row.total_bosses)}`;
 }
 function rowHeader(row){return `<span><strong>${esc(row.raid_name||'Raid')}</strong><div class="nh-analytic-meta">${esc(date(row.raid_date))}</div></span>`;}
+function compactSection(title,key,content){
+ return `<details class="nh-section-fold" data-analytics-section="${key}" ${analyticsOpen[key]?'open':''}><summary class="nh-section-heading"><h3 class="nh-analytic-title">${title}</h3><span class="nh-section-hint">${analyticsOpen[key]?'Collapse':'Expand'} <span aria-hidden="true">${analyticsOpen[key]?'▴':'▾'}</span></span></summary><div class="nh-section-body">${content}</div></details>`;
+}
 function renderAnalytics(){
  if(!analyticsData)return;
  const host=el('analytics-data');const monthly=analyticsData.monthly;
- let html=`<section class="nh-analytic-section"><h3 class="nh-analytic-title">Guild Independence by Month</h3><p>Historically accurate membership at each raid, not today's roster.</p>${bars(monthly.map(x=>({label:String(x.raid_month||'').slice(0,7),value:`${x.guild_independence_pct??0}%`,pct:x.guild_independence_pct||0})))}</section>`;
+ let html=compactSection('Guild Independence by Month','independence',
+ `<p>Historically accurate membership at each raid, not today's roster.</p>${bars(monthly.map(x=>({label:String(x.raid_month||'').slice(0,7),value:`${x.guild_independence_pct??0}%`,pct:x.guild_independence_pct||0})))}`);
  const comp=analyticsData.composition.filter(x=>matches(x,'composition')).sort((a,b)=>String(b.raid_date).localeCompare(String(a.raid_date))||Number(b.event_id)-Number(a.event_id));
- html+=`<section class="nh-analytic-section"><h3 class="nh-analytic-title">Raid Composition</h3><p>Guild composition at the time of each raid. Expand a session to see its counts.</p>${controls('composition')}<div class="nh-analytic-footer"><span class="nh-note">${num(comp.length)} matching raids</span><button class="nh-analytic-btn" data-expand-all="composition">Expand / Collapse all shown</button></div><div id="composition-list">${comp.slice(0,analyticsState.composition.limit).map(x=>`<details class="nh-analytic-row" data-event-id="${Number(x.event_id)}"><summary>${rowHeader(x)}<span class="nh-analytic-metrics">${num(x.guild_independence_pct)}% Syndicate</span></summary><div class="nh-analytic-row-content">${guildComposition(x)}<div class="nh-note">Counts reflect distinct character appearances for this raid.</div></div></details>`).join('')||'<div class="nh-analytic-empty">No raid composition matches your filters.</div>'}</div>${comp.length>analyticsState.composition.limit?'<button class="nh-analytic-btn" data-show-more="composition">Show more raids</button>':''}</section>`;
+ const compRows=comp.slice(0,analyticsState.composition.limit).map(x=>`<article class="nh-compact-raid"><div class="nh-compact-head">${rowHeader(x)}<strong>${num(x.guild_independence_pct)}% Syndicate</strong></div>${guildComposition(x)}</article>`).join('')||'<div class="nh-analytic-empty">No raid composition matches your filters.</div>';
+ html+=compactSection('Raid Composition','composition',
+ `<p>Current filters show guild composition for each raid, with historical membership classification.</p>${controls('composition')}<div class="nh-analytic-footer"><span class="nh-note">${num(comp.length)} matching raids</span></div><div id="composition-list">${compRows}</div>${comp.length>analyticsState.composition.limit?'<button class="nh-analytic-btn" data-show-more="composition">Show more raids</button>':''}`);
  const hist=analyticsData.history.filter(x=>matches(x,'history')).sort((a,b)=>String(b.raid_date).localeCompare(String(a.raid_date))||Number(b.event_id)-Number(a.event_id));
  const pages=Math.max(1,Math.ceil(hist.length/PAGE_SIZE));analyticsState.history.page=Math.min(Math.max(0,analyticsState.history.page),pages-1);
  const displayed=hist.slice(analyticsState.history.page*PAGE_SIZE,(analyticsState.history.page+1)*PAGE_SIZE);
- html+=`<section class="nh-analytic-section"><h3 class="nh-analytic-title">Raid History</h3><p>Expand a raid for boss progress, wipes, attendance and actual class counts. AQ40 Part 2 uses remaining bosses in its lockout.</p>${controls('history')}<div class="nh-analytic-footer"><span class="nh-note">${num(hist.length)} matching raids · page ${analyticsState.history.page+1} of ${pages}</span><button class="nh-analytic-btn" data-expand-all="history">Expand / Collapse all shown</button></div><div id="history-list">${displayed.map(x=>`<details class="nh-analytic-row" data-event-id="${Number(x.event_id)}"><summary>${rowHeader(x)}<span class="nh-analytic-metrics"><span>${esc(raidBosses(x))} bosses</span><span>${num(x.boss_wipes)} wipes</span><span>${num(x.attendance_records)} raiders</span></span></summary><div class="nh-analytic-row-content"><div class="nh-stats"><div class="nh-stat"><small>Bosses</small><strong>${esc(raidBosses(x))}</strong></div><div class="nh-stat"><small>Wipes</small><strong>${num(x.boss_wipes)}</strong></div><div class="nh-stat"><small>Attendance</small><strong>${num(x.attendance_records)}</strong></div></div><h4 style="color:#ead089;margin:14px 0 5px">Class Composition</h4><div class="nh-class-data" data-class-for="${Number(x.event_id)}"><p class="nh-note">Expand to load class counts…</p></div>${x.report_url&&/^https:\/\//.test(x.report_url)?`<a class="nh-link" href="${esc(x.report_url)}" target="_blank" rel="noopener noreferrer">Open Warcraft Logs</a>`:''}</div></details>`).join('')||'<div class="nh-analytic-empty">No raid history matches your filters.</div>'}</div><div class="nh-analytic-footer"><button class="nh-analytic-btn" data-history-step="-1" ${analyticsState.history.page===0?'disabled':''}>Previous</button><button class="nh-analytic-btn" data-history-step="1" ${analyticsState.history.page>=pages-1?'disabled':''}>Next</button></div></section>`;
+ const historyRows=displayed.map(x=>`<article class="nh-compact-raid"><div class="nh-compact-head">${rowHeader(x)}<span class="nh-compact-metrics"><strong>${esc(raidBosses(x))} bosses</strong><strong>${num(x.boss_wipes)} wipes</strong><strong>${num(x.attendance_records)} raiders</strong></span></div><div class="nh-compact-class-line"><span>Classes</span><div class="nh-class-data" data-class-for="${Number(x.event_id)}">Loading class counts…</div></div>${x.report_url&&/^https:\/\//.test(x.report_url)?`<a class="nh-link nh-compact-link" href="${esc(x.report_url)}" target="_blank" rel="noopener noreferrer">Warcraft Logs</a>`:''}</article>`).join('')||'<div class="nh-analytic-empty">No raid history matches your filters.</div>';
+ html+=compactSection('Raid History','history',
+ `<p>Bosses, wipes, attendance and class counts are visible on each raid. AQ40 Part 2 shows its remaining bosses.</p>${controls('history')}<div class="nh-analytic-footer"><span class="nh-note">${num(hist.length)} matching raids · page ${analyticsState.history.page+1} of ${pages}</span></div><div id="history-list">${historyRows}</div><div class="nh-analytic-footer"><button class="nh-analytic-btn" data-history-step="-1" ${analyticsState.history.page===0?'disabled':''}>Previous</button><button class="nh-analytic-btn" data-history-step="1" ${analyticsState.history.page>=pages-1?'disabled':''}>Next</button></div>`);
  host.innerHTML=html;
+ host.querySelectorAll('[data-analytics-section]').forEach(section=>section.addEventListener('toggle',()=>{
+  analyticsOpen[section.dataset.analyticsSection]=section.open;
+  const hint=section.querySelector('.nh-section-hint');if(hint)hint.innerHTML=section.open?'Collapse <span aria-hidden="true">▴</span>':'Expand <span aria-hidden="true">▾</span>';
+  if(section.open && section.dataset.analyticsSection==='history')requestVisibleClassCounts();
+ }));
  host.querySelectorAll('[data-filter]').forEach(input=>input.addEventListener(input.dataset.filter==='search'?'input':'change',()=>{
   const s=analyticsState[input.closest('[data-section]').dataset.section];s[input.dataset.filter]=input.value;
   s.limit=6;s.page=0;
-  // On text search keep focus and caret position while replacing the DOM.
   const active=input.dataset.filter==='search';const section=input.closest('[data-section]').dataset.section;const cursor=active?input.selectionStart:null;
   renderAnalytics();
   if(active){const next=host.querySelector(`[data-section="${section}"] [data-filter="search"]`);next?.focus();try{next?.setSelectionRange(cursor,cursor)}catch{}}
  }));
  host.querySelectorAll('[data-show-more]').forEach(b=>b.addEventListener('click',()=>{analyticsState.composition.limit+=6;renderAnalytics()}));
  host.querySelectorAll('[data-history-step]').forEach(b=>b.addEventListener('click',()=>{analyticsState.history.page+=Number(b.dataset.historyStep);renderAnalytics()}));
- host.querySelectorAll('[data-expand-all]').forEach(b=>b.addEventListener('click',()=>{
-  const entries=[...el(b.dataset.expandAll==='history'?'history-list':'composition-list').querySelectorAll('details')];const expand=entries.some(x=>!x.open);
-  entries.forEach(x=>{x.open=expand;if(expand&&b.dataset.expandAll==='history')loadClass(x)});
- }));
- host.querySelectorAll('#history-list details').forEach(d=>d.addEventListener('toggle',()=>{if(d.open)loadClass(d)}));
+ if(analyticsOpen.history)requestVisibleClassCounts();
 }
-async function loadClass(details){
- const node=details.querySelector('.nh-class-data');if(!node)return;
+let classRequests=0;
+const classQueue=[];
+function requestVisibleClassCounts(){
+ for(const node of document.querySelectorAll('#history-list .nh-class-data')){
+  if(node.dataset.queued)return;
+  node.dataset.queued='yes';classQueue.push(node);
+ }
+ processClassQueue();
+}
+function processClassQueue(){
+ while(classRequests<3&&classQueue.length){
+  const node=classQueue.shift();if(!node.isConnected)continue;
+  classRequests++;
+  loadClass(node).finally(()=>{classRequests--;processClassQueue()});
+ }
+}
+async function loadClass(node){
+ if(!node?.isConnected)return;
  const id=Number(node.dataset.classFor);
  if(classCache.has(id)){node.innerHTML=classComposition(classCache.get(id));return;}
  if(node.dataset.loading==='yes')return;
