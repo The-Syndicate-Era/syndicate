@@ -57,6 +57,9 @@
     .calendar-day.today .day-number {color:#f0d376;font-weight:700;}
     .event {display:block;margin-top:.35rem;padding:.35rem .4rem;font-size:.82rem;line-height:1.35;color:#f3ead3;border-left:3px solid var(--calendar-gold);overflow-wrap:anywhere;background:rgba(217,180,56,.10);}
     .event.raid {background:rgba(110,20,20,.45);border-color:#b53a3a;}
+    /* A muted raid with a green outline means Warcraft Logs are attached. */
+    .event.raid.has-logs {background:rgba(68,23,25,.42);border-left-color:#5ca476;box-shadow:inset 0 0 0 1.5px rgba(94,168,113,.80);border-radius:4px;}
+    .event.raid.has-logs:hover {background:rgba(76,30,30,.62);}
     .event.guild-event {background:rgba(24,55,105,.47);border-color:#4b78bd;}
     .event-name {display:block;font-family:var(--font-heading);font-size:.84em;line-height:1.4;color:#f3e5ba;font-weight:600;}
     .event:focus-visible{outline:2px solid var(--calendar-gold);outline-offset:2px}
@@ -159,6 +162,8 @@
     let events = [];
     const DISCORD_GUILD_ID='945513309925412905';
     let signupChannels=new Map();
+    const raidLogStatus=new Map(); // event ID -> true (logs), false (no logs)
+    let calendarLoadVersion=0;
     const pad = n => String(n).padStart(2,'0');
     const dateKey = (y,m,d) => `${y}-${pad(m+1)}-${pad(d)}`;
     function formatTime(time) {
@@ -175,10 +180,12 @@
     async function loadEvents() {
       title.textContent=displayedDate.toLocaleString('en-US',{month:'long',year:'numeric'});
       if (!db) {showMessage('Supabase is not connected. Check settings/supabase-config.js.',true);return;}
+      const loadVersion=++calendarLoadVersion;
       showMessage('Loading events…');
       const y=displayedDate.getFullYear(),m=displayedDate.getMonth();
       const start=dateKey(y,m,1),end=dateKey(y,m,new Date(y,m+1,0).getDate());
       const {data,error}=await db.from('Events').select('*').gte('date',start).lte('date',end).order('date',{ascending:true}).order('time',{ascending:true});
+      if(loadVersion!==calendarLoadVersion)return;
       if(error){console.error('Calendar data error',error);showMessage('Calendar events could not be loaded. Please try again later.',true);return;}
       // The channel directory stores the Discord snowflake; Events stores its UUID.
       // Read only, no extra Edge Function or database write permission needed.
@@ -192,6 +199,26 @@
         raid_status:r.raid_status||''
       }));
       renderCalendar();
+      void checkPastRaidLogs(loadVersion);
+    }
+    async function checkPastRaidLogs(loadVersion){
+      // Status comes from the same guild-authorized endpoint used by raid popups.
+      // A successful empty response means no logs; failed requests never mark completed.
+      const raids=events.filter(e=>String(e.type).trim().toLowerCase()==='raid' && isPastEvent(e) && e.id && !raidLogStatus.has(String(e.id)));
+      let cursor=0;
+      async function worker(){
+        while(cursor<raids.length){
+          if(loadVersion!==calendarLoadVersion)return;
+          const event=raids[cursor++];
+          try{
+            const {data,error}=await db.functions.invoke('syndicate-nerd-data',{body:{action:'calendar_event',event_id:event.id}});
+            if(error||!data?.success)throw Error(data?.error||error?.message||'Raid summary failed');
+            raidLogStatus.set(String(event.id),Boolean(data.raid));
+            if(loadVersion===calendarLoadVersion)renderCalendar();
+          }catch(err){console.warn('Raid status unavailable for event '+event.id,err);}
+        }
+      }
+      await Promise.all(Array.from({length:Math.min(3,raids.length)},()=>worker()));
     }
     function renderCalendar(){
       grid.replaceChildren();
@@ -213,9 +240,13 @@
         for(const event of (byDate.get(key)||[])){
           const kind=String(event.type).trim().toLowerCase();
           const block=document.createElement('button');block.type='button';block.className='event '+(kind==='raid'?'raid':(kind==='event'||kind==='guild event'?'guild-event':'other-event'));
+          if(kind==='raid' && raidLogStatus.get(String(event.id))===true){
+            block.classList.add('has-logs');
+            block.title='Warcraft Logs attached — view raid results';
+          }
           const name=document.createElement('span');name.className='event-name';name.textContent=event.name;block.append(name);
           if(event.time){const time=document.createElement('span');time.className='event-time';time.textContent=event.time;block.append(time);}
-          block.title='View details: '+event.name;block.setAttribute('aria-label','View '+event.name+' on '+event.date);
+          if(!block.title)block.title='View details: '+event.name;block.setAttribute('aria-label','View '+event.name+' on '+event.date);
           block.addEventListener('click',()=>openCalendarEvent(event));
           day.append(block);
         }
@@ -272,11 +303,14 @@
         if(error||!data?.success)throw Error(data?.error||error?.message||'Summary unavailable');
         calResults.replaceChildren();
         if(!data.raid){
+          raidLogStatus.set(String(event.id),false);
           if(isPastEvent(event)){
             const noLog=document.createElement('p');noLog.textContent='Hold your horses, we will upload soon.';calResults.append(noLog);
           }
           return;
         }
+        raidLogStatus.set(String(event.id),true);
+        renderCalendar();
         // An uploaded log replaces signups (even if the log was uploaded early).
         calLinks.replaceChildren();
         const result=data.raid;
