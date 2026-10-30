@@ -3,6 +3,18 @@ const el=id=>document.getElementById(id);
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const date=v=>v?new Date(String(v).slice(0,10)+'T12:00:00').toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'}):'—';
 const num=v=>Number(v||0).toLocaleString();
+
+const WOW_CLASS_COLORS={
+ warrior:'#C79C6E',paladin:'#F58CBA',hunter:'#ABD473',
+ rogue:'#FFF569',priest:'#FFFFFF',shaman:'#0070DE',
+ mage:'#69CCF0',warlock:'#9482C9',druid:'#FF7D0A'
+};
+const classColor=value=>WOW_CLASS_COLORS[String(value||'').trim().toLowerCase()]||null;
+const safeColor=value=>classColor(value)||'#e9c170';
+const className=(name,cls)=>`<span class="nh-character-name" style="color:${safeColor(cls)}">${esc(name)}</span>`;
+const badgeClass=association=>/^ex[- ]syndicate$/i.test(String(association||''))?'is-former':
+ /^(syndicate)$/i.test(String(association||''))?'':'is-outside';
+
 const status=(id,message,error=false)=>{el(id).innerHTML=`<p class="nh-status ${error?'error':''}">${esc(message)}</p>`};
 async function api(action,extras={}){
  const client=window.syndicateDB;
@@ -33,7 +45,7 @@ async function analytics(){status('analytics-data','Loading raid analytics…');
 async function leaderboard(){status('leaderboard-data','Loading rankings…');try{
  const d=await api('leaderboard',{raid_key:el('raid-filter').value});
  const rs=d.raiders||[];
- el('leaderboard-data').innerHTML=rs.length?table(['#','Raider','Last raid','Raids'],rs.map(x=>`<tr><td>${num(x.rank)}</td><td><strong>${esc(x.raider_name)}</strong></td><td class="nh-date">${esc(date(x.last_raid_date))}</td><td><strong>${num(x.raids_attended)}</strong></td></tr>`)):'<p class="nh-empty">No raiders found for this raid type.</p>';
+ el('leaderboard-data').innerHTML=rs.length?table(['#','Raider','Last raid','Raids'],rs.map(x=>`<tr><td>${num(x.rank)}</td><td><strong>${className(x.raider_name,x.main_class||x.character_class)}</strong></td><td class="nh-date">${esc(date(x.last_raid_date))}</td><td><strong>${num(x.raids_attended)}</strong></td></tr>`)):'<p class="nh-empty">No raiders found for this raid type.</p>';
  }catch(e){status('leaderboard-data',e.message,true)}
 }
 async function search(q){el('profile-data').replaceChildren();status('lookup-results',`Searching for ${q}…`);try{
@@ -47,9 +59,11 @@ async function search(q){el('profile-data').replaceChildren();status('lookup-res
 }
 async function profile(player_id){status('profile-data','Loading profile…');try{
  const d=await api('profile',{player_id});const p=d.profile,rs=d.recent||[],chars=d.characters||[],history=d.history||[];
- let html=`<div class="nh-card"><h2>${esc(p.name)} <span class="nh-tag">${esc(p.association)}</span></h2><p class="nh-muted">Main: ${esc(p.main)} ${p.current_rank?' · '+esc(p.current_rank):''}</p><div class="nh-stats"><div class="nh-stat"><small>Raids attended</small><strong>${num(p.raids_attended)}</strong></div><div class="nh-stat"><small>Attendance</small><strong>${num(p.attendance_pct)}%</strong></div><div class="nh-stat"><small>Last raid</small><strong>${esc(date(p.last_raid_date))}</strong></div></div><p class="nh-note">Attendance is out of ${num(p.total_logged_raids)} logged raid sessions.</p></div>`;
+ const mainCharacter=chars.find(c=>c.is_main===true)||chars.find(c=>String(c.character_name||'').toLocaleLowerCase()===String(p.main||'').toLocaleLowerCase());
+ const mainClass=mainCharacter?.character_class;
+ let html=`<div class="nh-card"><div class="nh-raider-heading"><h2>${className(p.name,mainClass)}</h2><span class="nh-raider-badge ${badgeClass(p.association)}">${esc(p.association)}</span></div><p class="nh-muted nh-main-label">Main: ${className(p.main,mainClass)}${p.current_rank?' · '+esc(p.current_rank):''}</p><div class="nh-stats"><div class="nh-stat"><small>Raids attended</small><strong>${num(p.raids_attended)}</strong></div><div class="nh-stat"><small>Attendance</small><strong>${num(p.attendance_pct)}%</strong></div><div class="nh-stat"><small>Last raid</small><strong>${esc(date(p.last_raid_date))}</strong></div></div><p class="nh-note">Attendance is out of ${num(p.total_logged_raids)} logged raid sessions.</p></div>`;
  html+=`<section class="nh-section"><h2>Recent Raid Activity — Last 30 Days</h2>${bars(rs.map(x=>({label:x.raid_type,value:`${x.attended}/${x.total} (${x.pct}%)`,pct:x.pct})))}</section>`;
- html+=`<section class="nh-section"><h2>Raiding Characters</h2>${chars.length?table(['Character','Class / Association','Last raid','Raids'],chars.sort((a,b)=>b.raids_attended-a.raids_attended).map(c=>`<tr><td>${esc(c.character_name)} ${c.is_main?'<span class="nh-pill">Main</span>':''}</td><td>${esc(c.character_class||'—')}<div class="nh-note">${esc(c.character_association)}</div></td><td>${esc(date(c.last_raid_date))}</td><td>${num(c.raids_attended)}</td></tr>`)):'<p class="nh-empty">No linked boss-participation characters found.</p>'}</section>`;
+ html+=`<section class="nh-section"><h2>Raiding Characters</h2>${chars.length?table(['Character','Class / Association','Last raid','Raids'],chars.sort((a,b)=>b.raids_attended-a.raids_attended).map(c=>`<tr><td>${className(c.character_name,c.character_class)} ${c.is_main?'<span class="nh-pill">Main</span>':''}</td><td><span style="color:${safeColor(c.character_class)}">${esc(c.character_class||'—')}</span><div class="nh-note">${esc(c.character_association)}</div></td><td>${esc(date(c.last_raid_date))}</td><td>${num(c.raids_attended)}</td></tr>`)):'<p class="nh-empty">No linked boss-participation characters found.</p>'}</section>`;
  html+=`<section class="nh-section"><h2>Full Raid History</h2>${history.length?table(['Date','Raid','Type'],history.map(r=>`<tr><td>${esc(date(r.raid_date))}</td><td>${esc(r.raid_name)}</td><td>${esc(r.raid_type)}</td></tr>`)):'<p class="nh-empty">No raid attendance recorded.</p>'}</section>`;
  el('profile-data').innerHTML=html;
  }catch(e){status('profile-data',e.message,true)}
@@ -61,22 +75,3 @@ el('lookup-form').addEventListener('submit',e=>{e.preventDefault();const v=el('l
 // Delay the initial API request until Supabase + officer guard can initialize.
 window.addEventListener('load',()=>{loadedAnalytics=true;analytics()});
 })();
-
-
-const WOW_CLASS_COLORS = {
-  warrior: "#C79C6E",
-  paladin: "#F58CBA",
-  hunter: "#ABD473",
-  rogue: "#FFF569",
-  priest: "#FFFFFF",
-  shaman: "#0070DE",
-  mage: "#69CCF0",
-  warlock: "#9482C9",
-  druid: "#FF7D0A"
-};
-
-function classColor(characterClass) {
-  return WOW_CLASS_COLORS[
-    String(characterClass || "").trim().toLowerCase()
-  ] || "#EBC46E";
-}
