@@ -29,6 +29,13 @@
 .rl-filter-active{font-size:.84rem;color:#d3b867;margin:0 0 10px}.rl-review-toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;margin:10px 0 13px}
 .rl-filter-dialog .rl-field{margin-bottom:13px}.rl-filter-dialog select,.rl-filter-dialog input{width:100%;box-sizing:border-box}
 @media(max-width:540px){.rl-filter-date-row{grid-template-columns:1fr}.rl-filter-actions .rl-btn{width:auto}}
+
+.rl-responsibility-box{border:1px solid #826b45;border-radius:10px;padding:17px;margin:17px 0;background:#1b1813}
+.rl-responsibility-box h3{color:#e6c262;margin:0 0 7px;font-size:1.08rem}
+.rl-responsibility-box .rl-field{margin-bottom:12px}.rl-responsibility-box .rl-field:last-of-type{margin-bottom:5px}
+.rl-actual-note{font-size:.85rem;color:#c4b8a5}.rl-actual-result{margin-top:8px;color:#d9c9a8;font-size:.88rem}
+.rl-history-edit{margin-top:12px;padding:13px;border:1px solid #745c37;border-radius:8px;background:#211a11}
+.rl-history-edit .rl-actions{margin-top:8px}
 </style>
 </head>
 <body>
@@ -46,6 +53,14 @@
 <div class="rl-field"><label for="reportUrl">Warcraft Logs report link</label><input id="reportUrl" type="url" placeholder="https://vanilla.warcraftlogs.com/reports/..." required autocomplete="off"></div>
 <div class="rl-field"><label for="eventId">Calendar raid</label><select id="eventId" required><option value="">Loading calendar raids…</option></select></div>
 <p class="rl-muted">Choose the raid the report actually belongs to. Future calendar events are excluded. Imports do not change roll bonuses.</p>
+<div class="rl-responsibility-box"><h3>Actual Raid Responsibilities</h3>
+<p class="rl-muted" style="margin:0 0 12px">Record who actually led and handled loot. Adopt-a-Raid volunteers will be suggested, but you must confirm the actual people.</p>
+<div class="rl-field"><label for="actualRl">Actual Raid Lead</label><input id="actualRl" list="raidResponsibilityNames" maxlength="80" placeholder="Character name (leave blank if unknown)" autocomplete="off"></div>
+<div class="rl-field"><label for="actualMl">Actual Master Looter</label><input id="actualMl" list="raidResponsibilityNames" maxlength="80" placeholder="Character name (leave blank if unknown)" autocomplete="off"></div>
+<datalist id="raidResponsibilityNames"></datalist>
+<p id="actualSuggestions" class="rl-actual-note" aria-live="polite">Select a calendar raid to see volunteer suggestions.</p>
+<label class="rl-actual-note"><input type="checkbox" id="confirmActuals"> Confirm these are the actual RL/ML for this raid (not merely volunteers)</label>
+</div>
 <div class="rl-actions"><button class="rl-btn primary" type="submit" id="importBtn">Import Report</button><button class="rl-btn" id="reloadEvents" type="button">Refresh Calendar</button></div>
 </form><div id="importStatus" class="rl-status" role="status" aria-live="polite" hidden></div>
 <p class="rl-note">All logged characters are preserved. Only unambiguous existing links should match automatically; PUGs and unclear names remain available for review.</p></section>
@@ -88,6 +103,7 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id), db=()=>window.syndicateDB;
 let reviewData=null, selectedParticipant=null, reviewReturnFocus=null;
+let actualsByEvent=new Map(), actualSuggestionToken=0;
 const reviewCategory=()=>document.querySelector('input[name=reviewCategory]:checked')?.value||'partner';
 const escDate=value=>{if(!value)return 'Date unavailable';const d=new Date(value);return Number.isNaN(d.getTime())?'Date unavailable':d.toLocaleString()};
 const localToday=()=>{const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')};
@@ -129,6 +145,60 @@ function refreshCalendarMarks(){
  if(chosen&&[...select.options].some(x=>x.value===chosen))select.value=chosen;
 }
 
+// Actual responsibilities are event-level, not report-level. Database RLS must enforce officer writes.
+const ACTUAL_TABLE='raid_actual_responsibilities';
+function cleanActualName(value){return String(value||'').trim().slice(0,80)}
+async function loadActuals(){
+ const {data,error}=await db().from(ACTUAL_TABLE).select('event_id,actual_rl,actual_ml,confirmed_at,confirmed_by');
+ if(error)throw Error('Actual responsibilities: '+error.message);
+ actualsByEvent=new Map((data||[]).map(r=>[String(r.event_id),r]));
+}
+async function getVolunteerSuggestions(eventId){
+ const {data,error}=await db().from('raid_responsibility_signups')
+  .select('toon_name,rl_preference,ml_preference').eq('event_id',eventId);
+ if(error)throw Error('Volunteer lookup: '+error.message);
+ return data||[];
+}
+function populateNameSuggestions(rows){
+ const holder=$('raidResponsibilityNames');holder.replaceChildren();
+ for(const name of [...new Set(rows.map(r=>cleanActualName(r.toon_name)).filter(Boolean))].sort())holder.append(new Option(name,name));
+}
+async function updateActualSuggestions(){
+ const token=++actualSuggestionToken,id=$('eventId').value;
+ $('actualRl').value='';$('actualMl').value='';$('confirmActuals').checked=false;
+ $('raidResponsibilityNames').replaceChildren();
+ if(!id){$('actualSuggestions').textContent='Select a calendar raid to see volunteer suggestions.';return;}
+ $('actualSuggestions').textContent='Loading volunteers and saved actual assignments…';
+ try{
+  const rows=await getVolunteerSuggestions(id);if(token!==actualSuggestionToken)return;
+  populateNameSuggestions(rows);
+  const existing=actualsByEvent.get(id);
+  if(existing){
+   $('actualRl').value=existing.actual_rl||'';$('actualMl').value=existing.actual_ml||'';
+   $('actualSuggestions').textContent='Saved actual assignments loaded. Review carefully: importing another log can update them only if you check confirmation.';
+  }else{
+   const wanted=role=>rows.filter(r=>r[role+'_preference']==='want');
+   const rl=wanted('rl'),ml=wanted('ml');
+   if(rl.length===1)$('actualRl').value=rl[0].toon_name;
+   if(ml.length===1)$('actualMl').value=ml[0].toon_name;
+   $('actualSuggestions').textContent='Suggestions from Adopt-a-Raid volunteers (only unique Want selections prefilled). These are NOT verified until you confirm.';
+  }
+ }catch(e){if(token===actualSuggestionToken)$('actualSuggestions').textContent='Could not load volunteer suggestions: '+e.message;}
+}
+async function saveActuals(eventId,rl,ml){
+ const {data:auth,error:sessionError}=await db().auth.getUser();
+ if(sessionError||!auth?.user?.id)throw Error('Officer login required to confirm responsibilities.');
+ const values={event_id:eventId,actual_rl:cleanActualName(rl)||null,actual_ml:cleanActualName(ml)||null,confirmed_by:auth.user.id,confirmed_at:new Date().toISOString(),updated_at:new Date().toISOString()};
+ const {error}=await db().from(ACTUAL_TABLE).upsert(values,{onConflict:'event_id'});
+ if(error)throw Error('Could not save actual roles: '+error.message+' (check officer RLS permissions)');
+ actualsByEvent.set(String(eventId),values);
+}
+function actualSummary(eventId){
+ const r=actualsByEvent.get(String(eventId));
+ return r?`Actual RL: ${r.actual_rl||'Not recorded'} · Actual ML: ${r.actual_ml||'Not recorded'}`:'Actual RL/ML: Not recorded';
+}
+$('eventId').addEventListener('change',updateActualSuggestions);
+
 function dateOfReport(report){return String(calendarById.get(String(report.event_id))?.date||report.raid_date||report.event_date||report.event?.date||report.report_start_time||'').slice(0,10)}
 function entry(report){
  const node=document.createElement('article');node.className='rl-entry';
@@ -141,7 +211,37 @@ function entry(report){
  const actions=document.createElement('div');actions.className='rl-entry-actions';
  if(/^https:\/\//i.test(report.report_url||'')){const a=document.createElement('a');a.href=report.report_url;a.target='_blank';a.rel='noopener noreferrer';a.className='rl-btn';a.textContent='Open Raid Log';actions.append(a)}
  const remove=document.createElement('button');remove.className='rl-btn danger';remove.type='button';remove.textContent='Delete Import';remove.addEventListener('click',()=>deleteReport(report,remove));actions.append(remove);
- node.append(actions);return node;
+ node.append(actions);
+ const actual=document.createElement('div');actual.className='rl-actual-result';actual.textContent=actualSummary(report.event_id);node.append(actual);
+ if(report.event_id!=null){
+  const edit=document.createElement('button');edit.className='rl-btn';edit.type='button';edit.textContent='Edit Actual RL / ML';
+  const panel=document.createElement('div');panel.className='rl-history-edit';panel.hidden=true;
+  edit.addEventListener('click',()=>{
+   panel.hidden=!panel.hidden;
+   if(!panel.hidden){panel.querySelector('[data-role=rl]').value=actualsByEvent.get(String(report.event_id))?.actual_rl||'';
+    panel.querySelector('[data-role=ml]').value=actualsByEvent.get(String(report.event_id))?.actual_ml||'';}
+  });
+  const inputs=[];
+  for(const [role,label] of [['rl','Actual Raid Lead'],['ml','Actual Master Looter']]){
+   const wrap=document.createElement('div');wrap.className='rl-field';
+   const lab=document.createElement('label');lab.textContent=label;
+   const input=document.createElement('input');input.dataset.role=role;input.maxLength=80;input.placeholder='Character name or leave blank';
+   wrap.append(lab,input);panel.append(wrap);inputs.push(input);
+  }
+  const confirmLabel=document.createElement('label');confirmLabel.className='rl-actual-note';
+  const verify=document.createElement('input');verify.type='checkbox';confirmLabel.append(verify,document.createTextNode(' I verified who actually performed these roles'));panel.append(confirmLabel);
+  const save=document.createElement('button');save.className='rl-btn primary';save.type='button';save.textContent='Save Actual Roles';
+  const status=document.createElement('div');status.className='rl-actual-result';panel.append(save,status);
+  save.addEventListener('click',async()=>{
+   if(!verify.checked){status.textContent='Please verify the actual roles before saving.';return;}
+   if(!confirm('Update actual RL/ML for this calendar event?'))return;
+   save.disabled=true;
+   try{await saveActuals(Number(report.event_id),inputs[0].value,inputs[1].value);actual.textContent=actualSummary(report.event_id);status.textContent='Actual roles saved to Adopt-a-Raid.';verify.checked=false;}
+   catch(e){status.textContent=e.message;}finally{save.disabled=false;}
+  });
+  node.append(edit,panel);
+ }
+ return node;
 }
 function renderHistory(){
  const host=$('historyList');host.replaceChildren();const term=$('historySearch').value.trim().toLowerCase(),from=$('historyFrom').value,to=$('historyTo').value;
@@ -165,6 +265,7 @@ async function loadHistory(){
    return;
   }
   historyReports=records;
+   try{await loadActuals()}catch(e){console.warn(e.message);}
   if(!historyReports.length){
    refreshCalendarMarks();$('historyList').replaceChildren();
    host.textContent='The import service returned 0 logs. Supabase previously contained 21 reports, so this is a backend listing/authorization issue, not a search-filter result. Check the syndicate-wcl-import list action.';
@@ -188,11 +289,31 @@ async function deleteReport(report,button){
  finally{button.disabled=false}
 }
 for(const id of ['historySearch','historyFrom','historyTo'])$(id).addEventListener('input',renderHistory);
-$('importForm').addEventListener('submit',async e=>{e.preventDefault();const eventId=Number($('eventId').value),url=$('reportUrl').value.trim();if(!Number.isSafeInteger(eventId)||eventId<=0)return message('importStatus','Please choose the matching calendar raid.',true);if(!confirm('Import this Warcraft Logs report into the selected raid?'))return;const button=$('importBtn');button.disabled=true;button.textContent='Importing…';message('importStatus','Retrieving report and saving raid data…');try{const r=await officerRequest({action:'import',report_url:url,event_id:eventId});const s=r.saved||{};
- const matchInfo=` Automatically matched: ${r.auto_matched_characters??0}. Attendance added: ${r.attendance_added??0}.`;
- const warning=r.attendance_warning?` WARNING: ${r.attendance_warning}`:'';
- message('importStatus',`Imported ${r.report_title||r.report_code}. Saved ${s.participants||0} characters and ${s.boss_kills||0} kills.${matchInfo}${warning}`,Boolean(r.attendance_warning),true);
- $('reportUrl').value='';await Promise.all([loadHistory(),loadReview()]);}catch(err){message('importStatus',err.message,true)}finally{button.disabled=false;button.textContent='Import Report';}});
+$('importForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const eventId=Number($('eventId').value),url=$('reportUrl').value.trim();
+ if(!Number.isSafeInteger(eventId)||eventId<=0)return message('importStatus','Please choose the matching calendar raid.',true);
+ const confirmRoles=$('confirmActuals').checked;
+ const rl=cleanActualName($('actualRl').value),ml=cleanActualName($('actualMl').value);
+ if((rl||ml)&&!confirmRoles)return message('importStatus','Check the actual RL/ML confirmation box, or clear the names to import without recording responsibilities.',true);
+ if(!confirm('Import this Warcraft Logs report into the selected raid?'+(confirmRoles?'\nActual RL: '+(rl||'Not recorded')+'\nActual ML: '+(ml||'Not recorded'):'')))return;
+ const button=$('importBtn');button.disabled=true;button.textContent='Importing…';
+ message('importStatus','Retrieving report and saving raid data…');
+ try{
+  const r=await officerRequest({action:'import',report_url:url,event_id:eventId});
+  const s=r.saved||{};
+  const matchInfo=` Automatically matched: ${r.auto_matched_characters??0}. Attendance added: ${r.attendance_added??0}.`;
+  const warning=r.attendance_warning?` WARNING: ${r.attendance_warning}`:'';
+  let actualMessage=' Actual RL/ML not updated.';
+  if(confirmRoles){
+   try{await saveActuals(eventId,rl,ml);actualMessage=' Actual RL/ML saved to Adopt-a-Raid.';}
+   catch(error){actualMessage=' IMPORTANT: Raid log imported, but actual RL/ML was NOT saved: '+error.message+' Use Raid Log History to retry.';}
+  }
+  message('importStatus',`Imported ${r.report_title||r.report_code}. Saved ${s.participants||0} characters and ${s.boss_kills||0} kills.${matchInfo}${warning}${actualMessage}`,Boolean(r.attendance_warning)||actualMessage.includes('NOT saved'),!r.attendance_warning&&!actualMessage.includes('NOT saved'));
+  $('reportUrl').value='';await Promise.all([loadHistory(),loadReview()]);
+ }catch(err){message('importStatus',err.message,true)}
+ finally{button.disabled=false;button.textContent='Import Report';}
+});
 function fillReviewPlayers(){const s=$('reviewPlayerId');s.replaceChildren(new Option('Select a known outside player…',''));for(const p of reviewData?.outside_players||[])s.add(new Option(`${p.display_name} (#${p.id})`,String(p.id)));}
 function showMode(){const existing=$('reviewMode').value==='existing';$('newPlayerField').hidden=existing;$('existingPlayerField').hidden=!existing;}
 function fillRosterOptions(){
