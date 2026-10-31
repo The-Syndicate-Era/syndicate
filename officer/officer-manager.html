@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leadership Manager | The Syndicate</title>
+  <link rel="stylesheet" href="../settings/styles.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="../settings/supabase-config.js" defer></script>
+  <script src="../settings/auth.js" defer></script>
+  <script src="../settings/officer-guard.js" defer></script>
+  <script src="../settings/font-setting.js" defer></script>
+  <script src="../settings/menu.js" defer></script>
+  <script src="../settings/site-layout.js" defer></script>
+  <style>
+    html.syn-access-pending body > main, html.syn-access-pending #syndicate-footer { visibility: hidden; }
+    .lm { --gold: #dfbf71; --muted:#b8aa91; background:#0b0a09; color:#e6ddca; min-height:82vh; padding:3rem 1.1rem 5rem; font-family:var(--font-body,Georgia,serif) }
+    .lm * {box-sizing:border-box} .lm-wrap{max-width:74rem;margin:auto}
+    .lm-hero{text-align:center;margin-bottom:2rem}.lm-kicker{color:var(--gold);font-size:.78rem;letter-spacing:.18em;text-transform:uppercase}
+    .lm h1,.lm h2,.lm h3{font-family:var(--font-heading,Cinzel,serif);font-weight:400;letter-spacing:.045em}
+    .lm h1{color:var(--gold);font-size:clamp(2rem,4vw,2.7rem);margin:.5rem 0}.lm p{line-height:1.65}
+    .lm-sub{max-width:42rem;margin:.5rem auto;color:var(--muted)}
+    .lm-alert{border:1px solid #8c7136;background:#201a0d;color:#e2c986;padding:.85rem 1.1rem;margin-bottom:1.5rem;border-radius:5px;font-size:.92rem}
+    .lm-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:1.25rem}
+    .lm-panel{border:1px solid #65532c;background:linear-gradient(180deg,#17140e,#100f0c);padding:1.3rem;border-radius:5px;min-width:0}
+    .lm-panel h2{color:var(--gold);margin:0 0 .3rem;font-size:1.3rem}.lm-help{color:var(--muted);font-size:.91rem;margin:.2rem 0 1.2rem}
+    .lm-label{display:block;color:#d8be88;font-size:.82rem;margin:.9rem 0 .35rem;letter-spacing:.04em}
+    .lm-input,.lm-select,.lm-textarea{width:100%;border:1px solid #796438;border-radius:4px;background:#0e0d0b;color:#f0e5cb;padding:.7rem;font:inherit;min-height:2.8rem}
+    .lm-textarea{resize:vertical;min-height:6rem}.lm-input:focus,.lm-select:focus,.lm-textarea:focus{outline:2px solid #d5b366;outline-offset:2px}
+    .lm-btn{background:linear-gradient(#a91b15,#650906);border:1px solid #c49d4a;border-radius:4px;color:#f6dc87;padding:.75rem 1.1rem;font-family:var(--font-heading,Cinzel,serif);font-size:.83rem;cursor:pointer}
+    .lm-btn:hover{filter:brightness(1.15)}.lm-btn:disabled{opacity:.42;cursor:not-allowed}.lm-btn.alt{background:#222017}
+    .lm-preview{border-top:1px solid #62512e;margin-top:1.3rem;padding-top:1.1rem;text-align:center}
+    .lm-preview .title{display:block;color:#bba06b;letter-spacing:.12em;font-size:.76rem}.lm-preview .name{display:block;color:#efd17e;font:1.35rem var(--font-heading,Cinzel,serif);margin:.5rem}
+    .lm-preview .quote{font-style:italic;color:#c5b69e;line-height:1.6;overflow-wrap:anywhere}
+    .lm-tools{display:flex;flex-wrap:wrap;gap:.5rem;margin:.8rem 0 1.1rem;align-items:center}
+    .lm-chip{border:1px solid #70603d;background:#201b12;border-radius:2rem;color:#e5d09f;padding:.38rem .7rem;cursor:pointer;font-size:.82rem}
+    .lm-chip[aria-pressed="true"]{background:#5a431b;border-color:#e1b85c}
+    .lm-list{display:grid;gap:.55rem}.lm-item{display:flex;align-items:center;gap:.75rem;justify-content:space-between;padding:.85rem;border:1px solid #524529;background:#15130f;border-radius:4px}
+    .lm-item strong{color:#e4c373;font:1rem var(--font-heading,Cinzel,serif)}.lm-item small{display:block;color:#aa9d84;font-size:.77rem;margin-top:.3rem}
+    .lm-status{color:#d8b773;font-size:.75rem;white-space:nowrap}.lm-empty{padding:1.2rem;text-align:center;color:#b7aa8f;border:1px dashed #685631}
+    .lm-foot{color:#a69b85;font-size:.83rem;margin-top:1.4rem}.lm-actions{display:flex;gap:.7rem;flex-wrap:wrap;margin-top:1rem}
+    .lm-management{margin-top:1.3rem}.lm-disclaimer{color:#c6a568;font-size:.82rem}
+    @media(max-width:800px){.lm-layout{grid-template-columns:1fr}.lm{padding-top:2.2rem}}
+  </style>
+</head>
+<body>
+  <div id="syndicate-menu"></div>
+  <main class="lm" id="main-content">
+    <div class="lm-wrap">
+      <header class="lm-hero">
+        <div class="lm-kicker">The Syndicate · Dark Council</div>
+        <h1>Leadership Manager</h1>
+        <p class="lm-sub">The people behind the chaos. Update your quote, celebrate retired legends, and keep our leadership roster current.</p>
+      </header>
+      <div class="lm-alert" role="status"><strong>Design preview:</strong> This page is not connected to Supabase yet. Any quote you type changes only the preview on this screen. Nothing will be saved or published.</div>
+      <div class="lm-layout">
+        <section class="lm-panel" aria-labelledby="profile-heading">
+          <h2 id="profile-heading">My Officer Profile</h2>
+          <p class="lm-help">Your guild identity will be matched to your verified Discord account once connections are added.</p>
+          <label class="lm-label" for="profile-name">Character name</label>
+          <input class="lm-input" id="profile-name" type="text" value="KAERIXI" disabled>
+          <label class="lm-label" for="profile-rank">Leadership rank</label>
+          <input class="lm-input" id="profile-rank" type="text" value="DARK COUNCIL" disabled>
+          <label class="lm-label" for="profile-quote">My quote</label>
+          <textarea class="lm-textarea" id="profile-quote" maxlength="300">I didn’t do it. I just organized it.</textarea>
+          <div class="lm-actions">
+            <button type="button" class="lm-btn alt" id="preview-quote">Preview my quote</button>
+            <button type="button" class="lm-btn" disabled title="Available after secure database integration">Save my profile</button>
+          </div>
+          <div class="lm-preview" aria-live="polite">
+            <span class="title" id="preview-rank">DARK COUNCIL</span>
+            <span class="name" id="preview-name">KAERIXI</span>
+            <div class="quote" id="quote-output">“I didn’t do it. I just organized it.”</div>
+          </div>
+        </section>
+        <section class="lm-panel" aria-labelledby="roster-heading">
+          <h2 id="roster-heading">Leadership Roster</h2>
+          <p class="lm-help">Browse today's leadership and the Legends of the Syndicate. A blank Legends roster does not show on the public guild page.</p>
+          <div class="lm-tools" role="group" aria-label="Filter leadership roster">
+            <button type="button" class="lm-chip" data-filter="active" aria-pressed="true">Active</button>
+            <button type="button" class="lm-chip" data-filter="honorary" aria-pressed="false">Honorary</button>
+            <button type="button" class="lm-chip" data-filter="hidden" aria-pressed="false">Hidden</button>
+          </div>
+          <div id="roster-list" class="lm-list" aria-live="polite"></div>
+        </section>
+      </div>
+      <section class="lm-panel lm-management" aria-labelledby="manage-heading">
+        <h2 id="manage-heading">GM &amp; Website Manager Controls</h2>
+        <p class="lm-help">These actions will be available only to accounts authorized by the backend. Officer access alone will not grant roster management permissions.</p>
+        <div class="lm-actions">
+          <button type="button" class="lm-btn" disabled>Add Officer</button>
+          <button type="button" class="lm-btn alt" disabled>Edit Rank &amp; Order</button>
+          <button type="button" class="lm-btn alt" disabled>Move to Legends</button>
+          <button type="button" class="lm-btn alt" disabled>Hide Profile</button>
+        </div>
+        <p class="lm-disclaimer">Management remains disabled until Discord identity, role authorization, and database policies are connected.</p>
+      </section>
+      <p class="lm-foot">Officer status and honorary recognition are separate from Discord permissions. Honorary members do not gain officer tools just because they appear in the guild history.</p>
+    </div>
+  </main>
+  <div id="syndicate-footer"></div>
+  <script>
+    (() => {
+      'use strict';
+      // Static display data for Phase 1 only. Replace with authorized Supabase reads in Phase 2.
+      const profiles = [
+        ['FARED','Dark Matriarch'],['YOSHI','Dark Council'],['BELLE','Dark Council'],
+        ['RILDILIAN','Dark Council'],['TANKBOT','Dark Council'],['ROACHEE','Dark Council'],
+        ['CHOCKI','Dark Council'],['KAERIXI','Dark Council'],['BEREAVEMENT','Dark Council'],['GRAWL','Dark Council']
+      ].map(([name, rank]) => ({name,rank,status:'active'}));
+      const roster = document.getElementById('roster-list');
+      function draw(filter) {
+        roster.replaceChildren();
+        const matches = profiles.filter(p => p.status === filter);
+        if (!matches.length) {
+          const empty = document.createElement('div'); empty.className='lm-empty';
+          empty.textContent = filter === 'honorary' ? 'No honorary legends have been added yet.' : filter === 'hidden' ? 'No hidden profiles.' : 'No active officers.';
+          roster.append(empty); return;
+        }
+        for (const profile of matches) {
+          const item = document.createElement('div'); item.className='lm-item';
+          const who = document.createElement('div');
+          const name = document.createElement('strong'); name.textContent = profile.name;
+          const rank = document.createElement('small'); rank.textContent = profile.rank;
+          who.append(name,rank);
+          const status = document.createElement('span'); status.className='lm-status'; status.textContent = filter.toUpperCase();
+          item.append(who,status); roster.append(item);
+        }
+      }
+      document.querySelectorAll('[data-filter]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('[data-filter]').forEach(b => b.setAttribute('aria-pressed',String(b===btn)));
+          draw(btn.dataset.filter);
+        });
+      });
+      document.getElementById('preview-quote').addEventListener('click', () => {
+        const quote = document.getElementById('profile-quote').value.trim();
+        document.getElementById('quote-output').textContent = quote ? `“${quote}”` : 'No quote entered yet.';
+      });
+      draw('active');
+    })();
+  </script>
+</body>
+</html>
