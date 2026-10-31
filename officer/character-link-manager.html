@@ -37,14 +37,14 @@
 (()=>{'use strict';
 const $=id=>document.getElementById(id);let db=null,selectedAccount=null,selectedMain=null;
 const notice=(msg,type='')=>{const n=$('notice');n.textContent=msg;n.className='status '+type;};
-// IMPORTANT: adjust this adapter if settings/supabase-config.js uses a different global.
-function getClient(){const candidates=[window.supabaseClient,window.syndicateSupabase,window.synSupabase,window._supabase,window.supabaseDb,window.supabase];for(const c of candidates){if(c&&typeof c.rpc==='function'&&c.auth&&typeof c.auth.getUser==='function')return c;}return null;}
+// Reuse the shared Supabase client from settings/supabase-config.js.
+function getClient(){const client=window.syndicateDB;return client&&typeof client.rpc==='function'&&client.auth&&typeof client.auth.getUser==='function'?client:null;}
 function el(tag,text,klass){const n=document.createElement(tag);if(text!==undefined)n.textContent=String(text);if(klass)n.className=klass;return n;}
 function clear(target){target.replaceChildren();}
 function addEmpty(target,message){target.append(el('div',message,'empty'));}
 function debounce(fn){let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),280);};}
 async function rpc(name,args={}){if(!db)throw Error('Supabase client not available');const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message||'Database request failed');return data;}
-async function verify(){db=getClient();if(!db)throw Error('Supabase client not found. Check settings/supabase-config.js global name in getClient().');const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Sign in through Discord to use this page.');await rpc('syndicate_manager_search_accounts',{p_search:''});}
+async function verify(){db=getClient();if(!db)throw Error('Supabase client not initialized. Check that settings/supabase-config.js loaded successfully.');const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Sign in through Discord to use this page.');await rpc('syndicate_manager_search_accounts',{p_search:''});}
 function makePick(target,items,render,onPick){clear(target);if(!items?.length){addEmpty(target,'No matches found.');return;}items.forEach(item=>{const row=el('div',undefined,'item');row.append(render(item));const b=el('button','Select','secondary');b.type='button';b.addEventListener('click',()=>onPick(item));row.append(b);target.append(row);});}
 function selection(){const a=selectedAccount,m=selectedMain;$('selection').textContent=`Account: ${a?(a.server_nickname||a.discord_username||a.discord_id):'not selected'} · Main: ${m?m.character_name:'not selected'}`;$('assign').disabled=!(a&&m&&!m.linked_user_id&&a.claim_status!=='approved'&&a.claim_status!=='pending');}
 async function searchAccounts(){const q=$('account-search').value.trim();selectedAccount=null;selection();clear($('account-results'));if(q.length<2)return;try{const data=await rpc('syndicate_manager_search_accounts',{p_search:q});makePick($('account-results'),data,a=>{const d=el('div');d.append(el('strong',a.server_nickname||a.discord_username||a.discord_id));d.append(el('div',`@${a.discord_username||'unknown'} · ${a.main_character||'No linked main'} (${a.claim_status||'unlinked'})`,'small'));return d;},a=>{selectedAccount=a;selection();notice('Discord account selected.');});}catch(e){notice(e.message,'err');}}
@@ -57,3 +57,4 @@ window.addEventListener('load',async()=>{try{await verify();$('manager-ui').clas
 })();
 </script>
 </body></html>
+
