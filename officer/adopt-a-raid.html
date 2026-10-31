@@ -61,7 +61,14 @@ html.syn-access-pending #dayModal {
 .raid-back-link { display:inline-flex; align-items:center; min-height:42px; padding:.55rem .9rem; color:var(--bright); background:#211b13; border:1px solid var(--gold); border-radius:8px; font-weight:600; text-decoration:none; }
 .raid-back-link:hover, .raid-back-link:focus-visible { background:#3a2c1b; color:#fff1cc; outline-offset:3px; }
 html.syn-access-pending .raid-back-row { display:none!important; }
- </style>
+ 
+/* Compact actual-roles presentation for completed calendar events. */
+.actual-line{color:#cce8cf!important;border-top:1px solid #574b38;padding-top:5px;margin-top:5px!important}
+.actual-responsibilities{padding-top:12px}
+.actual-role-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:10px 0}
+.actual-role-cell{background:#201b21;border:1px solid #493b2a;border-radius:8px;padding:10px;overflow-wrap:anywhere}
+.actual-role-cell strong{color:#e9d3a5;display:block;margin-top:3px}
+</style>
 </head>
 <body>
 
@@ -74,9 +81,9 @@ html.syn-access-pending .raid-back-row { display:none!important; }
 <main class="wrap">
 <div class="tabs"><button class="tab active" data-tab="calendarView">Raid Calendar &amp; Sign-Ups</button><button class="tab" data-tab="availabilityView">Officer Availability</button><button class="tab" data-tab="summaryView">Monthly Overview</button></div>
 <div id="message" class="notice" role="status" aria-live="polite" hidden></div>
-<section id="calendarView"><div class="toolbar"><div><h2>Monthly Raid Coverage</h2><div class="small muted">Select a raid to sign up. Dates and raids come from the existing guild calendar.</div></div><div class="controls"><button class="btn" id="prev" aria-label="Previous month">‹</button><strong id="monthTitle"></strong><button class="btn" id="next" aria-label="Next month">›</button><button class="btn" id="todayBtn">Today</button></div></div><div class="legend"><span><i class="dot red"></i>Missing RL or ML</span><span><i class="dot green"></i>Confirmed RL + ML</span><span><i class="dot purple"></i>Multiple interested</span><span><i class="dot amber"></i>Tentative coverage</span><span><i class="dot blue"></i>Officer unavailable</span></div><div class="panel"><div class="weekday"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div id="calendar" class="calendar"></div></div></section>
+<section id="calendarView"><div class="toolbar"><div><h2>Monthly Raid Coverage</h2><div class="small muted">Select a raid to sign up. Dates and raids come from the existing guild calendar.</div></div><div class="controls"><button class="btn" id="prev" aria-label="Previous month">‹</button><strong id="monthTitle"></strong><button class="btn" id="next" aria-label="Next month">›</button><button class="btn" id="todayBtn">Today</button></div></div><div class="legend"><span><i class="dot red"></i>Missing RL or ML</span><span><i class="dot green"></i>RL + ML volunteered</span><span><i class="dot purple"></i>Multiple interested</span><span><i class="dot amber"></i>Tentative coverage</span><span><i class="dot blue"></i>Officer unavailable</span></div><div class="panel"><div class="weekday"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div id="calendar" class="calendar"></div></div></section>
 <section id="availabilityView" hidden><div class="panel"><h2>Officer Availability</h2><p class="muted">Optional date-range calendar. Choose Available or Unavailable; it will appear as a bubble on affected calendar dates and in raid pop-ups. Availability does not automatically sign you up to lead or loot.</p><form id="availabilityForm"><div class="two-col"><div class="field"><label for="availToon">Character name</label><input id="availToon" required maxlength="80" placeholder="Kaerixi"></div><div class="field"><label for="availType">Status</label><select id="availType"><option value="unavailable">Unavailable / AFK</option><option value="available">Available</option></select></div><div class="field"><label for="availStart">Start date</label><input type="date" id="availStart" required></div><div class="field"><label for="availEnd">End date</label><input type="date" id="availEnd" required></div></div><div class="field"><label for="availNote">Note (optional)</label><input id="availNote" maxlength="160" placeholder="Travel / can cover if needed"></div><div class="modal-actions"><button class="btn primary" id="availabilitySave" type="submit">Save Availability</button><button class="btn" type="button" id="cancelAvailabilityEdit" hidden>Cancel Edit</button></div></form><div id="availabilityList" class="absences"></div></div></section>
-<section id="summaryView" hidden><div class="panel"><h2>Monthly Coverage Overview</h2><p class="muted" id="summaryTitle"></p><div class="table-wrap"><table><thead><tr><th>Raid</th><th>Date</th><th>Raid Lead — Coverage</th><th>Master Looter — Coverage</th><th>Coverage</th></tr></thead><tbody id="summaryRows"></tbody></table></div></div></section>
+<section id="summaryView" hidden><div class="panel"><h2>Monthly Coverage Overview</h2><p class="muted" id="summaryTitle"></p><div class="table-wrap"><table><thead><tr><th>Raid</th><th>Date</th><th>Raid Lead — Coverage</th><th>Master Looter — Coverage</th><th>Coverage</th><th>Actual RL</th><th>Actual ML</th></tr></thead><tbody id="summaryRows"></tbody></table></div></div></section>
 <div class="footer">◆ THIS IS THE WAY. ◆</div></main>
 <div id="raidModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-top"><div><div class="eyebrow">Officer Sign-Up</div><h2 id="modalTitle">Raid</h2><p id="modalDate" class="small muted"></p></div><button class="btn" id="closeRaid">✕</button></div><div id="modalBody"></div></section></div>
 <div id="dayModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle"><div class="modal-top"><h2 id="dayModalTitle">Availability</h2><button class="btn" id="closeDay">✕</button></div><div id="dayModalBody"></div></section></div>
@@ -89,7 +96,7 @@ let client = null;
  function ready() {
   return !!client && typeof client.from === 'function';
 }
-const EVENT_TABLE='Events', SIGNUP_TABLE='raid_responsibility_signups', AVAIL_TABLE='raid_officer_unavailability';
+const EVENT_TABLE='Events', SIGNUP_TABLE='raid_responsibility_signups', AVAIL_TABLE='raid_officer_unavailability', ACTUAL_TABLE='raid_actual_responsibilities';
 // The existing SQL requires BOTH preferences to be populated; 'no' is the default for the role not yet selected.
 const CHOICES=[{value:'want',label:"Going — I'd like to do it",desc:'Actively volunteering for the responsibility.'},{value:'can',label:'Going — Can if needed',desc:'Happy to help, but not requesting the position.'},{value:'bench',label:'Benched — Call me if needed',desc:'Available as backup if brought into the raid.'},{value:'no',label:'Not available',desc:'Cannot cover this responsibility.'}];
 const RAID_PATTERN=/\b(onyxia|ony|zg|zul.?gurub|aq20|aq40|ahn.?qiraj|molten core|mc|blackwing lair|bwl|naxx|ruins of ahn|temple of ahn)\b/i;
@@ -101,13 +108,21 @@ const dateOnly=s=>String(s||'').slice(0,10);
 const title=e=>String(e.event||e.event_name||e.name||'Raid');
 const raidId=e=>String(e.id);
 const isRaid=e=>String(e.type||'').trim().toLowerCase()==='raid'||RAID_PATTERN.test(title(e));
-const today=new Date();let year=today.getFullYear(),month=today.getMonth(),raids=[],signups=[],availability=[],modalId=null,modalMode=null;
+const today=new Date();let year=today.getFullYear(),month=today.getMonth(),raids=[],signups=[],availability=[],actuals=new Map(),modalId=null,modalMode=null;
 
 function notice(text,kind=''){const m=$('message');m.hidden=false;m.className='notice '+kind;m.textContent=text}
 function clearNotice(){$('message').hidden=true}
 function people(id){return signups.filter(s=>String(s.event_id)===String(id))}
 function willing(id,role){return people(id).filter(s=>s[role+'_preference']==='want')}
 function canHelp(id,role){return people(id).filter(s=>s[role+'_preference']==='can')}
+// Actual responsibilities are event-level records entered during raid-log management.
+function actualFor(id){return actuals.get(String(id))||null}
+function isCompletedRaid(event){return dateOnly(event.date)<localDate(new Date())}
+function actualRole(event,role){
+ const record=actualFor(raidId(event));
+ if(!record)return 'Not recorded';
+ return String(record['actual_'+role]||'').trim()||'Not recorded';
+}
 function roleInfo(id,role){
  const wants=willing(id,role),cans=canHelp(id,role);
  if(wants.length>1)return `${role.toUpperCase()}: ${wants.length} Interested`;
@@ -145,6 +160,14 @@ function renderCalendar(){
    b.append(node('b','',title(raid)),node('small','',String(raid.time||'')));
    b.append(node('small','coverage-line',roleInfo(raidId(raid),'rl')));
    b.append(node('small','coverage-line',roleInfo(raidId(raid),'ml')));
+   if(isCompletedRaid(raid)){
+     const rec=actualFor(raidId(raid));
+     const label=rec && (rec.actual_rl||rec.actual_ml)
+       ? `Actual · RL: ${actualRole(raid,'rl')} · ML: ${actualRole(raid,'ml')}`
+       : 'Actual RL / ML: Not recorded';
+     b.append(node('small','coverage-line actual-line',label));
+   }
+
 
    b.onclick=()=>openRaid(raidId(raid));cell.append(b);
   }
@@ -172,9 +195,17 @@ async function load() {
   }
 const [start,end]=monthRange();try{const result=await client.from(EVENT_TABLE).select('*').gte('date',start).lt('date',end).order('date',{ascending:true}).order('time',{ascending:true});if(result.error)throw Error('Events: '+result.error.message);raids=(result.data||[]).filter(isRaid);
 const ids=raids.map(raidId);let s=[];if(ids.length){const response=await client.from(SIGNUP_TABLE).select('*').in('event_id',ids);if(response.error)throw Error('Sign-ups: '+response.error.message);s=response.data||[]}signups=s;
-const response=await client.from(AVAIL_TABLE).select('*').lt('start_date',end).gte('end_date',start).order('start_date',{ascending:true});if(response.error)throw Error('Availability: '+response.error.message);availability=response.data||[];render();return true}catch(err){notice('Unable to load calendar data: '+err.message,'error');render();return false}}
-function setMonth(delta){const d=new Date(year,month+delta,1);year=d.getFullYear();month=d.getMonth();raids=[];signups=[];availability=[];load()}
-$('prev').onclick=()=>setMonth(-1);$('next').onclick=()=>setMonth(1);$('todayBtn').onclick=()=>{year=today.getFullYear();month=today.getMonth();raids=[];signups=[];availability=[];load()};
+const response=await client.from(AVAIL_TABLE).select('*').lt('start_date',end).gte('end_date',start).order('start_date',{ascending:true});if(response.error)throw Error('Availability: '+response.error.message);availability=response.data||[];
+// Fetch actual assignments separately: an error should not hide or disable sign-up functionality.
+actuals=new Map();
+if(ids.length){
+ const actualResult=await client.from(ACTUAL_TABLE).select('event_id,actual_rl,actual_ml,confirmed_by,confirmed_at').in('event_id',ids);
+ if(actualResult.error){notice('Raid sign-ups loaded, but actual RL/ML could not be loaded: '+actualResult.error.message,'error');}
+ else for(const item of actualResult.data||[])actuals.set(String(item.event_id),item);
+}
+render();return true}catch(err){notice('Unable to load calendar data: '+err.message,'error');render();return false}}
+function setMonth(delta){const d=new Date(year,month+delta,1);year=d.getFullYear();month=d.getMonth();raids=[];signups=[];availability=[];actuals=new Map();load()}
+$('prev').onclick=()=>setMonth(-1);$('next').onclick=()=>setMonth(1);$('todayBtn').onclick=()=>{year=today.getFullYear();month=today.getMonth();raids=[];signups=[];availability=[];actuals=new Map();load()};
 for(const tab of document.querySelectorAll('[data-tab]'))tab.onclick=()=>{document.querySelectorAll('[data-tab]').forEach(b=>{const active=b===tab;b.classList.toggle('active',active);$(b.dataset.tab).hidden=!active})};
 document.onkeydown=e=>{
   if(e.key==='Escape'){
@@ -216,6 +247,24 @@ async function removeSignup(s,role=null){
 }
 
 function drawModal(){const e=raids.find(r=>raidId(r)===modalId);if(!e)return;const host=$('modalBody');host.replaceChildren();const err=node('div','notice error');err.id='modalError';err.hidden=true;host.append(err);host.append(statusEl(coverage(e)));
+if(isCompletedRaid(e)){
+ const actualBox=node('section','people actual-responsibilities');
+ actualBox.append(node('h3','','Actual Raid Responsibilities'));
+ const record=actualFor(raidId(e));
+ const roles=node('div','actual-role-grid');
+ for(const [key,label] of [['rl','Raid Lead'],['ml','Master Looter']]){
+  const cell=node('div','actual-role-cell');
+  cell.append(node('div','small muted',label),node('strong','',actualRole(e,key)));
+  roles.append(cell);
+ }
+ actualBox.append(roles);
+ if(record?.confirmed_at){
+  const when=new Date(record.confirmed_at);
+  actualBox.append(node('div','small muted','Recorded '+(Number.isNaN(when.getTime())?'during raid log management':when.toLocaleString())));
+ }
+ actualBox.append(node('p','small muted','Actual roles are recorded or corrected through Raid Logs Management. Volunteer responses remain unchanged.'));
+ host.append(actualBox);
+}
 if(!modalMode){host.append(node('p','muted','What would you like to sign up for?'));const menu=node('div','role-menu');[['rl','Raid Lead'],['ml','Master Looter'],['absent','Absent']].forEach(([k,v])=>menu.append(makeBtn(v,()=>{modalMode=k;drawModal()})));host.append(menu)}else{host.append(makeBtn('← Back',()=>{modalMode=null;drawModal()}));const f=node('form');const w=node('div','field'),l=node('label','', 'Character / toon name'),name=node('input');name.required=true;name.maxLength=80;name.placeholder='Guild character name';name.autocomplete='off';w.append(l,name);f.append(w);
 if(modalMode==='absent')f.append(node('p','muted','Absent from this raid: both RL and ML responses will be set to Not available.'));
 else{f.append(node('h3','',modalMode==='rl'?'Raid Lead availability':'Master Looter availability'));CHOICES.forEach(c=>{const label=node('label','radio-choice'),radio=node('input');radio.type='radio';radio.name='preference';radio.value=c.value;const copy=node('span');copy.append(node('b','',c.label),node('small','',c.desc));label.append(radio,copy);f.append(label)})}
@@ -301,7 +350,7 @@ $('availabilityForm').onsubmit=async ev=>{
  if(response.error)return notice('Save failed: '+response.error.message,'error');
  resetAvailabilityEdit();await load();notice('Availability saved.','success');
 };
-function renderSummary(){const host=$('summaryRows');host.replaceChildren();for(const r of raids){const line=node('tr'),rl=roleInfo(raidId(r),'rl').replace(/^RL: /,''),ml=roleInfo(raidId(r),'ml').replace(/^ML: /,'');for(const value of [title(r),dateOnly(r.date),rl,ml,coverageText(coverage(r))])line.append(node('td','',value));host.append(line)}if(!raids.length){const row=node('tr'),cell=node('td','muted','No raid events for this month.');cell.colSpan=5;row.append(cell);host.append(row)}}
+function renderSummary(){const host=$('summaryRows');host.replaceChildren();for(const r of raids){const line=node('tr'),rl=roleInfo(raidId(r),'rl').replace(/^RL: /,''),ml=roleInfo(raidId(r),'ml').replace(/^ML: /,'');for(const value of [title(r),dateOnly(r.date),rl,ml,coverageText(coverage(r)),isCompletedRaid(r)?actualRole(r,'rl'):'—',isCompletedRaid(r)?actualRole(r,'ml'):'—'])line.append(node('td','',value));host.append(line)}if(!raids.length){const row=node('tr'),cell=node('td','muted','No raid events for this month.');cell.colSpan=7;row.append(cell);host.append(row)}}
 
 document.addEventListener('DOMContentLoaded', () => {
 
