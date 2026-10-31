@@ -35,10 +35,10 @@
     <button type="button" class="secondary" data-tab="activity">Website Activity</button>
   </nav>
   <section class="panel" data-panel="unlinked">
-    <div class="row"><div><h2>Members Needing Links</h2><p class="note">All Syndicate/New Syndicate Discord accounts from the latest full server sync. Members who have never visited the website are labeled Not Registered.</p></div><button class="secondary" id="sync-discord">Sync Discord Server</button><button class="secondary" id="reload-accounts">Refresh list</button></div>
-    <label for="unlinked-search">Filter accounts</label><input id="unlinked-search" placeholder="Server nickname or Discord username" autocomplete="off">
+    <div class="row"><div><h2>Members Needing Links</h2><p class="note">All Syndicate/New Syndicate Discord accounts from the latest full server sync. Members who have never visited the website can be preassigned a main; the assignment is not yet a confirmed claim.</p></div><button class="secondary" id="sync-discord">Sync Discord Server</button><button class="secondary" id="reload-accounts">Refresh list</button></div>
+    <div class="grid"><div><label for="unlinked-search">Find Discord account</label><input id="unlinked-search" placeholder="Server nickname or Discord username" autocomplete="off"></div><div><label for="registration-filter">Website Account</label><select id="registration-filter"><option value="all">All Discord members</option><option value="registered">Registered on website</option><option value="unregistered">Never logged in</option></select></div></div>
     <div id="unlinked-results" class="list" aria-live="polite"></div>
-    <div class="row"><button class="secondary" id="prev-accounts">Previous</button><span id="account-page" class="note">Page 1</span><button class="secondary" id="next-accounts">Next</button></div><p class="note">The full Discord directory is refreshed by Sync Discord Server. Accounts without a website login cannot be assigned through the existing link function yet.</p>
+    <div class="row"><button class="secondary" id="prev-accounts">Previous</button><span id="account-page" class="note">Page 1</span><button class="secondary" id="next-accounts">Next</button></div><p class="note">The full Discord directory is refreshed by Sync Discord Server. Use Link Main for any member. For members who have never logged in, the selection is saved as a preassignment awaiting account verification.</p>
     <div id="link-panel" class="clm-link hide">
       <h3>Link selected member</h3><div id="selected-account" class="note"></div>
       <label for="main-search">Search current guild mains</label><input id="main-search" placeholder="Type at least 2 characters" autocomplete="off">
@@ -69,7 +69,7 @@
   function debounce(fn){let t;return (...args)=>{clearTimeout(t);t=setTimeout(()=>fn(...args),300);};}
   async function rpc(name,args={}){const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message);return data||[];}
   function label(a){return a.server_nickname||a.discord_username||a.discord_id||'Unknown Discord account';}
-  function isUnlinked(a){return !a.linked_main;}
+  function isUnlinked(a){return !a.linked_main && !a.preassigned_main;}
   function stat(title,value){const x=node('div',undefined,'clm-stat');x.append(node('strong',value));x.append(node('span',title));return x;}
   function showTab(name){activeTab=name;document.querySelectorAll('[data-panel]').forEach(p=>p.classList.toggle('hide',p.dataset.panel!==name));document.querySelectorAll('[data-tab]').forEach(b=>{b.classList.toggle('active',b.dataset.tab===name);b.setAttribute('aria-pressed',String(b.dataset.tab===name));});if(name==='activity')loadActivity();}
   function makeButton(text,onClick,klass='secondary'){const b=node('button',text,klass);b.type='button';b.addEventListener('click',onClick);return b;}
@@ -83,18 +83,21 @@
       info.append(node('strong',name), node('div','@'+(a.discord_username||'unknown'),'small'));
       info.append(node('div', a.website_user_id ? 'Website account exists' : 'Not registered — never verified on website','small'));
       r.append(info);
-      if (a.website_user_id) {
+      if(a.preassigned_main){
+        const actions=node('div',undefined,'actions');
+        actions.append(node('span','Preassigned: '+a.preassigned_main+' · awaiting login','tag'));
+        actions.append(makeButton('Cancel',()=>act('syndicate_manager_cancel_preassignment',{p_assignment_id:a.preassignment_id},'Cancel preassignment of '+a.preassigned_main+' for '+name+'?'),'danger'));
+        r.append(actions);
+      } else {
         r.append(makeButton('Link Main',()=>{
           selectedAccount={...a,user_id:a.website_user_id};selectedMain=null;
           $('link-panel').classList.remove('hide');
-          $('selected-account').textContent=name+' · @'+(a.discord_username||'unknown');
+          $('selected-account').textContent=name+' · @'+(a.discord_username||'unknown')+' · '+(a.website_user_id?'Registered':'Preassignment — not yet registered');
           $('main-search').value='';clear($('main-results'));
           $('selection').textContent='Choose a main.';
           $('assign').disabled=true;
           $('link-panel').scrollIntoView({behavior:'smooth',block:'nearest'});
         }));
-      } else {
-        r.append(node('span','Awaiting first website login','tag'));
       }
       t.append(r);
     });
@@ -103,8 +106,8 @@
     $('next-accounts').disabled=accounts.length<ACCOUNT_PAGE_SIZE;
   }
   async function loadAccounts(){
-    accounts=await rpc('syndicate_manager_discord_roster',{
-      p_search:$('unlinked-search').value.trim(),p_unlinked_only:true,
+    accounts=await rpc('syndicate_manager_discord_roster_v2',{
+      p_search:$('unlinked-search').value.trim(),p_registration:$('registration-filter').value,
       p_limit:ACCOUNT_PAGE_SIZE,p_offset:accountOffset
     });
     renderAccounts();updateStats();
@@ -128,8 +131,9 @@
   document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>showTab(b.dataset.tab)));
   $('unlinked-search').addEventListener('input',debounce(()=>searchAccountsRemote().catch(e=>status(e.message,'err'))));
   $('main-search').addEventListener('input',debounce(searchMains));
+  $('registration-filter').addEventListener('change',()=>searchAccountsRemote().catch(e=>status(e.message,'err')));
   $('cancel-link').addEventListener('click',()=>$('link-panel').classList.add('hide'));
-  $('assign').addEventListener('click',()=>{if(selectedAccount&&selectedMain&&!selectedMain.linked_user_id)act('syndicate_assign_main',{p_user_id:selectedAccount.user_id,p_roster_character_id:selectedMain.roster_id},`Assign ${selectedMain.character_name} to ${label(selectedAccount)}?`);});
+  $('assign').addEventListener('click',()=>{if(!selectedAccount||!selectedMain||selectedMain.linked_user_id)return;const registered=Boolean(selectedAccount.website_user_id);act(registered?'syndicate_assign_main':'syndicate_manager_preassign_main',registered?{p_user_id:selectedAccount.website_user_id,p_roster_character_id:selectedMain.roster_id}:{p_discord_id:selectedAccount.discord_id,p_roster_character_id:selectedMain.roster_id},registered?`Assign ${selectedMain.character_name} to ${label(selectedAccount)}?`:`Preassign ${selectedMain.character_name} to ${label(selectedAccount)}? This will NOT confirm ownership until their account is verified.`);});
   $('prev-accounts').addEventListener('click',()=>{accountOffset=Math.max(0,accountOffset-ACCOUNT_PAGE_SIZE);loadAccounts().catch(e=>status(e.message,'err'));});
   $('next-accounts').addEventListener('click',()=>{accountOffset+=ACCOUNT_PAGE_SIZE;loadAccounts().catch(e=>status(e.message,'err'));});
   $('sync-discord').addEventListener('click',async()=>{
@@ -147,7 +151,7 @@
   });
   $('reload-accounts').addEventListener('click',()=>reload().then(()=>status('Refreshed.','ok')).catch(e=>status(e.message,'err')));
   $('period').addEventListener('change',loadActivity);
-  window.addEventListener('load',async()=>{try{db=window.syndicateDB;if(!db?.rpc)throw Error('Supabase client not found: expected window.syndicateDB.');const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Sign in through Discord to access this page.');await rpc('syndicate_manager_discord_roster',{p_search:'',p_unlinked_only:true,p_limit:1,p_offset:0});$('manager-ui').classList.remove('hide');showTab('unlinked');await reload();status('Connected. Manager permissions verified.','ok');}catch(e){status(e.message,'err');}});
+  window.addEventListener('load',async()=>{try{db=window.syndicateDB;if(!db?.rpc)throw Error('Supabase client not found: expected window.syndicateDB.');const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Sign in through Discord to access this page.');await rpc('syndicate_manager_discord_roster_v2',{p_search:'',p_registration:'all',p_limit:1,p_offset:0});$('manager-ui').classList.remove('hide');showTab('unlinked');await reload();status('Connected. Manager permissions verified.','ok');}catch(e){status(e.message,'err');}});
 })();
 </script>
 </body></html>
