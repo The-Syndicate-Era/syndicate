@@ -81,7 +81,27 @@
  async function confirmLink(){if(!chosenAccount||!chosenMain)return;const d=chosenAccount,m=chosenMain;if(m.roster_present){const registered=Boolean(d.website_user_id);await action(registered?'syndicate_assign_main':'syndicate_manager_preassign_main',registered?{p_user_id:d.website_user_id,p_roster_character_id:m.roster_id}:{p_discord_id:d.discord_id,p_roster_character_id:m.roster_id},`Link ${m.character_name} to ${label(d)}? ${registered?'This creates an approved current-main link.':'This creates a preassignment, not verified ownership.'}`)}else await action('syndicate_manager_link_former',{p_discord_id:d.discord_id,p_roster_character_id:m.roster_id},`Record ${m.character_name} as the former Syndicate main for ${label(d)}? This does not grant current guild access.`)}
  async function loadHistory(){clear('history-list');try{const rows=await rpc('syndicate_manager_claim_audit',{p_limit:50});if(!rows.length){$('history-list').append(create('div','No audit records.','empty'));return}rows.forEach(a=>{const r=create('div',undefined,'line');r.append(create('div',`${a.action} · ${a.character_name||'Unknown'}`,'name small'),create('div',`${a.actor_name||'Unknown'} · ${new Date(a.changed_at).toLocaleString()}`,'meta'));$('history-list').append(r)})}catch(e){$('history-list').append(create('div',e.message,'muted'))}}
  function refreshMetrics(){clear('metrics');const unresolvedCount=directory.filter(d=>d.association==='unlinked').length;const formerCount=directory.filter(d=>isFormer(d,suggestions.find(s=>s.discord_id===d.discord_id))).length;const metrics=[['Discord members',directory.length],['Linked / preassigned',directory.filter(d=>d.association!=='unlinked').length],['Suggestions',suggestions.length],['Ex-Syndicate review',formerCount]];metrics.forEach(([k,v])=>$('metrics').append(metric(k,v)))}
- async function refresh(){const [d,s,c,former]=await Promise.all([rpc('syndicate_manager_identity_directory'),rpc('syndicate_manager_identity_suggestions'),rpc('syndicate_manager_get_claims',{p_status:null}),rpc('syndicate_manager_former_link_ids')]);directory=d;suggestions=s;claims=c;formerIds=new Set(former.map(x=>x.claim_id));refreshMetrics();renderAttention();renderDirectory();loadHistory();if(activeTab==='activity')loadActivity()}
+ async function refresh(){
+  note('Loading member directory…');
+  const results=await Promise.allSettled([
+    rpc('syndicate_manager_identity_directory'),
+    rpc('syndicate_manager_identity_suggestions'),
+    rpc('syndicate_manager_get_claims',{p_status:null}),
+    rpc('syndicate_manager_former_link_ids')
+  ]);
+  const labels=['Member directory','Suggested matches','Claims','Former links'];
+  const failed=results.map((r,i)=>r.status==='rejected'?labels[i]+': '+r.reason.message:null).filter(Boolean);
+  if(results[0].status==='fulfilled') directory=results[0].value;
+  else directory=[];
+  suggestions=results[1].status==='fulfilled'?results[1].value:[];
+  claims=results[2].status==='fulfilled'?results[2].value:[];
+  formerIds=new Set((results[3].status==='fulfilled'?results[3].value:[]).map(x=>x.claim_id));
+  refreshMetrics();renderAttention();renderDirectory();
+  if(activeTab==='activity')loadActivity();
+  if(failed.length) note(failed.join(' | '),'err');
+  else note('Connected.','ok');
+  return failed.length===0;
+ }
  async function loadActivity(){try{activity=await rpc('syndicate_manager_website_activity',{p_days:Number($('period').value)});clear('activity-metrics');const total=activity.reduce((n,a)=>n+Number(a.visits||0),0);[['Visits',total],['Unique visitors',activity.length],['Active linked mains',activity.filter(a=>a.main_character).length],['Active-day maximum',Math.max(0,...activity.map(a=>Number(a.active_days||0)))]].forEach(([k,v])=>$('activity-metrics').append(metric(k,v)));clear('activity-list');const root=$('activity-list');if(!activity.length){root.append(create('div','No tracked sessions in this period. Confirm shared activity tracking is enabled.','empty'));return}const h=create('div',undefined,'activity-row head');['Main / Account','Visits','Days','Last seen'].forEach(x=>h.append(create('span',x)));root.append(h);activity.forEach(a=>{const r=create('div',undefined,'activity-row');const p=create('div');p.append(create('div',a.main_character||'Unlinked','name small'),create('div',a.discord_name||'Unknown','meta'));r.append(p,create('span',a.visits),create('span',a.active_days),create('span',a.last_seen?new Date(a.last_seen).toLocaleDateString():'—'));root.append(r)})}catch(e){note('Activity: '+e.message,'err')}}
  function exportCsv(){const vals=[['Discord nickname','Discord username','Website account','Association','Character','Former guild flag']];directoryRows().forEach(d=>vals.push([d.server_nickname||'',d.discord_username||'',d.website_user_id?'Yes':'No',d.association,d.character_name||'',isFormer(d,suggestions.find(s=>s.discord_id===d.discord_id))?'Review':'']));const csv=vals.map(r=>r.map(x=>'"'+String(x).replaceAll('"','""')+'"').join(',')).join('\r\n');const blob=new Blob([csv],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='syndicate-identity-directory.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)}
  function debounce(fn){let t;return ()=>{clearTimeout(t);t=setTimeout(fn,250)}}
@@ -92,7 +112,6 @@
  $('attention-refresh').onclick=$('directory-refresh').onclick=()=>refresh().then(()=>note('Refreshed.','ok')).catch(e=>note(e.message,'err'));
  $('directory-export').onclick=exportCsv;$('period').onchange=loadActivity;
  $('sync-discord').onclick=async()=>{if(!confirm('Refresh eligible Discord membership?'))return;const b=$('sync-discord');b.disabled=true;try{note('Syncing Discord…');const {data,error}=await db.functions.invoke('sync-syndicate-discord-roster',{body:{}});if(error)throw Error(error.message);if(!data?.success)throw Error(data?.error||'Sync failed');await refresh();note(`Synced ${data.eligible_members} eligible members.`,'ok')}catch(e){note(e.message,'err')}finally{b.disabled=false}};
- window.addEventListener('load',async()=>{try{db=window.syndicateDB;if(!db?.rpc)throw Error('Expected window.syndicateDB from shared config.');const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Sign in with Discord first.');await rpc('syndicate_manager_identity_directory');$('app').classList.remove('hide');show('attention');await refresh();note('Connected.','ok')}catch(e){note(e.message,'err')}});
+ window.addEventListener('load',async()=>{try{db=window.syndicateDB;if(!db?.rpc)throw Error('Expected window.syndicateDB from shared config.');const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Sign in with Discord first.');$('app').classList.remove('hide');show('attention');await refresh()}catch(e){note(e.message,'err')}});
 })();
 </script></body></html>
-
