@@ -4,7 +4,18 @@
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Identity Manager | The Syndicate</title>
 <link rel="stylesheet" href="../settings/styles.css">
-<style>html.syn-access-pending body>main,html.syn-access-pending #syndicate-footer{visibility:hidden}</style>
+<style>html.syn-access-pending body>main,html.syn-access-pending #syndicate-footer{visibility:hidden}/* Compact review dialog: never pushes the member list down the page. */
+.im .review-overlay{position:fixed;inset:0;z-index:9999;background:rgba(0,0,0,.78);display:flex;align-items:center;justify-content:center;padding:1rem;overflow-y:auto}
+.im .review-overlay.hide{display:none!important}
+.im .review-dialog{width:min(100%,570px);max-height:min(85vh,760px);overflow-y:auto;background:#201a12;border:1px solid #a28049;border-radius:10px;box-shadow:0 18px 65px #000c;padding:1.1rem 1.25rem;margin:auto}
+.im .review-dialog h2{font-size:1.15rem}
+.im .review-dialog #character-options{max-height:260px;overflow-y:auto;overscroll-behavior:contain;margin:.4rem 0}
+.im .review-dialog .choice{display:flex;align-items:center;justify-content:space-between;gap:.65rem;padding:.55rem 0;border-bottom:1px solid #493b27}
+.im .review-dialog .choice:last-child{border:0}
+.im .review-dialog .review-actions{display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;margin-top:.75rem}
+body.identity-review-open{overflow:hidden}
+@media(max-width:600px){.im .review-overlay{padding:.6rem}.im .review-dialog{max-height:90vh;padding:1rem}}
+</style>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="../settings/supabase-config.js" defer></script>
 <script src="../settings/auth.js" defer></script>
@@ -31,7 +42,7 @@
   <div class="space"><div><h2>Needs Attention</h2><p class="muted">Suggestions are based on names, not proof of ownership. Review before linking.</p></div><button id="sync-discord">Sync Discord</button></div>
   <div class="toolbar"><div><label for="attention-search">Find member or suggested main</label><input id="attention-search" placeholder="Search Discord, nickname or character"></div><div><label for="attention-filter">Review type</label><select id="attention-filter"><option value="all">All unresolved</option><option value="suggested">Suggested match</option><option value="former">Possible former Syndicate</option><option value="unmatched">No suggestion</option><option value="pending">Pending claim</option></select></div><button id="attention-refresh">Refresh</button></div>
   <div id="attention-list"></div><div id="attention-pages" class="pagebar"></div>
-  <div id="link-editor" class="sheet hide"><div class="space"><h2>Review character association</h2><button id="close-editor">Close</button></div><p id="editing-member" class="muted"></p><label for="character-search">Find a current main or former character</label><input id="character-search" placeholder="Search by character name (2+ letters)"><div id="character-options"></div><div id="chosen-main" class="muted">Select a character.</div><div class="flex"><button class="primary" id="confirm-link" disabled>Confirm association</button><span class="muted small">Former character links record history; they do not grant current guild access.</span></div></div>
+  <div id="link-editor" class="review-overlay hide" aria-hidden="true"><div class="review-dialog" role="dialog" aria-modal="true" aria-labelledby="review-title"><div class="space"><h2 id="review-title">Review character association</h2><button id="close-editor" type="button">Close</button></div><p id="editing-member" class="muted"></p><label for="character-search">Find a current main or former character</label><input id="character-search" placeholder="Search by character name (2+ letters)" autocomplete="off"><div id="character-options"></div><div id="chosen-main" class="muted">Select a character.</div><div class="review-actions"><button class="primary" id="confirm-link" disabled>Confirm association</button></div><p class="muted small">Former character links record history; they do not grant current guild access.</p></div></div>
  </section>
  <section class="panel hide" data-section="directory">
   <div class="space"><div><h2>Member Directory</h2><p class="muted">All eligible Discord accounts, including those without a website login.</p></div><button id="directory-refresh">Refresh</button></div>
@@ -48,7 +59,7 @@
 <script>
 (()=>{'use strict';
  const $=id=>document.getElementById(id);const create=(tag,txt,cls)=>{const el=document.createElement(tag);if(txt!==undefined)el.textContent=String(txt);if(cls)el.className=cls;return el};const clear=id=>$(id).replaceChildren();
- let db, directory=[],suggestions=[],claims=[],formerIds=new Set(),activeTab='attention',chosenAccount=null,chosenMain=null,attentionPage=0,directoryPage=0,activity=[];const PAGE=20;
+ let lastReviewTrigger=null;let db, directory=[],suggestions=[],claims=[],formerIds=new Set(),activeTab='attention',chosenAccount=null,chosenMain=null,attentionPage=0,directoryPage=0,activity=[];const PAGE=20;
  const note=(msg,cls='')=>{$('notice').textContent=msg;$('notice').className='notice '+cls};const label=a=>a.server_nickname||a.discord_username||a.discord_id;
  const rpc=async(n,a={})=>{const {data,error}=await db.rpc(n,a);if(error)throw Error(error.message);return data||[]};
  const btn=(txt,cb,cls='')=>{const b=create('button',txt,cls);b.type='button';b.onclick=cb;return b};
@@ -75,9 +86,27 @@
    const actions=create('div',undefined,'controls');if(d.association==='unlinked')actions.append(btn('Link',()=>openEditor(d,s)));else if(d.association==='preassigned')actions.append(btn('Cancel',()=>action('syndicate_manager_cancel_preassignment',{p_assignment_id:d.preassignment_id},'Cancel preassignment for '+label(d)+'?')));else if(d.association==='former_confirmed')actions.append(btn('Remove',()=>action('syndicate_manager_unlink_former',{p_link_id:d.former_link_id},'Remove historical association for '+label(d)+'?')));else if(d.association==='approved')actions.append(btn('Unlink',()=>{const reason=prompt('Reason for unlink (Cancel to stop):');if(reason!==null)action('syndicate_unlink_main',{p_claim_id:d.claim_id,p_reason:reason},'Unlink '+label(d)+'?')}));r.append(who,mid,actions);root.append(r)});
   pages('directory-pages',rows.length,directoryPage,p=>{directoryPage=p;renderDirectory()});
  }
- function openEditor(d,s){chosenAccount=d;chosenMain=null;$('link-editor').classList.remove('hide');$('editing-member').textContent=label(d)+' · '+(d.website_user_id?'Website account exists':'No website account — Discord preassignment');$('character-search').value='';clear('character-options');$('chosen-main').textContent='Select a character.';$('confirm-link').disabled=true;if(s){$('character-search').value=s.suggested_main;lookupCharacters()}$('link-editor').scrollIntoView({behavior:'smooth',block:'nearest'});show('attention')}
+ function closeEditor(){
+  $('link-editor').classList.add('hide');$('link-editor').setAttribute('aria-hidden','true');
+  document.body.classList.remove('identity-review-open');
+  chosenAccount=null;chosenMain=null;
+  if(lastReviewTrigger?.isConnected)lastReviewTrigger.focus({preventScroll:true});
+  lastReviewTrigger=null;
+ }
+ function openEditor(d,s){
+  lastReviewTrigger=document.activeElement;
+  chosenAccount=d;chosenMain=null;
+  $('editing-member').textContent=label(d)+' · '+(d.website_user_id?'Website account exists':'No website account — Discord preassignment');
+  $('character-search').value='';clear('character-options');
+  $('chosen-main').textContent='Select a character.';$('confirm-link').disabled=true;
+  show('attention');
+  $('link-editor').classList.remove('hide');$('link-editor').setAttribute('aria-hidden','false');
+  document.body.classList.add('identity-review-open');
+  if(s){$('character-search').value=s.suggested_main;lookupCharacters()}
+  $('character-search').focus({preventScroll:true});
+ }
  async function lookupCharacters(){const q=$('character-search').value.trim();chosenMain=null;$('confirm-link').disabled=true;clear('character-options');if(q.length<2)return;const t=$('character-options');try{const res=await rpc('syndicate_manager_identity_find_mains',{p_search:q});if(!res.length){t.append(create('div','No matching current mains or former characters found.','empty'));return}res.forEach(m=>{const el=create('div',undefined,'choice');const info=create('div');info.append(create('div',m.character_name,'name'),create('div',(m.roster_present?'Current Syndicate':'Former Syndicate')+(m.left_guild_date?' · left '+m.left_guild_date:''),'meta'));const choose=btn('Select',()=>{chosenMain=m;$('chosen-main').textContent='Selected '+m.character_name+(m.roster_present?' · current main':' · former character (historical link)');$('confirm-link').disabled=false});choose.disabled=Boolean(m.already_taken);if(m.already_taken)info.append(pill('Already assigned','warn'));el.append(info,choose);t.append(el)})}catch(e){note(e.message,'err')}}
- async function action(name,args,confirmation){if(!confirm(confirmation))return;try{note('Saving…');await rpc(name,args);$('link-editor').classList.add('hide');chosenAccount=null;chosenMain=null;await refresh();note('Saved successfully.','ok')}catch(e){note(e.message,'err')}}
+ async function action(name,args,confirmation){if(!confirm(confirmation))return;try{note('Saving…');await rpc(name,args);closeEditor();await refresh();note('Saved successfully.','ok')}catch(e){note(e.message,'err')}}
  async function confirmLink(){if(!chosenAccount||!chosenMain)return;const d=chosenAccount,m=chosenMain;if(m.roster_present){const registered=Boolean(d.website_user_id);await action(registered?'syndicate_assign_main':'syndicate_manager_preassign_main',registered?{p_user_id:d.website_user_id,p_roster_character_id:m.roster_id}:{p_discord_id:d.discord_id,p_roster_character_id:m.roster_id},`Link ${m.character_name} to ${label(d)}? ${registered?'This creates an approved current-main link.':'This creates a preassignment, not verified ownership.'}`)}else await action('syndicate_manager_link_former',{p_discord_id:d.discord_id,p_roster_character_id:m.roster_id},`Record ${m.character_name} as a former Syndicate character associated with ${label(d)}? This does not grant current guild access.`)}
  async function loadHistory(){clear('history-list');try{const rows=await rpc('syndicate_manager_claim_audit',{p_limit:50});if(!rows.length){$('history-list').append(create('div','No audit records.','empty'));return}rows.forEach(a=>{const r=create('div',undefined,'line');r.append(create('div',`${a.action} · ${a.character_name||'Unknown'}`,'name small'),create('div',`${a.actor_name||'Unknown'} · ${new Date(a.changed_at).toLocaleString()}`,'meta'));$('history-list').append(r)})}catch(e){$('history-list').append(create('div',e.message,'muted'))}}
  function refreshMetrics(){clear('metrics');const unresolvedCount=directory.filter(d=>d.association==='unlinked').length;const formerCount=directory.filter(d=>isFormer(d,suggestions.find(s=>s.discord_id===d.discord_id))).length;const metrics=[['Discord members',directory.length],['Linked / preassigned',directory.filter(d=>d.association!=='unlinked').length],['Suggestions',suggestions.length],['Ex-Syndicate review',formerCount]];metrics.forEach(([k,v])=>$('metrics').append(metric(k,v)))}
@@ -108,7 +137,9 @@
  document.querySelectorAll('[data-tab]').forEach(b=>b.addEventListener('click',()=>show(b.dataset.tab)));
  $('attention-search').addEventListener('input',debounce(()=>{attentionPage=0;renderAttention()}));$('attention-filter').addEventListener('change',()=>{attentionPage=0;renderAttention()});
  $('directory-search').addEventListener('input',debounce(()=>{directoryPage=0;renderDirectory()}));$('directory-filter').addEventListener('change',()=>{directoryPage=0;renderDirectory()});
- $('character-search').addEventListener('input',debounce(lookupCharacters));$('confirm-link').addEventListener('click',confirmLink);$('close-editor').addEventListener('click',()=>$('link-editor').classList.add('hide'));
+ $('character-search').addEventListener('input',debounce(lookupCharacters));$('confirm-link').addEventListener('click',confirmLink);$('close-editor').addEventListener('click',closeEditor);
+ $('link-editor').addEventListener('click',e=>{if(e.target===$('link-editor'))closeEditor()});
+ document.addEventListener('keydown',e=>{if($('link-editor').classList.contains('hide'))return;if(e.key==='Escape'){e.preventDefault();closeEditor()}else if(e.key==='Tab'){const controls=[...$('link-editor').querySelectorAll('button:not([disabled]),input:not([disabled])')].filter(x=>x.getClientRects().length);if(!controls.length)return;const first=controls[0],last=controls[controls.length-1];if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus()}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus()}}});
  $('attention-refresh').onclick=$('directory-refresh').onclick=()=>refresh().then(()=>note('Refreshed.','ok')).catch(e=>note(e.message,'err'));
  $('directory-export').onclick=exportCsv;$('period').onchange=loadActivity;
  $('sync-discord').onclick=async()=>{if(!confirm('Refresh eligible Discord membership?'))return;const b=$('sync-discord');b.disabled=true;try{note('Syncing Discord…');const {data,error}=await db.functions.invoke('sync-syndicate-discord-roster',{body:{}});if(error)throw Error(error.message);if(!data?.success)throw Error(data?.error||'Sync failed');await refresh();note(`Synced ${data.eligible_members} eligible members.`,'ok')}catch(e){note(e.message,'err')}finally{b.disabled=false}};
