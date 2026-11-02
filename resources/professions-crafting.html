@@ -1166,6 +1166,12 @@ main { padding-top: 1.7rem; }
 .crafting-message {min-height:1.5em;color:#dcc796;margin-top:12px;}
 .crafting-message.error {color:#efa4a4;}.crafting-message.success {color:#a9d8b1;}
 .crafting-hidden {display:none!important;}
+.crafting-profile-prompt {margin:12px 0 4px;padding:20px;border:1px solid #886c37;border-radius:9px;background:linear-gradient(135deg,#292014,#14110d);}
+.crafting-profile-prompt h3 {margin:0 0 9px;color:#e7c976;font-family:var(--font-heading);font-size:1.25rem;}
+.crafting-profile-prompt p {margin:0 0 13px;color:#d8cbb4;line-height:1.6;}
+.crafting-profile-prompt .crafting-profile-note {font-size:.85rem;color:#b8a78c;margin-top:11px;margin-bottom:0;}
+.crafting-profile-prompt button {max-width:100%;}
+.crafting-profile-prompt .crafting-friend-hint {margin-top:12px;font-size:.9rem;}
 .crafting-detail-main {font-size:.88rem;color:#bcae94;}
 /* Organized collapsible equipment/type sections */
 .crafting-recipe-group{background:#15110d;border:1px solid #66512b;border-radius:8px;overflow:hidden;flex:0 0 auto;}
@@ -1398,7 +1404,16 @@ main { padding-top: 1.7rem; }
           <button type="button" data-mode="mine" aria-pressed="true">My Characters</button>
           <button type="button" data-mode="friend" aria-pressed="false">Help a Friend</button>
         </div>
-        <div class="crafting-form-group" id="myCharacterGroup"><label for="craftCharacter">My main & alts</label><select id="craftCharacter"></select></div>
+        <div class="crafting-form-group" id="myCharacterGroup">
+          <div id="craftLinkedCharacters"><label for="craftCharacter">My main & alts</label><select id="craftCharacter"></select></div>
+          <section id="craftProfilePrompt" class="crafting-profile-prompt crafting-hidden" aria-label="Connect your characters">
+            <h3>Connect Your Characters</h3>
+            <p>Your Discord account isn't linked to a Syndicate main yet. Link your main to automatically find your alts and manage their known recipes.</p>
+            <button id="craftOpenProfile" class="syndicate-wow-button" type="button">Set Up My Profile</button>
+            <p class="crafting-profile-note">This only connects your website profile. It doesn't change your official guild main.</p>
+            <p class="crafting-friend-hint">Helping another guild member? Select <strong>Help a Friend</strong> above. You can add recipes without linking your own main.</p>
+          </section>
+        </div>
         <div class="crafting-form-group crafting-hidden" id="friendCharacterGroup">
           <label for="friendSearch">Find a current Syndicate character</label><input type="search" id="friendSearch" placeholder="Type at least 2 characters...">
           <select id="friendCharacter" aria-label="Matching guild characters"><option value="">Search for a guild character...</option></select>
@@ -1432,6 +1447,7 @@ main { padding-top: 1.7rem; }
 'use strict';
 let db, rareItems=[],characterItems=[],guildRoster=[],itemsWithCrafters=[],ownCharacters=[],canEdit=false,linkedMainId=null;
 let selectedProfession='',availability='all',mode='mine',savedIds=new Set(),draftIds=new Set(),delta=null,friendTimer=null;
+let pendingProfileSetup=false;
 const $ = id => document.getElementById(id);
 const clean = v => String(v??'').trim();
 const norm = v => clean(v).toLocaleLowerCase();
@@ -1457,8 +1473,8 @@ async function initAccess(){
     ownCharacters=Array.isArray(data)?data:[];canEdit=true;
     linkedMainId=Number(ownCharacters.find(c=>c.is_main)?.id)||null;
     $('addCraftButton').classList.remove('crafting-hidden');
-    if(ownCharacters.length) $('availabilityFilters').querySelector('[data-availability=mine]').classList.remove('crafting-hidden');
-  } catch(e){canEdit=false;ownCharacters=[];console.info('Crafting editor disabled for visitor:',e.message);}
+    $('availabilityFilters').querySelector('[data-availability=mine]').classList.toggle('crafting-hidden',!ownCharacters.length);
+  } catch(e){canEdit=false;ownCharacters=[];linkedMainId=null;$('addCraftButton').classList.add('crafting-hidden');$('availabilityFilters').querySelector('[data-availability=mine]').classList.add('crafting-hidden');console.info('Crafting editor disabled for visitor:',e.message);}
 }
 // Fetch every page: Supabase PostgREST often caps each response at 1,000 records.
 // Without pagination, craft associations and roster members beyond the cap go missing.
@@ -1518,7 +1534,7 @@ function openItem(i){$('detailTitle').textContent=i.item_name;$('detailBadges').
  const link=$('sourceLink');if(/^https:\/\//i.test(clean(i.source_url))){link.href=i.source_url;link.hidden=false;link.style.display='inline-block';}else{link.hidden=true;link.style.display='none';}
  showModal($('detailBackdrop'));}
 function activeCharacterId(){return Number(mode==='mine'?$('craftCharacter').value:$('friendCharacter').value)||null;}
-function renderCharacters(){const s=$('craftCharacter');s.innerHTML=ownCharacters.length?ownCharacters.map(c=>`<option value="${Number(c.id)}">${escapeHTML(c.name)} · ${c.is_main?'Main':'Alt'}</option>`).join(''):'<option value="">No linked characters — set up My Profile</option>';if(linkedMainId)s.value=String(linkedMainId);}
+function renderCharacters(){const linked=ownCharacters.length>0; $('craftLinkedCharacters').classList.toggle('crafting-hidden',!linked);$('craftProfilePrompt').classList.toggle('crafting-hidden',linked);const s=$('craftCharacter');s.innerHTML=ownCharacters.length?ownCharacters.map(c=>`<option value="${Number(c.id)}">${escapeHTML(c.name)} · ${c.is_main?'Main':'Alt'}</option>`).join(''):'<option value="">No linked characters — set up My Profile</option>';if(linkedMainId)s.value=String(linkedMainId);}
 function setMode(next){mode=next;document.querySelectorAll('[data-mode]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.mode===mode)));
  $('myCharacterGroup').classList.toggle('crafting-hidden',mode!=='mine');$('friendCharacterGroup').classList.toggle('crafting-hidden',mode!=='friend');$('craftItemList').innerHTML='';$('craftProfession').value='';savedIds=new Set();draftIds=new Set();message('');$('craftRecipeHint').textContent='Choose a character and profession to see saved recipes.';}
 async function searchFriend(){const q=clean($('friendSearch').value),s=$('friendCharacter');s.innerHTML='<option value="">Search for a guild character...</option>';if(q.length<2)return;
@@ -1577,11 +1593,33 @@ async function save(){if(!delta)return;const btn=$('submitCraft');btn.disabled=t
  await loadData();$('craftReviewMessage').textContent='Crafts updated successfully.';setTimeout(()=>{hideModal($('addCraftBackdrop'));$('craftEditor').classList.remove('crafting-hidden');$('craftReview').classList.add('crafting-hidden');},650);
  }catch(e){$('craftReviewMessage').textContent=e.message||'Unable to save. Please try again.';}finally{btn.disabled=false;btn.textContent='Confirm & Save';}}
 function openEditor(){if(!canEdit)return;mode='mine';renderCharacters();populateEditorProfessions();setMode('mine');$('craftReview').classList.add('crafting-hidden');$('craftEditor').classList.remove('crafting-hidden');showModal($('addCraftBackdrop'));}
+function openProfileFromCrafting(){
+  const link=document.querySelector('.syn-account__profile-link');
+  // Use the shared menu's own profile drawer; never duplicate authentication logic.
+  if(link && !link.hidden){
+    pendingProfileSetup=true;
+    hideModal($('addCraftBackdrop'));
+    link.click();
+    const drawer=document.querySelector('.syn-profile-drawer');
+    if(!drawer || drawer.hidden){pendingProfileSetup=false;window.location.href=new URL('../guild/my-profile.html',location.href).href;return;}
+    const observer=new MutationObserver(async()=>{
+      if(!drawer.hidden || !pendingProfileSetup)return;
+      pendingProfileSetup=false;observer.disconnect();
+      await initAccess();renderCharacters();renderResults();
+      if(canEdit)openEditor();
+    });
+    observer.observe(drawer,{attributes:true,attributeFilter:['hidden']});
+  }else{
+    window.location.href=new URL('../guild/my-profile.html',location.href).href;
+  }
+}
+
 function bind(){
  $('searchInput').addEventListener('input',renderResults);$('clearSearchButton').addEventListener('click',()=>{$('searchInput').value='';$('professionFilter').value='';$('categoryFilter').value='';selectedProfession='';availability='all';document.querySelectorAll('[data-availability]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.availability==='all')));populateCategories();renderProfessionButtons();renderResults();$('searchInput').focus();});
  $('professionFilter').addEventListener('change',()=>{selectedProfession=$('professionFilter').value;populateCategories();renderProfessionButtons();renderResults();});$('categoryFilter').addEventListener('change',renderResults);$('showInactive').addEventListener('change',renderResults);
  document.querySelectorAll('[data-availability]').forEach(b=>b.addEventListener('click',()=>{availability=b.dataset.availability;document.querySelectorAll('[data-availability]').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));renderResults();}));
  $('closeDetail').addEventListener('click',()=>hideModal($('detailBackdrop')));$('detailBackdrop').addEventListener('click',e=>{if(e.target===$('detailBackdrop'))hideModal($('detailBackdrop'));});
+ $('craftOpenProfile').addEventListener('click',openProfileFromCrafting);
  $('addCraftButton').addEventListener('click',openEditor);$('closeAddCraft').addEventListener('click',()=>hideModal($('addCraftBackdrop')));$('cancelCraft').addEventListener('click',()=>hideModal($('addCraftBackdrop')));$('addCraftBackdrop').addEventListener('click',e=>{if(e.target===$('addCraftBackdrop'))hideModal($('addCraftBackdrop'));});
  document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>setMode(b.dataset.mode)));$('craftCharacter').addEventListener('change',recipeOptions);$('friendCharacter').addEventListener('change',recipeOptions);$('craftProfession').addEventListener('change',recipeOptions);
  $('friendSearch').addEventListener('input',()=>{clearTimeout(friendTimer);friendTimer=setTimeout(searchFriend,250);});$('reviewCraft').addEventListener('click',review);$('backToCraft').addEventListener('click',()=>{$('craftReview').classList.add('crafting-hidden');$('craftEditor').classList.remove('crafting-hidden');});$('submitCraft').addEventListener('click',save);
