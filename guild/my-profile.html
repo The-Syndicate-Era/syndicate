@@ -1,6 +1,6 @@
 <!DOCTYPE html>
-<html lang="en" class="syn-access-pending">
-  <head>
+<html lang="en">
+<head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Profile | The Syndicate</title>
 <script>if(new URLSearchParams(location.search).has('embed'))document.documentElement.classList.add('syn-profile-embed');</script>
@@ -31,12 +31,13 @@
   <div id="profile-content" class="hide">
     <section class="panel"><div class="row"><div class="row" style="justify-content:flex-start"><div class="avatar" aria-hidden="true">⚓</div><div><h2 id="greeting">Welcome aboard!</h2><div class="muted" id="discord-name"></div></div></div><span class="badge">Discord connected</span></div></section>
     <section id="guild-panel" class="panel hide">
-      <h2>My Syndicate Main</h2><p class="muted" id="guild-hint">Your main character links your Discord identity to our guild roster.</p>
-      <div id="linked-main" class="hide"><div class="row"><div><strong id="linked-name" style="color:#edd08a;font-size:1.25rem"></strong><div class="muted">Confirmed main · The Syndicate</div></div><span class="badge">Linked</span></div><p class="muted">Need to change mains? Ask a Website Manager to update your association.</p></div>
-      <div id="pending-main" class="hide"><div class="note">Your request for <strong id="pending-name"></strong> is awaiting review.</div></div>
-      <div id="preassigned" class="hide"><div class="note"><strong id="preassigned-name"></strong> has been suggested for you by a Website Manager. Is that your main?</div><div class="actions"><button id="confirm-pre" class="primary" type="button">Yes, that's my main</button><button id="different-pre" type="button" class="subtle">That's not my main</button></div></div>
-      <div id="guild-search" class="hide"><label for="search-main">Search guild main characters</label><input id="search-main" autocomplete="off" placeholder="Type 2+ letters…"><div id="search-results" class="choices"></div><p class="muted">Choosing an unassigned main sends a request for review. It won't change an existing link automatically.</p></div>
+      <h2>My Syndicate Main</h2><p class="muted" id="guild-hint">Connect your Discord account to your main and alts in The Syndicate guild roster. This only updates your website identity.</p>
+      <div id="linked-main" class="hide"><div class="row"><div><strong id="linked-name" style="color:#edd08a;font-size:1.25rem"></strong><div class="muted">Confirmed main · The Syndicate</div></div><span class="badge">Linked</span></div><div class="actions"><button id="change-linked-main" type="button" class="subtle">Change Linked Main</button></div></div>
+      <div id="pending-main" class="hide"><div class="note">Your previous request for <strong id="pending-name"></strong> is awaiting review. You can select a linked main yourself below.</div></div>
+      <div id="preassigned" class="hide"><div class="note"><strong id="preassigned-name"></strong> was suggested for your Discord account. Is that your main?</div><div class="actions"><button id="confirm-pre" class="primary" type="button">Yes, that's my main</button><button id="different-pre" type="button" class="subtle">That's not my main</button></div></div>
+      <div id="guild-search" class="hide"><label for="search-main">Search guild main characters</label><input id="search-main" autocomplete="off" placeholder="Type 2+ letters…"><div id="search-results" class="choices"></div><p class="muted">Selecting a main links it to your Discord account on the website. It does not change the guild roster.</p></div>
     </section>
+    <section id="website-note" class="panel"><strong style="color:#e1c378">Website Linking Only</strong><p class="muted" style="margin:.55rem 0 0">Changing your linked main here only updates your website profile. To officially change your main in The Syndicate guild roster, speak with an officer.</p></section>
     <section id="outside-panel" class="panel hide"><h2>My Character</h2><p class="muted">For our PUGs, friends, and partner guild raiders. You don't need a Syndicate guild role to add your character.</p>
       <form id="outside-form"><label for="outside-name">Character name</label><input id="outside-name" minlength="2" maxlength="24" pattern="[A-Za-zÀ-ÿ]+" autocomplete="off" required placeholder="Your character name">
         <div class="two"><div><label for="outside-class">Class</label><select id="outside-class" required><option value="">Choose class</option><option>Warrior</option><option>Paladin</option><option>Hunter</option><option>Rogue</option><option>Priest</option><option>Shaman</option><option>Mage</option><option>Warlock</option><option>Druid</option></select></div><div><label for="outside-realm">Realm</label><select id="outside-realm"><option>Mankrik</option><option>Ashkandi</option><option>Pagle</option><option>Other</option></select></div></div>
@@ -52,7 +53,7 @@
  'use strict';
  const $ = id => document.getElementById(id);
  const show=(id,on=true)=>$(id).classList.toggle('hide',!on);
- let db,profile,searchTimer,working=false;
+ let db,profile,searchTimer,working=false,changingMain=false;
  const rpc=async(name,args={})=>{const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message);return data};
  const msg=(message,kind='')=>{const el=$('message');el.textContent=message;el.className='note '+kind;show('message',!!message)};
  const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n};
@@ -65,11 +66,14 @@
   if(profile.account_type==='syndicate'){
     show('linked-main',!!profile.main_name);show('pending-main',!profile.main_name&&!!profile.pending_name);
     show('preassigned',!profile.main_name&&!profile.pending_name&&!!profile.preassigned_id);
-    show('guild-search',!profile.main_name&&!profile.pending_name&&!profile.preassigned_id);
+    show('guild-search',changingMain||(!profile.main_name&&!profile.preassigned_id));
+    show('website-note',true);
+    $('change-linked-main').textContent=changingMain?'Cancel Change':'Change Linked Main';
     $('linked-name').textContent=profile.main_name||'';
     $('pending-name').textContent=profile.pending_name||'';
     $('preassigned-name').textContent=profile.preassigned_name||'';
   }else{
+    show('website-note',false);
     $('outside-name').value=profile.outside_character||'';
     $('outside-class').value=profile.outside_class||'';
     const known=['Mankrik','Ashkandi','Pagle'];const realm=profile.outside_realm||'Mankrik';
@@ -82,7 +86,7 @@
    if(!new URLSearchParams(location.search).has('welcome'))return;
    const needed=await rpc('syndicate_profile_welcome_needed');if(!needed)return;
    $('welcome-desc').textContent=profile.account_type==='syndicate'?
-     (profile.preassigned_name?'We found '+profile.preassigned_name+' as a suggested main. Confirm it or choose another.':'Want to connect your main character to your profile?'):
+     (profile.preassigned_name?'We found '+profile.preassigned_name+' as a suggested main for your website identity. Confirm it or choose another.':'Want to link your Discord account to your main character?'):
      'Add your WoW character, class, realm, and guild if you have one. You can do this later.';
    $('start-setup').textContent=profile.account_type==='syndicate'?'Choose my main':'Add my character';
    show('welcome-modal');$('start-setup').focus();
@@ -91,7 +95,8 @@
  $('later').onclick=()=>dismiss(true);$('close-welcome').onclick=()=>dismiss(true);
  $('start-setup').onclick=()=>dismiss(false);
  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('welcome-modal').classList.contains('hide'))dismiss(true)});
- $('different-pre').onclick=()=>{msg('A different main needs Website Manager review. Your reserved character has not been changed.','');};
+ $('different-pre').onclick=()=>{changingMain=true;show('guild-search');$('search-main').focus();msg('Search for the main you want to link. Your suggested character will be replaced when you confirm.');};
+ $('change-linked-main').onclick=()=>{changingMain=!changingMain;show('guild-search',changingMain);$('change-linked-main').textContent=changingMain?'Cancel Change':'Change Linked Main';if(changingMain)$('search-main').focus();};
  $('confirm-pre').onclick=async()=>{
    if(working||!confirm('Confirm that '+profile.preassigned_name+' is your Syndicate main?'))return;
    working=true;$('confirm-pre').disabled=true;
@@ -106,9 +111,9 @@
     if(!rows?.length){root.append(make('p','No current mains found.','muted'));return}
     rows.forEach(m=>{const line=make('div',undefined,'choice'),info=make('div');
       info.append(make('strong',m.character_name),make('div',m.character_class||'','muted'));
-      const button=make('button',m.available?'Request link':'Unavailable');button.type='button';button.disabled=!m.available;
-      button.onclick=async()=>{if(!confirm('Request '+m.character_name+' as your main?'))return;
-        button.disabled=true;try{await rpc('syndicate_claim_main',{p_roster_character_id:m.roster_id});await load();msg('Your main request was sent for review.','ok')}
+      const button=make('button',m.available?'Link Character':'Unavailable');button.type='button';button.disabled=!m.available;
+      button.onclick=async()=>{if(!confirm('Link '+m.character_name+' to your Discord account as your website main? This does not change your in-game guild main.'))return;
+        button.disabled=true;try{await rpc('syndicate_profile_set_linked_main',{p_roster_character_id:m.roster_id});changingMain=false;await load();msg('Linked main updated successfully!','ok')}
         catch(e){msg(e.message,'error');button.disabled=false}};
       line.append(info,button);root.append(line)})
   }catch(e){msg(e.message,'error')}
