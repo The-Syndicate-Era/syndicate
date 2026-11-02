@@ -1460,10 +1460,27 @@ async function initAccess(){
     if(ownCharacters.length) $('availabilityFilters').querySelector('[data-availability=mine]').classList.remove('crafting-hidden');
   } catch(e){canEdit=false;ownCharacters=[];console.info('Crafting editor disabled for visitor:',e.message);}
 }
+// Fetch every page: Supabase PostgREST often caps each response at 1,000 records.
+// Without pagination, craft associations and roster members beyond the cap go missing.
+async function fetchAllRows(table,orderColumns){
+ const pageSize=500,all=[];
+ for(let start=0;;start+=pageSize){
+  let query=db.from(table).select('*');
+  for(const column of orderColumns)query=query.order(column,{ascending:true});
+  const {data,error}=await query.range(start,start+pageSize-1);
+  if(error)throw error;
+  const rows=data||[];all.push(...rows);
+  if(rows.length<pageSize)break;
+ }
+ return all;
+}
 async function loadData(){
- const [r,c,g]=await Promise.all([db.from('rare_items').select('*'),db.from('character_items').select('*'),db.from('guild_roster').select('*')]);
- const error=r.error||c.error||g.error;if(error)throw error;
- rareItems=r.data||[];characterItems=c.data||[];guildRoster=g.data||[];
+ const [r,c,g]=await Promise.all([
+  fetchAllRows('rare_items',['id']),
+  fetchAllRows('character_items',['character_id','item_id']),
+  fetchAllRows('guild_roster',['id'])
+ ]);
+ rareItems=r;characterItems=c;guildRoster=g;
  mainRankMap=new Map(guildRoster.filter(x=>norm(x['Main/Alt'])==='main'&&current(x)).map(c=>[norm(characterName(c)),clean(c.Rank)]));
  const rosterById=new Map(guildRoster.map(x=>[Number(x.id),x]));
  const itemMap=new Map();for(const x of characterItems){const ch=rosterById.get(Number(x.character_id));if(!ch)continue;const id=Number(x.item_id);if(!itemMap.has(id))itemMap.set(id,[]);itemMap.get(id).push(ch);}
