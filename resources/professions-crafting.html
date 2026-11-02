@@ -1154,7 +1154,7 @@ main { padding-top: 1.7rem; }
 .crafting-mode {display:flex;gap:8px;flex-wrap:wrap;}
 .crafting-mode button {flex:1; padding:11px;background:#1d1912;color:#e3d4b5;border:1px solid #5c492c;border-radius:7px;}
 .crafting-mode button[aria-pressed=true] {border-color:#e8c965;background:#423215;color:#fff0c2;}
-.crafting-recipes {display:grid;grid-template-columns:1fr; gap:7px; max-height:310px;overflow-y:auto;padding:5px 2px;}
+.crafting-recipes {display:flex;flex-direction:column;gap:9px;max-height:460px;overflow-y:auto;padding:5px 4px;}
 .crafting-recipe {display:flex; align-items:center; gap:10px; padding:11px;background:#1c1812;border:1px solid #443821;border-radius:7px;color:#efe1c5;}
 .crafting-recipe input {accent-color:#d4af37;}
 .crafting-recipe.saved {border-color:#73602f;}
@@ -1167,7 +1167,18 @@ main { padding-top: 1.7rem; }
 .crafting-message.error {color:#efa4a4;}.crafting-message.success {color:#a9d8b1;}
 .crafting-hidden {display:none!important;}
 .crafting-detail-main {font-size:.88rem;color:#bcae94;}
-@media(min-width:760px) {.crafting-recipes {grid-template-columns:repeat(2,minmax(0,1fr));} }
+/* Organized collapsible equipment/type sections */
+.crafting-recipe-group{background:#15110d;border:1px solid #66512b;border-radius:8px;overflow:hidden;flex:0 0 auto;}
+.crafting-recipe-group>summary{display:flex;justify-content:space-between;align-items:center;gap:12px;cursor:pointer;padding:13px 16px;color:#f0d58c;font-weight:700;list-style:none;background:#292012;}
+.crafting-recipe-group>summary::-webkit-details-marker{display:none;}
+.crafting-recipe-group>summary:before{content:"▸";color:#d4af37;margin-right:4px;}
+.crafting-recipe-group[open]>summary:before{content:"▾";}
+.crafting-group-count{font-size:.84rem;color:#c8b99b;font-weight:400;margin-left:auto;white-space:nowrap;}
+.crafting-recipe-group-items{display:grid;grid-template-columns:1fr;gap:8px;padding:11px;}
+.crafting-recipe{min-width:0;}
+.crafting-recipe>span{min-width:0;overflow-wrap:anywhere;}
+.crafting-recipe small{font-size:.78rem;}
+@media(min-width:760px){.crafting-recipe-group-items{grid-template-columns:repeat(2,minmax(0,1fr));}}
 
   </style>
 </head>
@@ -1498,11 +1509,45 @@ async function searchFriend(){const q=clean($('friendSearch').value),s=$('friend
  for(const x of data||[]){const o=document.createElement('option');o.value=x.id;o.textContent=x.name+' · '+(x.main_name||x.name);s.append(o);} }
 function populateEditorProfessions(){const prof=unique(rareItems.map(x=>x.profession));$('craftProfession').innerHTML='<option value="">Choose a profession...</option>'+prof.map(x=>`<option value="${escapeHTML(x)}">${escapeHTML(x)}</option>`).join('');}
 function existingIds(charId,prof){const index=new Set(rareItems.filter(i=>i.profession===prof).map(i=>Number(i.id)));return new Set(characterItems.filter(x=>Number(x.character_id)===charId&&index.has(Number(x.item_id))).map(x=>Number(x.item_id)));}
-function recipeOptions(){const charId=activeCharacterId(),prof=$('craftProfession').value;if(!charId||!prof){$('craftItemList').innerHTML='';$('craftRecipeHint').textContent='Choose a character and profession to see saved recipes.';return;}
- savedIds=existingIds(charId,prof);draftIds=new Set(savedIds);const items=rareItems.filter(i=>i.profession===prof).sort((a,b)=>byName(a.category,b.category)||byName(a.item_name,b.item_name));
- $('craftRecipeHint').textContent=`${savedIds.size} previously saved · ${items.length} recipes in ${prof}`;
- $('craftItemList').innerHTML=items.map(i=>{const id=Number(i.id),saved=savedIds.has(id);return `<label class="crafting-recipe ${saved?'saved':''}"><input type="checkbox" data-recipe="${id}" ${saved?'checked':''} ${saved&&mode==='friend'?'disabled':''}><span>${escapeHTML(i.item_name)}</span>${saved?'<small>Saved</small>':''}</label>`;}).join('');
- $('craftItemList').querySelectorAll('[data-recipe]').forEach(inp=>inp.addEventListener('change',()=>{const id=Number(inp.dataset.recipe);inp.checked?draftIds.add(id):draftIds.delete(id);}));message('');}
+function recipeGroup(item,prof){
+ const name=clean(item.item_name).replace(/^Formula:\s*/i,'').replace(/^Recipe:\s*/i,'');
+ if(norm(prof)==='enchanting'){
+  const match=name.match(/(?:Enchant(?:ment)?\s+)?(2H Weapon|Two-Handed Weapon|Weapon|Gloves|Bracer|Bracers|Boots|Chest|Cloak|Shield|Robe|Ring)\s*[-–:]?/i);
+  if(match){const piece=norm(match[1]);return ({'2h weapon':'Weapons','two-handed weapon':'Weapons','weapon':'Weapons','gloves':'Gloves','bracer':'Bracers','bracers':'Bracers','boots':'Boots','chest':'Chest','cloak':'Cloaks','shield':'Shields','robe':'Chest','ring':'Rings'})[piece]||'Other Enchants';}
+  if(/\b(arcanite rod|runed|oil|wizard oil|mana oil)\b/i.test(name))return 'Rods & Oils';
+  return clean(item.category)||'Other Enchants';
+ }
+ if(norm(prof)==='alchemy'){
+  if(/\bflask\b/i.test(name))return 'Flasks';
+  if(/\b(elixir|giant growth)\b/i.test(name))return 'Elixirs';
+  if(/\b(potion|healing potion|mana potion|protection potion)\b/i.test(name))return 'Potions';
+  if(/\b(transmute|arcanite|transmutation)\b/i.test(name))return 'Transmutes';
+  if(/\b(oil|stone|salt)\b/i.test(name))return 'Oils & Reagents';
+  return clean(item.category)||'Other Alchemy';
+ }
+ return clean(item.category)||'Other Recipes';
+}
+function recipeOptions(){
+ const charId=activeCharacterId(),prof=$('craftProfession').value;
+ if(!charId||!prof){$('craftItemList').innerHTML='';$('craftRecipeHint').textContent='Choose a character and profession to see saved recipes.';return;}
+ savedIds=existingIds(charId,prof);draftIds=new Set(savedIds);
+ const items=rareItems.filter(i=>i.profession===prof);
+ const groups=new Map();for(const item of items){const group=recipeGroup(item,prof);if(!groups.has(group))groups.set(group,[]);groups.get(group).push(item);}
+ $('craftRecipeHint').textContent=`${savedIds.size} previously saved · ${items.length} recipes in ${prof} · Expand a group to edit`;
+ const entries=[...groups.entries()].sort(([a],[b])=>byName(a,b));
+ $('craftItemList').innerHTML=entries.map(([group,recipes])=>{
+  recipes.sort((a,b)=>byName(a.item_name,b.item_name));
+  const known=recipes.filter(i=>savedIds.has(Number(i.id))).length;
+  return `<details class="crafting-recipe-group" ${known?'open':''}><summary><span>${escapeHTML(group)}</span><span class="crafting-group-count" data-group-count>${known} saved / ${recipes.length}</span></summary><div class="crafting-recipe-group-items">${recipes.map(i=>{const id=Number(i.id),saved=savedIds.has(id);return `<label class="crafting-recipe ${saved?'saved':''}"><input type="checkbox" data-recipe="${id}" ${saved?'checked':''} ${saved&&mode==='friend'?'disabled':''}><span>${escapeHTML(i.item_name)}</span>${saved?'<small>Saved</small>':''}</label>`;}).join('')}</div></details>`;
+ }).join('');
+ $('craftItemList').querySelectorAll('[data-recipe]').forEach(inp=>inp.addEventListener('change',()=>{
+  const id=Number(inp.dataset.recipe);inp.checked?draftIds.add(id):draftIds.delete(id);
+  const label=inp.closest('.crafting-recipe');label?.classList.toggle('saved',inp.checked);
+  const group=inp.closest('.crafting-recipe-group');if(group){const count=group.querySelectorAll('[data-recipe]:checked').length;const total=group.querySelectorAll('[data-recipe]').length;group.querySelector('[data-group-count]').textContent=`${count} selected / ${total}`;}
+  $('craftRecipeHint').textContent=`${savedIds.size} previously saved · ${draftIds.size} currently selected · ${items.length} recipes in ${prof}`;
+ }));message('');
+}
+
 function review(){const id=activeCharacterId(),prof=$('craftProfession').value;if(!id||!prof){message('Select a character and profession first.','error');return;}
  const add=[...draftIds].filter(x=>!savedIds.has(x)),remove=mode==='mine'?[...savedIds].filter(x=>!draftIds.has(x)):[];
  if(!add.length&&!remove.length){message('No changes selected. Your recipes are already up to date.');return;}
