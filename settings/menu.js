@@ -82,6 +82,10 @@
 
               </div>
 
+              <a class="syn-account__profile-link"
+                 href="${url('guild/my-profile.html')}"
+                 hidden>♟ &nbsp; MY PROFILE</a>
+
               <button
                 class="syn-account__auth-button"
                 type="button"
@@ -132,6 +136,18 @@
           color: #b5a88f !important;
         }
       `;
+      colors.textContent += `
+        .syn-account__profile-link {
+          display:block; margin:.6rem 0; padding:.75rem 1rem;
+          color:#e5c978; border:1px solid #70562c;
+          background:#241b12; border-radius:5px;
+          text-align:center; text-decoration:none;
+          font-weight:700; letter-spacing:.04em;
+        }
+        .syn-account__profile-link[hidden] { display:none !important; }
+        .syn-account__profile-link:hover,
+        .syn-account__profile-link:focus-visible {background:#3b2b17;}
+      `;
       document.head.appendChild(colors);
     }
 
@@ -152,6 +168,10 @@
       account.querySelector('.syn-account__status');
     const accountButton =
       account.querySelector('.syn-account__auth-button');
+    const profileLink = account.querySelector('.syn-account__profile-link');
+    const profilePageURL = url('guild/my-profile.html');
+    const isProfilePage = window.location.pathname === new URL(profilePageURL).pathname;
+    const PROFILE_PROMPT_KEY = 'syndicate_profile_prompt_checked_v1';
 
     let currentUser = null;
     let currentAction = 'login';
@@ -172,8 +192,9 @@
         String(open)
       );
 
-      if (open && !accountButton.disabled) {
-        accountButton.focus();
+      if (open) {
+        if (!profileLink.hidden) profileLink.focus();
+        else if (!accountButton.disabled) accountButton.focus();
       }
     }
 
@@ -254,6 +275,7 @@
       }
 
       accountButton.disabled = true;
+      profileLink.hidden = true;
       displayAccount('CHECKING...', 'checking');
       accountStatus.textContent = 'Checking Discord login...';
 
@@ -322,8 +344,42 @@
 
         showMembershipStatus(membership);
         // Officer / Guild Master role is verified by the Discord Edge Function.
-        if (membership?.verified === true && membership?.status === 'member') {
-          displayAccount(username, membership.isOfficer === true ? 'officer' : 'member');
+         if (membership?.verified === true && membership?.status === 'member') {
+           const rank = membership.isOfficer === true ? 'officer' : 'member';
+           displayAccount(username, rank);
+           profileLink.hidden = false;
+
+           // Profile RPCs are optional during deployment: leave login usable
+           // even before the profile SQL has been installed.
+           const db = window.syndicateDB;
+           if (db?.rpc) {
+             try {
+               const { data, error } = await db.rpc('syndicate_my_profile');
+               if (version !== refreshVersion) return;
+               if (error) throw error;
+               const person = Array.isArray(data) ? data[0] : data;
+               const displayName = person?.main_name || person?.outside_character;
+               if (displayName) displayAccount(displayName, rank);
+
+               // A one-time, optional welcome per browser session per user.
+               // Excludes the profile page itself to avoid redirect loops.
+               const key = PROFILE_PROMPT_KEY + ':' + user.id;
+               if (!isProfilePage && !sessionStorage.getItem(key)) {
+                 sessionStorage.setItem(key, 'checked');
+                 const result = await db.rpc('syndicate_profile_welcome_needed');
+                 if (version !== refreshVersion) return;
+                 if (!result.error && result.data === true) {
+                   const destination = new URL(profilePageURL);
+                   destination.searchParams.set('welcome', '1');
+                   window.location.assign(destination.href);
+                   return;
+                 }
+                 if (result.error) sessionStorage.removeItem(key);
+               }
+             } catch (profileError) {
+               console.warn('Optional Syndicate profile lookup unavailable:', profileError);
+             }
+           }
         }
 
 
@@ -405,6 +461,9 @@
             event === 'INITIAL_SESSION' ||
             event === 'USER_UPDATED'
           ) {
+            if (event === 'SIGNED_OUT' && currentUser?.id) {
+              try { sessionStorage.removeItem(PROFILE_PROMPT_KEY + ':' + currentUser.id); } catch (_) {}
+            }
             setTimeout(() => {
               refreshAccount();
             }, 0);
