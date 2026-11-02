@@ -1,8 +1,9 @@
-<!DOCTYPE html> 
-<html lang="en">
-<head>
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+  <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>My Profile | The Syndicate</title>
+<script>if(new URLSearchParams(location.search).has('embed'))document.documentElement.classList.add('syn-profile-embed');</script>
 <link rel="stylesheet" href="../settings/styles.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
 <script src="../settings/supabase-config.js" defer></script>
@@ -13,6 +14,14 @@
 <style>
 .profile{background:#0b0908;color:#e8dbbd;min-height:75vh;padding:3rem 1rem 5rem;font-family:var(--font-body,Georgia,serif)}
 .profile *{box-sizing:border-box}.profile-wrap{max-width:650px;margin:auto}.profile-head{text-align:center;margin-bottom:1.8rem}.profile small.kicker{color:#d3a54c;letter-spacing:.16em;text-transform:uppercase}.profile h1,.profile h2{font-family:var(--font-heading,Georgia,serif);font-weight:400;color:#e1c378}.profile h1{font-size:clamp(2rem,4vw,2.6rem);margin:.55rem 0}.profile h2{font-size:1.25rem;margin:0}.profile .muted{color:#b9ac94;line-height:1.6;font-size:.92rem}.profile .panel{background:#17130e;border:1px solid #70562c;border-radius:9px;padding:1.4rem;margin-bottom:1rem}.profile .row{display:flex;gap:.8rem;align-items:center;justify-content:space-between;flex-wrap:wrap}.profile .center{text-align:center}.profile .avatar{display:grid;place-items:center;border-radius:50%;border:1px solid #9c7b37;width:52px;height:52px;background:#302618;color:#eac977;font-size:1.6rem}.profile .badge{color:#b2deb2;font-size:.76rem;border:1px solid #4e7e50;padding:.22rem .48rem;border-radius:30px}.profile .rule{border:0;border-top:1px solid #554526;margin:1.2rem 0}.profile label{display:block;color:#d8bb7c;font-size:.84rem;margin:.7rem 0 .3rem}.profile input,.profile select{display:block;width:100%;background:#0d0a08;color:#f2e3c3;border:1px solid #6f5836;border-radius:5px;padding:.74rem;font:inherit}.profile input:focus,.profile select:focus{outline:2px solid #bc9241;outline-offset:2px}.profile button,.profile a.action{font:inherit;background:#332716;color:#f0d48c;border:1px solid #96713a;border-radius:5px;padding:.65rem 1rem;cursor:pointer;text-decoration:none}.profile button:hover{filter:brightness(1.17)}.profile button:disabled{opacity:.4;cursor:not-allowed}.profile button.primary{background:#795623;color:#ffebad}.profile button.subtle{background:transparent;border-color:#554528}.profile .actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.profile .choices{max-height:245px;overflow:auto;margin:.7rem 0}.profile .choice{display:flex;gap:.8rem;align-items:center;justify-content:space-between;border-bottom:1px solid #493b29;padding:.65rem 0}.profile .choice:last-child{border:0}.profile .note{background:#241d14;border:1px solid #786037;border-radius:6px;padding:.8rem 1rem;margin:1rem 0;color:#e1c99a}.profile .note.error{border-color:#ac5651;color:#ffb2a8}.profile .note.ok{border-color:#4b7853;color:#b5deb8}.profile .hide{display:none!important}.profile .two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}@media(max-width:490px){.profile .two{grid-template-columns:1fr}}.profile .modal{position:fixed;inset:0;z-index:9998;background:#000d;display:grid;place-items:center;padding:1rem}.profile .modal-inner{width:min(100%,520px);max-height:90vh;overflow:auto;background:#17130e;border:1px solid #98753d;padding:1.4rem;border-radius:10px;box-shadow:0 18px 80px #000}
+
+.syn-profile-embed body { margin:0; background:#0b0908; }
+.syn-profile-embed .syn-menu,.syn-profile-embed .syn-footer,
+.syn-profile-embed #syndicate-menu,.syn-profile-embed #syndicate-footer {display:none!important}
+.syn-profile-embed .profile{min-height:100vh;padding:1.1rem 1rem 2rem;}
+.syn-profile-embed .profile-head{margin-bottom:1rem;}
+.syn-profile-embed .profile-head h1{font-size:1.7rem;}
+.syn-profile-embed .profile .panel{padding:1rem;}
 </style>
 </head>
 <body><div id="syndicate-menu"></div>
