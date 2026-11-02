@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" class="syn-access-pending">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>My Profile | The Syndicate</title>
+<link rel="stylesheet" href="../settings/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+<script src="../settings/supabase-config.js" defer></script>
+<script src="../settings/auth.js" defer></script>
+<script src="../settings/font-setting.js" defer></script>
+<script src="../settings/menu.js" defer></script>
+<script src="../settings/site-layout.js" defer></script>
+<style>
+.profile{background:#0b0908;color:#e8dbbd;min-height:75vh;padding:3rem 1rem 5rem;font-family:var(--font-body,Georgia,serif)}
+.profile *{box-sizing:border-box}.profile-wrap{max-width:650px;margin:auto}.profile-head{text-align:center;margin-bottom:1.8rem}.profile small.kicker{color:#d3a54c;letter-spacing:.16em;text-transform:uppercase}.profile h1,.profile h2{font-family:var(--font-heading,Georgia,serif);font-weight:400;color:#e1c378}.profile h1{font-size:clamp(2rem,4vw,2.6rem);margin:.55rem 0}.profile h2{font-size:1.25rem;margin:0}.profile .muted{color:#b9ac94;line-height:1.6;font-size:.92rem}.profile .panel{background:#17130e;border:1px solid #70562c;border-radius:9px;padding:1.4rem;margin-bottom:1rem}.profile .row{display:flex;gap:.8rem;align-items:center;justify-content:space-between;flex-wrap:wrap}.profile .center{text-align:center}.profile .avatar{display:grid;place-items:center;border-radius:50%;border:1px solid #9c7b37;width:52px;height:52px;background:#302618;color:#eac977;font-size:1.6rem}.profile .badge{color:#b2deb2;font-size:.76rem;border:1px solid #4e7e50;padding:.22rem .48rem;border-radius:30px}.profile .rule{border:0;border-top:1px solid #554526;margin:1.2rem 0}.profile label{display:block;color:#d8bb7c;font-size:.84rem;margin:.7rem 0 .3rem}.profile input,.profile select{display:block;width:100%;background:#0d0a08;color:#f2e3c3;border:1px solid #6f5836;border-radius:5px;padding:.74rem;font:inherit}.profile input:focus,.profile select:focus{outline:2px solid #bc9241;outline-offset:2px}.profile button,.profile a.action{font:inherit;background:#332716;color:#f0d48c;border:1px solid #96713a;border-radius:5px;padding:.65rem 1rem;cursor:pointer;text-decoration:none}.profile button:hover{filter:brightness(1.17)}.profile button:disabled{opacity:.4;cursor:not-allowed}.profile button.primary{background:#795623;color:#ffebad}.profile button.subtle{background:transparent;border-color:#554528}.profile .actions{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:1rem}.profile .choices{max-height:245px;overflow:auto;margin:.7rem 0}.profile .choice{display:flex;gap:.8rem;align-items:center;justify-content:space-between;border-bottom:1px solid #493b29;padding:.65rem 0}.profile .choice:last-child{border:0}.profile .note{background:#241d14;border:1px solid #786037;border-radius:6px;padding:.8rem 1rem;margin:1rem 0;color:#e1c99a}.profile .note.error{border-color:#ac5651;color:#ffb2a8}.profile .note.ok{border-color:#4b7853;color:#b5deb8}.profile .hide{display:none!important}.profile .two{display:grid;grid-template-columns:1fr 1fr;gap:.8rem}@media(max-width:490px){.profile .two{grid-template-columns:1fr}}.profile .modal{position:fixed;inset:0;z-index:9998;background:#000d;display:grid;place-items:center;padding:1rem}.profile .modal-inner{width:min(100%,520px);max-height:90vh;overflow:auto;background:#17130e;border:1px solid #98753d;padding:1.4rem;border-radius:10px;box-shadow:0 18px 80px #000}
+</style>
+</head>
+<body><div id="syndicate-menu"></div>
+<main class="profile" id="main-content"><div class="profile-wrap">
+  <header class="profile-head"><small class="kicker">The Syndicate · Your identity</small><h1>My Profile</h1><p class="muted">A little piece of the ship to call your own.</p></header>
+  <div id="message" class="note" role="status" aria-live="polite">Checking your Discord sign-in…</div>
+  <div id="profile-content" class="hide">
+    <section class="panel"><div class="row"><div class="row" style="justify-content:flex-start"><div class="avatar" aria-hidden="true">⚓</div><div><h2 id="greeting">Welcome aboard!</h2><div class="muted" id="discord-name"></div></div></div><span class="badge">Discord connected</span></div></section>
+    <section id="guild-panel" class="panel hide">
+      <h2>My Syndicate Main</h2><p class="muted" id="guild-hint">Your main character links your Discord identity to our guild roster.</p>
+      <div id="linked-main" class="hide"><div class="row"><div><strong id="linked-name" style="color:#edd08a;font-size:1.25rem"></strong><div class="muted">Confirmed main · The Syndicate</div></div><span class="badge">Linked</span></div><p class="muted">Need to change mains? Ask a Website Manager to update your association.</p></div>
+      <div id="pending-main" class="hide"><div class="note">Your request for <strong id="pending-name"></strong> is awaiting review.</div></div>
+      <div id="preassigned" class="hide"><div class="note"><strong id="preassigned-name"></strong> has been suggested for you by a Website Manager. Is that your main?</div><div class="actions"><button id="confirm-pre" class="primary" type="button">Yes, that's my main</button><button id="different-pre" type="button" class="subtle">That's not my main</button></div></div>
+      <div id="guild-search" class="hide"><label for="search-main">Search guild main characters</label><input id="search-main" autocomplete="off" placeholder="Type 2+ letters…"><div id="search-results" class="choices"></div><p class="muted">Choosing an unassigned main sends a request for review. It won't change an existing link automatically.</p></div>
+    </section>
+    <section id="outside-panel" class="panel hide"><h2>My Character</h2><p class="muted">For our PUGs, friends, and partner guild raiders. You don't need a Syndicate guild role to add your character.</p>
+      <form id="outside-form"><label for="outside-name">Character name</label><input id="outside-name" minlength="2" maxlength="24" pattern="[A-Za-zÀ-ÿ]+" autocomplete="off" required placeholder="Your character name">
+        <div class="two"><div><label for="outside-class">Class</label><select id="outside-class" required><option value="">Choose class</option><option>Warrior</option><option>Paladin</option><option>Hunter</option><option>Rogue</option><option>Priest</option><option>Shaman</option><option>Mage</option><option>Warlock</option><option>Druid</option></select></div><div><label for="outside-realm">Realm</label><select id="outside-realm"><option>Mankrik</option><option>Ashkandi</option><option>Pagle</option><option>Other</option></select></div></div>
+        <div id="other-realm-row" class="hide"><label for="other-realm">Enter realm</label><input id="other-realm" maxlength="60" placeholder="Realm name"></div>
+        <label for="outside-guild">Guild (optional)</label><input id="outside-guild" maxlength="80" placeholder="Partner guild or leave empty"><div class="actions"><button type="submit" class="primary" id="save-outside">Save my character</button></div>
+      </form><p class="muted">This personal profile is separate from the official Syndicate guild roster. Raid-log matching can be connected in a later phase.</p>
+    </section>
+  </div>
+  <div id="welcome-modal" class="modal hide" role="dialog" aria-modal="true" aria-labelledby="welcome-title"><div class="modal-inner"><div class="row"><small class="kicker">The Syndicate</small><button id="close-welcome" class="subtle" aria-label="Close welcome" type="button">✕</button></div><h2 id="welcome-title">Welcome aboard!</h2><p id="welcome-desc" class="muted">Let's connect your character.</p><div class="actions"><button type="button" id="start-setup" class="primary">Choose my main</button><button type="button" id="later" class="subtle">Maybe later</button></div></div></div>
+</div></main><div id="syndicate-footer"></div>
+<script>
+(() => {
+ 'use strict';
+ const $ = id => document.getElementById(id);
+ const show=(id,on=true)=>$(id).classList.toggle('hide',!on);
+ let db,profile,searchTimer,working=false;
+ const rpc=async(name,args={})=>{const {data,error}=await db.rpc(name,args);if(error)throw Error(error.message);return data};
+ const msg=(message,kind='')=>{const el=$('message');el.textContent=message;el.className='note '+kind;show('message',!!message)};
+ const make=(tag,text,cls)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(cls)n.className=cls;return n};
+ const mainName=()=>profile.account_type==='syndicate'?profile.main_name:profile.outside_character;
+ async function load(){
+  const rows=await rpc('syndicate_my_profile');profile=rows?.[0];if(!profile)throw Error('Your profile could not be loaded.');
+  show('profile-content');show('guild-panel',profile.account_type==='syndicate');show('outside-panel',profile.account_type==='outside');
+  $('discord-name').textContent='Signed in as '+profile.discord_name;
+  $('greeting').textContent=mainName()?'Hi, '+mainName()+'!':'Welcome aboard!';
+  if(profile.account_type==='syndicate'){
+    show('linked-main',!!profile.main_name);show('pending-main',!profile.main_name&&!!profile.pending_name);
+    show('preassigned',!profile.main_name&&!profile.pending_name&&!!profile.preassigned_id);
+    show('guild-search',!profile.main_name&&!profile.pending_name&&!profile.preassigned_id);
+    $('linked-name').textContent=profile.main_name||'';
+    $('pending-name').textContent=profile.pending_name||'';
+    $('preassigned-name').textContent=profile.preassigned_name||'';
+  }else{
+    $('outside-name').value=profile.outside_character||'';
+    $('outside-class').value=profile.outside_class||'';
+    const known=['Mankrik','Ashkandi','Pagle'];const realm=profile.outside_realm||'Mankrik';
+    $('outside-realm').value=known.includes(realm)?realm:'Other';$('other-realm').value=known.includes(realm)?'':realm;
+    show('other-realm-row',$('outside-realm').value==='Other');$('outside-guild').value=profile.outside_guild||'';
+  }
+  msg('');
+ }
+ async function checkWelcome(){
+   if(!new URLSearchParams(location.search).has('welcome'))return;
+   const needed=await rpc('syndicate_profile_welcome_needed');if(!needed)return;
+   $('welcome-desc').textContent=profile.account_type==='syndicate'?
+     (profile.preassigned_name?'We found '+profile.preassigned_name+' as a suggested main. Confirm it or choose another.':'Want to connect your main character to your profile?'):
+     'Add your WoW character, class, realm, and guild if you have one. You can do this later.';
+   $('start-setup').textContent=profile.account_type==='syndicate'?'Choose my main':'Add my character';
+   show('welcome-modal');$('start-setup').focus();
+ }
+ async function dismiss(save){show('welcome-modal',false);if(save){try{await rpc('syndicate_profile_welcome_dismiss')}catch(e){msg(e.message,'error')}}}
+ $('later').onclick=()=>dismiss(true);$('close-welcome').onclick=()=>dismiss(true);
+ $('start-setup').onclick=()=>dismiss(false);
+ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('welcome-modal').classList.contains('hide'))dismiss(true)});
+ $('different-pre').onclick=()=>{msg('A different main needs Website Manager review. Your reserved character has not been changed.','');};
+ $('confirm-pre').onclick=async()=>{
+   if(working||!confirm('Confirm that '+profile.preassigned_name+' is your Syndicate main?'))return;
+   working=true;$('confirm-pre').disabled=true;
+   try{await rpc('syndicate_profile_confirm_preassignment');await load();msg('Main linked successfully!','ok')}
+   catch(e){msg(e.message,'error')}finally{working=false;$('confirm-pre').disabled=false}
+ };
+ $('search-main').oninput=()=>{clearTimeout(searchTimer);searchTimer=setTimeout(searchMains,300)};
+ async function searchMains(){
+  const search=$('search-main').value.trim();const root=$('search-results');root.replaceChildren();if(search.length<2)return;
+  try{const rows=await rpc('syndicate_profile_search_mains',{p_search:search});
+    if(search!==$('search-main').value.trim())return;
+    if(!rows?.length){root.append(make('p','No current mains found.','muted'));return}
+    rows.forEach(m=>{const line=make('div',undefined,'choice'),info=make('div');
+      info.append(make('strong',m.character_name),make('div',m.character_class||'','muted'));
+      const button=make('button',m.available?'Request link':'Unavailable');button.type='button';button.disabled=!m.available;
+      button.onclick=async()=>{if(!confirm('Request '+m.character_name+' as your main?'))return;
+        button.disabled=true;try{await rpc('syndicate_claim_main',{p_roster_character_id:m.roster_id});await load();msg('Your main request was sent for review.','ok')}
+        catch(e){msg(e.message,'error');button.disabled=false}};
+      line.append(info,button);root.append(line)})
+  }catch(e){msg(e.message,'error')}
+ }
+ $('outside-realm').onchange=()=>show('other-realm-row',$('outside-realm').value==='Other');
+ $('outside-form').onsubmit=async e=>{e.preventDefault();if(working)return;
+  const realm=$('outside-realm').value==='Other'?$('other-realm').value.trim():$('outside-realm').value;
+  if(!realm){msg('Please enter a realm.','error');return}
+  working=true;$('save-outside').disabled=true;
+  try{await rpc('syndicate_profile_save_outside',{
+    p_character_name:$('outside-name').value.trim(),p_character_class:$('outside-class').value,
+    p_realm:realm,p_guild_name:$('outside-guild').value.trim()||null
+   });await load();msg('Your character profile is saved.','ok')}
+  catch(err){msg(err.message,'error')}finally{working=false;$('save-outside').disabled=false}
+ };
+ window.addEventListener('load',async()=>{try{
+   db=window.syndicateDB;if(!db?.rpc)throw Error('Supabase configuration not found');
+   const {data,error}=await db.auth.getUser();if(error||!data?.user)throw Error('Please sign in with Discord to view your profile.');
+   await load();await checkWelcome()
+  }catch(e){msg(e.message,'error')}});
+})();
+</script>
+</body></html>
