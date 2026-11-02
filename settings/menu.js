@@ -148,8 +148,84 @@
         .syn-account__profile-link:hover,
         .syn-account__profile-link:focus-visible {background:#3b2b17;}
       `;
+      colors.textContent += `
+        .syn-profile-overlay {position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:15000;}
+        .syn-profile-overlay[hidden], .syn-profile-drawer[hidden] {display:none!important;}
+        .syn-profile-drawer {position:fixed;z-index:15001;right:0;top:0;height:100dvh;
+          width:min(100%,540px);display:flex;flex-direction:column;
+          background:#0b0908;border-left:1px solid #9a742a;box-shadow:-14px 0 70px #000a;}
+        .syn-profile-drawer__top {padding:.8rem 1rem;display:flex;align-items:center;
+          justify-content:space-between;gap:1rem;background:#21190f;border-bottom:1px solid #70562c;}
+        .syn-profile-drawer__title {color:#e5c978;font-weight:700;letter-spacing:.08em;}
+        .syn-profile-drawer__close {background:transparent;border:1px solid #7a613a;
+          color:#e5c978;border-radius:5px;padding:.3rem .7rem;cursor:pointer;font-size:1.3rem;}
+        .syn-profile-drawer__frame {display:block;flex:1;width:100%;min-height:0;border:0;background:#0b0908;}
+        body.syn-profile-open {overflow:hidden;}
+      `;
       document.head.appendChild(colors);
     }
+
+    // Profile drawer: reuse the existing profile page inside a compact panel.
+    // Same-origin iframe retains the current Supabase session and backend logic.
+    const profileOverlay = document.createElement('div');
+    profileOverlay.className = 'syn-profile-overlay';
+    profileOverlay.hidden = true;
+    const profileDrawer = document.createElement('section');
+    profileDrawer.className = 'syn-profile-drawer';
+    profileDrawer.hidden = true;
+    profileDrawer.setAttribute('role', 'dialog');
+    profileDrawer.setAttribute('aria-modal', 'true');
+    profileDrawer.setAttribute('aria-label', 'My Profile');
+    profileDrawer.innerHTML = `
+      <div class="syn-profile-drawer__top">
+        <span class="syn-profile-drawer__title">⚓ MY PROFILE</span>
+        <button type="button" class="syn-profile-drawer__close" aria-label="Close profile">×</button>
+      </div>
+      <iframe class="syn-profile-drawer__frame" title="My Profile" loading="eager"></iframe>`;
+    document.body.append(profileOverlay, profileDrawer);
+    const profileFrame = profileDrawer.querySelector('iframe');
+    const closeProfileButton = profileDrawer.querySelector('.syn-profile-drawer__close');
+    let profileOpen = false;
+    let previousProfileFocus = null;
+    function openProfile(welcome = false) {
+      if (profileOpen) return;
+      previousProfileFocus = document.activeElement;
+      profileOpen = true;
+      setAccountOpen(false);
+      profileOverlay.hidden = false;
+      profileDrawer.hidden = false;
+      document.body.classList.add('syn-profile-open');
+      const destination = new URL(url('guild/my-profile.html'));
+      destination.searchParams.set('embed', '1');
+      if (welcome) destination.searchParams.set('welcome', '1');
+      profileFrame.src = destination.href;
+      closeProfileButton.focus();
+    }
+    function closeProfile() {
+      if (!profileOpen) return;
+      profileOpen = false;
+      profileDrawer.hidden = true;
+      profileOverlay.hidden = true;
+      document.body.classList.remove('syn-profile-open');
+      profileFrame.removeAttribute('src');
+      if (previousProfileFocus?.isConnected) previousProfileFocus.focus();
+      // Update display name after a profile was saved/confirmed.
+      refreshAccount();
+    }
+    closeProfileButton.addEventListener('click', closeProfile);
+    profileOverlay.addEventListener('click', closeProfile);
+    profileDrawer.addEventListener('keydown', event => {
+      if (event.key === 'Tab' && event.target === closeProfileButton && event.shiftKey) {
+        event.preventDefault();
+        profileFrame.focus();
+      }
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && profileOpen) {
+        event.preventDefault();
+        closeProfile();
+      }
+    });
 
     // =====================================
     // DISCORD ACCOUNT ELEMENTS
@@ -197,6 +273,12 @@
         else if (!accountButton.disabled) accountButton.focus();
       }
     }
+
+    profileLink.addEventListener('click', event => {
+      event.preventDefault();
+      if (profileLink.hidden || !currentUser) return;
+      openProfile(false);
+    });
 
     accountTrigger.addEventListener('click', () => {
       setAccountOpen(!accountOpen);
@@ -369,9 +451,7 @@
                  const result = await db.rpc('syndicate_profile_welcome_needed');
                  if (version !== refreshVersion) return;
                  if (!result.error && result.data === true) {
-                   const destination = new URL(profilePageURL);
-                   destination.searchParams.set('welcome', '1');
-                   window.location.assign(destination.href);
+                   openProfile(true);
                    return;
                  }
                  if (result.error) sessionStorage.removeItem(key);
