@@ -12,7 +12,7 @@
   const siteRoot = new URL('../', script.src);
   const homeURL = new URL('index.html', siteRoot).href;
 
-  const VERIFIED_KEY = 'syndicate_member_verification_v2';
+  const VERIFIED_KEY = 'syndicate_member_verification_v3';
   const LIMIT_KEY = 'syndicate_verification_cooldown_v2';
   const LOCK_KEY = 'syndicate_verification_inflight_v2';
   const VERIFIED_MS = 5 * 60 * 1000;
@@ -123,12 +123,13 @@
 
       if (data?.verified === true && data?.status === 'member') {
         const result = {
-          verified: true,
-          status: 'member',
-          isOfficer: data.isOfficer === true,
-          isGuildMember: data.isGuildMember === true,
-          checkedAt: data.checkedAt
-        };
+  verified: true,
+  status: 'member',
+  isOfficer: data.isOfficer === true,
+  isGuildMember: data.isGuildMember === true,
+  isDarkPillar: data.isDarkPillar === true,
+  checkedAt: data.checkedAt
+};
         setVerified(userId, result);
         return result;
       }
