@@ -144,7 +144,8 @@
           text-align:center; text-decoration:none;
           font-weight:700; letter-spacing:.04em;
         }
-        .syn-account__profile-link[hidden] { display:none !important; }
+        .syn-account__profile-link[hidden],
+        .syn-menu__drawer-links a[hidden] { display:none !important; }
         .syn-account__profile-link:hover,
         .syn-account__profile-link:focus-visible {background:#3b2b17;}
       `;
@@ -253,6 +254,13 @@
     let currentAction = 'login';
     let accountOpen = false;
     let refreshVersion = 0;
+    let canAccessRaids = false;
+    let raidNavLink = null;
+
+    function setRaidNavigation(allowed) {
+      canAccessRaids = allowed === true;
+      if (raidNavLink) raidNavLink.hidden = !canAccessRaids;
+    }
 
     function displayAccount(name, rank) {
       accountName.textContent = name;
@@ -344,6 +352,7 @@
 
     async function refreshAccount() {
       const version = ++refreshVersion;
+      setRaidNavigation(false);
       const auth = window.syndicateAuth;
 
       if (!auth) {
@@ -425,6 +434,9 @@
         if (version !== refreshVersion) return;
 
         showMembershipStatus(membership);
+        setRaidNavigation(membership?.verified === true &&
+          membership?.status === 'member' &&
+          (membership.isOfficer === true || membership.isDarkPillar === true));
         // Officer / Guild Master role is verified by the Discord Edge Function.
          if (membership?.verified === true && membership?.status === 'member') {
            const rank = membership.isOfficer === true ? 'officer' : 'member';
@@ -541,6 +553,10 @@
             event === 'INITIAL_SESSION' ||
             event === 'USER_UPDATED'
           ) {
+            if (event === 'SIGNED_OUT') {
+              ++refreshVersion;
+              setRaidNavigation(false);
+            }
             if (event === 'SIGNED_OUT' && currentUser?.id) {
               try { sessionStorage.removeItem(PROFILE_PROMPT_KEY + ':' + currentUser.id); } catch (_) {}
             }
@@ -602,6 +618,18 @@
 
       nav.appendChild(a);
     }
+
+    // Raid leadership navigation is visible only after role verification.
+    raidNavLink = document.createElement('a');
+    raidNavLink.textContent = 'Raid Responsibilities';
+    raidNavLink.href = url('officer/adopt-a-raid.html');
+    raidNavLink.hidden = !canAccessRaids;
+    if (location.pathname === new URL(raidNavLink.href).pathname) {
+      raidNavLink.setAttribute('aria-current', 'page');
+    }
+    const raidHubLink = Array.from(nav.children).find(a => a.href === url('raid-hub.html'));
+    if (raidHubLink) raidHubLink.after(raidNavLink);
+    else nav.appendChild(raidNavLink);
 
     const motto = document.createElement('div');
     motto.className = 'syn-menu__drawer-motto';
@@ -672,7 +700,7 @@
       if (event.key === 'Tab') {
         const controls = Array.from(
           drawer.querySelectorAll(
-            'button:not(:disabled), a'
+            'button:not(:disabled), a:not([hidden])'
           )
         );
 
