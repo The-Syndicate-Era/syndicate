@@ -621,7 +621,7 @@
 
     // Raid leadership navigation is visible only after role verification.
     raidNavLink = document.createElement('a');
-    raidNavLink.textContent = 'Raid Responsibilities';
+    raidNavLink.textContent = 'Adopt a Raid';
     raidNavLink.href = url('officer/adopt-a-raid.html');
     raidNavLink.hidden = !canAccessRaids;
     if (location.pathname === new URL(raidNavLink.href).pathname) {
