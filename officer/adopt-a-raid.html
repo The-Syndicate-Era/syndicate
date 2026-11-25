@@ -14,8 +14,8 @@
 <script src="../settings/supabase-config.js" defer></script>
 <script src="../settings/auth.js" defer></script>
 
-<!-- Dark Council access verification -->
-<script src="../settings/officer-guard.js" defer></script>
+<!-- Dark Council / Dark Pillar access verification -->
+<script src="../settings/raid-guard.js" defer></script>
 
 <!-- Shared site layout -->
 <script src="../settings/font-setting.js" defer></script>
@@ -80,12 +80,12 @@ html.syn-access-pending .raid-back-row { display:none!important; }
     <a class="raid-back-link" href="./officer-hub.html">← Back to Officer Hub</a>
   </div>
  
- <section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Operations</div><h1>Raid Responsibilities</h1><p>Volunteer as Raid Lead or Master Looter, manage coverage, and share officer availability.</p></div></section>
+ <section class="hero"><div class="hero-inner"><div class="eyebrow">The Syndicate · Raid Operations</div><h1>Raid Responsibilities</h1><p>Volunteer as Raid Lead or Master Looter, manage coverage, and share raid team availability.</p></div></section>
 <main class="wrap">
-<div class="tabs"><button class="tab active" data-tab="calendarView">Full Calendar</button><button class="tab" data-tab="summaryView">Coverage Report</button><button class="tab" data-tab="availabilityView">Officer Availability</button><button class="tab" data-tab="bankView">Bank Rotation</button></div>
+<div class="tabs"><button class="tab active" data-tab="calendarView">Full Calendar</button><button class="tab" data-tab="summaryView">Coverage Report</button><button class="tab" data-tab="availabilityView">Raid Team Availability</button><button class="tab" data-tab="bankView">Bank Rotation</button></div>
 <div id="message" class="notice" role="status" aria-live="polite" hidden></div>
-<section id="calendarView"><div class="toolbar"><div><h2>Monthly Raid Coverage</h2><div class="small muted">Select a raid to sign up. Dates and raids come from the existing guild calendar.</div></div><div class="controls"><button class="btn" id="prev" aria-label="Previous month">‹</button><strong id="monthTitle"></strong><button class="btn" id="next" aria-label="Next month">›</button><button class="btn" id="todayBtn">Today</button></div></div><div class="legend"><span><i class="dot red"></i>Missing RL or ML</span><span><i class="dot green"></i>RL + ML volunteered</span><span><i class="dot purple"></i>Multiple interested</span><span><i class="dot amber"></i>Tentative coverage</span><span><i class="dot blue"></i>Officer unavailable</span></div><div class="coverage-strip" id="calendarStrip">Loading coverage…</div><div class="panel"><div class="weekday"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div id="calendar" class="calendar"></div></div></section>
-<section id="availabilityView" hidden><div class="panel"><h2>Officer Availability</h2><p class="muted">Optional date-range calendar. Choose Available or Unavailable; it will appear as a bubble on affected calendar dates and in raid pop-ups. Availability does not automatically sign you up to lead or loot.</p><form id="availabilityForm"><div class="two-col"><div class="field"><label for="availToon">Character name</label><input id="availToon" required maxlength="80" placeholder="Kaerixi"></div><div class="field"><label for="availType">Status</label><select id="availType"><option value="unavailable">Unavailable / AFK</option><option value="available">Available</option></select></div><div class="field"><label for="availStart">Start date</label><input type="date" id="availStart" required></div><div class="field"><label for="availEnd">End date</label><input type="date" id="availEnd" required></div></div><div class="field"><label for="availNote">Note (optional)</label><input id="availNote" maxlength="160" placeholder="Travel / can cover if needed"></div><div class="modal-actions"><button class="btn primary" id="availabilitySave" type="submit">Save Availability</button><button class="btn" type="button" id="cancelAvailabilityEdit" hidden>Cancel Edit</button></div></form><div id="availabilityList" class="absences"></div></div></section>
+<section id="calendarView"><div class="toolbar"><div><h2>Monthly Raid Coverage</h2><div class="small muted">Select a raid to sign up. Dates and raids come from the existing guild calendar.</div></div><div class="controls"><button class="btn" id="prev" aria-label="Previous month">‹</button><strong id="monthTitle"></strong><button class="btn" id="next" aria-label="Next month">›</button><button class="btn" id="todayBtn">Today</button></div></div><div class="legend"><span><i class="dot red"></i>Missing RL or ML</span><span><i class="dot green"></i>RL + ML volunteered</span><span><i class="dot purple"></i>Multiple interested</span><span><i class="dot amber"></i>Tentative coverage</span><span><i class="dot blue"></i>Raid team unavailable</span></div><div class="coverage-strip" id="calendarStrip">Loading coverage…</div><div class="panel"><div class="weekday"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div><div id="calendar" class="calendar"></div></div></section>
+<section id="availabilityView" hidden><div class="panel"><h2>Raid Team Availability</h2><p class="muted">Optional date-range calendar. Choose Available or Unavailable; it will appear as a bubble on affected calendar dates and in raid pop-ups. Availability does not automatically sign you up to lead or loot.</p><form id="availabilityForm"><div class="two-col"><div class="field"><label for="availToon">Character name</label><input id="availToon" required maxlength="80" placeholder="Kaerixi"></div><div class="field"><label for="availType">Status</label><select id="availType"><option value="unavailable">Unavailable / AFK</option><option value="available">Available</option></select></div><div class="field"><label for="availStart">Start date</label><input type="date" id="availStart" required></div><div class="field"><label for="availEnd">End date</label><input type="date" id="availEnd" required></div></div><div class="field"><label for="availNote">Note (optional)</label><input id="availNote" maxlength="160" placeholder="Travel / can cover if needed"></div><div class="modal-actions"><button class="btn primary" id="availabilitySave" type="submit">Save Availability</button><button class="btn" type="button" id="cancelAvailabilityEdit" hidden>Cancel Edit</button></div></form><div id="availabilityList" class="absences"></div></div></section>
 <section id="summaryView" hidden><div class="panel report-panel">
   <div class="toolbar"><div><h2>Raid Coverage Report</h2><p class="small muted">See missing positions, review completed raids, and share with the Dark Council.</p></div></div>
   <div class="report-filters"><div class="field"><label for="reportPreset">Date range</label><select id="reportPreset"><option value="week">This Week (Tue–Mon)</option><option value="next">Next Week</option><option value="two">Next Two Weeks</option><option value="month">This Month</option><option value="custom">Custom Range</option></select></div><div class="field"><label for="reportFrom">From</label><input type="date" id="reportFrom"></div><div class="field"><label for="reportTo">Through</label><input type="date" id="reportTo"></div><div class="field"><label for="reportStatus">Show</label><select id="reportStatus"><option value="all">All raids</option><option value="gaps">Missing / tentative only</option><option value="covered">Covered only</option><option value="history">Completed raids</option></select></div><button class="btn primary" id="runReport">Apply Dates</button></div>
@@ -97,7 +97,7 @@ html.syn-access-pending .raid-back-row { display:none!important; }
 <section id="bankView" hidden><div class="panel"><div class="toolbar"><div><h2>Tuesday Bank Rotation</h2><p class="small muted">The bank listed for each Tuesday handles bank mats until the following Monday. Reorder banks to change future weeks.</p></div></div>
 <div id="bankStatus" class="notice" hidden></div><div class="bank-layout"><div class="bank-left"><h3>Rotation Order</h3><div id="bankEntries" class="bank-entries"></div><form id="bankAddForm" class="bank-add"><input id="bankNewName" maxlength="80" placeholder="Add bank toon" required><button class="btn primary" type="submit">Add Bank</button></form><p class="small muted">Use ↑ and ↓ to reorder. Remove or pause a bank when it should no longer rotate.</p></div><div><h3>Upcoming Tuesdays</h3><div id="bankUpcoming" class="bank-upcoming"></div><p class="small muted">Past Tuesday assignments are preserved in the assignment history. Changes apply to future unlocked weeks.</p></div></div></div></section>
 <div class="footer">◆ THIS IS THE WAY. ◆</div></main>
-<div id="raidModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-top"><div><div class="eyebrow">Officer Sign-Up</div><h2 id="modalTitle">Raid</h2><p id="modalDate" class="small muted"></p></div><button class="btn" id="closeRaid">✕</button></div><div id="modalBody"></div></section></div>
+<div id="raidModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal-top"><div><div class="eyebrow">Raid Team Sign-Up</div><h2 id="modalTitle">Raid</h2><p id="modalDate" class="small muted"></p></div><button class="btn" id="closeRaid">✕</button></div><div id="modalBody"></div></section></div>
 <div id="dayModal" class="modal-layer" hidden><section class="modal" role="dialog" aria-modal="true" aria-labelledby="dayModalTitle"><div class="modal-top"><h2 id="dayModalTitle">Availability</h2><button class="btn" id="closeDay">✕</button></div><div id="dayModalBody"></div></section></div>
 <script>
 'use strict';
@@ -105,6 +105,43 @@ html.syn-access-pending .raid-back-row { display:none!important; }
 // Shared Syndicate Supabase connection.
 // Initialized after Officer access is granted.
 let client = null;
+let raidAccess = null, ownedToons = [];
+const isOfficer = () => raidAccess?.isOfficer === true;
+const nameKey = value => String(value || '').trim().toLowerCase();
+const ownsToon = name => ownedToons.some(t => nameKey(t) === nameKey(name));
+const canEditRecord = record => isOfficer() || (ownsToon(record.toon_name) && (!record.owner_user_id || record.owner_user_id === raidAccess?.userId));
+function characterSelect(id, existingName) {
+  const select = document.createElement('select');
+  if (id) select.id = id;
+  select.required = true;
+  const placeholder = new Option(ownedToons.length ? 'Select your character' : 'No approved characters available', '');
+  placeholder.disabled = true; placeholder.selected = true; select.add(placeholder);
+  for (const name of ownedToons) select.add(new Option(name, name));
+  if (existingName && ownsToon(existingName)) {
+    const match = ownedToons.find(n => nameKey(n) === nameKey(existingName));
+    select.value = match;
+  }
+  return select;
+}
+async function configureRaidAccess() {
+  raidAccess = window.syndicateRaidAccess;
+  if (!raidAccess || (!isOfficer() && !raidAccess.isDarkPillar)) throw Error('Raid permissions unavailable.');
+  if (isOfficer()) return;
+  document.querySelector('.raid-back-link').href = '../index.html';
+  document.querySelector('.raid-back-link').textContent = '← Back to The Syndicate';
+  $('postReport').hidden = true;
+  $('postReport').parentElement.nextElementSibling.hidden = true;
+  $('bankAddForm').hidden = true;
+  $('bankAddForm').nextElementSibling.textContent = 'Bank rotation is read-only for Dark Pillar.';
+  const result = await client.rpc('syndicate_raid_owned_characters');
+  if (result.error) console.error('Character lookup failed:', result.error);
+  ownedToons = result.error ? [] : (result.data || []).map(r => r.toon_name).filter(Boolean);
+  $('availToon').replaceWith(characterSelect('availToon'));
+  if (!ownedToons.length) {
+    $('availabilityForm').hidden = true;
+    $('availabilityForm').before(node('p','notice',result.error ? 'Character lookup failed. Refresh to try again. You can still view coverage.' : 'An approved current guild character claim is required to submit availability or sign up.'));
+  }
+}
  function ready() {
   return !!client && typeof client.from === 'function';
 }
@@ -188,7 +225,7 @@ function renderCalendar(){
   for(const [list,kind] of [[AFK,'unavailable'],[avail,'available']]){
    if(!list.length)continue;
    const b=node('button','away-pill'+(kind==='available'?' avail-pill':''));b.type='button';
-   b.textContent=(list.length===1?list[0].toon_name:`${list.length} officers`)+(kind==='available'?' · Available':' · AFK');
+   b.textContent=(list.length===1?list[0].toon_name:`${list.length} raid team members`)+(kind==='available'?' · Available':' · AFK');
    b.onclick=()=>openDay(day);cell.append(b);
   }
   host.append(cell);
@@ -235,6 +272,7 @@ function makeBtn(text,fn,cls='btn'){const b=node('button',cls,text);b.type='butt
 // Officer-managed signup removal. This is an explicit action; changing one role does not delete the other.
 async function removeSignup(s,role=null){
  if(!ready())return modalError('The database connection is unavailable.');
+ if(!canEditRecord(s))return modalError('You can only remove your own sign-ups.');
  const eventId=modalId;
  if(String(s.event_id)!==String(eventId))return modalError('This sign-up no longer belongs to the selected raid.');
  const action=role?`${role.toUpperCase()} preference`:'entire sign-up';
@@ -278,21 +316,21 @@ if(isCompletedRaid(e)){
  actualBox.append(node('p','small muted','Actual roles are recorded or corrected through Raid Logs Management. Volunteer responses remain unchanged.'));
  host.append(actualBox);
 }
-if(!modalMode){host.append(node('p','muted','What would you like to sign up for?'));const menu=node('div','role-menu');[['rl','Raid Lead'],['ml','Master Looter'],['absent','Absent']].forEach(([k,v])=>menu.append(makeBtn(v,()=>{modalMode=k;drawModal()})));host.append(menu)}else{host.append(makeBtn('← Back',()=>{modalMode=null;drawModal()}));const f=node('form');const w=node('div','field'),l=node('label','', 'Character / toon name'),name=node('input');name.required=true;name.maxLength=80;name.placeholder='Guild character name';name.autocomplete='off';w.append(l,name);f.append(w);
+if(!isOfficer()&&!ownedToons.length){host.append(node('p','notice','An approved current guild character claim is required to sign up.'));}else if(!modalMode){host.append(node('p','muted','What would you like to sign up for?'));const menu=node('div','role-menu');[['rl','Raid Lead'],['ml','Master Looter'],['absent','Absent']].forEach(([k,v])=>menu.append(makeBtn(v,()=>{modalMode=k;drawModal()})));host.append(menu)}else{host.append(makeBtn('← Back',()=>{modalMode=null;drawModal()}));const f=node('form');const w=node('div','field'),l=node('label','', 'Character / toon name'),name=isOfficer()?node('input'):characterSelect();name.required=true;name.maxLength=80;name.placeholder='Guild character name';name.autocomplete='off';w.append(l,name);f.append(w);
 if(modalMode==='absent')f.append(node('p','muted','Absent from this raid: both RL and ML responses will be set to Not available.'));
 else{f.append(node('h3','',modalMode==='rl'?'Raid Lead availability':'Master Looter availability'));CHOICES.forEach(c=>{const label=node('label','radio-choice'),radio=node('input');radio.type='radio';radio.name='preference';radio.value=c.value;const copy=node('span');copy.append(node('b','',c.label),node('small','',c.desc));label.append(radio,copy);f.append(label)})}
 function restore(){const existing=people(modalId).find(s=>s.toon_name.toLowerCase()===name.value.trim().toLowerCase());if(!existing||modalMode==='absent')return;const value=existing[modalMode+'_preference'];f.querySelectorAll('input[name=preference]').forEach(r=>r.checked=r.value===value)}name.onchange=restore;const save=makeBtn('Save Sign-Up',()=>{} ,'btn primary');save.type='submit';f.append(save);
-f.onsubmit=async ev=>{ev.preventDefault();if(!ready())return modalError('Supabase configuration is missing.');const toon=name.value.trim();if(!toon)return modalError('Enter your character name.');const choice=modalMode==='absent'?'no':f.querySelector('input[name=preference]:checked')?.value;if(!choice)return modalError('Select an option.');const old=people(modalId).find(s=>s.toon_name.toLowerCase()===toon.toLowerCase());const record={event_id:e.id,toon_name:old?.toon_name||toon,rl_preference:old?.rl_preference||'no',ml_preference:old?.ml_preference||'no',updated_at:new Date().toISOString()};if(modalMode==='absent'){record.rl_preference='no';record.ml_preference='no'}else record[modalMode+'_preference']=choice;
+f.onsubmit=async ev=>{ev.preventDefault();if(!ready())return modalError('Supabase configuration is missing.');const toon=name.value.trim();if(!toon)return modalError('Enter your character name.');if(!isOfficer()&&!ownsToon(toon))return modalError('Select an approved character.');const choice=modalMode==='absent'?'no':f.querySelector('input[name=preference]:checked')?.value;if(!choice)return modalError('Select an option.');const old=people(modalId).find(s=>s.toon_name.toLowerCase()===toon.toLowerCase());if(old&&!canEditRecord(old))return modalError('This sign-up belongs to another account.');const record={event_id:e.id,toon_name:old?.toon_name||toon,rl_preference:old?.rl_preference||'no',ml_preference:old?.ml_preference||'no',updated_at:new Date().toISOString()};if(modalMode==='absent'){record.rl_preference='no';record.ml_preference='no'}else record[modalMode+'_preference']=choice;
 save.disabled=true;const response=await client.from(SIGNUP_TABLE).upsert(record,{onConflict:'event_id,toon_name'});save.disabled=false;if(response.error)return modalError('Save failed: '+response.error.message);const ok=await load();if(!ok)return modalError('Saved, but could not refresh data.');modalMode=null;drawModal();$('modalBody').prepend(node('div','notice success',`Saved for ${record.toon_name}.`))};host.append(f)}
-const peopleBox=node('section','people');peopleBox.append(node('h3','','Officer Sign-Ups'));const rows=people(modalId);if(!rows.length)peopleBox.append(node('p','muted small','No sign-ups yet.'));else for(const s of [...rows].sort((a,b)=>a.toon_name.localeCompare(b.toon_name))){const line=node('div','people-row');const nice=v=>CHOICES.find(c=>c.value===v)?.label||'—';const info=node('div');info.append(node('strong','',s.toon_name),node('div','small muted',`RL: ${nice(s.rl_preference)} · ML: ${nice(s.ml_preference)}`));
+const peopleBox=node('section','people');peopleBox.append(node('h3','','Raid Team Sign-Ups'));const rows=people(modalId);if(!rows.length)peopleBox.append(node('p','muted small','No sign-ups yet.'));else for(const s of [...rows].sort((a,b)=>a.toon_name.localeCompare(b.toon_name))){const line=node('div','people-row');const nice=v=>CHOICES.find(c=>c.value===v)?.label||'—';const info=node('div');info.append(node('strong','',s.toon_name),node('div','small muted',`RL: ${nice(s.rl_preference)} · ML: ${nice(s.ml_preference)}`));
  const actions=node('div','entry-actions');
- if(s.rl_preference!=='no')actions.append(makeBtn('Remove RL',()=>removeSignup(s,'rl')));
- if(s.ml_preference!=='no')actions.append(makeBtn('Remove ML',()=>removeSignup(s,'ml')));
- actions.append(makeBtn('Remove All',()=>removeSignup(s)));
+ if(canEditRecord(s)&&s.rl_preference!=='no')actions.append(makeBtn('Remove RL',()=>removeSignup(s,'rl')));
+ if(canEditRecord(s)&&s.ml_preference!=='no')actions.append(makeBtn('Remove ML',()=>removeSignup(s,'ml')));
+ if(canEditRecord(s))actions.append(makeBtn('Remove All',()=>removeSignup(s)));
  line.append(info,actions);peopleBox.append(line)}host.append(peopleBox);
-const AFK=overlapping(dateOnly(e.date));const availBox=node('section','people');availBox.append(node('h3','','Officer Availability'));if(!AFK.length)availBox.append(node('p','muted small','No officer availability notes for this day.'));else for(const a of AFK){const line=node('div','people-row'),kind=availabilityKind(a),desc=(kind==='available'?'Available':'AFK')+(availabilityNote(a)?' · '+availabilityNote(a):'');line.append(node('strong','',a.toon_name),node('span','small',desc));availBox.append(line)}host.append(availBox)}
+const AFK=overlapping(dateOnly(e.date));const availBox=node('section','people');availBox.append(node('h3','','Raid Team Availability'));if(!AFK.length)availBox.append(node('p','muted small','No raid team availability notes for this day.'));else for(const a of AFK){const line=node('div','people-row'),kind=availabilityKind(a),desc=(kind==='available'?'Available':'AFK')+(availabilityNote(a)?' · '+availabilityNote(a):'');line.append(node('strong','',a.toon_name),node('span','small',desc));availBox.append(line)}host.append(availBox)}
 $('closeRaid').onclick=closeRaid;$('raidModal').onclick=e=>{if(e.target===$('raidModal'))closeRaid()};
-function openDay(day){const dates=overlapping(day);$('dayModalTitle').textContent='Officer Availability · '+day;const body=$('dayModalBody');body.replaceChildren();for(const a of dates){const item=node('div','people-row');item.append(node('strong','',a.toon_name),node('span','small',(availabilityKind(a)==='available'?'Available':'AFK')+(availabilityNote(a)?' · '+availabilityNote(a):'')));body.append(item)}$('dayModal').hidden=false}
+function openDay(day){const dates=overlapping(day);$('dayModalTitle').textContent='Raid Team Availability · '+day;const body=$('dayModalBody');body.replaceChildren();for(const a of dates){const item=node('div','people-row');item.append(node('strong','',a.toon_name),node('span','small',(availabilityKind(a)==='available'?'Available':'AFK')+(availabilityNote(a)?' · '+availabilityNote(a):'')));body.append(item)}$('dayModal').hidden=false}
 
 function closeDay() {
   $('dayModal').hidden = true;
@@ -313,23 +351,25 @@ document.onkeydown = e => {
 
  let editingAvailabilityId=null;
 function resetAvailabilityEdit(){
- editingAvailabilityId=null;$('availabilityForm').reset();$('availabilitySave').textContent='Save Availability';$('cancelAvailabilityEdit').hidden=true;
+ editingAvailabilityId=null;$('availToon').disabled=false;$('availabilityForm').reset();$('availabilitySave').textContent='Save Availability';$('cancelAvailabilityEdit').hidden=true;
 }
 $('cancelAvailabilityEdit').onclick=resetAvailabilityEdit;
 function editAvailability(a){
- editingAvailabilityId=a.id;$('availToon').value=a.toon_name;$('availType').value=availabilityKind(a);
+ if(!canEditRecord(a))return;editingAvailabilityId=a.id;$('availToon').value=isOfficer()?a.toon_name:ownedToons.find(n=>nameKey(n)===nameKey(a.toon_name));$('availToon').disabled=!isOfficer();$('availType').value=availabilityKind(a);
  $('availStart').value=dateOnly(a.start_date);$('availEnd').value=dateOnly(a.end_date);
  $('availNote').value=availabilityNote(a);$('availabilitySave').textContent='Update Availability';
  $('cancelAvailabilityEdit').hidden=false;
  document.querySelector('[data-tab="availabilityView"]').click();$('availabilityForm').scrollIntoView({behavior:'smooth',block:'center'});
 }
 async function deleteAvailability(a){
+ if(!canEditRecord(a))return;
  if(!confirm(`Remove ${a.toon_name}'s availability entry?`))return;
  const {error}=await client.from(AVAIL_TABLE).delete().eq('id',a.id);
  if(error)return notice('Remove failed: '+error.message,'error');
  if(editingAvailabilityId===a.id)resetAvailabilityEdit();await load();notice('Availability entry removed.','success');
 }
 async function closeAvailability(a){
+ if(!canEditRecord(a))return;
  // Close an ongoing entry as of today; entries already in the past can simply be removed.
  const todayStr=localDate(new Date());
  if(todayStr<dateOnly(a.start_date))return notice('This entry has not started. Use Edit or Remove instead.','error');
@@ -346,9 +386,9 @@ function renderAvailability(){
   const kind=availabilityKind(a),row=node('div','abs-row'),info=node('div');
   info.append(node('strong','',`${a.toon_name} · ${kind==='available'?'Available':'Unavailable'}`),node('div','small muted',`${dateOnly(a.start_date)} through ${dateOnly(a.end_date)}${availabilityNote(a)?' · '+availabilityNote(a):''}`));
   const actions=node('div','entry-actions');
-  actions.append(makeBtn('Edit',()=>editAvailability(a)));
+  if(canEditRecord(a)){actions.append(makeBtn('Edit',()=>editAvailability(a)));
   if(dateOnly(a.start_date)<=localDate(new Date())&&dateOnly(a.end_date)>localDate(new Date()))actions.append(makeBtn('End Today',()=>closeAvailability(a)));
-  actions.append(makeBtn('Remove',()=>deleteAvailability(a)));
+  actions.append(makeBtn('Remove',()=>deleteAvailability(a)));}
   row.append(info,actions);host.append(row);
  }
 }
@@ -356,7 +396,8 @@ $('availabilityForm').onsubmit=async ev=>{
  ev.preventDefault();if(!ready())return notice('Supabase is not configured.','error');
  const toon=$('availToon').value.trim(),start=$('availStart').value,end=$('availEnd').value,kind=$('availType').value,note=$('availNote').value.trim();
  if(!toon||!start||!end)return;if(end<start)return notice('End date must be on or after start date.','error');
- const payload={toon_name:toon,start_date:start,end_date:end,note:(kind==='available'?AVAIL_PREFIX+' ':'')+note||null};
+ const existing=availability.find(a=>a.id===editingAvailabilityId);if(!isOfficer()&&(!ownsToon(toon)||(editingAvailabilityId!==null&&(!existing||!canEditRecord(existing)))))return notice('You can only manage your approved characters.','error');
+  const payload={toon_name:!isOfficer()&&existing?existing.toon_name:toon,start_date:start,end_date:end,note:(kind==='available'?AVAIL_PREFIX+' ':'')+note||null};
  const response=editingAvailabilityId===null
   ?await client.from(AVAIL_TABLE).insert(payload)
   :await client.from(AVAIL_TABLE).update(payload).eq('id',editingAvailabilityId);
@@ -381,15 +422,15 @@ async function loadBankData(){
 }
 function renderCalendarStrip(){const host=$('calendarStrip');if(!host)return;const from=localDate(new Date()),end=addDays(from,13);const upcoming=raids.filter(r=>dateOnly(r.date)>=from&&dateOnly(r.date)<=end);const gaps=upcoming.reduce((v,r)=>v+(willing(raidId(r),'rl').length===0?1:0)+(willing(raidId(r),'ml').length===0?1:0),0);host.replaceChildren();host.append(node('strong','',`${upcoming.length} upcoming raids this month · ${gaps} open volunteer positions`));const b=node('button','btn','View Coverage Report →');b.onclick=()=>{document.querySelector('[data-tab="summaryView"]').click();};host.append(b)}
 function renderBankRotation(){const host=$('bankEntries');host.replaceChildren();const active=bankEntries.slice().sort((a,b)=>a.position-b.position);if(!active.length)host.append(node('p','muted','No banks configured yet. Add the first bank toon below.'));
- for(let i=0;i<active.length;i++){const e=active[i],row=node('div','bank-entry'),label=node('div','');label.append(node('strong','',`${i+1}. ${e.toon_name}`),node('div','small muted',e.active?'In rotation':'Paused'));const actions=node('div','entry-actions');actions.append(makeBtn('↑',()=>moveBank(i,-1)));actions.append(makeBtn('↓',()=>moveBank(i,1)));actions.append(makeBtn(e.active?'Pause':'Resume',()=>toggleBank(e)));actions.append(makeBtn('Remove',()=>removeBank(e)));row.append(label,actions);host.append(row);}
+ for(let i=0;i<active.length;i++){const e=active[i],row=node('div','bank-entry'),label=node('div','');label.append(node('strong','',`${i+1}. ${e.toon_name}`),node('div','small muted',e.active?'In rotation':'Paused'));const actions=node('div','entry-actions');if(isOfficer()){actions.append(makeBtn('↑',()=>moveBank(i,-1)));actions.append(makeBtn('↓',()=>moveBank(i,1)));actions.append(makeBtn(e.active?'Pause':'Resume',()=>toggleBank(e)));actions.append(makeBtn('Remove',()=>removeBank(e)));}row.append(label,actions);host.append(row);}
  const upcoming=$('bankUpcoming');upcoming.replaceChildren();let t=tuesdayOnOrBefore(localDate(new Date()));if(t<localDate(new Date()))t=addDays(t,7);for(let i=0;i<10;i++){const date=addDays(t,i*7),row=node('div','bank-week');row.append(node('span','',localParse(date).toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})),node('strong','',bankForTuesday(date)||'Unassigned'));upcoming.append(row)}
 }
 async function bankSave(call,success){const result=await call;if(result.error)throw result.error;await loadBankData();renderBankRotation();renderCalendar();notice(success,'success')}
 async function ensureBankAnchor(){if(bankSettings)return;const start=tuesdayOnOrBefore(localDate(new Date()));const {error}=await client.from(BANK_SETTINGS).upsert({id:1,anchor_tuesday:start},{onConflict:'id'});if(error)throw error;}
-async function addBank(e){e.preventDefault();const name=$('bankNewName').value.trim();if(!name)return;try{await ensureBankAnchor();const next=Math.max(0,...bankEntries.map(b=>b.position))+1;await bankSave(client.from(BANK_ENTRIES).insert({toon_name:name,position:next,active:true}),'Bank added.');$('bankNewName').value='';}catch(e){notice('Bank add failed: '+e.message,'error')}}
-async function moveBank(i,dir){const list=bankEntries.slice().sort((a,b)=>a.position-b.position),other=list[i+dir];if(!other)return;try{const row=list[i],old=row.position;const tmp=-999999;const a=await client.from(BANK_ENTRIES).update({position:tmp}).eq('id',row.id);if(a.error)throw a.error;const b=await client.from(BANK_ENTRIES).update({position:old}).eq('id',other.id);if(b.error)throw b.error;await bankSave(client.from(BANK_ENTRIES).update({position:other.position}).eq('id',row.id),'Rotation order updated.');}catch(e){notice('Reorder failed: '+e.message,'error');await loadBankData();renderBankRotation()}}
-async function toggleBank(e){try{await bankSave(client.from(BANK_ENTRIES).update({active:!e.active}).eq('id',e.id),'Bank status updated.')}catch(err){notice(err.message,'error')}}
-async function removeBank(e){if(!confirm(`Remove ${e.toon_name} from future rotation? Historical assignments will remain.`))return;try{await bankSave(client.from(BANK_ENTRIES).delete().eq('id',e.id),'Bank removed.')}catch(err){notice(err.message,'error')}}
+async function addBank(e){e.preventDefault();if(!isOfficer())return;const name=$('bankNewName').value.trim();if(!name)return;try{await ensureBankAnchor();const next=Math.max(0,...bankEntries.map(b=>b.position))+1;await bankSave(client.from(BANK_ENTRIES).insert({toon_name:name,position:next,active:true}),'Bank added.');$('bankNewName').value='';}catch(e){notice('Bank add failed: '+e.message,'error')}}
+async function moveBank(i,dir){if(!isOfficer())return;const list=bankEntries.slice().sort((a,b)=>a.position-b.position),other=list[i+dir];if(!other)return;try{const row=list[i],old=row.position;const tmp=-999999;const a=await client.from(BANK_ENTRIES).update({position:tmp}).eq('id',row.id);if(a.error)throw a.error;const b=await client.from(BANK_ENTRIES).update({position:old}).eq('id',other.id);if(b.error)throw b.error;await bankSave(client.from(BANK_ENTRIES).update({position:other.position}).eq('id',row.id),'Rotation order updated.');}catch(e){notice('Reorder failed: '+e.message,'error');await loadBankData();renderBankRotation()}}
+async function toggleBank(e){if(!isOfficer())return;try{await bankSave(client.from(BANK_ENTRIES).update({active:!e.active}).eq('id',e.id),'Bank status updated.')}catch(err){notice(err.message,'error')}}
+async function removeBank(e){if(!isOfficer())return;if(!confirm(`Remove ${e.toon_name} from future rotation? Historical assignments will remain.`))return;try{await bankSave(client.from(BANK_ENTRIES).delete().eq('id',e.id),'Bank removed.')}catch(err){notice(err.message,'error')}}
 $('bankAddForm').addEventListener('submit',addBank);
 function setReportDates(){const todayStr=localDate(new Date()),base=tuesdayOnOrBefore(todayStr),preset=$('reportPreset').value;let start=base,end=addDays(base,6);if(preset==='next'){start=addDays(base,7);end=addDays(base,13)}if(preset==='two')end=addDays(base,13);if(preset==='month'){start=dateAt(today.getFullYear(),today.getMonth(),1);end=dateAt(today.getFullYear(),today.getMonth()+1,0)}if(preset!=='custom'){$('reportFrom').value=start;$('reportTo').value=end;} }
 $('reportPreset').addEventListener('change',setReportDates);setReportDates();
@@ -409,7 +450,7 @@ function reportText(){const lines=[`THE SYNDICATE — RAID COVERAGE`,`${formatDa
 $('copyReport').onclick=async()=>{if(!reportReady)return notice('Generate a report first.','error');try{await navigator.clipboard.writeText(reportText());notice('Coverage report copied.','success')}catch(e){notice('Could not copy: '+e.message,'error')}};
 // Export using native SVG foreignObject is unreliable in Safari; use a canvas-rendered text report.
 $('downloadReport').onclick=()=>{if(!reportReady)return notice('Generate a report first.','error');const lines=reportText().split('\n'),width=1150,pad=55,lineH=27,canvas=document.createElement('canvas');canvas.width=width;canvas.height=Math.max(320,lines.length*lineH+pad*2);const ctx=canvas.getContext('2d');ctx.fillStyle='#111015';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#d4af66';ctx.font='bold 25px Georgia';ctx.fillText('THE SYNDICATE',pad,pad);ctx.font='18px Arial';let y=pad+43;for(const line of lines){ctx.fillStyle=line.includes('NEEDED')?'#ff9b9b':line.startsWith('  ')?'#ded7cb':'#d5b471';ctx.fillText(line.slice(0,100),pad,y);y+=lineH;}const a=document.createElement('a');a.href=canvas.toDataURL('image/png');a.download=`syndicate-raid-coverage-${reportFrom}-${reportTo}.png`;a.click()};
-$('postReport').onclick=async()=>{if(!reportReady)return notice('Generate a report first.','error');if(!confirm(`Post the ${reportFrom} through ${reportTo} coverage report to the officer Discord channel?`))return;const b=$('postReport');b.disabled=true;try{const res=await client.functions.invoke('syndicate-raid-coverage-discord',{body:{action:'post',from:reportFrom,to:reportTo,status:$('reportStatus').value}});if(res.error)throw res.error;if(!res.data?.success)throw Error(res.data?.error||'Posting failed');notice('Coverage report posted to officer Discord.','success')}catch(e){notice('Discord post unavailable: '+e.message+'. Deploy the companion Edge Function first.','error')}finally{b.disabled=false}};
+$('postReport').onclick=async()=>{if(!isOfficer())return notice('Only Dark Council can post to Officer Discord.','error');if(!reportReady)return notice('Generate a report first.','error');if(!confirm(`Post the ${reportFrom} through ${reportTo} coverage report to the officer Discord channel?`))return;const b=$('postReport');b.disabled=true;try{const res=await client.functions.invoke('syndicate-raid-coverage-discord',{body:{action:'post',from:reportFrom,to:reportTo,status:$('reportStatus').value}});if(res.error)throw res.error;if(!res.data?.success)throw Error(res.data?.error||'Posting failed');notice('Coverage report posted to officer Discord.','success')}catch(e){notice('Discord post unavailable: '+e.message+'. Deploy the companion Edge Function first.','error')}finally{b.disabled=false}};
 // Initialize report when its tab is first opened; return to calendar without reloading signups.
 document.querySelector('[data-tab="summaryView"]').addEventListener('click',()=>{if(!reportReady)loadReport()});
 document.querySelector('[data-tab="bankView"]').addEventListener('click',renderBankRotation);
@@ -418,7 +459,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   let started = false;
 
-  function startOfficerPage() {
+  async function startOfficerPage() {
     if (started) return;
 
     // Only initialize data after the Officer Guard grants access.
@@ -441,8 +482,13 @@ document.addEventListener('DOMContentLoaded', () => {
     started = true;
     observer.disconnect();
 
-    render();
-    load();
+    try {
+      await configureRaidAccess();
+      render();
+      await load();
+    } catch (error) {
+      notice(error.message, 'error');
+    }
   }
 
   const observer = new MutationObserver(startOfficerPage);
